@@ -28,7 +28,7 @@ public class Drives {
 
     static final File TOP_DIRECTORY = new File(
         new File(System.getProperty("user.home")),
-        "git/history/backup/drives");
+        "git/history/drives");
 
     enum Target {
         FILE, DIRECTORY, ANY;
