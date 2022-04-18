@@ -1,0 +1,49 @@
+[ 
+    { 
+        "name" : "Cars", 
+        "nodes" : [ 
+            { 
+                "name" : "Truck", 
+                "nodes" : [ 
+                    { 
+                        "name" : "Regular", 
+                        "nodes" : [ 
+                            
+                        ]
+                    }, 
+
+                    { 
+                        "name" : "4x4", 
+                        "nodes" : [ 
+                            { 
+                                "name" : "Lifted", 
+                                "nodes" : [ 
+                                    
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }, 
+
+            { 
+                "name" : "Jeep", 
+                "nodes" : [ 
+                    { 
+                        "name" : "4x4", 
+                        "nodes" : [ 
+                            
+                        ]
+                    }
+                ]
+            }, 
+
+            { 
+                "name" : "Convertable", 
+                "nodes" : [ 
+                    
+                ]
+            }
+        ]
+    }
+]
