@@ -1,0 +1,77 @@
+{
+    // IntelliSense を使用して利用可能な属性を学べます。
+    // 既存の属性の説明をホバーして表示します。
+    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch Delbom",
+            "request": "launch",
+            "mainClass": "util.main.Delbom",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "Launch Drives",
+            "request": "launch",
+            "mainClass": "util.main.Drives",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "Launch DrivesDb",
+            "request": "launch",
+            "mainClass": "util.main.DrivesDb",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "Launch Dump",
+            "request": "launch",
+            "mainClass": "util.main.Dump",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "Launch Flat",
+            "request": "launch",
+            "mainClass": "util.main.Flat",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "Launch Pdf",
+            "request": "launch",
+            "mainClass": "util.main.Pdf",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "Launch Srt",
+            "request": "launch",
+            "mainClass": "util.main.Srt",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "Launch Extract",
+            "request": "launch",
+            "mainClass": "util.srt.Extract",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "Launch Merge",
+            "request": "launch",
+            "mainClass": "util.srt.Merge",
+            "projectName": "util"
+        }
+    ]
+}
