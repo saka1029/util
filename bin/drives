@@ -1,0 +1,5 @@
+#!/bin/sh
+BASE=~/git/util
+CP=$BASE/target/util-1.0.jar:$BASE/lib/*
+T=~/git/history/drives
+java -cp $CP util.main.Drives -t $T $*

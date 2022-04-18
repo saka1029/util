@@ -1,0 +1,4 @@
+#!/bin/sh
+BASE=~/git/util
+CP=$BASE/target/util-1.0.jar:$BASE/lib/*
+java -cp $CP util.main.Dump $*
