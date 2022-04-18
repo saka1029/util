@@ -26,7 +26,9 @@ import util.io.WindowsTreeReader;
  */
 public class Drives {
 
-    static final File TOP_DIRECTORY = new File(new File(System.getProperty("user.home")), "git/history/backup/drives");
+    static final File TOP_DIRECTORY = new File(
+        new File(System.getProperty("user.home")),
+        "git/history/backup/drives");
 
     enum Target {
         FILE, DIRECTORY, ANY;
