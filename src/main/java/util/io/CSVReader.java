@@ -1,7 +1,13 @@
 package util.io;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +44,7 @@ import java.util.List;
  * </pre>
  *
  */
-public class CSVReader {
+public class CSVReader implements Closeable {
 
     final BufferedReader reader;
     int ch;
@@ -48,6 +54,22 @@ public class CSVReader {
     public CSVReader(BufferedReader reader) throws IOException {
         this.reader = reader;
         this.ch = get();
+    }
+
+    public CSVReader(Reader reader) throws IOException {
+        this(new BufferedReader(reader));
+    }
+
+    public CSVReader(Path path, Charset encoding) throws IOException {
+        this(Files.newBufferedReader(path, encoding));
+    }
+
+    public CSVReader(Path path) throws IOException {
+        this(path, Charset.defaultCharset());
+    }
+
+    public CSVReader(String csv) throws IOException {
+        this(new StringReader(csv));
     }
 
     int get() throws IOException {
@@ -125,5 +147,10 @@ public class CSVReader {
         else
             throw new RuntimeException("CR, LF, CRLF or EOF expected but '" + (char)ch + "'");
         return line;
+    }
+
+    @Override
+    public void close() throws IOException {
+        reader.close();
     }
 }
