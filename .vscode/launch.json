@@ -4,6 +4,7 @@
     // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "java",
             "name": "Launch Current File",
@@ -71,6 +72,13 @@
             "name": "Launch Merge",
             "request": "launch",
             "mainClass": "util.srt.Merge",
+            "projectName": "util"
+        }
+        {
+            "type": "java",
+            "name": "Launch Compiler",
+            "request": "launch",
+            "mainClass": "util.language.csp.Compiler",
             "projectName": "util"
         }
     ]

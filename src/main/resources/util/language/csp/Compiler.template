@@ -1,0 +1,25 @@
+#PACKAGE#
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+#IMPORTS#
+public class #CLASS# {
+public static void solve(Consumer<int[]> callback) {
+#DECLARE#
+#FOR#
+}
+#FUNCTIONS#
+    public static void main(String[] args) throws Exception {
+        long start = System.currentTimeMillis();
+        System.out.println(#VARIABLES#);
+        int[] count = {0};
+        Consumer<int[]> callback = a -> {
+            ++count[0];
+            System.out.println(IntStream.of(a)
+                .mapToObj(n -> "" + n)
+                .collect(Collectors.joining(",")));
+        };
+        solve(callback);
+        System.err.printf("solutions: " + count[0] + ", elapse: %d msec.%n", System.currentTimeMillis() - start);
+    }
+}
