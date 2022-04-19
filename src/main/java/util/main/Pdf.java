@@ -11,7 +11,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.property.AreaBreakType;
 
 /**
  * 指定したディレクトリの下に拡張子
@@ -32,7 +31,7 @@ public class Pdf {
     static final FileFilter IS_DIRECTORY = f -> f.isDirectory();
     static final FileFilter IS_IMAGE_FILE = f -> f.isFile()
         && f.getName().matches("(?i).*\\.(png|jpg|jpeg)$");
-    static final AreaBreak NEXT_PAGE = new AreaBreak(AreaBreakType.NEXT_PAGE);
+    static final AreaBreak NEXT_PAGE = new AreaBreak(PageSize.A4);
 
     static void printPdf(File outFile, File[] imageFiles, float margin, boolean landscape) throws IOException {
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFile));

@@ -1,5 +1,5 @@
 setlocal
-set HOME=%USERPROFILE%\git\history
-set CP=%HOME%\target\util-1.0.jar;%HOME%\lib\*
+set BASE=%USERPROFILE%\git\util
+set CP=%BASE%\target\util-1.0.jar;%BASE%\lib\*
 java -cp %CP% util.main.Dump %*
 endlocal

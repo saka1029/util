@@ -1,6 +1,6 @@
 setlocal
-set HOME=%USERPROFILE%\git\util
+set BASE=%USERPROFILE%\git\util
 set T=%USERPROFILE%\git\history\drives
-set CP=%HOME%\target\util-1.0.jar;%HOME%\lib\*
+set CP=%BASE%\target\util-1.0.jar;%BASE%\lib\*
 java -cp %CP% util.main.Drives -t %T% %*
 endlocal
