@@ -2,7 +2,8 @@ package util.main;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-
+import java.util.Arrays;
+import java.util.Comparator;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -63,6 +64,8 @@ public class Pdf {
 
     static void makePdf(File dir, float margin, boolean landscape) throws IOException {
         File[] imageFiles = dir.listFiles(IS_IMAGE_FILE);
+        // WindowsとLinuxで同じソート順になるようにファイル名の上昇順でソートします。
+        Arrays.sort(imageFiles, Comparator.comparing(f -> f.getName()));
         if (imageFiles.length > 0)
             printPdf(new File(dir.getPath() + ".pdf"), imageFiles, margin, landscape);
         for (File subDir : dir.listFiles(IS_DIRECTORY))
