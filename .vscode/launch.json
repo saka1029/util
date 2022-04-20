@@ -79,7 +79,7 @@
             "name": "Launch Compiler",
             "request": "launch",
             "mainClass": "util.language.csp.Compiler",
-            "projectName": "util"
+            "args": "-v ramanujan.csp"
         }
     ]
 }

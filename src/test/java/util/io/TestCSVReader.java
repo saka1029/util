@@ -2,10 +2,15 @@ package util.io;
 
 import static org.junit.Assert.assertEquals;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.logging.Logger;
 import org.junit.Test;
 
@@ -16,6 +21,7 @@ import org.junit.Test;
 public class TestCSVReader {
     
     static final Logger logger = Logger.getLogger(TestCSVReader.class.getName());
+
     @Test
     public void testPath() throws IOException {
         logger.info("*** " + Thread.currentThread().getStackTrace()[1].getMethodName());
@@ -35,5 +41,20 @@ public class TestCSVReader {
             assertEquals(List.of("医療機関", "年", "月", "日", "診療科", "金額"), r.readLine());
             assertEquals(List.of("上毛病院", "29", "12", "20", "精神科", "1,210"), r.readLine());
         }
+    }
+
+    @Test
+    public void testEncoding() throws IOException {
+        logger.info("日本語");
+        String fe = "file.encoding";
+        System.out.println(fe + "=" + System.getProperty(fe));
+        OutputStream os = System.out;
+        byte[] utf8 = "これはUTF-8の日本語\r\n".getBytes(StandardCharsets.UTF_8);
+        byte[] ms932 = "これはMS932の日本語\r\n".getBytes(Charset.forName("MS932"));
+        os.write(utf8);
+        os.write(ms932);
+        Properties p = System.getProperties();
+        for (Entry<Object, Object>  e : p.entrySet())
+            System.out.println(e);
     }
 }
