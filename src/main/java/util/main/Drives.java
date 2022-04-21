@@ -15,7 +15,7 @@ import util.io.WindowsTreeReader;
  * ドライブごとのtreeコマンド実行結果（/drivesにあるファイル）
  * についてgrepします。
  * usage:
- * java Drives [-f|-d|-a|-t TOPDIR] 検索文字列
+ * java util.main.Drives [-f|-d|-a] [-t TOPDIR] 検索文字列
  * -f ファイルのみ検索
  * -d ファイルのみ検索
  * -a すべてを検索
@@ -70,12 +70,19 @@ public class Drives {
             }
     }
 
+    static String USAGE = ""
+        + "usage:  java util.main.Drives [-f|-d|-a] [-t TOPDIR] 検索文字列%n"
+        + " -f ファイルのみ検索%n"
+        + " -d ファイルのみ検索%n"
+        + " -a すべてを検索%n"
+        + " -t TOPDIR treeファイルのある場所%n";
+
     static void usage() {
-        throw new IllegalArgumentException("Usage: java Drives [-a|-f|-d|-t TOPDIR] PATTERN");
+        throw new IllegalArgumentException(USAGE.formatted());
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("args=" + Arrays.toString(args));
+        // System.out.println("args=" + Arrays.toString(args));
         Target target = Target.ANY;
         String pattern = null;
         File top = TOP_DIRECTORY;
