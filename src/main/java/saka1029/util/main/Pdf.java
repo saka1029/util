@@ -24,6 +24,7 @@ import com.itextpdf.layout.element.Image;
  * <pre>
  * [使い方]
  * java Pdf [-m マージン] [-l] ディレクトリ
+ * -lはLandscape(横長)
  * </pre>
  */
 public class Pdf {
@@ -32,13 +33,13 @@ public class Pdf {
     static final FileFilter IS_DIRECTORY = f -> f.isDirectory();
     static final FileFilter IS_IMAGE_FILE = f -> f.isFile()
         && f.getName().matches("(?i).*\\.(png|jpg|jpeg)$");
-    static final AreaBreak NEXT_PAGE = new AreaBreak(PageSize.A4);
 
     static void printPdf(File outFile, File[] imageFiles, float margin, boolean landscape) throws IOException {
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFile));
         PageSize pageSize = PageSize.A4;
         if (landscape)
             pageSize = pageSize.rotate();
+        AreaBreak NEXT_PAGE = new AreaBreak(pageSize);
         try (Document document = new Document(pdf, pageSize)) {
             document.setMargins(margin, margin, margin, margin);
             Rectangle rect = pdf.getDefaultPageSize();
