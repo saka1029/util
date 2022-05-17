@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.logging.Logger;
 import org.junit.Test;
 
 /**
@@ -20,11 +19,9 @@ import org.junit.Test;
  */
 public class TestCSVReader {
     
-    static final Logger logger = Logger.getLogger(TestCSVReader.class.getName());
-
     @Test
     public void testPath() throws IOException {
-        logger.info("*** " + Thread.currentThread().getStackTrace()[1].getMethodName());
+        System.out.println("*** " + Thread.currentThread().getStackTrace()[1].getMethodName());
         Path path = Paths.get("data/2018-04-05 明細 - シート1.csv");
         try (CSVReader r = new CSVReader(path)) {
             assertEquals(List.of("医療機関", "年", "月", "日", "診療科", "金額"), r.readLine());
@@ -34,7 +31,7 @@ public class TestCSVReader {
     
     @Test
     public void testString() throws IOException {
-        logger.info("*** " + Thread.currentThread().getStackTrace()[1].getMethodName());
+        System.out.println("*** " + Thread.currentThread().getStackTrace()[1].getMethodName());
         Path path = Paths.get("data/2018-04-05 明細 - シート1.csv");
         String csv = Files.readString(path);
         try (CSVReader r = new CSVReader(csv)) {
@@ -45,7 +42,7 @@ public class TestCSVReader {
 
     @Test
     public void testEncoding() throws IOException {
-        logger.info("日本語");
+        System.out.println("*** " + Thread.currentThread().getStackTrace()[1].getMethodName());
         String fe = "file.encoding";
         System.out.println(fe + "=" + System.getProperty(fe));
         OutputStream os = System.out;
