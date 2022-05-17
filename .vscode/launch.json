@@ -5,6 +5,7 @@
     "version": "0.2.0",
     "configurations": [
 
+
         {
             "type": "java",
             "name": "Launch Current File",
@@ -13,73 +14,11 @@
         },
         {
             "type": "java",
-            "name": "Launch Delbom",
+            "name": "Launch Jav",
             "request": "launch",
-            "mainClass": "util.main.Delbom",
-            "projectName": "util"
-        },
-        {
-            "type": "java",
-            "name": "Launch Drives",
-            "request": "launch",
-            "mainClass": "util.main.Drives",
-            "projectName": "util"
-        },
-        {
-            "type": "java",
-            "name": "Launch DrivesDb",
-            "request": "launch",
-            "mainClass": "util.main.DrivesDb",
-            "projectName": "util"
-        },
-        {
-            "type": "java",
-            "name": "Launch Dump",
-            "request": "launch",
-            "mainClass": "util.main.Dump",
-            "projectName": "util"
-        },
-        {
-            "type": "java",
-            "name": "Launch Flat",
-            "request": "launch",
-            "mainClass": "util.main.Flat",
-            "projectName": "util"
-        },
-        {
-            "type": "java",
-            "name": "Launch Pdf",
-            "request": "launch",
-            "mainClass": "util.main.Pdf",
-            "projectName": "util"
-        },
-        {
-            "type": "java",
-            "name": "Launch Srt",
-            "request": "launch",
-            "mainClass": "util.main.Srt",
-            "projectName": "util"
-        },
-        {
-            "type": "java",
-            "name": "Launch Extract",
-            "request": "launch",
-            "mainClass": "util.srt.Extract",
-            "projectName": "util"
-        },
-        {
-            "type": "java",
-            "name": "Launch Merge",
-            "request": "launch",
-            "mainClass": "util.srt.Merge",
-            "projectName": "util"
-        }
-        {
-            "type": "java",
-            "name": "Launch Compiler",
-            "request": "launch",
-            "mainClass": "util.language.csp.Compiler",
-            "args": "-v ramanujan.csp"
+            "mainClass": "saka1029.util.main.Jav",
+            "projectName": "util",
+            "args": "ADN-174"
         }
     ]
 }
