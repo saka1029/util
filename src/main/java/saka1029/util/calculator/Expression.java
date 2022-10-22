@@ -101,10 +101,10 @@ public interface Expression {
                 if (eat('-'))
                     minus = true;
                 if (eat('(')) {
-                    atom = expression(null);
+                    atom = expression(null, 0);
                     if (!eat(')'))
                         throw new ParseException("')' expected");
-                } if (Character.isDigit(ch)) {
+                } else if (Character.isDigit(ch)) {
                     bufferClear();
                     bufferInteger();
                     if (ch == '.') {
@@ -160,8 +160,12 @@ public interface Expression {
                 return factor;
             }
 
-            Expression expression(Expression t) {
-                Expression term = t == null ? term() : t;
+            Expression expression(Expression t, int start) {
+                Expression term = t;
+                if (t == null) {
+                    start = index - 1;
+                    term = term();
+                }
                 while (true)
                     if (eat('+')) {
                         Expression left = term, right = term();
@@ -171,11 +175,24 @@ public interface Expression {
                         term = variables -> left.eval(variables) - right.eval(variables);
                     } else
                         break;
-                return term;
+                int end = index;
+                Expression termFinal = term;
+                String stringFinal = s.substring(start, end).trim();
+                return new Expression() {
+                    @Override
+                    public double eval(Map<String, Expression> variables) {
+                        return termFinal.eval(variables);
+                    }
+                    @Override
+                    public String toString() {
+                        return stringFinal;
+                    }
+                };
             }
 
             Expression statement() {
                 spaces();
+                int start = index - 1;
                 if (idFirst(ch)) {
                     bufferClear();
                     bufferAppendGet(ch);
@@ -183,15 +200,15 @@ public interface Expression {
                         bufferAppendGet(ch);
                     String name = bufferToString();
                     if (eat('=')) {
-                        Expression expression = expression(null);
+                        Expression expression = expression(null, 0);
                         return variables -> {
                             variables.put(name, expression);
                             return 0;
                         };
                     } else
-                        return expression(variable(name));
+                        return expression(variable(name), start);
                 }
-                return expression(null);
+                return expression(null, 0);
             }
 
             Expression parse() {
