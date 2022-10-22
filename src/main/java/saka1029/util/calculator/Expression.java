@@ -5,7 +5,6 @@ import java.util.Map;
 /**
  * <pre>
  * SYNTAX
- * statement  : [ id '=' ] expression
  * expression : term { ('+' | '-' ) term }
  * term       : factor { ( '*' | '/' ) factor }
  * factor     : atom [ '^' factor ]
@@ -15,31 +14,23 @@ import java.util.Map;
 @FunctionalInterface
 public interface Expression {
     double eval(Map<String, Expression> variables);
-    
-    public static class ParseException extends RuntimeException {
-        private static final long serialVersionUID = 1L;
 
-        ParseException(String format, Object... args) {
-            super(format.formatted(args));
-        }
+    public static boolean idFirst(int ch) {
+        return Character.isAlphabetic(ch);
     }
 
-    public static class EvaluationException extends RuntimeException {
-        private static final long serialVersionUID = 1L;
-
-        EvaluationException(String format, Object... args) {
-            super(format.formatted(args));
-        }
+    public static boolean idRest(int ch) {
+        return idFirst(ch) || Character.isDigit(ch) || ch == '_';
     }
 
     public static Expression parse(String s) {
         return new Object() {
             int length = s.length(), index = 0, ch = get();
-            
+
             int get() {
                 return ch = index < length ? s.charAt(index++) : -1;
             }
-            
+
             void spaces() {
                 while (Character.isWhitespace(ch))
                     get();
@@ -53,22 +44,22 @@ public interface Expression {
                 }
                 return false;
             }
-            
+
             StringBuilder buffer = new StringBuilder();
-            
+
             void bufferClear() {
                 buffer.setLength(0);
             }
-            
+
             void bufferAppend(int ch) {
-                buffer.append((char)ch);
+                buffer.append((char) ch);
             }
-            
+
             void bufferAppendGet(int ch) {
                 bufferAppend(ch);
                 get();
             }
-            
+
             String bufferToString() {
                 return buffer.toString();
             }
@@ -76,14 +67,6 @@ public interface Expression {
             void bufferInteger() {
                 while (Character.isDigit(ch))
                     bufferAppendGet(ch);
-            }
-            
-            boolean idFirst(int ch) {
-                return Character.isAlphabetic(ch);
-            }
-            
-            boolean idRest(int ch) {
-                return idFirst(ch) || Character.isDigit(ch) || ch == '_';
             }
 
             Expression variable(String name) {
@@ -101,7 +84,7 @@ public interface Expression {
                 if (eat('-'))
                     minus = true;
                 if (eat('(')) {
-                    atom = expression(null, 0);
+                    atom = expression();
                     if (!eat(')'))
                         throw new ParseException("')' expected");
                 } else if (Character.isDigit(ch)) {
@@ -160,12 +143,9 @@ public interface Expression {
                 return factor;
             }
 
-            Expression expression(Expression t, int start) {
-                Expression term = t;
-                if (t == null) {
-                    start = index - 1;
-                    term = term();
-                }
+            Expression expression() {
+                int start = index - 1;
+                Expression term = term();
                 while (true)
                     if (eat('+')) {
                         Expression left = term, right = term();
@@ -183,6 +163,7 @@ public interface Expression {
                     public double eval(Map<String, Expression> variables) {
                         return termFinal.eval(variables);
                     }
+
                     @Override
                     public String toString() {
                         return stringFinal;
@@ -190,29 +171,8 @@ public interface Expression {
                 };
             }
 
-            Expression statement() {
-                spaces();
-                int start = index - 1;
-                if (idFirst(ch)) {
-                    bufferClear();
-                    bufferAppendGet(ch);
-                    while (idRest(ch))
-                        bufferAppendGet(ch);
-                    String name = bufferToString();
-                    if (eat('=')) {
-                        Expression expression = expression(null, 0);
-                        return variables -> {
-                            variables.put(name, expression);
-                            return 0;
-                        };
-                    } else
-                        return expression(variable(name), start);
-                }
-                return expression(null, 0);
-            }
-
             Expression parse() {
-                Expression e = statement();
+                Expression e = expression();
                 if (ch != -1)
                     throw new ParseException("extra string '%'", s.substring(index - 1));
                 return e;
