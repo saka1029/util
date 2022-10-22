@@ -21,6 +21,8 @@ class TestExpression {
         assertEquals(2.0 / 3, Expression.parse("2 / 3").eval(m), E);
         assertEquals(1 + 2.0 / 3, Expression.parse("1 + 2 / 3").eval(m), E);
         assertEquals(1 + Math.pow(2, 3) / 3, Expression.parse("1 + 2 ^ 3 / 3").eval(m), E);
+        assertEquals(Math.pow(2, Math.pow(3, 2)), Expression.parse("2 ^ 3 ^ 2").eval(m), E);
+        assertEquals(Math.pow(Math.pow(2, 3), 2), Expression.parse("(2 ^ 3) ^ 2").eval(m), E);
     }
 
     @Test
