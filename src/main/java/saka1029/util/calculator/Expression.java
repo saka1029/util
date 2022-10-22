@@ -77,6 +77,23 @@ public interface Expression {
                 while (Character.isDigit(ch))
                     bufferAppendGet(ch);
             }
+            
+            boolean idFirst(int ch) {
+                return Character.isAlphabetic(ch);
+            }
+            
+            boolean idRest(int ch) {
+                return idFirst(ch) || Character.isDigit(ch) || ch == '_';
+            }
+
+            Expression variable(String name) {
+                return variables -> {
+                    Expression e = variables.get(name);
+                    if (e == null)
+                        throw new EvaluationException("undefined variable '%s'", name);
+                    return e.eval(variables);
+                };
+            }
 
             Expression atom() {
                 Expression atom;
@@ -84,7 +101,7 @@ public interface Expression {
                 if (eat('-'))
                     minus = true;
                 if (eat('(')) {
-                    atom = expression();
+                    atom = expression(null);
                     if (!eat(')'))
                         throw new ParseException("')' expected");
                 } if (Character.isDigit(ch)) {
@@ -104,17 +121,13 @@ public interface Expression {
                     }
                     double value = Double.valueOf(bufferToString());
                     atom = variables -> value;
-                } else if (Character.isAlphabetic(ch)) {
+                } else if (idFirst(ch)) {
                     bufferClear();
-                    while (Character.isAlphabetic(ch) || Character.isDigit(0) || ch == '_')
+                    bufferAppendGet(ch);
+                    while (idRest(ch))
                         bufferAppendGet(ch);
                     String name = bufferToString();
-                    atom = variables -> {
-                        Expression e = variables.get(name);
-                        if (e == null)
-                            throw new EvaluationException("undefined variable '%s'", name);
-                        return e.eval(variables);
-                    };
+                    atom = variable(name);
                 } else
                     throw new ParseException("unknown char '%c'", ch);
                 if (minus) {
@@ -147,8 +160,8 @@ public interface Expression {
                 return factor;
             }
 
-            Expression expression() {
-                Expression term = term();
+            Expression expression(Expression t) {
+                Expression term = t == null ? term() : t;
                 while (true)
                     if (eat('+')) {
                         Expression left = term, right = term();
@@ -161,8 +174,30 @@ public interface Expression {
                 return term;
             }
 
+            Expression statement() {
+                spaces();
+                if (idFirst(ch)) {
+                    bufferClear();
+                    bufferAppendGet(ch);
+                    while (idRest(ch))
+                        bufferAppendGet(ch);
+                    String name = bufferToString();
+                    if (eat('=')) {
+                        Expression expression = expression(null);
+                        return variables -> {
+                            variables.put(name, expression);
+                            return 0;
+                        };
+                    } else
+                        return expression(variable(name));
+                }
+                return expression(null);
+            }
+
             Expression parse() {
-                Expression e = expression();
+                Expression e = statement();
+                if (ch != -1)
+                    throw new ParseException("extra string '%'", s.substring(index - 1));
                 return e;
             }
         }.parse();
