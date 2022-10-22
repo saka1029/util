@@ -10,6 +10,9 @@ import java.util.Map;
  * term       : factor { ( '*' | '/' ) factor }
  * factor     : atom [ '^' factor ]
  * atom       : [ '-' ] ( number | id | '(' expression ')' )
+ * number     : integer [ '.' integer ] [ ( 'e' | 'E' ) ( '+' | '-' ) integer ]
+ * integer    : digit { digit }
+ * id         : alphabet { alphabet | digit | '_' }
  * </pre>
  */
 @FunctionalInterface
@@ -110,14 +113,14 @@ public interface Expression {
                     if (ch == '.') {
                         bufferAppendGet(ch);
                         bufferInteger();
-                        if (ch == 'e' || ch == 'E') {
+                    }
+                    if (ch == 'e' || ch == 'E') {
+                        bufferAppendGet(ch);
+                        if (ch == '-' || ch == '+')
                             bufferAppendGet(ch);
-                            if (ch == '-' || ch == '+')
-                                bufferAppendGet(ch);
-                            if (!Character.isDigit(ch))
-                                throw new ParseException("digit expected after 'E'");
-                            bufferInteger();
-                        }
+                        if (!Character.isDigit(ch))
+                            throw new ParseException("digit expected after 'E'");
+                        bufferInteger();
                     }
                     double value = Double.valueOf(bufferToString());
                     atom = variables -> value;
