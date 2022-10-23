@@ -69,15 +69,6 @@ public interface Expression {
                     bufferAppendGet(ch);
             }
 
-            Expression variable(String name) {
-                return variables -> {
-                    Expression e = variables.get(name);
-                    if (e == null)
-                        throw new EvaluationException("undefined variable '%s'", name);
-                    return e.eval(variables);
-                };
-            }
-
             Expression atom() {
                 Expression atom;
                 boolean minus = false;
@@ -110,12 +101,17 @@ public interface Expression {
                     while (idRest(ch))
                         bufferAppendGet(ch);
                     String name = bufferToString();
-                    atom = variable(name);
+                    atom = variables -> {
+                        Expression e = variables.get(name);
+                        if (e == null)
+                            throw new EvaluationException("undefined variable '%s'", name);
+                        return e.eval(variables);
+                    };
                 } else
                     throw new ParseException("unknown char '%c'", ch);
                 if (minus) {
                     Expression arg = atom;
-                    atom = variables -> arg.eval(variables);
+                    atom = variables -> -arg.eval(variables);
                 }
                 return atom;
             }

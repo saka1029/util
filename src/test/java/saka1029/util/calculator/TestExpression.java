@@ -14,6 +14,7 @@ class TestExpression {
     void testParse() {
         Map<String, Expression> m = Map.of();
         assertEquals(12.3, Expression.parse("12.3").eval(m), E);
+        assertEquals(-12.3, Expression.parse("-12.3").eval(m), E);
         assertEquals(1 + 2 + 3, Expression.parse("1 + 2 + 3").eval(m), E);
         assertEquals(1 + 2 * 3, Expression.parse("1 + 2 * 3").eval(m), E);
         assertEquals((1 + 2) * 3, Expression.parse("(1 + 2) * 3").eval(m), E);
