@@ -12,7 +12,7 @@ class TestExpression {
     static final double E = 5e-6;
 
     @Test
-    void testConstantExpression() {
+    void testConstantExpression() throws EvaluationException, ParseException {
         Map<String, Expression> m = Map.of();
         assertEquals(12.3, Expression.of("12.3").eval(m), E);
         assertEquals(-12.3, Expression.of("-12.3").eval(m), E);
@@ -28,7 +28,7 @@ class TestExpression {
     }
     
     @Test
-    void testVariables() {
+    void testVariables() throws EvaluationException, ParseException {
         Map<String, Expression> m = new HashMap<>(Map.of(
             "x", Expression.of("12.3"),
             "y", Expression.of("x + 1")));
@@ -39,7 +39,7 @@ class TestExpression {
     }
 
     @Test
-    void testToString() {
+    void testToString() throws ParseException {
         assertEquals("12.3", Expression.of("12.3").toString());
         assertEquals("1 + 2 + 3", Expression.of("1 + 2 + 3").toString());
         assertEquals("(1 + 2) * 3", Expression.of("(1 + 2) * 3").toString());

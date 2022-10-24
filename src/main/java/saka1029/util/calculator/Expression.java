@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @FunctionalInterface
 public interface Expression {
-    double eval(Map<String, Expression> variables);
+    double eval(Map<String, Expression> variables) throws EvaluationException;
 
     public static boolean idFirst(int ch) {
         return Character.isAlphabetic(ch);
@@ -26,7 +26,7 @@ public interface Expression {
         return idFirst(ch) || Character.isDigit(ch) || ch == '_';
     }
 
-    public static Expression of(String s) {
+    public static Expression of(String s) throws ParseException {
         return new Object() {
             int length = s.length(), index = 0, ch = get();
 
@@ -72,7 +72,7 @@ public interface Expression {
                     bufferAppendGet(ch);
             }
 
-            Expression atom() {
+            Expression atom() throws ParseException {
                 Expression atom;
                 boolean minus = false;
                 if (eat('-'))
@@ -119,7 +119,7 @@ public interface Expression {
                 return atom;
             }
 
-            Expression factor() {
+            Expression factor() throws ParseException {
                 Expression atom = atom();
                 if (eat('^')) {
                     Expression left = atom, right = factor();
@@ -128,7 +128,7 @@ public interface Expression {
                 return atom;
             }
 
-            Expression term() {
+            Expression term() throws ParseException {
                 Expression factor = factor();
                 while (true)
                     if (eat('*')) {
@@ -142,7 +142,7 @@ public interface Expression {
                 return factor;
             }
 
-            Expression expression() {
+            Expression expression() throws ParseException {
                 int start = index - 1;
                 Expression term = term();
                 while (true)
@@ -159,7 +159,7 @@ public interface Expression {
                 String stringFinal = s.substring(start, end).trim();
                 return new Expression() {
                     @Override
-                    public double eval(Map<String, Expression> variables) {
+                    public double eval(Map<String, Expression> variables) throws EvaluationException {
                         return termFinal.eval(variables);
                     }
 
@@ -170,7 +170,7 @@ public interface Expression {
                 };
             }
 
-            Expression parse() {
+            Expression parse() throws ParseException {
                 Expression e = expression();
                 if (ch != -1)
                     throw new ParseException("extra string '%'", s.substring(index - 1));

@@ -1,6 +1,6 @@
 package saka1029.util.calculator;
 
-public class EvaluationException extends RuntimeException {
+public class EvaluationException extends Exception {
     private static final long serialVersionUID = 1L;
 
     EvaluationException(String format, Object... args) {
