@@ -26,7 +26,7 @@ public interface Expression {
         return idFirst(ch) || Character.isDigit(ch) || ch == '_';
     }
 
-    public static Expression parse(String s) {
+    public static Expression of(String s) {
         return new Object() {
             int length = s.length(), index = 0, ch = get();
 
