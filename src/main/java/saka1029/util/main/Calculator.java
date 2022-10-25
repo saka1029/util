@@ -58,7 +58,7 @@ public class Calculator {
                 case 2:
                     String name = split[0].trim();
                     if (!isVariableName(name))
-                        throw new ParseException("`%s` is not variable%n", name);
+                        throw new ParseException("`%s` is not variable", name);
                     exp = Expression.of(split[1].trim());
                     variables.put(name, exp);
                     break;
