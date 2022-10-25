@@ -22,6 +22,16 @@ public class Calculator {
         this.reader = new BufferedReader(reader);
         this.writer = new PrintWriter(writer);
     }
+    
+    public double eval(String expression) throws EvaluationException, ParseException {
+        return Expression.of(expression).eval(variables);
+    }
+    
+    public void put(String name, String expression) throws ParseException {
+        if (!isVariableName(name))
+            throw new ParseException("'%s' is not variable", name);
+        variables.put(name, Expression.of(expression));
+    }
 
     static boolean isVariableName(String s) {
         int length = s.length();
@@ -52,15 +62,10 @@ public class Calculator {
                 case 0:
                     continue;
                 case 1:
-                    exp = Expression.of(split[0].trim());
-                    print(exp.eval(variables));
+                    print(eval(split[0].trim()));
                     break;
                 case 2:
-                    String name = split[0].trim();
-                    if (!isVariableName(name))
-                        throw new ParseException("`%s` is not variable%n", name);
-                    exp = Expression.of(split[1].trim());
-                    variables.put(name, exp);
+                    put(split[0].trim(), split[1].trim());
                     break;
                 default:
                     error("too many '='");
