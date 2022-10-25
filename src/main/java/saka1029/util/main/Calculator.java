@@ -2,6 +2,8 @@ package saka1029.util.main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
@@ -14,16 +16,9 @@ import saka1029.util.calculator.ParseException;
 
 public class Calculator {
 
-    final BufferedReader reader;
-    final PrintWriter writer;
     final Map<String, Expression> variables = new HashMap<>();
 
-    public Calculator(Reader reader, Writer writer) {
-        this.reader = new BufferedReader(reader);
-        this.writer = new PrintWriter(writer);
-    }
-
-    static boolean isVariableName(String s) {
+    public static boolean isVariableName(String s) {
         int length = s.length();
         if (length <= 0 || !Expression.idFirst(s.charAt(0)))
             return false;
@@ -32,47 +27,61 @@ public class Calculator {
                 return false;
         return true;
     }
-
-    void print(Object message) {
-        writer.println(message);
+    
+    public double eval(String expression) throws EvaluationException, ParseException {
+        return Expression.of(expression).eval(variables);
+    }
+ 
+    public Expression get(String name) {
+        return variables.get(name);
     }
 
-    void error(String message) {
-        writer.println("! " + message);
+    public void put(String name, String expression) throws ParseException {
+        if (!isVariableName(name))
+            throw new ParseException("'%s' is not variable", name);
+        variables.put(name, Expression.of(expression));
     }
 
-    public void run() throws IOException {
+    public void run(Reader reader, Writer writer) throws IOException {
+        run(reader, writer, "");
+    }
+
+    public void run(Reader reader, Writer writer, String prompt) throws IOException {
+        BufferedReader r = new BufferedReader(reader);
+        PrintWriter w = new PrintWriter(writer, true);
         String line;
-        while ((line = reader.readLine()) != null) {
+        w.print(prompt); w.flush();
+        while ((line = r.readLine()) != null) {
             line = line.replaceFirst("#.*$", "");
             String[] split = line.trim().split("=");
-            Expression exp;
             try {
                 switch (split.length) {
-                case 0:
-                    continue;
                 case 1:
-                    exp = Expression.of(split[0].trim());
-                    print(exp.eval(variables));
+                    String exp = split[0].trim();
+                    if (exp.isEmpty())
+                        continue;
+                    if (exp.startsWith("."))
+                        w.println(get(exp.substring(1).trim()));
+                    else
+                        w.println(eval(exp));
                     break;
                 case 2:
-                    String name = split[0].trim();
-                    if (!isVariableName(name))
-                        throw new ParseException("`%s` is not variable", name);
-                    exp = Expression.of(split[1].trim());
-                    variables.put(name, exp);
+                    put(split[0].trim(), split[1].trim());
                     break;
                 default:
-                    error("too many '='");
+                    w.println("! too many '='");
                 }
             } catch (ParseException | EvaluationException e) {
-                error(e.getMessage());
+                w.println("! " + e.getMessage());
             }
+            w.print(prompt); w.flush();
         }
     }
 
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
+    public static void main(String[] args) throws IOException {
+        Calculator c = new Calculator();
+        Reader reader = new InputStreamReader(System.in);
+        Writer writer = new OutputStreamWriter(System.out);
+        c.run(reader, writer, "> ");
     }
-
 }
