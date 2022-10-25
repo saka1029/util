@@ -14,26 +14,9 @@ import saka1029.util.calculator.ParseException;
 
 public class Calculator {
 
-    final BufferedReader reader;
-    final PrintWriter writer;
     final Map<String, Expression> variables = new HashMap<>();
 
-    public Calculator(Reader reader, Writer writer) {
-        this.reader = new BufferedReader(reader);
-        this.writer = new PrintWriter(writer);
-    }
-    
-    public double eval(String expression) throws EvaluationException, ParseException {
-        return Expression.of(expression).eval(variables);
-    }
-    
-    public void put(String name, String expression) throws ParseException {
-        if (!isVariableName(name))
-            throw new ParseException("'%s' is not variable", name);
-        variables.put(name, Expression.of(expression));
-    }
-
-    static boolean isVariableName(String s) {
+    public static boolean isVariableName(String s) {
         int length = s.length();
         if (length <= 0 || !Expression.idFirst(s.charAt(0)))
             return false;
@@ -42,36 +25,44 @@ public class Calculator {
                 return false;
         return true;
     }
-
-    void print(Object message) {
-        writer.println(message);
+    
+    public double eval(String expression) throws EvaluationException, ParseException {
+        return Expression.of(expression).eval(variables);
+    }
+ 
+    public Expression get(String name) {
+        return variables.get(name);
     }
 
-    void error(String message) {
-        writer.println("! " + message);
+    public void put(String name, String expression) throws ParseException {
+        if (!isVariableName(name))
+            throw new ParseException("'%s' is not variable", name);
+        variables.put(name, Expression.of(expression));
     }
 
-    public void run() throws IOException {
+    public void run(Reader reader, Writer writer) throws IOException {
+        BufferedReader r = new BufferedReader(reader);
+        PrintWriter w = new PrintWriter(writer);
         String line;
-        while ((line = reader.readLine()) != null) {
+        while ((line = r.readLine()) != null) {
             line = line.replaceFirst("#.*$", "");
             String[] split = line.trim().split("=");
-            Expression exp;
             try {
                 switch (split.length) {
-                case 0:
-                    continue;
                 case 1:
-                    print(eval(split[0].trim()));
+                    String exp = split[0].trim();
+                    if (exp.isEmpty())
+                        continue;
+                    w.println(eval(exp));
                     break;
                 case 2:
                     put(split[0].trim(), split[1].trim());
                     break;
                 default:
-                    error("too many '='");
+                    w.println("! too many '='");
                 }
             } catch (ParseException | EvaluationException e) {
-                error(e.getMessage());
+                w.println("! " + e.getMessage());
             }
         }
     }
