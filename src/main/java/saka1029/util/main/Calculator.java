@@ -8,7 +8,9 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import saka1029.util.calculator.EvaluationException;
 import saka1029.util.calculator.Expression;
+import saka1029.util.calculator.ParseException;
 
 public class Calculator {
 
@@ -31,12 +33,12 @@ public class Calculator {
         return true;
     }
 
-    void expression(String e) {
-
+    void print(Object message) {
+        writer.println(message);
     }
 
-    void assign(String v, String e) {
-
+    void error(String message) {
+        writer.println("! " + message);
     }
 
     public void run() throws IOException {
@@ -44,15 +46,27 @@ public class Calculator {
         while ((line = reader.readLine()) != null) {
             line = line.replaceFirst("#.*$", "");
             String[] split = line.trim().split("=");
-            switch (split.length) {
-            case 0:
-                continue;
-            case 1:
-                expression(split[0]);
-                break;
-            case 2:
-                assign(split[0].trim(), split[1].trim());
-                break;
+            Expression exp;
+            try {
+                switch (split.length) {
+                case 0:
+                    continue;
+                case 1:
+                    exp = Expression.of(split[0].trim());
+                    print(exp.eval(variables));
+                    break;
+                case 2:
+                    String name = split[0].trim();
+                    if (!isVariableName(name))
+                        throw new ParseException("`%s` is not variable%n", name);
+                    exp = Expression.of(split[1].trim());
+                    variables.put(name, exp);
+                    break;
+                default:
+                    error("too many '='");
+                }
+            } catch (ParseException | EvaluationException e) {
+                error(e.getMessage());
             }
         }
     }
