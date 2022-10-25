@@ -2,6 +2,8 @@ package saka1029.util.main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
@@ -41,9 +43,14 @@ public class Calculator {
     }
 
     public void run(Reader reader, Writer writer) throws IOException {
+        run(reader, writer, "");
+    }
+
+    public void run(Reader reader, Writer writer, String prompt) throws IOException {
         BufferedReader r = new BufferedReader(reader);
-        PrintWriter w = new PrintWriter(writer);
+        PrintWriter w = new PrintWriter(writer, true);
         String line;
+        w.print(prompt); w.flush();
         while ((line = r.readLine()) != null) {
             line = line.replaceFirst("#.*$", "");
             String[] split = line.trim().split("=");
@@ -53,7 +60,10 @@ public class Calculator {
                     String exp = split[0].trim();
                     if (exp.isEmpty())
                         continue;
-                    w.println(eval(exp));
+                    if (exp.startsWith("."))
+                        w.println(get(exp.substring(1).trim()));
+                    else
+                        w.println(eval(exp));
                     break;
                 case 2:
                     put(split[0].trim(), split[1].trim());
@@ -64,11 +74,14 @@ public class Calculator {
             } catch (ParseException | EvaluationException e) {
                 w.println("! " + e.getMessage());
             }
+            w.print(prompt); w.flush();
         }
     }
 
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
+    public static void main(String[] args) throws IOException {
+        Calculator c = new Calculator();
+        Reader reader = new InputStreamReader(System.in);
+        Writer writer = new OutputStreamWriter(System.out);
+        c.run(reader, writer, "> ");
     }
-
 }
