@@ -173,7 +173,7 @@ public interface Expression {
             Expression parse() throws ParseException {
                 Expression e = expression();
                 if (ch != -1)
-                    throw new ParseException("extra string '%'", s.substring(index - 1));
+                    throw new ParseException("extra string '%s'", s.substring(index - 1));
                 return e;
             }
         }.parse();

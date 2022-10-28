@@ -14,6 +14,13 @@ import saka1029.util.calculator.EvaluationException;
 import saka1029.util.calculator.Expression;
 import saka1029.util.calculator.ParseException;
 
+/**
+ * <pre>
+ * SYNTAX
+ * line        = statement { ';' statement }
+ * statement   = [ id '=' ] expression
+ * </pre>
+ */
 public class Calculator {
 
     final Map<String, Expression> variables = new HashMap<>();
@@ -27,11 +34,11 @@ public class Calculator {
                 return false;
         return true;
     }
-    
+
     public double eval(String expression) throws EvaluationException, ParseException {
         return Expression.of(expression).eval(variables);
     }
- 
+
     public Expression get(String name) {
         return variables.get(name);
     }
@@ -50,31 +57,38 @@ public class Calculator {
         BufferedReader r = new BufferedReader(reader);
         PrintWriter w = new PrintWriter(writer, true);
         String line;
-        w.print(prompt); w.flush();
+        w.print(prompt);
+        w.flush();
         while ((line = r.readLine()) != null) {
             line = line.replaceFirst("#.*$", "");
-            String[] split = line.trim().split("=");
-            try {
-                switch (split.length) {
-                case 1:
-                    String exp = split[0].trim();
-                    if (exp.isEmpty())
-                        continue;
-                    if (exp.startsWith("."))
-                        w.println(get(exp.substring(1).trim()));
-                    else
-                        w.println(eval(exp));
-                    break;
-                case 2:
-                    put(split[0].trim(), split[1].trim());
-                    break;
-                default:
-                    w.println("! too many '='");
+            String[] statements = line.split(";");
+            for (String statement : statements) {
+                String[] split = statement.trim().split("=");
+                try {
+                    switch (split.length) {
+                    case 1:
+                        String exp = split[0].trim();
+                        if (exp.isEmpty())
+                            continue;
+                        if (exp.startsWith("."))
+                            w.println(get(exp.substring(1).trim()));
+                        else
+                            w.println(eval(exp));
+                        break;
+                    case 2:
+                        String name = split[0].trim();
+                        put(name, split[1].trim());
+                        w.println(eval(name));
+                        break;
+                    default:
+                        w.println("! too many '='");
+                    }
+                } catch (ParseException | EvaluationException e) {
+                    w.println("! " + e.getMessage());
                 }
-            } catch (ParseException | EvaluationException e) {
-                w.println("! " + e.getMessage());
+                w.print(prompt);
+                w.flush();
             }
-            w.print(prompt); w.flush();
         }
     }
 

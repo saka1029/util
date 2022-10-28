@@ -65,13 +65,22 @@ class TestCalculator {
     
     @Test
     public void testRunAssignment() throws IOException {
-        testRun("x = 1 + 2 * 3%nx%n" , "7.0%n");
-        testRun("x = 1 + 2 * 3%"
-            + "ny = x + 1%n"
-            + "f = y ^ 2 + 1%n"
-            + "f%n" // ((1 + 2 * 3) + 1) ^ 2 + 1 = 65
+        testRun("x = 1 + 2 * 3%n" , "7.0%n");
+        testRun("x = 1 + 2 * 3%n"
+            + "y = x + 1%n"
+            + "f = y ^ 2 + 1%n" // ((1 + 2 * 3) + 1) ^ 2 + 1 = 65
             + "x = 3%n"
             + "f%n",   // (3 + 1) ^ 2 + 1 = 17
-            "65.0%n17.0%n");
+            "7.0%n8.0%n65.0%n3.0%n17.0%n");
+    }
+    
+    @Test
+    public void testRunMultiStatement() throws IOException {
+        testRun("x = 1 + 2 * 3;"
+            + "y = x + 1;"
+            + "f = y ^ 2 + 1;" // ((1 + 2 * 3) + 1) ^ 2 + 1 = 65
+            + "x = 3;"
+            + "f%n",   // (3 + 1) ^ 2 + 1 = 17
+            "7.0%n8.0%n65.0%n3.0%n17.0%n");
     }
 }
