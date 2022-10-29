@@ -8,9 +8,10 @@ import java.util.Map;
  * expression : term { ('+' | '-' ) term }
  * term       : factor { ( '*' | '/' ) factor }
  * factor     : atom [ '^' factor ]
- * atom       : [ '-' ] ( number | id | '(' expression ')' )
+ * atom       : [ '-' ] ( number | variable | '(' expression ')' )
  * number     : integer [ '.' integer ] [ ( 'e' | 'E' ) ( '+' | '-' ) integer ]
  * integer    : digit { digit }
+ * variable   : id [ '(' [ expression { ',' expression } ]')' ]
  * id         : alphabet { alphabet | digit | '_' }
  * </pre>
  */
