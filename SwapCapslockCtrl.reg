@@ -1,0 +1,11 @@
+Windows Registry Editor Version 5.00
+;英数(CapsLock)→左Ctrl		3A→1D
+;左Ctrl→英数(CapsLock)		1D→3A
+;無変換→全角/半角(漢字)	7B→29
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout]
+"Scancode Map"=hex:00,00,00,00,00,00,00,00,\
+  04,00,00,00,\
+  1d,00,3a,00,\
+  3a,00,1d,00,\
+  29,00,7b,00,\
+  00,00,00,00
