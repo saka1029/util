@@ -7,7 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Csp {
@@ -17,7 +19,7 @@ public class Csp {
     static class Problem {
         String fqcn;
         final List<String> imports = new ArrayList<>();
-        final List<Variable> variables = new ArrayList<>();
+        final Map<String, Variable> variables = new LinkedHashMap<>();
         final List<Constraint> constraints = new ArrayList<>();
         final List<String> functions = new ArrayList<>();
         @Override
@@ -26,7 +28,7 @@ public class Csp {
             sb.append("problem " + fqcn + NL);
             for (String s : imports)
                 sb.append("import " + s + NL);
-            for (Variable v : variables)
+            for (Variable v : variables.values())
                 sb.append(v);
             for (Constraint c : constraints)
                 sb.append(c);
@@ -99,7 +101,7 @@ public class Csp {
                             variable.name = g[i];
                             variable.start = start;
                             variable.end = end;
-                            problem.variables.add(variable);
+                            problem.variables.put(g[i], variable);
                         }
                         break;
                     case "constraint":
@@ -107,23 +109,22 @@ public class Csp {
                         constraint.predicate = f[1];
                         problem.constraints.add(constraint);
                         for (String e : f[1].split("(?i)[^a-z0-9]+")) {
-                            for (Variable variable : problem.variables)
-                                if (e.equals(variable.name)) {
-                                    constraint.variables.add(variable);
-                                    variable.constraints.add(constraint);
-                                }
+                            Variable variable = problem.variables.get(e);
+                            if (e != null) {
+                                constraint.variables.add(variable);
+                                variable.constraints.add(constraint);
+                            }
                         }
                         break;
                     case "allDifferent":
                         String[] d = f[1].split("\\s+");
                         List<Variable> diff = new ArrayList<>();
-                        L: for (String e : d) {
-                            for (Variable v : problem.variables)
-                                if (e.equals(v.name)) {
-                                    diff.add(v);
-                                    continue L;
-                                }
-                            throw new RuntimeException("variable '" + e + "' is not defined");
+                        for (String e : d) {
+                            Variable v = problem.variables.get(e);
+                            if (v != null)
+                                diff.add(v);
+                            else
+                                throw new RuntimeException("variable '" + e + "' is not defined");
                         }
                         for (int i = 0, max = diff.size(); i < max; ++i) {
                             Variable a = diff.get(i);
