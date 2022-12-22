@@ -1,9 +1,10 @@
 # ラマヌジャンのタクシー数を求める
-problem ramanujan;
-variable [1..100] a c d b;
-#variable [1..5000] x;
-constraint a < c;
-constraint c <= d;
-constraint d < b;
-constraint a*a*a + b*b*b == c*c*c + d*d*d;
-#constraint x == a*a*a + b*b*b;
+problem ramanujan
+variable 1 100 a c d b
+#variable 1 5000 x
+constraint a < c
+constraint c <= d
+constraint d < b
+constraint a*a*a + b*b*b == c*c*c + d*d*d
+#constraint x == a*a*a + b*b*b
+allDifferent a b c d
