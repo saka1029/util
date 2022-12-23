@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import saka1029.util.language.JavaCompilerInMemory;
 import saka1029.util.language.JavaCompilerInMemory.CompileError;
@@ -29,47 +30,17 @@ public class Csp {
         final Map<String, Variable> variables = new LinkedHashMap<>();
         final List<Constraint> constraints = new ArrayList<>();
         final List<String> functions = new ArrayList<>();
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("problem " + className + NL);
-            for (String s : imports)
-                sb.append("import " + s + NL);
-            for (Variable v : variables.values())
-                sb.append(v);
-            for (Constraint c : constraints)
-                sb.append(c);
-            for (String f : functions)
-                sb.append(f).append(NL);
-            return sb.toString();
-        }
     }
     
     static class Variable {
         String name;
         int start, end;
         final Set<Constraint> constraints = new HashSet<>();
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("variable %d %d %s%n".formatted(start, end, name));
-            for (Constraint c : constraints)
-                sb.append("  %s%n".formatted(c.predicate));
-            return sb.toString();
-        }
     }
     
     static class Constraint {
         String predicate;
         final Set<Variable> variables = new HashSet<>();
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("constraint %s%n".formatted(predicate));
-            for (Variable v : variables)
-                sb.append("  %s%n".formatted(v.name));
-            return sb.toString();
-        }
     }
     
     /**
@@ -87,10 +58,10 @@ public class Csp {
         try (BufferedReader br = Files.newBufferedReader(file)) {
             String line;
             while ((line = br.readLine()) != null) {
-                line = line.replaceAll("#.*", "").trim();
-                if (line.isEmpty())
+                String trimed = line.replaceAll("#.*", "").trim();
+                if (trimed.isEmpty())
                     continue;
-                String[] f = line.trim().split("\\s+", 2);
+                String[] f = trimed.split("\\s+", 2);
                 switch (f[0]) {
                     case "problem":
                         problem.className = f[1];
@@ -148,7 +119,7 @@ public class Csp {
                         }
                         break;
                     default:
-                        problem.functions.add(line);
+                        problem.functions.add("    " + line);
                         break;
                 }
             }
@@ -159,17 +130,20 @@ public class Csp {
     static String generate(Problem problem) {
         StringWriter sw = new StringWriter();
         try (PrintWriter w = new PrintWriter(sw)) {
-            w.printf("import java.util.function.Consumer;%n");
-            w.printf("import java.util.stream.Collectors;%n");
-            w.printf("import java.util.stream.IntStream;%n");
             for (String s : problem.imports)
                 w.printf("import %s;%n", s);
+            if (!problem.imports.isEmpty())
+                w.println();
             w.printf("public class %s {%n", problem.className);
-            w.printf("    static void solve(Consumer<int[]> callback) {%n");
+            w.println();
+            w.printf("    static int solve() {%n");
+            w.printf("        int count = 0;%n");
+            w.printf("        System.out.println(%s);%n",
+                problem.variables.keySet().stream().collect(Collectors.joining(",", "\"", "\"")));
             Set<Constraint> remainConstraints = new HashSet<>(problem.constraints);
             List<Variable> generatedVariables = new ArrayList<>();
             for (Variable v : problem.variables.values()) {
-                w.printf("        for (int %1$s = %2$d; %1$s < %3$d; ++%1$s)%n", v.name, v.start, v.end);
+                w.printf("        for (int %1$s = %2$d; %1$s <= %3$d; ++%1$s)%n", v.name, v.start, v.end);
                 generatedVariables.add(v);
                 List<Constraint> generatedConstraints = remainConstraints.stream()
                     .filter(c -> generatedVariables.containsAll(c.variables)).toList();
@@ -182,24 +156,24 @@ public class Csp {
             if (!remainConstraints.isEmpty())
                 throw new RuntimeException("constraints does not generated: "
                     + remainConstraints.stream().map(c -> c.predicate).collect(Collectors.joining(", ")));
-            w.printf("        callback.accept(new int[] {%s});%n",
+//            w.printf("        callback.accept(new int[] {%s});%n",
+            w.printf("        {%n");
+            w.printf("            ++count;%n");
+            w.printf("            System.out.printf(\"%s%%n\", %s);%n",
+                IntStream.range(0, problem.variables.size()).mapToObj(i -> "%d").collect(Collectors.joining(",")),
                 problem.variables.keySet().stream().collect(Collectors.joining(", ")));
+            w.printf("        }%n");
+            w.printf("        return count;%n");
             w.printf("    }%n");
+            w.println();
             for (String s : problem.functions)
                 w.printf("%s%n", s);
+            if (!problem.functions.isEmpty())
+                w.println();
             w.printf("    public static void main(String[] args) {%n");
-            w.printf("       long start = System.currentTimeMillis();%n");
-            w.printf("        System.out.println(%s);%n",
-                problem.variables.keySet().stream().collect(Collectors.joining(",", "\"", "\"")));
-            w.printf("        int[] count = {0};%n");
-            w.printf("        Consumer<int[]> callback = a -> {%n");
-            w.printf("            ++count[0];%n");
-            w.printf("            System.out.println(IntStream.of(a)%n");
-            w.printf("                .mapToObj(n -> \"\" + n)%n");
-            w.printf("                .collect(Collectors.joining(\",\")));%n");
-            w.printf("        };%n");
-            w.printf("        solve(callback);%n");
-            w.printf("        System.err.printf(\"solutions: \" + count[0] + \", elapse: %%d msec.%%n\", System.currentTimeMillis() - start);%n");
+            w.printf("        long start = System.currentTimeMillis();%n");
+            w.printf("        int count = solve();%n");
+            w.printf("        System.err.printf(\"solutions: \" + count + \", elapse: %%d msec.%%n\", System.currentTimeMillis() - start);%n");
             w.printf("    }%n");
             w.printf("}%n");
         }
@@ -215,12 +189,10 @@ public class Csp {
         if (args.length != 1)
             throw new RuntimeException("usage: java saka1029.util.main.Csp CSP_FILE");
         Problem problem = parse(Paths.get(args[0]));
-        System.out.println(problem);
         String generatedSource = generate(problem);
         System.out.println(generatedSource);
         JavaCompilerInMemory.compile(problem.className, generatedSource, OPTIONS)
-        .getMethod("main", String[].class).invoke(null, new Object[] {new String[0]});
-
+            .getMethod("main", String[].class).invoke(null, new Object[] {new String[0]});
     }
 
 }
