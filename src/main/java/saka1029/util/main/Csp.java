@@ -213,7 +213,7 @@ public class Csp {
             NoSuchMethodException, SecurityException,
             ClassNotFoundException, CompileError {
         if (args.length != 1)
-            throw new RuntimeException("usage: csp FILE");
+            throw new RuntimeException("usage: java saka1029.util.main.Csp CSP_FILE");
         Problem problem = parse(Paths.get(args[0]));
         System.out.println(problem);
         String generatedSource = generate(problem);
