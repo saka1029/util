@@ -2,6 +2,9 @@ package saka1029.util.main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,13 +14,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import saka1029.util.language.JavaCompilerInMemory;
+import saka1029.util.language.JavaCompilerInMemory.CompileError;
 
 public class Csp {
     
     static final String NL = System.lineSeparator();
 
     static class Problem {
-        String fqcn;
+        String className;
         final List<String> imports = new ArrayList<>();
         final Map<String, Variable> variables = new LinkedHashMap<>();
         final List<Constraint> constraints = new ArrayList<>();
@@ -25,7 +32,7 @@ public class Csp {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append("problem " + fqcn + NL);
+            sb.append("problem " + className + NL);
             for (String s : imports)
                 sb.append("import " + s + NL);
             for (Variable v : variables.values())
@@ -68,7 +75,7 @@ public class Csp {
     /**
      * <pre>
      * SYNTAX
-     * definition = 'problem' fqcn
+     * definition = 'problem' className
      *              { 'import' fqcn }
      *              { 'variable' int int var { var } }
      *              { 'constraint' predicate }
@@ -86,7 +93,7 @@ public class Csp {
                 String[] f = line.trim().split("\\s+", 2);
                 switch (f[0]) {
                     case "problem":
-                        problem.fqcn = f[1];
+                        problem.className = f[1];
                         break;
                     case "import":
                         problem.imports.add(f[1]);
@@ -148,12 +155,72 @@ public class Csp {
         }
         return problem;
     }
+    
+    static String generate(Problem problem) {
+        StringWriter sw = new StringWriter();
+        try (PrintWriter w = new PrintWriter(sw)) {
+            w.printf("import java.util.function.Consumer;%n");
+            w.printf("import java.util.stream.Collectors;%n");
+            w.printf("import java.util.stream.IntStream;%n");
+            for (String s : problem.imports)
+                w.printf("import %s;%n", s);
+            w.printf("public class %s {%n", problem.className);
+            w.printf("    static void solve(Consumer<int[]> callback) {%n");
+            Set<Constraint> remainConstraints = new HashSet<>(problem.constraints);
+            List<Variable> generatedVariables = new ArrayList<>();
+            for (Variable v : problem.variables.values()) {
+                w.printf("        for (int %1$s = %2$d; %1$s < %3$d; ++%1$s)%n", v.name, v.start, v.end);
+                generatedVariables.add(v);
+                List<Constraint> generatedConstraints = remainConstraints.stream()
+                    .filter(c -> generatedVariables.containsAll(c.variables)).toList();
+                if (!generatedConstraints.isEmpty()) {
+                    w.printf("        if (%s)%n",
+                        generatedConstraints.stream().map(c -> c.predicate).collect(Collectors.joining(" && ")));
+                    remainConstraints.removeAll(generatedConstraints);
+                }
+            }
+            if (!remainConstraints.isEmpty())
+                throw new RuntimeException("constraints does not generated: "
+                    + remainConstraints.stream().map(c -> c.predicate).collect(Collectors.joining(", ")));
+            w.printf("        callback.accept(new int[] {%s});%n",
+                problem.variables.keySet().stream().collect(Collectors.joining(", ")));
+            w.printf("    }%n");
+            for (String s : problem.functions)
+                w.printf("%s%n", s);
+            w.printf("    public static void main(String[] args) {%n");
+            w.printf("       long start = System.currentTimeMillis();%n");
+            w.printf("        System.out.println(%s);%n",
+                problem.variables.keySet().stream().collect(Collectors.joining(",", "\"", "\"")));
+            w.printf("        int[] count = {0};%n");
+            w.printf("        Consumer<int[]> callback = a -> {%n");
+            w.printf("            ++count[0];%n");
+            w.printf("            System.out.println(IntStream.of(a)%n");
+            w.printf("                .mapToObj(n -> \"\" + n)%n");
+            w.printf("                .collect(Collectors.joining(\",\")));%n");
+            w.printf("        };%n");
+            w.printf("        solve(callback);%n");
+            w.printf("        System.err.printf(\"solutions: \" + count[0] + \", elapse: %%d msec.%%n\", System.currentTimeMillis() - start);%n");
+            w.printf("    }%n");
+            w.printf("}%n");
+        }
+        return sw.toString();
+    }
+    
+    static final List<String> OPTIONS = List.of("-g:none");
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException,
+            IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException, SecurityException,
+            ClassNotFoundException, CompileError {
         if (args.length != 1)
             throw new RuntimeException("usage: csp FILE");
         Problem problem = parse(Paths.get(args[0]));
         System.out.println(problem);
+        String generatedSource = generate(problem);
+        System.out.println(generatedSource);
+        JavaCompilerInMemory.compile(problem.className, generatedSource, OPTIONS)
+        .getMethod("main", String[].class).invoke(null, new Object[] {new String[0]});
+
     }
 
 }
