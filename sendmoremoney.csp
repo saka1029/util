@@ -1,11 +1,11 @@
-problem sendmoremoney
-#import java.util.stream.IntStream;
+problem SendMoreMoney
 variable 1 9 s m
 variable 0 9 e n d o r y
 allDifferent s e n d m o r y
 constraint n(s, e, n, d) + n(m, o, r, e) == n(m, o, n, e, y)
+#import java.util.stream.IntStream;
 static int n(int... digits) {
-//    return IntStream.of(digits).reduce(0, (a, b) -> a * 10 + b);
+#    return IntStream.of(digits).reduce(0, (a, b) -> a * 10 + b);
     int n = 0;
     for (int i : digits)
         n = n * 10 + i;

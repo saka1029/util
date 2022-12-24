@@ -26,10 +26,9 @@ public class Csp {
 
     static class Problem {
         String className;
-        final List<String> imports = new ArrayList<>();
         final Map<String, Variable> variables = new LinkedHashMap<>();
         final List<Constraint> constraints = new ArrayList<>();
-        final List<String> functions = new ArrayList<>();
+        final List<String> anyCodes = new ArrayList<>();
     }
     
     static class Variable {
@@ -47,7 +46,6 @@ public class Csp {
      * <pre>
      * SYNTAX
      * definition = 'problem' className
-     *              { 'import' fqcn }
      *              { 'variable' int int var { var } }
      *              { 'constraint' predicate }
      *              { functions }
@@ -66,9 +64,9 @@ public class Csp {
                     case "problem":
                         problem.className = f[1];
                         break;
-                    case "import":
-                        problem.imports.add(f[1]);
-                        break;
+//                    case "import":
+//                        problem.imports.add(f[1]);
+//                        break;
                     case "variable":
                         String[] g = f[1].split("\\s+");
                         if (g.length < 3 || !g[0].matches("[+-]?\\d+") || !g[1].matches("[+-]?\\d+"))
@@ -119,7 +117,7 @@ public class Csp {
                         }
                         break;
                     default:
-                        problem.functions.add("    " + line);
+                        problem.anyCodes.add(line);
                         break;
                 }
             }
@@ -130,9 +128,13 @@ public class Csp {
     static String generate(Problem problem) {
         StringWriter sw = new StringWriter();
         try (PrintWriter w = new PrintWriter(sw)) {
-            for (String s : problem.imports)
-                w.printf("import %s;%n", s);
-            if (!problem.imports.isEmpty())
+            boolean outImport = false;
+            for (String s : problem.anyCodes)
+                if (s.trim().startsWith("import ")) {
+                    w.printf("%s%n", s);
+                    outImport = true;
+                }
+            if (outImport)
                 w.println();
             w.printf("public class %s {%n", problem.className);
             w.println();
@@ -166,9 +168,13 @@ public class Csp {
             w.printf("        return count;%n");
             w.printf("    }%n");
             w.println();
-            for (String s : problem.functions)
-                w.printf("%s%n", s);
-            if (!problem.functions.isEmpty())
+            boolean outAnyCode = false;
+            for (String s : problem.anyCodes)
+                if (!s.trim().startsWith("import ")) {
+                    w.printf("%s%n", s);
+                    outAnyCode = true;
+                }
+            if (outAnyCode)
                 w.println();
             w.printf("    public static void main(String[] args) {%n");
             w.printf("        long start = System.currentTimeMillis();%n");
