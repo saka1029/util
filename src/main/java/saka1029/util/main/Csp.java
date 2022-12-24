@@ -22,8 +22,6 @@ import saka1029.util.language.JavaCompilerInMemory.CompileError;
 
 public class Csp {
     
-    static final String NL = System.lineSeparator();
-
     static class Problem {
         String className;
         final Map<String, Variable> variables = new LinkedHashMap<>();
@@ -91,18 +89,12 @@ public class Csp {
                         break;
                     case "allDifferent":
                         String[] d = f[1].split("\\s+");
-                        List<Variable> diff = new ArrayList<>();
-                        for (String e : d) {
-                            Variable v = problem.variables.get(e);
-                            if (v != null)
-                                diff.add(v);
-                            else
-                                throw new RuntimeException("variable '" + e + "' is not defined");
-                        }
-                        for (int i = 0, max = diff.size(); i < max; ++i) {
-                            Variable a = diff.get(i);
+                        for (int i = 0, max = d.length; i < max; ++i) {
+                            Variable a = problem.variables.get(d[i]);
+                            if (a == null)
+                                throw new RuntimeException("variable '%s' notdefined".formatted(d[i]));
                             for (int j = i + 1; j < max; ++j) {
-                                Variable b = diff.get(j);
+                                Variable b = problem.variables.get(d[j]);
                                 Constraint c = new Constraint();
                                 problem.constraints.add(c);
                                 c.predicate = a.name + " != " + b.name;
