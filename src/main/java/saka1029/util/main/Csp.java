@@ -81,7 +81,7 @@ public class Csp {
                         problem.constraints.add(constraint);
                         for (String e : f[1].split("(?i)[^a-z0-9]+")) {
                             Variable variable = problem.variables.get(e);
-                            if (e != null) {
+                            if (variable != null) {
                                 constraint.variables.add(variable);
                                 variable.constraints.add(constraint);
                             }
