@@ -64,9 +64,6 @@ public class Csp {
                     case "problem":
                         problem.className = f[1];
                         break;
-//                    case "import":
-//                        problem.imports.add(f[1]);
-//                        break;
                     case "variable":
                         String[] g = f[1].split("\\s+");
                         if (g.length < 3 || !g[0].matches("[+-]?\\d+") || !g[1].matches("[+-]?\\d+"))
