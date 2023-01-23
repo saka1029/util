@@ -27,16 +27,11 @@ public class Srt {
 
         public int no;
         public long begin, end;
-        public String first;
-        public String second;
+        public String text = "";
 
         @Override
         public String toString() {
-            String r = String.format("%d%n%s --> %s%n", no, t(begin), t(end));
-            if (first != null) r += String.format("%s%n", first);
-            if (second != null) r += String.format("%s%n", second);
-            r += String.format("%n");
-            return r;
+            return String.format("%d%n%s --> %s%n%s%n", no, t(begin), t(end), text);
         }
     }
     
@@ -88,9 +83,7 @@ public class Srt {
                 continue;
             } else {
                 if (s == null) throw new IOException("NO, TIMEがありません:" + seq + ":" + line);
-                if (s.first == null) s.first = line;
-                else if (s.second == null) s.second = line;
-                else throw new IOException("スクリプトが2行を超えています:" + seq + ":" + line);
+                s.text += String.format("%s%n", line);
             }
         }
         if (s != null) add(s);
