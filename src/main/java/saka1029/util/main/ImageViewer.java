@@ -29,6 +29,7 @@ public class ImageViewer extends JFrame {
     void readImage() {
         try {
             image = ImageIO.read(file);
+            setTitle(file.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }
