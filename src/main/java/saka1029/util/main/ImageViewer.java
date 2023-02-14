@@ -124,6 +124,16 @@ public class ImageViewer extends JFrame {
                         readImage();
                         repaint();
                         break;
+                    case '0':
+                        index = 0;
+                        readImage();
+                        repaint();
+                        break;
+                    case '9':
+                        index = files.length - 1;
+                        readImage();
+                        repaint();
+                        break;
                 }
             }
         });
