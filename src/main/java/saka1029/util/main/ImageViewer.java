@@ -29,6 +29,7 @@ public class ImageViewer extends JFrame {
     static final int 終了 = 27 /* ESC */, 拡大 = 59 /* ; */, 縮小 = 45 /* - */;
     static final int 前 = 37 /* ← */, 上 = 38 /* ↑ */, 次 = 39 /* → */, 下 = 40 /* ↓ */;
     static final int 左回転 = 'L', 右回転 = 'R', 左右反転 = 'M', 全画面 = 'F';
+    static final float FONT_SIZE = 24F;
 
     final File dir;
     final File[] files;
@@ -120,7 +121,7 @@ public class ImageViewer extends JFrame {
 
     JMenuItem menuItem(String label, ActionListener listener) {
         JMenuItem item = new JMenuItem(label);
-        item.setFont(item.getFont().deriveFont(24F));
+        item.setFont(item.getFont().deriveFont(FONT_SIZE));
         item.addActionListener(listener);
         return item;
     }
