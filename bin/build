@@ -1,4 +1,4 @@
 #!/bin/sh -v
 mvn clean package
-rm lib/*
-mvn dependency:copy-dependencies -DoutputDirectory=lib
+#rm lib/*
+#mvn dependency:copy-dependencies -DoutputDirectory=lib
