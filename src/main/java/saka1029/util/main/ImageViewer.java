@@ -184,6 +184,7 @@ public class ImageViewer extends JFrame {
                 switch (e.getKeyCode()) {
                     case 終了:
                     case 'X':
+                    case 'Q':
                         exit();
                         break;
                     case 全画面:
@@ -212,6 +213,7 @@ public class ImageViewer extends JFrame {
                         break;
                 }
             }
+
             @Override
             public void keyTyped(KeyEvent e) {
             }
