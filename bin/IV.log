@@ -1,0 +1,2 @@
+Exception in thread "main" java.lang.IllegalArgumentException: イメージファイルを指定してください。
+	at saka1029.util.main.ImageViewer.main(ImageViewer.java:230)
