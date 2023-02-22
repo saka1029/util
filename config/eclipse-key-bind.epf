@@ -1,0 +1,7 @@
+#Wed Feb 22 13:11:13 JST 2023
+\!/=
+/instance/org.eclipse.ui.workbench/org.eclipse.ui.commands=<?xml version\="1.0" encoding\="UTF-8"?>\n<org.eclipse.ui.commands>\n<activeKeyConfiguration keyConfigurationId\="kg.totality.core.insert_mode"/>\n<keyBinding contextId\="org.eclipse.ui.contexts.dialogAndWindow" keyConfigurationId\="org.eclipse.ui.defaultAcceleratorConfiguration" keySequence\="ALT+/"/>\n<keyBinding contextId\="org.eclipse.ui.contexts.dialogAndWindow" keyConfigurationId\="org.eclipse.ui.defaultAcceleratorConfiguration" keySequence\="ALT+/"/>\n<keyBinding commandId\="org.eclipse.ui.edit.text.contentAssist.proposals" contextId\="org.eclipse.ui.contexts.dialogAndWindow" keyConfigurationId\="kg.totality.core.insert_mode" keySequence\="CTRL+, CTRL+,"/>\n</org.eclipse.ui.commands>
+/instance/org.eclipse.ui/KEY_CONFIGURATION_ID=kg.totality.core.insert_mode
+@org.eclipse.ui=3.201.200.v20221024-2137
+@org.eclipse.ui.workbench=3.127.0.v20221024-2137
+file_export_version=3.0
