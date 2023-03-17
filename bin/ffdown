@@ -1,0 +1,2 @@
+#!/bin/sh
+ffmpeg -protocol_whitelist file,http,https,tcp,tls,crypto -i $1 -movflags faststart -c copy $1.mp4
