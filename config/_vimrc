@@ -15,6 +15,7 @@ set fileformat=dos
 set ignorecase
 set belloff=all
 set guifont=MS_Gothic:h12
+set ambiwidth=double
 
 " CTRL-X are Cut
 vnoremap <C-X> "+x
