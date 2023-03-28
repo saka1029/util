@@ -1,5 +1,5 @@
 syntax enable
-colorscheme blue
+" colorscheme blue
 set showmode
 set showmatch
 set shiftwidth=4
