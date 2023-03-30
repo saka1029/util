@@ -2,4 +2,4 @@
 BASE=~/git/util
 CP=$BASE/target/util-1.0.jar:$BASE/lib/*
 T=~/git/mine/drives
-java -cp $CP saka1029.util.main.Drives -t $T $*
+java -cp $CP saka1029.util.main.Drives -t $T "$*"
