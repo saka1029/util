@@ -1,1 +1,1 @@
-git daemon --reuseaddr --export-all --enable=receive-pack --base-path=/d/git
+git daemon --reuseaddr --export-all --enable=receive-pack --base-path=D:\\git
