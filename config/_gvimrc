@@ -1,4 +1,4 @@
 colorscheme darkblue
 set guifont=MigMix_1M:h12:cSHIFTJIS
-# for Linx
-#set guifont=MigMix\ 1M\ 12
+" for Linx
+"set guifont=MigMix\ 1M\ 12
