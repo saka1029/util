@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<data>
+    <vid>1390</vid>
+    <pid>296</pid>
+    <rev>0</rev>
+    <select_profile>0</select_profile>
+    <profile>
+        <profname>デフォルト</profname>
+        <lbutton>1</lbutton>
+        <lbutton_etcKey></lbutton_etcKey>
+        <rbutton>2</rbutton>
+        <rbutton_etcKey></rbutton_etcKey>
+        <tbutton>38</tbutton>
+        <tbutton_etcKey></tbutton_etcKey>
+        <button4>3</button4>
+        <button4_etcKey></button4_etcKey>
+        <button5>4</button5>
+        <button5_etcKey></button5_etcKey>
+        <scrolls>4</scrolls>
+        <tiltleft>37</tiltleft>
+        <tiltleft_etcKey>←</tiltleft_etcKey>
+        <tiltright>37</tiltright>
+        <tiltright_etcKey>→</tiltright_etcKey>
+        <hspeed>5</hspeed>
+        <hlotate>5</hlotate>
+        <hcount>3</hcount>
+        <button6>37</button6>
+        <button6_etcKey>Space</button6_etcKey>
+        <button7>37</button7>
+        <button7_etcKey>F</button7_etcKey>
+        <button8>38</button8>
+        <button8_etcKey></button8_etcKey>
+    </profile>
+</data>
