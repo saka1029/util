@@ -6,8 +6,8 @@ set shiftwidth=4
 set tabstop=4
 set expandtab
 " set encoding=cp932
-set directory=c:\temp
-set undodir=c:\temp
+set directory=/tmp
+set undodir=/tmp
 set nobackup
 set fileformats=unix,dos
 set fileformat=dos
@@ -21,4 +21,4 @@ vnoremap <C-C> "+y
 " CTRL-V are Paste
 map <C-V>       "+gP
 
-set guifont=MS_Gothic:h12
+set guifont=Noto\ Mono\ 12
