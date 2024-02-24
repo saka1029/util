@@ -2,7 +2,6 @@ package saka1029.util.main;
 
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
