@@ -66,17 +66,15 @@ public class DriveTree {
 
     /**
      * USAGE:
-     * java saka1029.util.main.Files VOLUME_NAME IN_DIR OUT_DIR
+     * java saka1029.util.main.Files VOLUME_NAME IN_DIR [OUT_DIR]
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        if (args.length != 3) {
+        if (args.length != 2 && args.length != 3)
             usage();
-            return;
-        }
         String volumeName = args[0];
         Path inDir = Paths.get(args[1]);
-        Path outDir = Paths.get(args[2]);
+        Path outDir = Paths.get(args.length == 3 ? args[2] : ".");
         write(volumeName, inDir, outDir);
     }
 }

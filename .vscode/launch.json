@@ -4,14 +4,21 @@
     // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "type": "java",
+            "name": "Drive",
+            "request": "launch",
+            "mainClass": "saka1029.util.main.Drive",
+            "projectName": "util",
+            "args": "test 百葉花音",
+        },
         {
             "type": "java",
             "name": "DriveTree",
             "request": "launch",
             "mainClass": "saka1029.util.main.DriveTree",
             "projectName": "util",
-            "args": "BUR2T \\\\minipc\\G ."
+            "args": "BUR2T \\\\minipc\\G"
         },
         {
             "type": "java",
