@@ -22,7 +22,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
-@SuppressWarnings("serial")
 public class ImageViewer extends JFrame {
 
     static final String[] 拡張子 = {".jpg", ".jpeg", ".gif", ".png", ".bmp"};

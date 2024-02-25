@@ -3,7 +3,8 @@ package saka1029.util.passmark;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class TestPassMark {
      * style="width: 0%">(0%)</span> </div> <span class="count">NA</span><span
      * class="mark-neww">3,010</span> <span class="price-neww">NA</span></a> </li>
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         String[] urls = {"https://www.cpubenchmark.net/high_end_cpus.html",
             "https://www.cpubenchmark.net/mid_range_cpus.html",
             "https://www.cpubenchmark.net/midlow_range_cpus.html",
@@ -32,7 +33,7 @@ public class TestPassMark {
             w.printf("%s,%s,%s,%s,%s%n", "range", "url", "name", "passmark", "price");
             Set<String> names = new HashSet<>();
             for (int i = 0; i < urls.length; i++) {
-                Document doc = Jsoup.parse(new URL(urls[i]), 5000);
+                Document doc = Jsoup.parse(new URI(urls[i]).toURL(), 5000);
                 Elements list = doc.select("ul.chartlist > li");
                 for (Element e : list) {
                     String name = e.select("span.prdname").text().replace(",", " ");
