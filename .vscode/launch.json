@@ -18,7 +18,14 @@
             "request": "launch",
             "mainClass": "saka1029.util.main.DriveTree",
             "projectName": "util",
-            "args-windows": "BUR2T \\\\minipc\\G",
+            "args": "BUR2T \\\\minipc\\G",
+        },
+        {
+            "type": "java",
+            "name": "DriveTree-linux",
+            "request": "launch",
+            "mainClass": "saka1029.util.main.DriveTree",
+            "projectName": "util",
             "args": "BUR2T /run/user/1000/gvfs/smb-share:server=minipc,share=g/"
         },
         {

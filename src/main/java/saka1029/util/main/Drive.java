@@ -68,6 +68,6 @@ public class Drive {
         Path inDir = Paths.get(args[0]);
         String string = args[1];
         find(inDir, string);
-        System.out.printf("inDir=%s string=%s%n", inDir, string);
+        // System.out.printf("inDir=%s string=%s%n", inDir, string);
     }
 }
