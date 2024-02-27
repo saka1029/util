@@ -19,7 +19,7 @@ public class Funcall implements Expression {
     public double eval(Context c) {
         Expression e = c.get(name);
         if (!(e instanceof Func func))
-            throw new EvalException("'%s' is not a function".formatted(name));
+            throw new EvalException("'%s' is not a function", name);
         double[] values = Arrays.stream(arguments)
             .mapToDouble(a -> a.eval(c))
             .toArray();
