@@ -1,5 +1,7 @@
+package saka1029.util.eval;
+
 public interface Expression {
 
-    void eval(Context c);
+    double eval(Context c);
 
 }

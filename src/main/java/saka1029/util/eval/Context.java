@@ -2,7 +2,6 @@ package saka1029.util.eval;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.bouncycastle.oer.its.ContributedExtensionBlock;
 
 public class Context {
     private final Context parent;
@@ -23,7 +22,12 @@ public class Context {
 
     public Expression get(String name) {
         Expression e = binding.get(name);
-        return e != null ? e : parent != null ? parent.get(name) : null;
+        if (e != null)
+            return e;
+        else if (parent != null)
+            return parent.get(name);
+        else
+            throw new RuntimeException("undef: '%s'".formatted(name));
     }
 
     public void put(String name, Expression e) {
