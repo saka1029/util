@@ -27,11 +27,15 @@ public class Context {
         else if (parent != null)
             return parent.get(name);
         else
-            throw new RuntimeException("undef: '%s'".formatted(name));
+            throw new EvalException("'%s' undefined", name);
     }
 
     public void put(String name, Expression e) {
         binding.put(name, e);
+    }
+
+    public void putFunc(String name, Func e) {
+        put(name, e);
     }
     
 }
