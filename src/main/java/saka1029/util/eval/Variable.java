@@ -1,6 +1,10 @@
 package saka1029.util.eval;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Variable implements Expression {
+    static final Map<String, Variable> all = new HashMap<>();
     public final String name;
 
     Variable(String name) {
@@ -8,7 +12,7 @@ public class Variable implements Expression {
     }
 
     public static Variable of(String name) {
-        return new Variable(name);
+        return all.computeIfAbsent(name, k -> new Variable(name));
     }
 
     @Override
