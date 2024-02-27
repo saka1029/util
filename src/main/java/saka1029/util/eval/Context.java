@@ -20,5 +20,14 @@ public class Context {
     public Context child() {
         return new Context(this);
     }
+
+    public Expression get(String name) {
+        Expression e = binding.get(name);
+        return e != null ? e : parent != null ? parent.get(name) : null;
+    }
+
+    public void put(String name, Expression e) {
+        binding.put(name, e);
+    }
     
 }
