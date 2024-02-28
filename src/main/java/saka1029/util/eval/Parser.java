@@ -33,7 +33,8 @@ public class Parser {
     static boolean isOperatorChar(int ch) {
         return switch (ch) {
             case '!', '$', '%', '&', '-', '=', '^', '~' -> true;
-            case '|', '@', '+', '*', '<', '>', '/', '?', '.' -> true;
+            case '|', '@', '+', '*', '<', '>', '/', '?' -> true;
+            case '.', ';', ':'-> true;
             default -> false;
         };
     }
@@ -57,13 +58,6 @@ public class Parser {
     // 本来の浮動小数点パターン
     // static final Pattern NUMBER = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
     static final Pattern NUMBER = Pattern.compile("[-+]?[0-9]+(\\.[0-9]+)?([eE][-+]?[0-9]+)?");
-
-    static boolean isNumberChar(int ch) {
-        return switch (ch) {
-            case '+', '-', '.', 'e', 'E' -> true;
-            default -> isDigit(ch);
-        };
-    }
 
     StringBuilder sb = new StringBuilder();
 
@@ -112,7 +106,7 @@ public class Parser {
         do {
             sbAppend(ch);
         } while (isIdRestChar(ch));
-        return token = sb.toString();
+        return sb.toString();
     }
 
     String token() {

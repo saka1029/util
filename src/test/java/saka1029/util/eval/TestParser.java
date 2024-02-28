@@ -22,5 +22,11 @@ public class TestParser {
         assertEquals(List.of("123","1.2","+2","+2.2","-3","-3.3","3e5","-3.4e6","-3.4e-66","e"),
             tokens("123 1.2 +2 +2.2 -3 -3.3 3e5 -3.4e6 -3.4e-66e"));
     }
+
+    @Test
+    public void testOperators() {
+        assertEquals(List.of("123","<","e",";","(","ij","<=","0",")"),
+            tokens(" 123 < e; (ij <= 0) "));
+    }
     
 }
