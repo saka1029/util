@@ -7,10 +7,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * SYNTAX
+ * <pre>
+ * statement  = [ call '=' ] expression
+ * expression = term { ['+' | '-'] term }
+ * term       = factor { ['*' | '/' | '%' ] factor }
+ * factor     = primary { '^' factor }
+ * primary    = ID | call | NUMBER | '(' expression ')'
+ * call       = ID '(' [ expression { ',' expression } ] ')'
+ * </pre>
+ */
 public class Parser {
+
+    enum TokenType { ID, NUMBER, OTHER }
+
     final Reader reader;
     int ch;
     String token;
+    TokenType type;
 
     Parser(Reader reader) {
         this.reader = reader;
@@ -92,6 +107,7 @@ public class Parser {
                 throw new EvalException("Illegal number format: '%s%c'", sb, ch);
             sbAppendDigit();
         }
+        type = TokenType.NUMBER;
         return sb.toString();
     }
 
@@ -106,10 +122,12 @@ public class Parser {
         do {
             sbAppend(ch);
         } while (isIdRestChar(ch));
+        type = TokenType.ID;
         return sb.toString();
     }
 
     String token() {
+        type = TokenType.OTHER;
         while (Character.isWhitespace(ch))
             ch();
         return token = switch (ch) {
@@ -138,17 +156,27 @@ public class Parser {
         };
     }
 
+    Expression statement() {
+        switch (token) {
+
+        }
+
+    }
+
+    public List<Expression> read() {
+        List<Expression> list = new ArrayList<>();
+        Expression e;
+        while ((e = statement()) != null)
+            list.add(e);
+        return list;
+    }
+
     public List<String> tokens() {
         List<String> list = new ArrayList<>();
         while (token != null) {
             list.add(token);
             token();
         }
-        return list;
-    }
-
-    public List<Expression> read() {
-        List<Expression> list = new ArrayList<>();
         return list;
     }
 
