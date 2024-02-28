@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Parser {
     final Reader reader;
@@ -25,10 +26,14 @@ public class Parser {
         return new Parser(new StringReader(source));
     }
 
+    static boolean isDigit(int ch) {
+        return ch >= '0' && ch <= '9';
+    }
+
     static boolean isOperatorChar(int ch) {
         return switch (ch) {
             case '!', '$', '%', '&', '-', '=', '^', '~' -> true;
-            case '|', '@', '+', '*', '<', '>', '/', '?' -> true;
+            case '|', '@', '+', '*', '<', '>', '/', '?', '.' -> true;
             default -> false;
         };
     }
@@ -38,7 +43,7 @@ public class Parser {
     }
 
     static boolean isIdRestChar(int ch) {
-        return isIdFirstChar(ch) || ch >= '0' && ch <= '9';
+        return isIdFirstChar(ch) || isDigit(ch);
     }
 
     int ch() {
@@ -47,41 +52,112 @@ public class Parser {
         } catch (IOException e) {
             throw new EvalException(e);
         }
+    }
 
+    // 本来の浮動小数点パターン
+    // static final Pattern NUMBER = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
+    static final Pattern NUMBER = Pattern.compile("[-+]?[0-9]+(\\.[0-9]+)?([eE][-+]?[0-9]+)?");
+
+    static boolean isNumberChar(int ch) {
+        return switch (ch) {
+            case '+', '-', '.', 'e', 'E' -> true;
+            default -> isDigit(ch);
+        };
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    void sbClear() {
+        sb.setLength(0);
+    }
+
+    void sbAppend(int ch) {
+        sb.append((char)ch);
+    }
+
+    void sbAppendDigit() {
+        do {
+            sbAppend(ch);
+            ch();
+        } while (isDigit(ch));
+    }
+
+    String num() {
+        sbAppendDigit();
+        if (ch == '.') {
+            sbAppend(ch); // '.'
+            ch();
+            if (!isDigit(ch))
+                throw new EvalException("Illegal number: '%s%c'", sb, ch);
+            sbAppendDigit();
+        }
+        if (ch == 'e' || ch == 'E') {
+            sbAppend(ch); // 'e' or 'E'
+            ch();
+            if (ch == '+' || ch == '-') {
+                sbAppend(ch); // '+' or '-'
+                ch();
+            }
+            if (!isDigit(ch))
+                throw new EvalException("Illegal number format: '%s%c'", sb, ch);
+            sbAppendDigit();
+        }
+        return sb.toString();
+    }
+
+    String op() {
+        do {
+            sbAppend(ch);
+            ch();
+        } while (isOperatorChar(ch));
+        return sb.toString();
+    }
+
+    String id() {
+        do {
+            sbAppend(ch);
+            ch();
+        } while (isIdRestChar(ch));
+        return token = sb.toString();
     }
 
     String token() {
         while (Character.isWhitespace(ch))
             ch();
-        switch (ch) {
-            case -1:
-                return token = null;
-            case '(':
+        return token = switch (ch) {
+            case -1 -> null;
+            case '(', ')', ',' -> {
+                int c = ch;
                 ch();
-                return token = "(";
-            case ')':
+                yield Character.toString(c);
+            }
+            case '+', '-' -> {
+                sbClear();
+                sbAppend(ch);
                 ch();
-                return token = ")";
-            case ',':
-                ch();
-                return token = ",";
-            default:
-                StringBuilder sb = new StringBuilder();
-                if (isIdFirstChar(ch)) {
-                    do {
-                        sb.append((char) ch);
-                        ch();
-                    } while (isIdRestChar(ch));
-                    return token = sb.toString();
-                } else if (isOperatorChar(ch)) {
-                    do {
-                        sb.append((char) ch);
-                        ch();
-                    } while (isOperatorChar(ch));
-                    return token = sb.toString();
-                } else
+                yield isDigit(ch) ? num() : op();
+            }
+            default -> {
+                sbClear();
+                if (isDigit(ch))
+                    yield num();
+                else if (isIdFirstChar(ch)) 
+                    yield id();
+                else if (isOperatorChar(ch))
+                    yield op();
+                else
                     throw new EvalException("Unknown char '%c'", (char) ch);
+            }
+        };
+    }
+
+    public List<String> tokens() {
+        List<String> list = new ArrayList<>();
+        while (token != null) {
+            list.add(token);
+            token();
         }
+        return list;
     }
 
     public List<Expression> read() {
