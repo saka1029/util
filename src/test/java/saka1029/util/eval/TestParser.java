@@ -12,6 +12,7 @@ public class TestParser {
 
     @Test
     public void testTokens() {
+        assertEquals(List.of("abc", "123"), tokens("    abc     123    "));
         assertEquals(List.of("(", "123", ")"), tokens("(123)"));
         assertEquals(List.of("123", ",", "3", "abc"), tokens("123, 3abc"));
     }
