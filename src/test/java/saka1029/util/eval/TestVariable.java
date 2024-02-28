@@ -10,7 +10,7 @@ public class TestVariable {
     public void testVariable() {
         Context c = Context.of();
         Variable v = Variable.of("abc");
-        c.put("abc", Number.of(123));
+        c.variable("abc", Number.of(123));
         assertEquals(123.0, v.eval(c), DELTA);
     }
     
