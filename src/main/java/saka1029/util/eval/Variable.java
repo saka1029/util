@@ -17,7 +17,7 @@ public class Variable implements Expression {
 
     @Override
     public double eval(Context c) {
-        return c.get(name).eval(c);
+        return c.variable(name).eval(c);
     }
     
     @Override

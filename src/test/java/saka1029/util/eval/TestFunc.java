@@ -26,9 +26,9 @@ public class TestFunc {
     @Test
     public void testFunc() {
         Context c = Context.of();
-        c.putFunc("+", (x, a) -> Arrays.stream(a).sum());
-        c.putFunc("-", (x, a) -> a[0] - Arrays.stream(a, 1, a.length).sum());
-        c.putFunc("hypot", (x, a) -> Math.sqrt(a[0] * a[0] + a[1] * a[1]));
+        c.function("+", (x, a) -> Arrays.stream(a).sum());
+        c.function("-", (x, a) -> a[0] - Arrays.stream(a, 1, a.length).sum());
+        c.function2("hypot", (x, a, b) -> a * a + b * b);
         Funcall call = f("hypot", f("+", n(1), n(2)), f("+", n(1), n(3)));
         assertEquals(5.0, call.eval(c), 0.0005);
     }
@@ -41,11 +41,10 @@ public class TestFunc {
     @Test
     public void testUserFunc() {
         Context c = Context.of();
-        c.putFunc("+", (x, a) -> a[0] + a[1]);
-        c.putFunc("-", (x, a) -> a[0] - a[1]);
-        c.putFunc("*", (x, a) -> a[0] * a[1]);
-        c.putFunc("sqrt", (x, a) -> Math.sqrt(a[0]));
-        c.putFunc("hypot", UserFunc.of(f("sqrt", f("+", f("*", v("x"), v("x")), f("*", v("y"), v("y")))), "x", "y"));
+        c.function2("+", (x, a, b) -> a + b);
+        c.function2("-", (x, a, b) -> a - b);
+        c.function2("*", (x, a, b) -> a * b);
+        c.function("hypot", UserFunc.of(f("+", f("*", v("x"), v("x")), f("*", v("y"), v("y"))), "x", "y"));
         Funcall call = f("hypot", f("+", n(1), n(2)), f("+", n(1), n(3)));
         assertEquals(5.0, call.eval(c), 0.0005);
     }
