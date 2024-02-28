@@ -73,12 +73,12 @@ public class Parser {
 
     void sbAppend(int ch) {
         sb.append((char)ch);
+        ch();
     }
 
     void sbAppendDigit() {
         do {
             sbAppend(ch);
-            ch();
         } while (isDigit(ch));
     }
 
@@ -86,18 +86,14 @@ public class Parser {
         sbAppendDigit();
         if (ch == '.') {
             sbAppend(ch); // '.'
-            ch();
             if (!isDigit(ch))
                 throw new EvalException("Illegal number: '%s%c'", sb, ch);
             sbAppendDigit();
         }
         if (ch == 'e' || ch == 'E') {
             sbAppend(ch); // 'e' or 'E'
-            ch();
-            if (ch == '+' || ch == '-') {
+            if (ch == '+' || ch == '-')
                 sbAppend(ch); // '+' or '-'
-                ch();
-            }
             if (!isDigit(ch))
                 throw new EvalException("Illegal number format: '%s%c'", sb, ch);
             sbAppendDigit();
@@ -108,7 +104,6 @@ public class Parser {
     String op() {
         do {
             sbAppend(ch);
-            ch();
         } while (isOperatorChar(ch));
         return sb.toString();
     }
@@ -116,7 +111,6 @@ public class Parser {
     String id() {
         do {
             sbAppend(ch);
-            ch();
         } while (isIdRestChar(ch));
         return token = sb.toString();
     }
@@ -134,7 +128,6 @@ public class Parser {
             case '+', '-' -> {
                 sbClear();
                 sbAppend(ch);
-                ch();
                 yield isDigit(ch) ? num() : op();
             }
             default -> {
