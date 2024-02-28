@@ -18,6 +18,11 @@ public class TestParser {
     }
 
     @Test
+    public void testId() {
+        assertEquals(List.of("123","a","123","+","a","1","-","bb"), tokens(" 123a 123+a 1-bb"));
+    }
+
+    @Test
     public void testNumbers() {
         assertEquals(List.of("123","1.2","+2","+2.2","-3","-3.3","3e5","-3.4e6","-3.4e-66","e"),
             tokens("123 1.2 +2 +2.2 -3 -3.3 3e5 -3.4e6 -3.4e-66e"));
@@ -27,6 +32,8 @@ public class TestParser {
     public void testOperators() {
         assertEquals(List.of("123","<","e",";","(","ij","<=","0",")"),
             tokens(" 123 < e; (ij <= 0) "));
+        assertEquals(List.of("+","a","-","b"), tokens("  +a -b"));
+        assertEquals(List.of("++","a","-+","b"), tokens("  ++a -+b"));
     }
     
 }

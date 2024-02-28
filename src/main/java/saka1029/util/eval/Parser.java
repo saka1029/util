@@ -113,16 +113,14 @@ public class Parser {
     }
 
     String op() {
-        do {
+        while (isOperatorChar(ch))
             sbAppend(ch);
-        } while (isOperatorChar(ch));
         return sb.toString();
     }
 
     String id() {
-        do {
+        while (isIdRestChar(ch))
             sbAppend(ch);
-        } while (isIdRestChar(ch));
         type = TokenType.ID;
         return sb.toString();
     }
@@ -158,10 +156,7 @@ public class Parser {
     }
 
     Expression statement() {
-        switch (token) {
-
-        }
-
+        return null;
     }
 
     public List<Expression> read() {
