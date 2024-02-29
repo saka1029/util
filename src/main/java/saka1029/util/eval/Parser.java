@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 /**
  * SYNTAX
  * <pre>
- * statement  = [ declare '=' ] expression
- * declare    = ID '(' [ ID { ',' ID } ] ')'
+ * statement  = [ define '=' ] expression
+ * define     = ID '(' [ ID { ',' ID } ] ')'
  * expression = [ '+' | '-' ] term { [ '+' | '-' ] term }
  * term       = factor { [ '*' | '/' | '%' ] factor }
  * factor     = primary { '^' factor }
@@ -156,28 +156,46 @@ public class Parser {
         };
     }
 
-    static boolean eq(String left, String... rights) {
-        if (left == null)
-            return false;
-        for (String r : rights)
-            if (left.equals(r))
-                return true;
+    static boolean eq(String s, String... comps) {
+        if (s != null)
+            for (String c : comps)
+                if (s.equals(c))
+                    return true;
         return false;
     }
 
     Expression primary() {
         Expression e;
-        if (type == TokenType.NUMBER)
+        if (type == TokenType.NUMBER) {
             e = Number.of(Double.parseDouble(token));
-        else if (type == TokenType.ID)
-            e = Variable.of(token);
-        else if (eq(token, "(")) {
+            token();
+        } else if (type == TokenType.ID) {
+            String name = token;
+            token();  // skip name
+            if (eq(token, "(")) {
+                token();  // skip "("
+                List<Expression> args = new ArrayList<>();
+                if (token != null && !token.equals(")")) { // !eq(token, ")")とは書けない点に注意する。
+                    args.add(expression());
+                    while (eq(token, ",")) {
+                        token();  // skip ","
+                        args.add(expression());
+                    }
+                }
+                if (!eq(token, ")"))
+                    throw new EvalException("')' expected");
+                token();
+                e = Funcall.of(name, args.toArray(Expression[]::new));
+            } else
+                e = Variable.of(name);
+        } else if (eq(token, "(")) {
+            token();  // skip "("
             e = expression();
             if (!eq(token, ")"))
                 throw new EvalException("')' expected");
+            token();
         } else
             throw new EvalException("Unknown token '%s'", token);
-        token();
         return e;
     }
 

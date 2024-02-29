@@ -64,6 +64,13 @@ public class TestParser {
     }
 
     @Test
+    public void testParen() {
+        Context c = context();
+        assertEquals(27.0, read1("3 * (4 + 5)").eval(c), DELTA);
+        assertEquals("(* 3 (+ 4 5))", read1("3 * (4 + 5)").string());
+    }
+
+    @Test
     public void testExpression() {
         Context c = context();
         assertEquals(3.0, read1("3").eval(c), DELTA);
@@ -73,6 +80,17 @@ public class TestParser {
         assertEquals("(+ 3 (^ 0.2 (^ 2 3)))", read1("3 + 0.2 ^ 2 ^ 3").string());
         c.variable("x", Number.of(3.3));
         assertEquals(6.6, read1("x + x").eval(c), DELTA);
+    }
+
+    @Test
+    public void testFuncall() {
+        Context c = context();
+        c.function0("three", (x) -> 3);
+        c.function1("sqrt", (x, a) -> Math.sqrt(a));
+        c.function2("hypot", (x, a, b) -> Math.hypot(a, b));
+        assertEquals(3.0, read1("three()").eval(c), DELTA);
+        assertEquals(3.0, read1("sqrt(9)").eval(c), DELTA);
+        assertEquals(5.0, read1("hypot(1 + 2, 2 * 2)").eval(c), DELTA);
     }
     
 }
