@@ -23,5 +23,4 @@ public class UserFunc implements Func {
             child.variable(names[i], Number.of(arguments[i]));
         return body.eval(child);
     }
-    
 }

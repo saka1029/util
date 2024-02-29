@@ -17,12 +17,12 @@ public class Number implements Expression {
     }
 
     @Override
-    public String toString() {
-        return Double.toString(value);
+    public double eval(Context c) {
+        return value;
     }
 
     @Override
-    public double eval(Context c) {
-        return value;
+    public String string() {
+        return Double.toString(value).replaceFirst("\\.0$", "");
     }
 }

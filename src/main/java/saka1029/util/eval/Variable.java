@@ -21,7 +21,7 @@ public class Variable implements Expression {
     }
     
     @Override
-    public String toString() {
+    public String string() {
         return name;
     }
 }

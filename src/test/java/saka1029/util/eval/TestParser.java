@@ -70,6 +70,7 @@ public class TestParser {
         assertEquals(4.2, read1("3 + 1.2").eval(c), DELTA);
         assertEquals(3.12, read1("3 + 1.2 * 0.1").eval(c), DELTA);
         assertEquals(3 + Math.pow(0.2, Math.pow(2, 3)), read1("3 + 0.2 ^ 2 ^ 3").eval(c), DELTA);
+        assertEquals("(+ 3 (^ 0.2 (^ 2 3)))", read1("3 + 0.2 ^ 2 ^ 3").string());
         c.variable("x", Number.of(3.3));
         assertEquals(6.6, read1("x + x").eval(c), DELTA);
     }

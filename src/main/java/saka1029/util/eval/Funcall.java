@@ -1,6 +1,8 @@
 package saka1029.util.eval;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Funcall implements Expression {
     final String name;
@@ -24,4 +26,9 @@ public class Funcall implements Expression {
         return func.call(c, values);
     }
 
+    @Override
+    public String string() {
+        return "(%s %s)".formatted(name,
+            Stream.of(arguments).map(a -> a.string()).collect(Collectors.joining(" ")));
+    }
 }
