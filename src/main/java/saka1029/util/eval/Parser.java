@@ -12,11 +12,12 @@ import java.util.regex.Pattern;
  * <pre>
  * statement  = [ declare '=' ] expression
  * declare    = ID '(' [ ID { ',' ID } ] ')'
- * expression = term { ['+' | '-'] term }
- * term       = factor { ['*' | '/' | '%' ] factor }
+ * expression = [ '+' | '-' ] term { [ '+' | '-' ] term }
+ * term       = factor { [ '*' | '/' | '%' ] factor }
  * factor     = primary { '^' factor }
  * primary    = ID [ '(' [ expression { ',' expression } ] ')' ]
- *            | NUMBER | '(' expression ')'
+ *            | NUMBER
+ *            | '(' expression ')'
  * </pre>
  */
 public class Parser {
@@ -155,14 +156,67 @@ public class Parser {
         };
     }
 
-    Expression statement() {
-        return null;
+    static boolean eq(String left, String... rights) {
+        if (left == null)
+            return false;
+        for (String r : rights)
+            if (left.equals(r))
+                return true;
+        return false;
+    }
+
+    Expression primary() {
+        Expression e;
+        if (type == TokenType.NUMBER)
+            e = Number.of(Double.parseDouble(token));
+        else if (type == TokenType.ID)
+            e = Variable.of(token);
+        else if (eq(token, "(")) {
+            e = expression();
+            if (!eq(token, ")"))
+                throw new EvalException("')' expected");
+        } else
+            throw new EvalException("Unknown token '%s'", token);
+        token();
+        return e;
+    }
+
+    Expression factor() {
+        Expression e = primary();
+        while (eq(token, "^")) {
+            String op = token;
+            token();
+            e = Funcall.of(op, e, factor());
+        }
+        return e;
+    }
+
+    Expression term() {
+        Expression e = factor();
+        while (eq(token, "*", "/", "%")) {
+            String op = token;
+            token();
+            e = Funcall.of(op, e, factor());
+        }
+        return e;
+    }
+
+    Expression expression() {
+        if (token == null)
+            return null;
+        Expression e = term();
+        while (eq(token, "+", "-")) {
+            String op = token;
+            token();
+            e = Funcall.of(op, e, term());
+        }
+        return e;
     }
 
     public List<Expression> read() {
         List<Expression> list = new ArrayList<>();
         Expression e;
-        while ((e = statement()) != null)
+        while ((e = expression()) != null)
             list.add(e);
         return list;
     }

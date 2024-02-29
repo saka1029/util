@@ -6,6 +6,8 @@ import org.junit.Test;
 
 public class TestParser {
 
+    static final double DELTA = 5e-6;
+
     static List<String> tokens(String source) {
         return Parser.of(source).tokens();
     }
@@ -34,6 +36,42 @@ public class TestParser {
             tokens(" 123 < e; (ij <= 0) "));
         assertEquals(List.of("+","a","-","b"), tokens("  +a -b"));
         assertEquals(List.of("++","a","-+","b"), tokens("  ++a -+b"));
+    }
+
+    static Expression read1(String source) {
+        return Parser.of(source).read().get(0);
+    }
+
+    static Context context() {
+        Context c = Context.of();
+        c.function2("+", (x, a, b) -> a + b);
+        c.function2("-", (x, a, b) -> a - b);
+        c.function2("*", (x, a, b) -> a * b);
+        c.function2("/", (x, a, b) -> a / b);
+        c.function2("%", (x, a, b) -> a % b);
+        c.function2("^", (x, a, b) -> Math.pow(a, b));
+        return c;
+    }
+
+    @Test
+    public void testRead() {
+        Context c = context();
+        List<Expression> list = Parser.of(" 1 2 3 ").read();
+        assertEquals(3, list.size());
+        assertEquals(1.0, list.get(0).eval(c), DELTA);
+        assertEquals(2.0, list.get(1).eval(c), DELTA);
+        assertEquals(3.0, list.get(2).eval(c), DELTA);
+    }
+
+    @Test
+    public void testExpression() {
+        Context c = context();
+        assertEquals(3.0, read1("3").eval(c), DELTA);
+        assertEquals(4.2, read1("3 + 1.2").eval(c), DELTA);
+        assertEquals(3.12, read1("3 + 1.2 * 0.1").eval(c), DELTA);
+        assertEquals(3 + Math.pow(0.2, Math.pow(2, 3)), read1("3 + 0.2 ^ 2 ^ 3").eval(c), DELTA);
+        c.variable("x", Number.of(3.3));
+        assertEquals(6.6, read1("x + x").eval(c), DELTA);
     }
     
 }
