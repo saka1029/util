@@ -164,30 +164,34 @@ public class Parser {
         return false;
     }
 
+    Expression variableOrFuncall() {
+        String name = token;
+        token();  // skip name
+        if (eq(token, "(")) {
+            token();  // skip "("
+            List<Expression> args = new ArrayList<>();
+            if (token != null && !eq(token, ")")) {
+                args.add(expression());
+                while (eq(token, ",")) {
+                    token();  // skip ","
+                    args.add(expression());
+                }
+            }
+            if (!eq(token, ")"))
+                throw new EvalException("')' expected");
+            token();
+            return Funcall.of(name, args.toArray(Expression[]::new));
+        } else
+            return Variable.of(name);
+    }
+
     Expression primary() {
         Expression e;
         if (type == TokenType.NUMBER) {
             e = Number.of(Double.parseDouble(token));
             token();
         } else if (type == TokenType.ID) {
-            String name = token;
-            token();  // skip name
-            if (eq(token, "(")) {
-                token();  // skip "("
-                List<Expression> args = new ArrayList<>();
-                if (token != null && !token.equals(")")) { // !eq(token, ")")とは書けない点に注意する。
-                    args.add(expression());
-                    while (eq(token, ",")) {
-                        token();  // skip ","
-                        args.add(expression());
-                    }
-                }
-                if (!eq(token, ")"))
-                    throw new EvalException("')' expected");
-                token();
-                e = Funcall.of(name, args.toArray(Expression[]::new));
-            } else
-                e = Variable.of(name);
+            e = variableOrFuncall();
         } else if (eq(token, "(")) {
             token();  // skip "("
             e = expression();
@@ -231,10 +235,38 @@ public class Parser {
         return e;
     }
 
+    Expression userdef(Funcall f) {
+        List<String> args = new ArrayList<>();
+        for (Expression a : f.arguments)
+            if (a instanceof Variable v)
+                args.add(v.name);
+            else
+                throw new EvalException("Variable expected but: %s", a);
+        UserFunc func = UserFunc.of(expression(), args.toArray(String[]::new));
+        return c -> { c.function(f.name, func); return 0; };
+    }
+
+    Expression statement() {
+        if (token == null)
+            return null;
+        Expression e = expression();
+        if (eq(token, "=")) {
+            token(); // skip "="
+            if (e instanceof Variable v) {
+                Expression body = expression();
+                return c -> { c.variable(v.name, body); return 0; };
+            } else if (e instanceof Funcall f) {
+                return userdef(f);
+            } else
+                throw new EvalException("Variable of function header expected but: %s", e);
+        } else
+            return e;
+    }
+
     public List<Expression> read() {
         List<Expression> list = new ArrayList<>();
         Expression e;
-        while ((e = expression()) != null)
+        while ((e = statement()) != null)
             list.add(e);
         return list;
     }
