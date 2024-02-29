@@ -28,7 +28,9 @@ public class Funcall implements Expression {
 
     @Override
     public String string() {
-        return "(%s %s)".formatted(name,
-            Stream.of(arguments).map(a -> a.string()).collect(Collectors.joining(" ")));
+        return Stream.of(arguments)
+            .map(Expression::string)
+            .collect(Collectors
+                .joining(" ", "(" + name + " ", ")"));
     }
 }
