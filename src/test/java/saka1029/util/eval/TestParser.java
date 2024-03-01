@@ -109,10 +109,10 @@ public class TestParser {
     @Test
     public void testDefineFunction() {
         Context c = context();
-        assertEquals(Double.NaN, statement("double(x) = x + x").eval(c), DELTA);
-        assertEquals(6.0, statement("double(3)").eval(c), DELTA);
+        assertEquals(Double.NaN, statement("二倍(x) = x + x").eval(c), DELTA);
+        assertEquals(6.0, statement("二倍(3)").eval(c), DELTA);
         c.function1("sqrt", (x, a) -> Math.sqrt(a));
-        assertEquals(Double.NaN, statement("hypot(x, y) = sqrt(x^2 + y^2)").eval(c), DELTA);
-        assertEquals(10.0, statement("hypot(double(3), double(4))").eval(c), DELTA);
+        assertEquals(Double.NaN, statement("斜辺(x, y) = sqrt(x^2 + y^2)").eval(c), DELTA);
+        assertEquals(10.0, statement("斜辺(二倍(3), 二倍(4))").eval(c), DELTA);
     }
 }
