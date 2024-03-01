@@ -243,10 +243,10 @@ public class Parser {
             else
                 throw new EvalException("Variable expected but: %s", a);
         UserFunc func = UserFunc.of(expression(), args.toArray(String[]::new));
-        return c -> { c.function(f.name, func); return 0; };
+        return c -> { c.function(f.name, func); return Double.NaN; };
     }
 
-    Expression statement() {
+    public Expression statement() {
         if (token == null)
             return null;
         Expression e = expression();
@@ -254,7 +254,7 @@ public class Parser {
             token(); // skip "="
             if (e instanceof Variable v) {
                 Expression body = expression();
-                return c -> { c.variable(v.name, body); return 0; };
+                return c -> { c.variable(v.name, body); return Double.NaN; };
             } else if (e instanceof Funcall f) {
                 return userdef(f);
             } else
@@ -263,7 +263,7 @@ public class Parser {
             return e;
     }
 
-    public List<Expression> read() {
+    public List<Expression> readAll() {
         List<Expression> list = new ArrayList<>();
         Expression e;
         while ((e = statement()) != null)
