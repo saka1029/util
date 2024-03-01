@@ -60,11 +60,14 @@ public class Parser {
     }
 
     static boolean isIdFirstChar(int ch) {
-        return Character.isAlphabetic(ch) || ch == '_';
+        return ch >= 'A' && ch <= 'Z'
+            || ch >= 'a' && ch <= 'z'
+            || ch == '_'
+            || ch >= 256;
     }
 
     static boolean isIdRestChar(int ch) {
-        return isIdFirstChar(ch) || isDigit(ch);
+        return isIdFirstChar(ch) || ch >= '0' && ch <= '9';
     }
 
     int ch() {

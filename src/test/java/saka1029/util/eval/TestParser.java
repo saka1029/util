@@ -104,6 +104,8 @@ public class TestParser {
         assertEquals(7.0, statement("y").eval(c), DELTA);
         assertEquals(Double.NaN, statement("x = 3^2").eval(c), DELTA);
         assertEquals(11.0, statement("y").eval(c), DELTA);
+        assertEquals(Double.NaN, statement("𩸽 = 3 + 2").eval(c), DELTA);
+        assertEquals(5.0, statement("𩸽").eval(c), DELTA);
     }
     
     @Test
