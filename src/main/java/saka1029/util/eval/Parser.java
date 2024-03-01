@@ -10,14 +10,17 @@ import java.util.regex.Pattern;
 /**
  * SYNTAX
  * <pre>
- * statement  = [ define '=' ] expression
- * define     = ID '(' [ ID { ',' ID } ] ')'
- * expression = [ '+' | '-' ] term { [ '+' | '-' ] term }
- * term       = factor { [ '*' | '/' | '%' ] factor }
- * factor     = primary { '^' factor }
- * primary    = ID [ '(' [ expression { ',' expression } ] ')' ]
- *            | NUMBER
- *            | '(' expression ')'
+ * statement       = expression
+ *                 | define-variable
+ *                 | define-function
+ * define-variable = ID '=' expression
+ * define-function = ID '(' [ ID { ',' ID } ] ')' '=' expression
+ * expression      = [ '+' | '-' ] term { [ '+' | '-' ] term }
+ * term            = factor { [ '*' | '/' | '%' ] factor }
+ * factor          = primary { '^' factor }
+ * primary         = ID [ '(' [ expression { ',' expression } ] ')' ]
+ *                 | NUMBER
+ *                 | '(' expression ')'
  * </pre>
  */
 public class Parser {
