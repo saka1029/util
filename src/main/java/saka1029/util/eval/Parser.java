@@ -229,7 +229,17 @@ public class Parser {
     Expression expression() {
         if (token == null)
             return null;
+        boolean minus = false;
+        switch (token) {
+            case "-":
+                minus = true;
+            case "+":
+                token();
+                break;
+        }
         Expression e = term();
+        if (minus)
+            e = Funcall.of("neg", e);
         while (eq(token, "+", "-")) {
             String op = token;
             token();

@@ -44,6 +44,7 @@ public class TestParser {
 
     static Context context() {
         Context c = Context.of();
+        c.function1("neg", (x, a) -> -a);
         c.function2("+", (x, a, b) -> a + b);
         c.function2("-", (x, a, b) -> a - b);
         c.function2("*", (x, a, b) -> a * b);
@@ -80,6 +81,7 @@ public class TestParser {
         assertEquals("(+ 3 (^ 0.2 (^ 2 3)))", statement("3 + 0.2 ^ 2 ^ 3").string());
         c.variable("x", Number.of(3.3));
         assertEquals(6.6, statement("x + x").eval(c), DELTA);
+        assertEquals(-6.0, statement("- 3 - 3").eval(c), DELTA);
     }
 
     @Test
