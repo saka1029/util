@@ -238,17 +238,6 @@ public class Parser {
         return e;
     }
 
-    Expression userdef(Funcall f) {
-        List<String> args = new ArrayList<>();
-        for (Expression a : f.arguments)
-            if (a instanceof Variable v)
-                args.add(v.name);
-            else
-                throw new EvalException("Variable expected but: %s", a);
-        UserFunc func = UserFunc.of(expression(), args.toArray(String[]::new));
-        return c -> { c.function(f.name, func); return Double.NaN; };
-    }
-
     public Expression statement() {
         if (token == null)
             return null;
@@ -259,7 +248,14 @@ public class Parser {
                 Expression body = expression();
                 return c -> { c.variable(v.name, body); return Double.NaN; };
             } else if (e instanceof Funcall f) {
-                return userdef(f);
+                List<String> args = new ArrayList<>();
+                for (Expression a : f.arguments)
+                    if (a instanceof Variable v)
+                        args.add(v.name);
+                    else
+                        throw new EvalException("Variable expected but: %s", a);
+                UserFunc func = UserFunc.of(expression(), args.toArray(String[]::new));
+                return c -> { c.function(f.name, func); return Double.NaN; };
             } else
                 throw new EvalException("Variable of function header expected but: %s", e);
         } else
