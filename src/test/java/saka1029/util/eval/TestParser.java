@@ -111,6 +111,6 @@ public class TestParser {
         assertEquals(6.0, statement("double(3)").eval(c), DELTA);
         c.function1("sqrt", (x, a) -> Math.sqrt(a));
         assertEquals(Double.NaN, statement("hypot(x, y) = sqrt(x^2 + y^2)").eval(c), DELTA);
-        assertEquals(5.0, statement("hypot(3, 4)").eval(c), DELTA);
+        assertEquals(10.0, statement("hypot(double(3), double(4))").eval(c), DELTA);
     }
 }
