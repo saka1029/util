@@ -94,7 +94,7 @@ public class TestParser {
     }
     
     @Test
-    public void testAssign() {
+    public void testDefineVariable() {
         Context c = context();
         assertEquals(Double.NaN, statement("x = 3 + 2").eval(c), DELTA);
         assertEquals(5.0, statement("x").eval(c), DELTA);
@@ -102,5 +102,15 @@ public class TestParser {
         assertEquals(7.0, statement("y").eval(c), DELTA);
         assertEquals(Double.NaN, statement("x = 3^2").eval(c), DELTA);
         assertEquals(11.0, statement("y").eval(c), DELTA);
+    }
+    
+    @Test
+    public void testDefineFunction() {
+        Context c = context();
+        assertEquals(Double.NaN, statement("double(x) = x + x").eval(c), DELTA);
+        assertEquals(6.0, statement("double(3)").eval(c), DELTA);
+        c.function1("sqrt", (x, a) -> Math.sqrt(a));
+        assertEquals(Double.NaN, statement("hypot(x, y) = sqrt(x^2 + y^2)").eval(c), DELTA);
+        assertEquals(5.0, statement("hypot(3, 4)").eval(c), DELTA);
     }
 }
