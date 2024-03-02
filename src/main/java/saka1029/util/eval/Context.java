@@ -15,7 +15,38 @@ public class Context {
     }
 
     public static Context of() {
-        return new Context(null);
+        Context c = new Context(null);
+        initialize(c);
+        return c;
+    }
+
+    public static void initialize(Context c) {
+        c.variable("pi", x -> Math.PI);
+        c.variable("e", x -> Math.E);
+        c.function1("neg", (x, a) -> -a);
+        c.function2("+", (x, a, b) -> a + b);
+        c.function2("-", (x, a, b) -> a - b);
+        c.function2("*", (x, a, b) -> a * b);
+        c.function2("/", (x, a, b) -> a / b);
+        c.function2("%", (x, a, b) -> a % b);
+        c.function2("^", (x, a, b) -> Math.pow(a, b));
+        c.function2("hypot", (x, a, b) -> Math.hypot(a, b));
+        c.function1("sqrt", (x, a) -> Math.sqrt(a));
+        c.function1("abs", (x, a) -> Math.abs(a));
+        c.function1("exp", (x, a) -> Math.exp(a));
+        c.function1("sin", (x, a) -> Math.sin(a));
+        c.function1("asin", (x, a) -> Math.asin(a));
+        c.function1("sinh", (x, a) -> Math.sinh(a));
+        c.function1("cos", (x, a) -> Math.cos(a));
+        c.function1("acos", (x, a) -> Math.acos(a));
+        c.function1("cosh", (x, a) -> Math.cosh(a));
+        c.function1("tan", (x, a) -> Math.tan(a));
+        c.function1("atan", (x, a) -> Math.atan(a));
+        c.function1("tanh", (x, a) -> Math.tanh(a));
+        c.function1("log", (x, a) -> Math.log10(a));
+        c.function1("ln", (x, a) -> Math.log(a));
+        c.function1("rad", (x, a) -> Math.toRadians(a));
+        c.function1("deg", (x, a) -> Math.toDegrees(a));
     }
 
     public Context child() {

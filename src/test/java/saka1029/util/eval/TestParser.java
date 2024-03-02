@@ -43,15 +43,7 @@ public class TestParser {
     }
 
     static Context context() {
-        Context c = Context.of();
-        c.function1("neg", (x, a) -> -a);
-        c.function2("+", (x, a, b) -> a + b);
-        c.function2("-", (x, a, b) -> a - b);
-        c.function2("*", (x, a, b) -> a * b);
-        c.function2("/", (x, a, b) -> a / b);
-        c.function2("%", (x, a, b) -> a % b);
-        c.function2("^", (x, a, b) -> Math.pow(a, b));
-        return c;
+        return Context.of();
     }
 
     @Test

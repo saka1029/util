@@ -14,27 +14,43 @@ import saka1029.util.eval.Parser;
 
 public class Eval {
 
+    static void help(PrintWriter out) {
+        out.println("Type '/exit' or '/quit' to exit:");
+        out.println();
+        out.println("SYNTAX:");
+        out.println(" statement       = expression");
+        out.println("                 | define-variable");
+        out.println("                 | define-function.");
+        out.println(" define-variable = ID '=' expression.");
+        out.println(" define-function = ID '(' [ ID { ',' ID } ] ')' '=' expression.");
+        out.println(" expression      = [ '+' | '-' ] term { [ '+' | '-' ] term }.");
+        out.println(" term            = factor { [ '*' | '/' | '%' ] factor }.");
+        out.println(" factor          = primary { '^' factor }.");
+        out.println(" primary         = ID [ '(' [ expression { ',' expression } ] ')' ]");
+        out.println("                 | NUMBER");
+        out.println("                 | '(' expression ')'.");
+    }
+
     static void run(Reader reader, Writer writer) throws IOException {
         Context context = Context.of();
-        context.function1("neg", (x, a) -> -a);
-        context.function2("+", (x, a, b) -> a + b);
-        context.function2("-", (x, a, b) -> a - b);
-        context.function2("*", (x, a, b) -> a * b);
-        context.function2("/", (x, a, b) -> a / b);
-        context.function2("%", (x, a, b) -> a % b);
-        context.function2("^", (x, a, b) -> Math.pow(a, b));
-        context.function2("hypot", (x, a, b) -> Math.hypot(a, b));
-        context.function1("sqrt", (x, a) -> Math.sqrt(a));
         PrintWriter out = new PrintWriter(writer, true);
         BufferedReader in = new BufferedReader(reader);
-        while (true) {
+        L: while (true) {
             out.print("> ");
             out.flush();
             String line = in.readLine();
             if (line == null)
-                break;
+                break L;
             if (line.isBlank())
-                continue;
+                continue L;
+            switch (line) {
+                case "/help":
+                    help(out);
+                    continue L;
+                case "/exit":
+                case "/quit":
+                    break L;
+            }
             try {
                 Expression expression = Parser.of(line).read();
                 double d = expression.eval(context);
