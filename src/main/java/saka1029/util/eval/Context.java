@@ -2,6 +2,7 @@ package saka1029.util.eval;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Context {
     private final Context parent;
@@ -53,6 +54,10 @@ public class Context {
         return new Context(this);
     }
 
+    public Set<String> variables() {
+        return variables.keySet();
+    }
+
     public Expression variable(String name) {
         Expression e = variables.get(name);
         if (e != null)
@@ -65,6 +70,10 @@ public class Context {
 
     public void variable(String name, Expression e) {
         variables.put(name, e);
+    }
+
+    public Set<String> functions() {
+        return functions.keySet();
     }
 
     public Func function(String name) {

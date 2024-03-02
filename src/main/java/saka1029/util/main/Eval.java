@@ -15,7 +15,15 @@ import saka1029.util.eval.Parser;
 public class Eval {
 
     static void help(PrintWriter out) {
-        out.println("Type '/exit' or '/quit' to exit:");
+        out.println("COMMAND:");
+        out.println(" '/exit'   : Exit");
+        out.println(" '/quit'   : Exit");
+        out.println(" '/vars'   : List variable names");
+        out.println(" '/funcs'  : List function names");
+        out.println(" '/syntax' : Show syntax");
+    }
+
+    static void syntax(PrintWriter out) {
         out.println();
         out.println("SYNTAX:");
         out.println(" statement       = expression");
@@ -35,6 +43,7 @@ public class Eval {
         Context context = Context.of();
         PrintWriter out = new PrintWriter(writer, true);
         BufferedReader in = new BufferedReader(reader);
+        out.println("Type '/help' to help.");
         L: while (true) {
             out.print("> ");
             out.flush();
@@ -47,9 +56,18 @@ public class Eval {
                 case "/help":
                     help(out);
                     continue L;
+                case "/syntax":
+                    syntax(out);
+                    continue L;
                 case "/exit":
                 case "/quit":
                     break L;
+                case "/vars":
+                    context.variables().stream().sorted().forEach(v -> out.println(v));
+                    continue L;
+                case "/funcs":
+                    context.functions().stream().sorted().forEach(v -> out.println(v));
+                    continue L;
             }
             try {
                 Expression expression = Parser.of(line).read();
