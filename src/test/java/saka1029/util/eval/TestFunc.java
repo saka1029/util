@@ -3,6 +3,12 @@ package saka1029.util.eval;
 import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import org.junit.Test;
+import saka1029.util.cal.Context;
+import saka1029.util.cal.Expression;
+import saka1029.util.cal.Funcall;
+import saka1029.util.cal.Number;
+import saka1029.util.cal.UserFunc;
+import saka1029.util.cal.Variable;
 
 public class TestFunc {
 

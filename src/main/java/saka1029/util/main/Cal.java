@@ -7,20 +7,20 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
-import saka1029.util.eval.Context;
-import saka1029.util.eval.EvalException;
-import saka1029.util.eval.Expression;
-import saka1029.util.eval.Parser;
+import saka1029.util.cal.Context;
+import saka1029.util.cal.EvalException;
+import saka1029.util.cal.Expression;
+import saka1029.util.cal.Parser;
 
-public class Eval {
+public class Cal {
 
     static void help(PrintWriter out) {
         out.println("COMMAND:");
-        out.println(" '/exit'   : Exit");
-        out.println(" '/quit'   : Exit");
-        out.println(" '/vars'   : List variable names");
-        out.println(" '/funcs'  : List function names");
-        out.println(" '/syntax' : Show syntax");
+        out.println(" /exit   : Exit");
+        out.println(" /quit   : Exit");
+        out.println(" /vars   : List variable names");
+        out.println(" /funcs  : List function names");
+        out.println(" /syntax : Show syntax");
     }
 
     static void syntax(PrintWriter out) {

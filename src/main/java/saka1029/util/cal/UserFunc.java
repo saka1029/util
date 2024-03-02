@@ -1,4 +1,4 @@
-package saka1029.util.eval;
+package saka1029.util.cal;
 
 public class UserFunc implements Func {
     final Expression body;
