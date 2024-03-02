@@ -80,7 +80,7 @@ public class Parser {
 
     // 本来の浮動小数点パターン
     // static final Pattern NUMBER = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
-    static final Pattern NUMBER = Pattern.compile("[-+]?[0-9]+(\\.[0-9]+)?([eE][-+]?[0-9]+)?");
+    static final Pattern NUMBER = Pattern.compile("[0-9]+(\\.[0-9]+)?([eE][-+]?[0-9]+)?");
 
     StringBuilder sb = new StringBuilder();
 
@@ -143,11 +143,6 @@ public class Parser {
                 ch();
                 yield Character.toString(c);
             }
-            case '+', '-' -> {
-                sbClear();
-                sbAppend(ch);
-                yield isDigit(ch) ? num() : op();
-            }
             default -> {
                 sbClear();
                 if (isDigit(ch))
@@ -157,7 +152,7 @@ public class Parser {
                 else if (isOperatorChar(ch))
                     yield op();
                 else
-                    throw new EvalException("Unknown char '%c'", (char) ch);
+                    throw new EvalException("Unknown char 0x%02x", ch);
             }
         };
     }

@@ -6,11 +6,18 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Eval",
+            "request": "launch",
+            "mainClass": "saka1029.util.main.Eval",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
             "name": "Drive",
             "request": "launch",
             "mainClass": "saka1029.util.main.Drive",
             "projectName": "util",
-            "args": "test 夏目",
+            "args": "test 夏目"
         },
         {
             "type": "java",
@@ -18,7 +25,7 @@
             "request": "launch",
             "mainClass": "saka1029.util.main.DriveTree",
             "projectName": "util",
-            "args": "BUR2T \\\\minipc\\G",
+            "args": "BUR2T \\\\minipc\\G"
         },
         {
             "type": "java",
