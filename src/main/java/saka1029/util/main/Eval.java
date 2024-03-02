@@ -23,6 +23,8 @@ public class Eval {
         context.function2("/", (x, a, b) -> a / b);
         context.function2("%", (x, a, b) -> a % b);
         context.function2("^", (x, a, b) -> Math.pow(a, b));
+        context.function2("hypot", (x, a, b) -> Math.hypot(a, b));
+        context.function1("sqrt", (x, a) -> Math.sqrt(a));
         PrintWriter out = new PrintWriter(writer, true);
         BufferedReader in = new BufferedReader(reader);
         while (true) {
@@ -42,7 +44,7 @@ public class Eval {
                 System.err.println(e.getMessage());
             }
         }
-
+        out.println();
     }
 
     public static void main(String[] args) throws IOException {
