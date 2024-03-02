@@ -39,13 +39,13 @@ public class Cal {
         out.println("                 | '(' expression ')'.");
     }
 
-    static void run(Reader reader, Writer writer) throws IOException {
+    static void run(String prompt, Reader reader, Writer writer) throws IOException {
         Context context = Context.of();
         PrintWriter out = new PrintWriter(writer, true);
         BufferedReader in = new BufferedReader(reader);
         out.println("Type '/help' to help.");
         L: while (true) {
-            out.print("> ");
+            out.print(prompt);
             out.flush();
             String line = in.readLine();
             if (line == null)
@@ -84,7 +84,7 @@ public class Cal {
     public static void main(String[] args) throws IOException {
         Reader reader = new InputStreamReader(System.in);
         Writer writer = new OutputStreamWriter(System.out);
-        run(reader, writer);
+        run("> ", reader, writer);
     }
     
 }
