@@ -251,7 +251,7 @@ public class Parser {
         return e;
     }
 
-    public Expression statement() {
+    public Expression read() {
         if (token == null)
             return null;
         Expression e = expression();
@@ -278,7 +278,7 @@ public class Parser {
     public List<Expression> readAll() {
         List<Expression> list = new ArrayList<>();
         Expression e;
-        while ((e = statement()) != null)
+        while ((e = read()) != null)
             list.add(e);
         return list;
     }

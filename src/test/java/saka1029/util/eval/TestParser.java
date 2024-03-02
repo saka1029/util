@@ -38,8 +38,8 @@ public class TestParser {
         assertEquals(List.of("++","a","-+","b"), tokens("  ++a -+b"));
     }
 
-    static Expression statement(String source) {
-        return Parser.of(source).statement();
+    static Expression read(String source) {
+        return Parser.of(source).read();
     }
 
     static Context context() {
@@ -67,21 +67,21 @@ public class TestParser {
     @Test
     public void testParen() {
         Context c = context();
-        assertEquals(27.0, statement("3 * (4 + 5)").eval(c), DELTA);
-        assertEquals("(* 3 (+ 4 5))", statement("3 * (4 + 5)").string());
+        assertEquals(27.0, read("3 * (4 + 5)").eval(c), DELTA);
+        assertEquals("(* 3 (+ 4 5))", read("3 * (4 + 5)").string());
     }
 
     @Test
     public void testExpression() {
         Context c = context();
-        assertEquals(3.0, statement("3").eval(c), DELTA);
-        assertEquals(4.2, statement("3 + 1.2").eval(c), DELTA);
-        assertEquals(3.12, statement("3 + 1.2 * 0.1").eval(c), DELTA);
-        assertEquals(3 + Math.pow(0.2, Math.pow(2, 3)), statement("3 + 0.2 ^ 2 ^ 3").eval(c), DELTA);
-        assertEquals("(+ 3 (^ 0.2 (^ 2 3)))", statement("3 + 0.2 ^ 2 ^ 3").string());
+        assertEquals(3.0, read("3").eval(c), DELTA);
+        assertEquals(4.2, read("3 + 1.2").eval(c), DELTA);
+        assertEquals(3.12, read("3 + 1.2 * 0.1").eval(c), DELTA);
+        assertEquals(3 + Math.pow(0.2, Math.pow(2, 3)), read("3 + 0.2 ^ 2 ^ 3").eval(c), DELTA);
+        assertEquals("(+ 3 (^ 0.2 (^ 2 3)))", read("3 + 0.2 ^ 2 ^ 3").string());
         c.variable("x", Number.of(3.3));
-        assertEquals(6.6, statement("x + x").eval(c), DELTA);
-        assertEquals(-6.0, statement("- 3 - 3").eval(c), DELTA);
+        assertEquals(6.6, read("x + x").eval(c), DELTA);
+        assertEquals(-6.0, read("- 3 - 3").eval(c), DELTA);
     }
 
     @Test
@@ -90,31 +90,31 @@ public class TestParser {
         c.function0("three", (x) -> 3);
         c.function1("sqrt", (x, a) -> Math.sqrt(a));
         c.function2("hypot", (x, a, b) -> Math.hypot(a, b));
-        assertEquals(3.0, statement("three()").eval(c), DELTA);
-        assertEquals(3.0, statement("sqrt(9)").eval(c), DELTA);
-        assertEquals(5.0, statement("hypot(1 + 2, 2 * 2)").eval(c), DELTA);
+        assertEquals(3.0, read("three()").eval(c), DELTA);
+        assertEquals(3.0, read("sqrt(9)").eval(c), DELTA);
+        assertEquals(5.0, read("hypot(1 + 2, 2 * 2)").eval(c), DELTA);
     }
     
     @Test
     public void testDefineVariable() {
         Context c = context();
-        assertEquals(Double.NaN, statement("x = 3 + 2").eval(c), DELTA);
-        assertEquals(5.0, statement("x").eval(c), DELTA);
-        assertEquals(Double.NaN, statement("y = x + 2").eval(c), DELTA);
-        assertEquals(7.0, statement("y").eval(c), DELTA);
-        assertEquals(Double.NaN, statement("x = 3^2").eval(c), DELTA);
-        assertEquals(11.0, statement("y").eval(c), DELTA);
-        assertEquals(Double.NaN, statement("𩸽 = 3 + 2").eval(c), DELTA);
-        assertEquals(5.0, statement("𩸽").eval(c), DELTA);
+        assertEquals(Double.NaN, read("x = 3 + 2").eval(c), DELTA);
+        assertEquals(5.0, read("x").eval(c), DELTA);
+        assertEquals(Double.NaN, read("y = x + 2").eval(c), DELTA);
+        assertEquals(7.0, read("y").eval(c), DELTA);
+        assertEquals(Double.NaN, read("x = 3^2").eval(c), DELTA);
+        assertEquals(11.0, read("y").eval(c), DELTA);
+        assertEquals(Double.NaN, read("𩸽 = 3 + 2").eval(c), DELTA);
+        assertEquals(5.0, read("𩸽").eval(c), DELTA);
     }
     
     @Test
     public void testDefineFunction() {
         Context c = context();
-        assertEquals(Double.NaN, statement("二倍(x) = x + x").eval(c), DELTA);
-        assertEquals(6.0, statement("二倍(3)").eval(c), DELTA);
+        assertEquals(Double.NaN, read("二倍(x) = x + x").eval(c), DELTA);
+        assertEquals(6.0, read("二倍(3)").eval(c), DELTA);
         c.function1("sqrt", (x, a) -> Math.sqrt(a));
-        assertEquals(Double.NaN, statement("斜辺(x, y) = sqrt(x^2 + y^2)").eval(c), DELTA);
-        assertEquals(10.0, statement("斜辺(二倍(3), 二倍(4))").eval(c), DELTA);
+        assertEquals(Double.NaN, read("斜辺(x, y) = sqrt(x^2 + y^2)").eval(c), DELTA);
+        assertEquals(10.0, read("斜辺(二倍(3), 二倍(4))").eval(c), DELTA);
     }
 }
