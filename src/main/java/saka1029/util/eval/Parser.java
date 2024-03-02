@@ -199,7 +199,9 @@ public class Parser {
             if (!eq(token, ")"))
                 throw new EvalException("')' expected");
             token();
-        } else
+        } else if (token == null)
+            throw new EvalException("Unterminated expression");
+        else
             throw new EvalException("Unknown token '%s'", token);
         return e;
     }
