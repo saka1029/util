@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Calculator",
+            "request": "launch",
+            "mainClass": "saka1029.util.main.Calculator",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
             "name": "Eval",
             "request": "launch",
             "mainClass": "saka1029.util.main.Eval",

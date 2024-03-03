@@ -1,8 +1,5 @@
 package saka1029.util.cal;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -27,23 +24,20 @@ public class Parser {
 
     enum TokenType { ID, NUMBER, OTHER }
 
-    final Reader reader;
+    final String input;
+    int index = 0;
     int ch;
     String token;
     TokenType type;
 
-    Parser(Reader reader) {
-        this.reader = reader;
+    Parser(String input) {
+        this.input = input;
         ch();
         token();
     }
 
-    public static Parser of(Reader reader) {
-        return new Parser(reader);
-    }
-
-    public static Parser of(String source) {
-        return new Parser(new StringReader(source));
+    public static Parser of(String input) {
+        return new Parser(input);
     }
 
     static boolean isDigit(int ch) {
@@ -71,11 +65,7 @@ public class Parser {
     }
 
     int ch() {
-        try {
-            return ch = reader.read();
-        } catch (IOException e) {
-            throw new EvalException(e);
-        }
+        return ch = index >= input.length() ? -1 : input.charAt(index++);
     }
 
     // 本来の浮動小数点パターン
