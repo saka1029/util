@@ -1,6 +1,7 @@
 package saka1029.util.eval;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import java.util.List;
 import org.junit.Test;
 import saka1029.util.cal.Context;
@@ -46,30 +47,26 @@ public class TestParser {
         return Parser.of(source).read();
     }
 
-    static Context context() {
-        return Context.of();
-    }
-
     @Test
     public void testRead() {
-        Context c = context();
-        List<Expression> list = Parser.of(" 1 2 3 ").readAll();
-        assertEquals(3, list.size());
-        assertEquals(1.0, list.get(0).eval(c), DELTA);
-        assertEquals(2.0, list.get(1).eval(c), DELTA);
-        assertEquals(3.0, list.get(2).eval(c), DELTA);
+        Context c = Context.of();
+        Parser parser = Parser.of(" 1 2 3 ");
+        assertEquals(1.0, parser.read().eval(c), DELTA);
+        assertEquals(2.0, parser.read().eval(c), DELTA);
+        assertEquals(3.0, parser.read().eval(c), DELTA);
+        assertNull(parser.read());
     }
 
     @Test
     public void testParen() {
-        Context c = context();
+        Context c = Context.of();
         assertEquals(27.0, read("3 * (4 + 5)").eval(c), DELTA);
         assertEquals("(* 3 (+ 4 5))", read("3 * (4 + 5)").string());
     }
 
     @Test
     public void testExpression() {
-        Context c = context();
+        Context c = Context.of();
         assertEquals(3.0, read("3").eval(c), DELTA);
         assertEquals(4.2, read("3 + 1.2").eval(c), DELTA);
         assertEquals(3.12, read("3 + 1.2 * 0.1").eval(c), DELTA);
@@ -82,7 +79,7 @@ public class TestParser {
 
     @Test
     public void testFuncall() {
-        Context c = context();
+        Context c = Context.of();
         c.function0("three", (x) -> 3);
         c.function1("sqrt", (x, a) -> Math.sqrt(a));
         c.function2("hypot", (x, a, b) -> Math.hypot(a, b));
@@ -93,7 +90,7 @@ public class TestParser {
     
     @Test
     public void testDefineVariable() {
-        Context c = context();
+        Context c = Context.of();
         assertEquals(Double.NaN, read("x = 3 + 2").eval(c), DELTA);
         assertEquals(5.0, read("x").eval(c), DELTA);
         assertEquals(Double.NaN, read("y = x + 2").eval(c), DELTA);
@@ -106,7 +103,7 @@ public class TestParser {
     
     @Test
     public void testDefineFunction() {
-        Context c = context();
+        Context c = Context.of();
         assertEquals(Double.NaN, read("二倍(x) = x + x").eval(c), DELTA);
         assertEquals(6.0, read("二倍(3)").eval(c), DELTA);
         c.function1("sqrt", (x, a) -> Math.sqrt(a));

@@ -262,13 +262,13 @@ public class Parser {
             return e;
     }
 
-    public List<Expression> readAll() {
-        List<Expression> list = new ArrayList<>();
-        Expression e;
-        while ((e = read()) != null)
-            list.add(e);
-        return list;
-    }
+    // public List<Expression> readAll() {
+    //     List<Expression> list = new ArrayList<>();
+    //     Expression e;
+    //     while ((e = read()) != null)
+    //         list.add(e);
+    //     return list;
+    // }
 
     public List<String> tokens() {
         List<String> list = new ArrayList<>();
