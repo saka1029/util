@@ -7,12 +7,18 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Comparator;
+import java.util.Map.Entry;
 import saka1029.util.cal.Context;
 import saka1029.util.cal.EvalException;
 import saka1029.util.cal.Expression;
 import saka1029.util.cal.Parser;
 
 public class Cal {
+
+    static String string(double v) {
+        return Double.toString(v).replaceFirst("\\.0$", "");
+    }
 
     static void help(PrintWriter out) {
         out.println("COMMAND:");
@@ -39,6 +45,47 @@ public class Cal {
         out.println("                 | '(' expression ')'.");
     }
 
+    enum Command {
+        EXIT, COMMAND, NOT_COMMAND
+    }
+
+    static void vars(Context context, PrintWriter out) {
+        context.variables().stream()
+            .sorted(Comparator.comparing(Entry::getKey))
+            .forEach(e -> {
+                out.printf("%s -> ", e.getKey());
+                try {
+                    out.print(string(e.getValue().eval(context)));
+                } catch (EvalException ex) {
+                    out.print("unknown");
+                }
+                out.println();
+            });
+    }
+
+    static Command command(Context context, PrintWriter out, String line) {
+        switch (line) {
+            case "/help":
+                help(out);
+                return Command.COMMAND;
+            case "/syntax":
+                syntax(out);
+                return Command.COMMAND;
+            case "/exit":
+            case "/quit":
+                return Command.EXIT;
+            case "/vars":
+                vars(context, out);
+                return Command.COMMAND;
+            case "/funcs":
+                context.functions().stream().sorted().forEach(v -> out.println(v));
+                return Command.COMMAND;
+            default:
+                return Command.NOT_COMMAND;
+        }
+
+    }
+
     static void run(String prompt, Reader reader, Writer writer) throws IOException {
         Context context = Context.of();
         PrintWriter out = new PrintWriter(writer, true);
@@ -52,28 +99,19 @@ public class Cal {
                 break L;
             if (line.isBlank())
                 continue L;
-            switch (line) {
-                case "/help":
-                    help(out);
-                    continue L;
-                case "/syntax":
-                    syntax(out);
-                    continue L;
-                case "/exit":
-                case "/quit":
+            switch (command(context, out, line)) {
+                case EXIT:
                     break L;
-                case "/vars":
-                    context.variables().stream().sorted().forEach(v -> out.println(v));
+                case COMMAND:
                     continue L;
-                case "/funcs":
-                    context.functions().stream().sorted().forEach(v -> out.println(v));
-                    continue L;
+                case NOT_COMMAND:
+                    break;
             }
             try {
                 Expression expression = Parser.of(line).read();
                 double d = expression.eval(context);
                 if (!Double.isNaN(d))
-                    out.println(Double.toString(d).replaceFirst("\\.0$", ""));
+                    out.println(string(d));
             } catch (EvalException e) {
                 System.err.println(e.getMessage());
             }

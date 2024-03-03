@@ -2,6 +2,7 @@ package saka1029.util.cal;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class Context {
@@ -54,8 +55,8 @@ public class Context {
         return new Context(this);
     }
 
-    public Set<String> variables() {
-        return variables.keySet();
+    public Set<Entry<String, Expression>> variables() {
+        return variables.entrySet();
     }
 
     public Expression variable(String name) {

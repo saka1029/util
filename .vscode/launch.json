@@ -6,9 +6,9 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Calculator",
+            "name": "Cal",
             "request": "launch",
-            "mainClass": "saka1029.util.main.Calculator",
+            "mainClass": "saka1029.util.main.Cal",
             "projectName": "util"
         },
         {
