@@ -108,10 +108,14 @@ public class Cal {
                     break;
             }
             try {
-                Expression expression = Parser.of(line).read();
+                Parser parser = Parser.of(line);
+                Expression expression = parser.read();
+                Expression next = parser.read();
                 double d = expression.eval(context);
                 if (!Double.isNaN(d))
                     out.println(string(d));
+                if (next != null)
+                    System.err.println("(Extra tokens were discarded)");
             } catch (EvalException e) {
                 System.err.println(e.getMessage());
             }
