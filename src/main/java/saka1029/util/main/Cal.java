@@ -1,6 +1,7 @@
 package saka1029.util.main;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -86,7 +87,7 @@ public class Cal {
 
     }
 
-    static void run(String prompt, Reader reader, Writer writer) throws IOException {
+    static void run(String prompt, Reader reader, Writer writer, boolean echo) throws IOException {
         Context context = Context.of();
         PrintWriter out = new PrintWriter(writer, true);
         BufferedReader in = new BufferedReader(reader);
@@ -97,6 +98,8 @@ public class Cal {
             String line = in.readLine();
             if (line == null)
                 break L;
+            if (echo)
+                out.println(line);
             if (line.isBlank())
                 continue L;
             switch (command(context, out, line)) {
@@ -123,10 +126,35 @@ public class Cal {
         out.println();
     }
 
+    static void usage() {
+        System.err.println("USAGE:");
+        System.err.println("java saka1029.util.main.Cal [-f FILE] [-e]");
+        System.err.println("-f FILE    : Input file");
+        System.err.println("-e         : Echo back");
+        System.exit(1);
+    }
+
     public static void main(String[] args) throws IOException {
-        Reader reader = new InputStreamReader(System.in);
-        Writer writer = new OutputStreamWriter(System.out);
-        run("> ", reader, writer);
+        String prompt = "> ";
+        boolean echo = false;
+        String file = null;
+        for (int i = 0; i < args.length; ++i)
+            switch (args[i]) {
+                case "-f":
+                    if (++i < args.length) {
+                        file = args[i++];
+                        echo = true;
+                    } else
+                        usage();
+                    break;
+                case "-e":
+                    echo = true;
+                    break;
+                default:
+                    usage();
+            }
+        Reader reader = file != null ? new FileReader(file) : new InputStreamReader(System.in);
+        run(prompt, reader, new OutputStreamWriter(System.out), echo);
     }
     
 }
