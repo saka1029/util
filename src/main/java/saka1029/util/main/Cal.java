@@ -118,9 +118,9 @@ public class Cal {
                 if (!Double.isNaN(d))
                     out.println(string(d));
                 if (next != null)
-                    System.err.println("(Extra tokens were discarded)");
+                    out.println("WARN: Extra tokens were discarded");
             } catch (EvalException e) {
-                System.err.println(e.getMessage());
+                out.println("ERROR: " + e.getMessage());
             }
         }
         out.println();
