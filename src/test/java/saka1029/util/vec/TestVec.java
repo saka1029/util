@@ -6,9 +6,32 @@ import vec.Vec;
 
 public class TestVec {
 
+    static Vec vec(double... elements) {
+        return new Vec(elements);
+    }
+
     @Test
     public void testAppend() {
-        assertEquals(Vec.of(1, 2, 3, 4), Vec.of(1, 2).append(Vec.of(3, 4)));
+        assertEquals(vec(1, 2, 3, 4), Vec.append(vec(1, 2), vec(3, 4)));
+    }
+
+    @Test
+    public void testUnaryOperator() {
+        assertEquals(vec(2, 3, 4), Vec.calculate(x -> x + 1, vec(1, 2, 3)));
+    }
+
+    @Test
+    public void testBinaryOperator() {
+        assertEquals(vec(3, 5, 7), Vec.calculate((x, y) -> x + y, vec(1, 2, 3), vec(2, 3, 4)));
+        assertEquals(vec(2, 3, 4), Vec.calculate((x, y) -> x + y, vec(1, 2, 3), vec(1)));
+        assertEquals(vec(2, 3, 4), Vec.calculate((x, y) -> x + y, vec(1), vec(1, 2, 3)));
+    }
+
+    @Test
+    public void testInsert() {
+        assertEquals(vec(1), Vec.insert((x, y) -> x + y, vec(1)));
+        assertEquals(vec(3), Vec.insert((x, y) -> x + y, vec(1, 2)));
+        assertEquals(vec(6), Vec.insert((x, y) -> x + y, vec(1, 2, 3)));
     }
 
 }

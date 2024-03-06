@@ -1,31 +1,62 @@
 package vec;
 
 import java.util.Arrays;
+import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleUnaryOperator;
 
 public class Vec {
     final double[] elements;
 
-    Vec(double[] elements) {
+    public Vec(double... elements) {
+        if (elements.length == 0)
+            throw new RuntimeException("no elements");
         this.elements = elements;
     }
 
-    public static Vec of(double... elements) {
-        return new Vec(elements);
-    }
-
-    public Vec append(Vec right) {
-        double[] a = new double[size() + right.size()];
-        System.arraycopy(elements, 0, a, 0, elements.length);
-        System.arraycopy(right.elements, 0, a, elements.length, right.elements.length);
+    public static Vec append(Vec left, Vec right) {
+        int lsize = left.elements.length, rsize = right.elements.length;
+        double[] a = new double[lsize + rsize];
+        System.arraycopy(left.elements, 0, a, 0, lsize);
+        System.arraycopy(right.elements, 0, a, lsize, rsize);
         return new Vec(a);
     }
 
-    public int size() {
-        return elements.length;
-    }
+    public static Vec calculate(DoubleUnaryOperator op, Vec vec) {
+        int size = vec.elements.length;
+        double[] a = new double[size];
+        for (int i = 0; i < size; ++i)
+            a[i] = op.applyAsDouble(vec.elements[i]);
+        return new Vec(a);
+    } 
 
-    public double get(int index) {
-        return elements[index];
+    public static Vec calculate(DoubleBinaryOperator op, Vec left, Vec right) {
+        int lsize = left.elements.length, rsize = right.elements.length;
+        double[] a;
+        if (lsize == 1) {
+            a = new double[rsize];
+            double e = left.elements[0];
+            for (int i = 0; i < rsize; ++i)
+                a[i] = op.applyAsDouble(e, right.elements[i]);
+        } else if (rsize == 1) {
+            a = new double[lsize];
+            double e = right.elements[0];
+            for (int i = 0; i < lsize; ++i)
+                a[i] = op.applyAsDouble(left.elements[i], e);
+        } else if (lsize == rsize) {
+            a = new double[lsize];
+            for (int i = 0; i < lsize; ++i)
+                a[i] = op.applyAsDouble(left.elements[i], right.elements[i]);
+        } else
+            throw new RuntimeException();
+        return new Vec(a);
+    } 
+
+    public static Vec insert(DoubleBinaryOperator op, Vec vec) {
+        int size = vec.elements.length;
+        double r = vec.elements[0];
+        for (int i = 1; i < size; ++i)
+            r = op.applyAsDouble(r, vec.elements[i]);
+        return new Vec(r);
     }
 
     @Override
