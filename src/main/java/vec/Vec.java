@@ -7,10 +7,14 @@ import java.util.function.DoubleUnaryOperator;
 public class Vec {
     final double[] elements;
 
-    public Vec(double... elements) {
+    Vec(double... elements) {
         if (elements.length == 0)
             throw new RuntimeException("no elements");
         this.elements = elements;
+    }
+
+    public static Vec of(double... elements) {
+        return new Vec(elements.clone());
     }
 
     public static Vec append(Vec left, Vec right) {
@@ -57,6 +61,13 @@ public class Vec {
         for (int i = 1; i < size; ++i)
             r = op.applyAsDouble(r, vec.elements[i]);
         return new Vec(r);
+    }
+
+    public static Vec iota(double n) {
+        double[] a = new double[(int)n];
+        for (int i = 0; i < n; ++i)
+            a[i] = i;
+        return new Vec(a);
     }
 
     @Override

@@ -7,7 +7,7 @@ import vec.Vec;
 public class TestVec {
 
     static Vec vec(double... elements) {
-        return new Vec(elements);
+        return Vec.of(elements);
     }
 
     @Test
