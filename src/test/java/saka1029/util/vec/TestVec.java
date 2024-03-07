@@ -2,7 +2,7 @@ package saka1029.util.vec;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import vec.Vec;
+import saka1029.util.vec.Vec;
 
 public class TestVec {
 

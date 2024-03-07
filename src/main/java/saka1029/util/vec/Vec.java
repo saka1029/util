@@ -1,4 +1,4 @@
-package vec;
+package saka1029.util.vec;
 
 import java.util.Arrays;
 import java.util.function.DoubleBinaryOperator;
