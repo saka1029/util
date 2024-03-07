@@ -135,6 +135,9 @@ public class Parser {
     }
 
     Expression expression() {
+        boolean minus = false;
+        if (eat('-'))
+            minus = true;
         Expression e = term();
         while (true)
             if (eat('+')) {
@@ -145,6 +148,10 @@ public class Parser {
                 e = c -> Vec.calculate((a, b) -> a - b, left.eval(c), right.eval(c));
             } else
                 break;
+        if (minus) {
+            Expression left = e;
+            e = c -> Vec.calculate(a -> -a, left.eval(c));
+        }
         return e;
     }
 

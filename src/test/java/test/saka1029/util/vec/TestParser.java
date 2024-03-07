@@ -23,6 +23,13 @@ public class TestParser {
     }
 
     @Test
+    public void testUnary() {
+        Context c = Context.of();
+        assertEquals(vec(-3), eval(c, " - 1 + 2"));
+        assertEquals(vec(-1, -2, -3), eval(c, " - 1 2 3"));
+    }
+
+    @Test
     public void testPlus() {
         Context c = Context.of();
         assertEquals(vec(3), eval(c, " 1 + 2"));
