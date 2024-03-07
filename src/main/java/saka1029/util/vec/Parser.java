@@ -102,6 +102,7 @@ public class Parser {
         spaces();
         while (isPrimary(ch)) {
             Expression left = primary, right = primary();
+            // TODO: この連結方式は効率が悪い。
             primary = c -> left.eval(c).append(right.eval(c));
             spaces();
         }

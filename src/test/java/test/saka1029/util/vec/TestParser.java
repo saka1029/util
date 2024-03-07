@@ -30,4 +30,13 @@ public class TestParser {
         assertEquals(vec(2, 3, 4), eval(c, " 1 2 3 + 1"));
     }
 
+    @Test
+    public void testAssign() {
+        Context c = Context.of();
+        assertEquals(Vec.NAN, eval(c, "a = 1 + 2"));
+        assertEquals(vec(3), eval(c, " a "));
+        assertEquals(Vec.NAN, eval(c, "b = 1 2 3 + 2"));
+        assertEquals(vec(3, 4, 5), eval(c, " b "));
+    }
+
 }
