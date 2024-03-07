@@ -27,6 +27,7 @@ public class TestParser {
         Context c = Context.of();
         assertEquals(vec(3), eval(c, " 1 + 2"));
         assertEquals(vec(2, 3, 4), eval(c, " 1 + 1 2 3"));
+        assertEquals(vec(2, 3, 4), eval(c, " 1 2 3 + 1"));
     }
 
 }

@@ -3,6 +3,7 @@ package saka1029.util.vec;
 import java.util.Arrays;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.Collectors;
 
 public class Vec implements Expression {
     public static Vec NAN = new Vec();
@@ -94,5 +95,12 @@ public class Vec implements Expression {
         if (!Arrays.equals(elements, other.elements))
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.stream(elements)
+            .mapToObj(d -> Double.toString(d).replaceFirst("\\.0$", ""))
+            .collect(Collectors.joining(" "));
     }
 }
