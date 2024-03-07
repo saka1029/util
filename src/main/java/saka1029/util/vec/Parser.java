@@ -39,8 +39,35 @@ public class Parser {
         return false;
     }
 
+    Expression factor() {
+    }
+
+    Expression term() {
+        Expression e = factor();
+        while (true)
+            if (eat('*')) {
+                Expression left = e;
+                e = c -> Vec.calculate((a, b) -> a * b, left.eval(c), factor().eval(c));
+            } else if (eat('/')) {
+                Expression left = e;
+                e = c -> Vec.calculate((a, b) -> a / b, left.eval(c), factor().eval(c));
+            } else
+                break;
+        return e;
+    }
+
     Expression expression() {
-        return null;
+        Expression e = term();
+        while (true)
+            if (eat('+')) {
+                Expression left = e;
+                e = c -> Vec.calculate((a, b) -> a + b, left.eval(c), term().eval(c));
+            } else if (eat('-')) {
+                Expression left = e;
+                e = c -> Vec.calculate((a, b) -> a - b, left.eval(c), term().eval(c));
+            } else
+                break;
+        return e;
     }
 
     Expression statement() {
