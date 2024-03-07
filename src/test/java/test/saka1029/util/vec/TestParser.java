@@ -37,6 +37,8 @@ public class TestParser {
         assertEquals(vec(3), eval(c, " a "));
         assertEquals(Vec.NAN, eval(c, "b = 1 2 3 + 2 3 4"));
         assertEquals(vec(3, 5, 7), eval(c, " b "));
+        assertEquals(Vec.NAN, eval(c, "c = 2 b 2 3 4"));
+        assertEquals(vec(2, 3, 5, 7, 2, 3, 4), eval(c, " c "));
     }
 
 }
