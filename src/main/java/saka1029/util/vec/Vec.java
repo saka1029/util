@@ -5,6 +5,7 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
 public class Vec {
+    public static Vec NaN = new Vec();
     final double[] elements;
 
     Vec(double... elements) {

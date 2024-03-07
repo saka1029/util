@@ -1,4 +1,4 @@
-package saka1029.util.vec;
+package test.saka1029.util.vec;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
