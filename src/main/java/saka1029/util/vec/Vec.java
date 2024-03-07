@@ -4,24 +4,30 @@ import java.util.Arrays;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-public class Vec {
-    public static Vec NaN = new Vec();
+public class Vec implements Expression {
+    public static Vec NAN = new Vec();
+
     final double[] elements;
 
-    Vec(double... elements) {
-        if (elements.length == 0)
-            throw new RuntimeException("no elements");
+    private Vec(double... elements) {
         this.elements = elements;
     }
 
     public static Vec of(double... elements) {
+        if (elements.length == 0)
+            throw new RuntimeException("no elements");
         return new Vec(elements.clone());
     }
 
-    public static Vec append(Vec left, Vec right) {
-        int lsize = left.elements.length, rsize = right.elements.length;
+    @Override
+    public Vec eval(Context context) {
+        return this;
+    }
+
+    public Vec append(Vec right) {
+        int lsize = elements.length, rsize = right.elements.length;
         double[] a = new double[lsize + rsize];
-        System.arraycopy(left.elements, 0, a, 0, lsize);
+        System.arraycopy(elements, 0, a, 0, lsize);
         System.arraycopy(right.elements, 0, a, lsize, rsize);
         return new Vec(a);
     }

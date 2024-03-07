@@ -12,7 +12,7 @@ public class TestVec {
 
     @Test
     public void testAppend() {
-        assertEquals(vec(1, 2, 3, 4), Vec.append(vec(1, 2), vec(3, 4)));
+        assertEquals(vec(1, 2, 3, 4), vec(1, 2).append(vec(3, 4)));
     }
 
     @Test
