@@ -4,11 +4,14 @@ package saka1029.util.vec;
  * SYNTAX:
  * <pre>
  * statement  = [ ID '=' ] expression
- * expression = [ '-' ] term { [ '+' | '-' ] term }
- * term       = factor { [ '*' | '/' ] factor }
+ * expression = term { ( '+' | '-' ) term }
+ * term       = factor { ( '*' | '/' ) factor }
  * factor     = sequence { '^' factor }
- * sequence   = primary { primary }
+ * sequence   = unary { unary }
+ * unary      = primary | UOP unary
  * primary    = '(' expression ')' | ID | NUMBER
+ * NUMBER     = DIGITS [ '.' DIGITS ] [ ( 'e' | 'E' ) [ '+' | '-' ] DIGITS ]
+ * DIGITS     = '0'..'9' { '0'..'9' }
  * </pre>
  */
 public class Parser {
