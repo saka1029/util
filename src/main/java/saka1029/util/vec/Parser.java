@@ -40,6 +40,13 @@ public class Parser {
         return false;
     }
 
+    boolean or(int... expected) {
+        for (int e : expected)
+            if (token.type() == e)
+                return true;
+        return false;
+    }
+
     Expression primary() {
         Expression e;
         if (eat('(')) {
@@ -100,14 +107,19 @@ public class Parser {
     }
 
     Expression expression() {
-        boolean minus = false;
-        if (eat('-'))
-            minus = true;
-        Expression e = term();
-        if (minus) {
-            Expression left = e;
-            e = c -> Vec.calculate(a -> -a, left.eval(c));
+        int prefix = -1;
+        if (or('-', '+', '*')) {
+            prefix = token.type();
+            get();
         }
+        Expression e = term();
+        Expression g = e;
+        e = switch (prefix) {
+            case '-' -> c -> Vec.calculate(a -> -a, g.eval(c)); // TODO: なぜinsertではないのか？
+            case '+' -> c -> Vec.insert((a, b) -> a + b, g.eval(c));
+            case '*' -> c -> Vec.insert((a, b) -> a * b, g.eval(c));
+            default -> e;
+        };
         while (true)
             if (eat('+')) {
                 Expression left = e, right = term();
