@@ -1,5 +1,7 @@
 package saka1029.util.vec;
 
+import saka1029.util.vec.Scanner.Token;
+
 /**
  * SYNTAX:
  * <pre>
@@ -7,20 +9,18 @@ package saka1029.util.vec;
  * expression = term { ( '+' | '-' ) term }
  * term       = factor { ( '*' | '/' ) factor }
  * factor     = sequence { '^' factor }
- * sequence   = unary { unary }
- * unary      = primary | UOP unary
+ * sequence   = primary { primary }
  * primary    = '(' expression ')' | ID | NUMBER
  * NUMBER     = DIGITS [ '.' DIGITS ] [ ( 'e' | 'E' ) [ '+' | '-' ] DIGITS ]
  * DIGITS     = '0'..'9' { '0'..'9' }
  * </pre>
  */
 public class Parser {
-    final String input;
-    int index = 0;
-    int ch;
+    final Scanner input;
+    Token token;
 
     private Parser(String input) {
-        this.input = input;
+        this.input = Scanner.of(input);
         get();
     }
 
@@ -28,57 +28,16 @@ public class Parser {
         return new Parser(input);
     }
 
-    int get() {
-        return ch = index < input.length() ? input.charAt(index++) : -1;
-    }
-
-    void spaces() {
-        while (Character.isWhitespace(ch))
-            get();
+    Token get() {
+        return token = input.read();
     }
 
     boolean eat(int expected) {
-        spaces();
-        if (expected == ch) {
+        if (token.type() == expected) {
             get();
             return true;
         }
         return false;
-    }
-
-    static boolean isDigit(int ch) {
-        return ch >= '0' && ch <= '9';
-    }
-
-    static boolean isIdFirst(int ch) {
-        return ch >= 'A' && ch <= 'Z'
-            || ch >= 'a' && ch <= 'z'
-            || ch == '_'
-            || ch >= 256;
-    }
-
-    static boolean isIdRest(int ch) {
-        return isIdFirst(ch) || ch >= '0' && ch <= '9';
-    }
-
-    Expression id() {
-        StringBuilder sb = new StringBuilder();
-        while (isIdRest(ch)) {
-            sb.append((char)ch);
-            get();
-        }
-        String name = sb.toString();
-        return Variable.of(name);
-    }
-
-    Expression number() {
-        StringBuilder sb = new StringBuilder();
-        while (isDigit(ch)) {
-            sb.append((char)ch);
-            get();
-        }
-        double d = Double.parseDouble(sb.toString());
-        return Vec.of(d);
     }
 
     Expression primary() {
@@ -86,28 +45,31 @@ public class Parser {
         if (eat('(')) {
             e = expression();
             if (!eat(')'))
-                throw new RuntimeException("')' expected");
-        } else if (isIdFirst(ch)) {
-            e = id();
-        } else if (isDigit(ch)) {
-            e = number();
+                throw new VecException("')' expected");
+        } else if (token.type() == 'i') {
+            e = Variable.of(token.string());
+            get();
+        } else if (token.type() == 'n') {
+            e = Vec.of(token.number());
+            get();
         } else
-            throw new RuntimeException("Unknown char: 0x%02x".formatted(ch));
+            throw new VecException("Unknown token: '%s'", token.string());
         return e;
     }
 
-    static boolean isPrimary(int ch) {
-        return ch == '(' || isIdFirst(ch) || isDigit(ch);
+    static boolean isPrimary(Token token) {
+        return switch (token.type()) {
+            case '(', 'i', 'n' -> true;
+            default -> false;
+        };
     }
 
     Expression sequence() {
         Expression primary = primary();
-        spaces();
-        while (isPrimary(ch)) {
+        while (isPrimary(token)) {
             Expression left = primary, right = primary();
             // TODO: この連結方式は効率が悪い。
             primary = c -> left.eval(c).append(right.eval(c));
-            spaces();
         }
         return primary;
     }
@@ -165,7 +127,7 @@ public class Parser {
                 Expression value = expression();
                 return c -> { c.variable(v.name, value); return Vec.NAN; };
             } else
-                throw new RuntimeException("Variable expected before '='");
+                throw new VecException("Variable expected before '='");
         } else
             return e;
     }

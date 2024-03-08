@@ -46,7 +46,7 @@ public class Scanner {
     }
 
     static boolean isIdRest(int ch) {
-        return isIdFirst(ch) || ch >= '0' && ch <= '9';
+        return isIdFirst(ch) || isDigit(ch);
     }
 
     StringBuilder sb = new StringBuilder();
@@ -65,7 +65,7 @@ public class Scanner {
 
     void digits() {
         if (!isDigit(ch))
-            throw new RuntimeException("Digit expected but 0x%02X".formatted(ch));
+            throw new VecException("Digit expected but 0x%02X", ch);
         do {
             appendGet();
         } while (isDigit(ch));
@@ -121,7 +121,7 @@ public class Scanner {
                 else if (isIdFirst(ch))
                     return id();
                 else
-                    throw new RuntimeException("Unknown char 0x%02X".formatted(ch));
+                    throw new VecException("Unknown char 0x%02X", ch);
         }
     }
 }
