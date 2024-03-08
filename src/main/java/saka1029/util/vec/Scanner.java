@@ -2,32 +2,23 @@ package saka1029.util.vec;
 
 public class Scanner {
 
-    public class Token {
-        public final int type;
-        public final String string;
-        public final double number;
-        Token(int type, String string, double number) {
-            this.type = type;
-            this.string = string;
-            this.number = number;
-        }
+    public record Token(int type, String string) {
         public Token(int type) {
-            this(type, null, Double.NaN);
+            this(type, null);
         }
-        public Token(String value) {
-            this('i', value, Double.NaN);
-        }
-        public Token(double value) {
-            this('n', null, value);
+        public double number() {
+            return Double.parseDouble(string);
         }
     }
 
     final String input;
-    int index = 0;
-    int ch = get();
+    int index;
+    int ch;
 
     Scanner(String input) {
         this.input = input;
+        this.index = 0;
+        this.ch = get();
     }
 
     public static Scanner of(String input) {
@@ -95,7 +86,7 @@ public class Scanner {
                 appendGet();
             digits();
         }
-        return new Token(Double.parseDouble(sb.toString()));
+        return new Token('n', sb.toString());
     }
 
     Token id() {
@@ -103,7 +94,7 @@ public class Scanner {
         do {
             appendGet();
         } while (isIdRest(ch));
-        return new Token(sb.toString());
+        return new Token('i', sb.toString());
     }
 
     public Token read() {
@@ -124,12 +115,13 @@ public class Scanner {
             case '-':
                 get();
                 return isDigit(ch) ? number('-') : new Token('-');
+            default:
+                if (isDigit(ch))
+                    return number(0);
+                else if (isIdFirst(ch))
+                    return id();
+                else
+                    throw new RuntimeException("Unknown char 0x%02X".formatted(ch));
         }
-        if (isDigit(ch))
-            return number(-1);
-        else if (isIdFirst(ch))
-            return id();
-        else
-            throw new RuntimeException("Unknown char 0x%02X".formatted(ch));
     }
 }
