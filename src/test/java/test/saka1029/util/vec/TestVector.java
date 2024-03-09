@@ -14,14 +14,11 @@ public class TestVector {
 
         @Override
         public Vec append(Vec right) {
-            switch (right) {
-                case Number n:
-                    return Array.of(value, n.value);
-                case Array a:
-                    return a.appendLeft(this);
-                default:
-                    throw new RuntimeException();
-            }
+            return switch (right) {
+                case Number n -> Array.of(value, n.value);
+                case Array a -> a.appendLeft(this);
+                default -> throw new RuntimeException();
+            };
         }
     }
     
@@ -63,14 +60,11 @@ public class TestVector {
 
         @Override
         public Vec append(Vec right) {
-            switch (right) {
-                case Number n:
-                    return appendRight(n);
-                case Array a:
-                    return append(a);
-                default:
-                    throw new RuntimeException();
-            }
+            return switch (right) {
+                case Number n -> appendRight(n);
+                case Array a -> append(a);
+                default -> throw new RuntimeException();
+            };
         }
     }
 
