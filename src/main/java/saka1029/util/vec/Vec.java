@@ -16,7 +16,7 @@ public class Vec implements Expression {
 
     public static Vec of(double... elements) {
         if (elements.length == 0)
-            throw new RuntimeException("no elements");
+            throw new VecException("No elements");
         return new Vec(elements.clone());
     }
 
@@ -59,7 +59,7 @@ public class Vec implements Expression {
             for (int i = 0; i < lsize; ++i)
                 a[i] = op.applyAsDouble(left.elements[i], right.elements[i]);
         } else
-            throw new RuntimeException();
+            throw new VecException("Vec size mismatch %d and %d", lsize, rsize);
         return new Vec(a);
     } 
 

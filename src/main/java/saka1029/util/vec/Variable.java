@@ -24,7 +24,7 @@ public class Variable implements Expression {
     public Vec eval(Context context) {
         Expression e = context.variable(name);
         if (e == null)
-            throw new RuntimeException("variable '%s' not found".formatted(name));
+            throw new VecException("variable '%s' not found", name);
         return e.eval(context);
     }
 

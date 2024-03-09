@@ -23,18 +23,34 @@ public class TestParser {
     }
 
     @Test
-    public void testUnary() {
-        Context c = Context.of();
-        assertEquals(vec(1), eval(c, " - 1 + 2"));
-        assertEquals(vec(-1, -2, -3), eval(c, " - 1 2 3"));
-    }
-
-    @Test
-    public void testPlus() {
+    public void testBinaryPlus() {
         Context c = Context.of();
         assertEquals(vec(3), eval(c, " 1 + 2"));
         assertEquals(vec(2, 3, 4), eval(c, " 1 + 1 2 3"));
         assertEquals(vec(2, 3, 4), eval(c, " 1 2 3 + 1"));
+    }
+
+    @Test
+    public void testUnaryMinus() {
+        Context c = Context.of();
+        assertEquals(vec(1), eval(c, " - 1 + 2"));
+        assertEquals(vec(-1, -2, -3), eval(c, " - 1 2 3"));
+        assertEquals(vec(-1, 2, 3), eval(c, " -1 2 3"));
+    }
+
+    @Test
+    public void testUnaryPlus() {
+        Context c = Context.of();
+        assertEquals(vec(10), eval(c, "  + 1 2 3 4"));
+        assertEquals(vec(11), eval(c, "  + 1 2 3 4 + 1"));
+        assertEquals(vec(11), eval(c, "  1 + (+ 1 2 3 4)"));
+    }
+
+    @Test
+    public void testUnaryStar() {
+        Context c = Context.of();
+        assertEquals(vec(24), eval(c, "  * 1 2 3 4"));
+        assertEquals(vec(25), eval(c, "  * 1 2 3 4 + 1"));
     }
 
     @Test
@@ -46,6 +62,9 @@ public class TestParser {
         assertEquals(vec(3, 5, 7), eval(c, " b "));
         assertEquals(Vec.NAN, eval(c, "c = 2 b 2 3 4"));
         assertEquals(vec(2, 3, 5, 7, 2, 3, 4), eval(c, " c "));
+        assertEquals(vec(-2, -3, -5, -7, -2, -3, -4), eval(c, " -c "));
+        assertEquals(Vec.NAN, eval(c, "b = 8"));
+        assertEquals(vec(2, 8, 2, 3, 4), eval(c, " c "));
     }
 
 }
