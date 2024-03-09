@@ -68,11 +68,31 @@ public class Parser {
         return Variable.of(name);
     }
 
+    void appendGet(StringBuilder sb, int ch) {
+        sb.append((char)ch);
+        get();
+    }
+
+    void integer(StringBuilder sb) {
+        if (!isDigit(ch))
+            throw new RuntimeException("Digit expected");
+        do {
+            appendGet(sb, ch);
+        } while (isDigit(ch));
+    }
+
     Expression number() {
         StringBuilder sb = new StringBuilder();
-        while (isDigit(ch)) {
-            sb.append((char)ch);
-            get();
+        integer(sb);
+        if (ch == '.') {
+            appendGet(sb, ch);
+            integer(sb);
+        }
+        if (ch == 'e' || ch == 'E') {
+            appendGet(sb, ch);
+            if (ch == '+' || ch == '-')
+                appendGet(sb, ch);
+            integer(sb);
         }
         double d = Double.parseDouble(sb.toString());
         return Vec.of(d);
