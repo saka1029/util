@@ -40,59 +40,11 @@ public class Parser {
         return false;
     }
 
-    static boolean isDigit(int ch) {
-        return ch >= '0' && ch <= '9';
-    }
-
-    static boolean isIdFirst(int ch) {
-        return ch >= 'A' && ch <= 'Z'
-            || ch >= 'a' && ch <= 'z'
-            || ch == '_'
-            || ch >= 256;
-    }
-
-    static boolean isIdRest(int ch) {
-        return isIdFirst(ch) || ch >= '0' && ch <= '9';
-    }
-
-    Expression id() {
-        StringBuilder sb = new StringBuilder();
-        while (isIdRest(ch)) {
-            sb.append((char)ch);
-            get();
-        }
-        String name = sb.toString();
-        return Variable.of(name);
-    }
-
-    void appendGet(StringBuilder sb, int ch) {
-        sb.append((char)ch);
-        get();
-    }
-
-    void integer(StringBuilder sb) {
-        if (!isDigit(ch))
-            throw new RuntimeException("Digit expected");
-        do {
-            appendGet(sb, ch);
-        } while (isDigit(ch));
-    }
-
-    Expression number() {
-        StringBuilder sb = new StringBuilder();
-        integer(sb);
-        if (ch == '.') {
-            appendGet(sb, ch);
-            integer(sb);
-        }
-        if (ch == 'e' || ch == 'E') {
-            appendGet(sb, ch);
-            if (ch == '+' || ch == '-')
-                appendGet(sb, ch);
-            integer(sb);
-        }
-        double d = Double.parseDouble(sb.toString());
-        return Vec.of(d);
+    boolean or(int... expects) {
+        for (int e : expects)
+            if (token.type() == e)
+                return true;
+        return false;
     }
 
     Expression primary() {
