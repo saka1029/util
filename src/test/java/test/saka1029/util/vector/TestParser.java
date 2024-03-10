@@ -74,6 +74,7 @@ public class TestParser {
         assertEquals(Vector.of(3), eval(c, "length 1 2 3"));
         assertEquals(Vector.of(24), eval(c, "* 1 2 3 4"));
         assertEquals(Vector.of(1, 2, 3, 4), eval(c, "iota 4"));
+        assertEquals(Vector.of(0, 1, 2, 3), eval(c, "iota 4 - 1"));
         assertEquals(Vector.of(1, 4, 9, 16), eval(c, "iota 4 ^ 2"));
         assertEquals(Vector.of(2, 4, 8, 16), eval(c, "2 ^ iota 4"));
     }
