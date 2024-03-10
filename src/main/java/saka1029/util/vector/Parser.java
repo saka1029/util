@@ -28,12 +28,16 @@ public class Parser {
         get();
     }
 
+    public static Parser of(String input) {
+        return new Parser(input);
+    }
+
     Token get() {
         return token = lexer.read();
     }
 
     boolean eat(int expected) {
-        if (token.type() == expected) {
+        if (token != null && token.type() == expected) {
             get();
             return true;
         }
@@ -58,6 +62,8 @@ public class Parser {
     }
 
     static boolean isPrime(Token token) {
+        if (token == null)
+            return false;
         return switch (token.type()) {
             case '(', 'n', 'i' -> true;
             default -> false;
@@ -89,7 +95,7 @@ public class Parser {
         while (eat('^')) {
             Expression l = e, r = factor();
             e = c -> l.eval(c).apply(
-                (a, b) -> new BigDecimal(Math.pow(a.doubleValue(), b.doubleValue())), r.eval(c));
+                (a, b) -> Vector.pow(a, b), r.eval(c));
         }
         return e;
     }
@@ -102,7 +108,7 @@ public class Parser {
                 e = c -> l.eval(c).apply((a, b) -> a.multiply(b), r.eval(c));
             } else if (eat('/')) {
                 Expression l = e, r = factor();
-                e = c -> l.eval(c).apply((a, b) -> a.divide(b), r.eval(c));
+                e = c -> l.eval(c).apply((a, b) -> Vector.divide(a, b), r.eval(c));
             } else
                 break;
         return e;

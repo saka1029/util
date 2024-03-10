@@ -1,10 +1,12 @@
 package saka1029.util.vector;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class Vector implements Expression {
+    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
     public static final Vector NaN = new Vector();
 
     private final BigDecimal[] elements;
@@ -13,10 +15,33 @@ public class Vector implements Expression {
         this.elements = elements;
     }
 
-    static Vector of(BigDecimal... elements) {
+    public static Vector of(BigDecimal... elements) {
         if (elements.length <= 0)
             throw new IllegalArgumentException("elements");
         return new Vector(elements);
+    }
+
+    public static BigDecimal number(double value) {
+        return new BigDecimal(value, MATH_CONTEXT);
+    }
+
+    public static BigDecimal number(String value) {
+        return new BigDecimal(value, MATH_CONTEXT);
+    }
+
+    public static BigDecimal divide(BigDecimal left, BigDecimal right) {
+        return left.divide(right, MATH_CONTEXT);
+    }
+
+    public static BigDecimal pow(BigDecimal left, BigDecimal right) {
+        return Vector.number(Math.pow(left.doubleValue(), right.doubleValue()));
+    }
+
+    public static Vector of(double... elements) {
+        BigDecimal[] a = Arrays.stream(elements)
+            .mapToObj(s -> number(s))
+            .toArray(BigDecimal[]::new);
+        return of(a);
     }
 
     @Override
@@ -41,25 +66,24 @@ public class Vector implements Expression {
     }
 
     public Vector apply(Binary operator, Vector right) {
-        int lSize = elements.length, rSize = elements.length;
-        BigDecimal[] n;
+        int lSize = elements.length, rSize = right.elements.length;
+        BigDecimal[] a;
         if (lSize == 1) {
-            n = new BigDecimal[rSize + 1];
-            for (int i = 0; i <= rSize; ++i)
-                n[i] = operator.apply(elements[0], right.elements[i]);
+            a = new BigDecimal[rSize];
+            for (int i = 0; i < rSize; ++i)
+                a[i] = operator.apply(elements[0], right.elements[i]);
         } else if (rSize == 1) {
-            n = new BigDecimal[lSize + 1];
-            for (int i = 0; i <= lSize; ++i)
-                n[i] = operator.apply(elements[i], right.elements[0]);
+            a = new BigDecimal[lSize];
+            for (int i = 0; i < lSize; ++i)
+                a[i] = operator.apply(elements[i], right.elements[0]);
         } else if (rSize == lSize) {
-            int size = lSize + rSize;
-            n = new BigDecimal[size];
-            for (int i = 0; i < size; ++i)
-                n[i] = operator.apply(elements[i], right.elements[i]);
+            a = new BigDecimal[lSize];
+            for (int i = 0; i < lSize; ++i)
+                a[i] = operator.apply(elements[i], right.elements[i]);
         } else
             throw new VectorException("Illegal vector length %d and %d",
                 elements.length, right.elements.length);
-        return new Vector(n);
+        return new Vector(a);
     }
     
     public Vector insert(Binary operator) {
@@ -68,6 +92,16 @@ public class Vector implements Expression {
         for (int i = 1; i < size; ++i)
             r = operator.apply(r, elements[i]);
         return new Vector(r);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(elements);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Vector v && Arrays.equals(v.elements, elements);
     }
 
     @Override

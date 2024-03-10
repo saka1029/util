@@ -9,7 +9,7 @@ public class Lexer {
         }
 
         public BigDecimal number() {
-            return new BigDecimal(string);
+            return Vector.number(string);
         }
 
         @Override
