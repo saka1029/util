@@ -66,6 +66,7 @@ public class TestParser {
         Context c = Context.of();
         assertEquals(Vector.of(-1, -2, -3), eval(c, "- 1 2 3"));
         assertEquals(Vector.of(6), eval(c, "sum 1 2 3"));
+        assertEquals(Vector.of(-6), eval(c, "sum - 1 2 3"));
         assertEquals(Vector.of(6), eval(c, "+ 1 2 3"));
         assertEquals(Vector.of(8), eval(c, "+ 1 2 3 + 2"));
         assertEquals(Vector.of(8), eval(c, "2 + + 1 2 3"));

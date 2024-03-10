@@ -10,7 +10,7 @@ import saka1029.util.vector.Lexer.Token;
  * expression = term { ( '+' | '-' ) term }
  * term       = factor { ( '*' | '/' ) factor }
  * factor     = unary { '^' factor }
- * unary      = vector | ( '-' | ID ) unary
+ * unary      = vector | UOP unary
  * vector     = primary { primary }
  * primary    = '(' expression ')' | ID | NUMBER
  */
