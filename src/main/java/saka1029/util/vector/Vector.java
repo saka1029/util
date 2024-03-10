@@ -44,8 +44,19 @@ public class Vector implements Expression {
         return of(a);
     }
 
+    public static Vector iota(int n) {
+        BigDecimal[] a = new BigDecimal[n];
+        for (int i = 0; i < n; ++i)
+            a[i] = number(i + 1);
+        return of(a);
+    }
+
     public int length() {
         return elements.length;
+    }
+
+    public BigDecimal get(int index) {
+        return elements[index];
     }
 
     @Override

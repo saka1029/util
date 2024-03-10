@@ -22,7 +22,14 @@ public class Parser {
         uops.put("sqrt", e -> c -> e.eval(c).apply(a -> a.sqrt(Vector.MATH_CONTEXT)));
         uops.put("sum", e -> c -> e.eval(c).insert((a, b) -> a.add(b)));
         uops.put("+", e -> c -> e.eval(c).insert((a, b) -> a.add(b)));
+        uops.put("*", e -> c -> e.eval(c).insert((a, b) -> a.multiply(b)));
         uops.put("length", e -> c -> Vector.of(e.eval(c).length()));
+        uops.put("iota", e -> c -> {
+            Vector v = e.eval(c);
+            if (v.length() != 1)
+                throw new VectorException("Required one argument but %d", v.length());
+            return Vector.iota(v.get(0).intValue());
+        });
     }
 
     Token token;
