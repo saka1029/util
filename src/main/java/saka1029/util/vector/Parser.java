@@ -17,8 +17,10 @@ import saka1029.util.vector.Lexer.Token;
 public class Parser {
     final Lexer lexer;
     final Map<String, Function<Expression, Expression>> uops = Map.of(
-        "-", e -> c -> e.eval(c).apply(a -> a.negate())
+        "-", e -> c -> e.eval(c).apply(a -> a.negate()),
+        "sum", e -> c -> e.eval(c).insert((a, b) -> a.add(b))
     );
+
     Token token;
 
     Parser(String input) {
@@ -39,7 +41,20 @@ public class Parser {
     }
 
     Expression primary() {
-
+        Expression e;
+        if (eat('(')) {
+            e = expression();
+            if (!eat(')'))
+                throw new VectorException("')' expected");
+        } else if (token.type() == 'i') {
+            e = Variable.of(token.string());
+            get();
+        } else if (token.type() == 'n') {
+            e = Vector.of(token.number());
+            get();
+        } else
+            throw new VectorException("Unknown token: '%s'", token.string());
+        return e;
     }
 
     static boolean isPrime(Token token) {
@@ -94,7 +109,7 @@ public class Parser {
 
     }
 
-    Expression statement() {
+    Expression expression() {
         Expression e = term();
         while (true)
             if (eat('+')) {
