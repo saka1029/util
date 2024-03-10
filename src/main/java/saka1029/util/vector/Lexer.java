@@ -4,9 +4,14 @@ import java.math.BigDecimal;
 
 public class Lexer {
     public record Token(int type, String string) {
+        public Token(int type) {
+            this(type, Character.toString(type));
+        }
+
         public BigDecimal number() {
             return new BigDecimal(string);
         }
+
         @Override
         public final String toString() {
             return "%c%s".formatted((char)type, string == null ? "" : ":" + string);
