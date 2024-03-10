@@ -109,7 +109,7 @@ public class Parser {
 
     }
 
-    Expression expression() {
+    public Expression expression() {
         Expression e = term();
         while (true)
             if (eat('+')) {
@@ -121,6 +121,18 @@ public class Parser {
             } else
                 break;
         return e;
+    }
+
+    public Expression statement() {
+        Expression e = expression();
+        if (eat('=')) {
+            if (e instanceof Variable v) {
+                Expression value = expression();
+                return c -> { c.variable(v.name, value); return Vector.NaN; };
+            } else
+                throw new VectorException("Variable expected before '='");
+        } else
+            return e;
     }
 
 }
