@@ -1,15 +1,21 @@
 package saka1029.util.vector;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Vector implements Expression {
+    public static final Vector NaN = new Vector();
+
     private final BigDecimal[] elements;
 
-    Vector(BigDecimal[] elements) {
+    Vector(BigDecimal... elements) {
         this.elements = elements;
     }
 
-    static Vector of(BigDecimal[] elements) {
+    static Vector of(BigDecimal... elements) {
+        if (elements.length <= 0)
+            throw new IllegalArgumentException("elements");
         return new Vector(elements);
     }
 
@@ -27,6 +33,11 @@ public class Vector implements Expression {
     }
 
     public Vector apply(Unary operator) {
+        int size = elements.length;
+        BigDecimal[] r = new BigDecimal[size];
+        for (int i = 0; i < size; ++i)
+            r[i] = operator.apply(elements[i]);
+        return new Vector(r);
     }
 
     public Vector apply(Binary operator, Vector right) {
@@ -46,11 +57,23 @@ public class Vector implements Expression {
             for (int i = 0; i < size; ++i)
                 n[i] = operator.apply(elements[i], right.elements[i]);
         } else
-            throw new VectorException("Illegal vector length %d : %d",
+            throw new VectorException("Illegal vector length %d and %d",
                 elements.length, right.elements.length);
         return new Vector(n);
     }
     
     public Vector insert(Binary operator) {
+        int size = elements.length;
+        BigDecimal r = elements[0];
+        for (int i = 1; i < size; ++i)
+            r = operator.apply(r, elements[i]);
+        return new Vector(r);
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.stream(elements)
+            .map(e -> e.toString())
+            .collect(Collectors.joining(" "));
     }
 }
