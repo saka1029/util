@@ -40,6 +40,10 @@ public class TestParser {
         return Vector.pow(num(a), num(b));
     }
 
+    static BigDecimal sqrt(double a) {
+        return num(a).sqrt(Vector.MATH_CONTEXT);
+    }
+
     @Test
     public void testTerm() {
         Context c = Context.of();
@@ -55,6 +59,18 @@ public class TestParser {
         assertEquals(Vector.of(1, 4, 9), eval(c, "1 2 3 ^ 2"));
         assertEquals(Vector.of(pow(1,0.5), pow(2,0.5), pow(3,0.5)), eval(c, "1 2 3 ^ 0.5"));
         assertEquals(Vector.of(2, 4, 8), eval(c, "2 ^ 1 2 3"));
+    }
+
+    @Test
+    public void testUnary() {
+        Context c = Context.of();
+        assertEquals(Vector.of(-1, -2, -3), eval(c, "- 1 2 3"));
+        assertEquals(Vector.of(6), eval(c, "sum 1 2 3"));
+        assertEquals(Vector.of(6), eval(c, "+ 1 2 3"));
+        assertEquals(Vector.of(8), eval(c, "+ 1 2 3 + 2"));
+        assertEquals(Vector.of(8), eval(c, "2 + + 1 2 3"));
+        assertEquals(Vector.of(sqrt(1), sqrt(2), sqrt(3)), eval(c, "sqrt 1 2 3"));
+        assertEquals(Vector.of(3), eval(c, "length 1 2 3"));
     }
 
 }

@@ -113,7 +113,7 @@ public class Lexer {
             case '^':
                 int t = ch;
                 get();
-                return new Token(t, null);
+                return new Token(t);
             default:
                 if (isDigit(ch))
                     return number();

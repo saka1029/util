@@ -1,6 +1,6 @@
 package saka1029.util.vector;
 
-import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import saka1029.util.vector.Lexer.Token;
@@ -16,10 +16,14 @@ import saka1029.util.vector.Lexer.Token;
  */
 public class Parser {
     final Lexer lexer;
-    final Map<String, Function<Expression, Expression>> uops = Map.of(
-        "-", e -> c -> e.eval(c).apply(a -> a.negate()),
-        "sum", e -> c -> e.eval(c).insert((a, b) -> a.add(b))
-    );
+    static final Map<String, Function<Expression, Expression>> uops = new HashMap<>();
+    static {
+        uops.put("-", e -> c -> e.eval(c).apply(a -> a.negate()));
+        uops.put("sqrt", e -> c -> e.eval(c).apply(a -> a.sqrt(Vector.MATH_CONTEXT)));
+        uops.put("sum", e -> c -> e.eval(c).insert((a, b) -> a.add(b)));
+        uops.put("+", e -> c -> e.eval(c).insert((a, b) -> a.add(b)));
+        uops.put("length", e -> c -> Vector.of(e.eval(c).length()));
+    }
 
     Token token;
 
@@ -82,7 +86,7 @@ public class Parser {
     Expression unary() {
         int type = token.type();
         String name = token.string();
-        if ((type == '-' || type == 'i') && uops.containsKey(name)) {
+        if (uops.containsKey(name)) {
             get();
             Expression e = unary();
             return uops.get(name).apply(e);

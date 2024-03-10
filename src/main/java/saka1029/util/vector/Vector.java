@@ -44,6 +44,10 @@ public class Vector implements Expression {
         return of(a);
     }
 
+    public int length() {
+        return elements.length;
+    }
+
     @Override
     public Vector eval(Context context) {
         return this;
