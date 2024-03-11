@@ -28,7 +28,8 @@ public class Vector implements Expression {
     }
 
     public static BigDecimal number(String value) {
-        return new BigDecimal(value, MATH_CONTEXT);
+        // MathContextが無い点に注意。あると大きい桁数の場合、有効桁34桁に丸められてしまう。
+        return new BigDecimal(value);
     }
 
     public static BigDecimal divide(BigDecimal left, BigDecimal right) {

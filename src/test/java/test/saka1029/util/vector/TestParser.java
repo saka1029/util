@@ -83,6 +83,10 @@ public class TestParser {
         assertEquals(Vector.of(2, 4, 8, 16), eval(c, "2 ^ iota 4"));
         assertEquals(Vector.of(div(55,10)), eval(c, "ave iota 10"));
         assertEquals(Vector.of(2432902008176640000D), eval(c, "* iota 20"));
+        assertEquals(Vector.of(new BigDecimal("93326215443944152681699238"
+            + "85626670049071596826438162146859296389521759999"
+            + "32299156089414639761565182862536979208272237582"
+            + "51185210916864000000000000000000000000")), eval(c, "* iota 100"));
     }
 
     @Test

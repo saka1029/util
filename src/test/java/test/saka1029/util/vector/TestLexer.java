@@ -3,6 +3,8 @@ package test.saka1029.util.vector;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import org.junit.Test;
 import saka1029.util.vector.Lexer;
 import saka1029.util.vector.Lexer.Token;
@@ -27,6 +29,18 @@ public class TestLexer {
         assertFalse(Character.isAlphabetic('3'));
         assertFalse(Character.isAlphabetic('３'));
         assertFalse(Character.isAlphabetic('．'));
+    }
+
+    static BigDecimal num(double value) {
+        return new BigDecimal(value, MathContext.DECIMAL128);
+    }
+    @Test
+    public void testBigDecimal() {
+        assertEquals("123456", num(123456).toString());
+        assertEquals("9.740826547200000282107043858559297032629610129675762450907755551910",
+            num(1.23456).multiply(num(7.89012)).toString());
+        assertEquals("0.3333333333333333333333333333333333",
+            num(1).divide(num(3), MathContext.DECIMAL128).toString());
     }
 
     static String lex(String input) {
