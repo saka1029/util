@@ -101,6 +101,8 @@ public class Parser {
     }
 
     Expression unary() {
+        if (token == null)
+            throw new VectorException("Unexpected end");
         String name = token.string();
         if (uops.containsKey(name)) {
             get();

@@ -1,11 +1,13 @@
 package test.saka1029.util.vector;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import org.junit.Test;
 import saka1029.util.vector.Context;
 import saka1029.util.vector.Parser;
 import saka1029.util.vector.Vector;
+import saka1029.util.vector.VectorException;
 
 public class TestParser {
 
@@ -89,6 +91,17 @@ public class TestParser {
         assertEquals(Vector.NaN, eval(c, "a = iota 4"));
         assertEquals(Vector.of(div(10,4)), eval(c, "+ a / length a"));
         assertEquals(Vector.of(div(10,4)), eval(c, "+ iota 4 / length iota 4"));
+    }
+
+    @Test
+    public void testException() {
+        Context c = Context.of();
+        try {
+            eval(c, "3 + ");
+            fail();
+        } catch (VectorException e) {
+            assertEquals("Unexpected end", e.getMessage());
+        }
     }
 
 }
