@@ -20,7 +20,7 @@ public class Variable implements Expression {
     public Vector eval(Context context) {
         Expression e = context.variable(name);
         if (e == null)
-            throw new VectorException("Variable '%s' not found", name);
+            throw new VectorException("Variable '%s' is not defined", name);
         return e.eval(context);
     }
 

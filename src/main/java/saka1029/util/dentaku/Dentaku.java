@@ -9,7 +9,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.Map.Entry;
 
-public class Main {
+public class Dentaku {
 
     static void help(PrintWriter out) {
         out.println("/exit    Exit program");
@@ -87,7 +87,7 @@ public class Main {
     }
 
     static void usage() {
-        System.err.printf("java %s%n", Main.class.getName());
+        System.err.printf("java %s%n", Dentaku.class.getName());
         System.exit(1);
     }
 

@@ -6,9 +6,9 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Main",
+            "name": "Dentaku",
             "request": "launch",
-            "mainClass": "saka1029.util.dentaku.Main",
+            "mainClass": "saka1029.util.dentaku.Dentaku",
             "projectName": "util"
         },
         {
