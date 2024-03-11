@@ -12,7 +12,7 @@ import saka1029.util.vector.VectorException;
 public class TestParser {
 
     static Vector eval(Context c, String input) {
-        return Parser.of(input).statement().eval(c);
+        return Parser.parse(input).eval(c);
     }
 
     @Test
@@ -101,6 +101,18 @@ public class TestParser {
             fail();
         } catch (VectorException e) {
             assertEquals("Unexpected end", e.getMessage());
+        }
+        try {
+            eval(c, "");
+            fail();
+        } catch (VectorException e) {
+            assertEquals("No expression", e.getMessage());
+        }
+        try {
+            eval(c, "(1 2 3))");
+            fail();
+        } catch (VectorException e) {
+            assertEquals("Extra string ')'", e.getMessage());
         }
     }
 

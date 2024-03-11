@@ -53,6 +53,16 @@ public class Parser {
         return new Parser(input);
     }
 
+    public static Expression parse(String input) {
+        Parser parser = new Parser(input);
+        Expression e = parser.statement();
+        if (e == null)
+            throw new VectorException("No expression");
+        if (parser.token != null)
+            throw new VectorException("Extra string '%s'", parser.token.string());
+        return e;
+    }
+
     Token get() {
         return token = lexer.read();
     }
@@ -103,11 +113,11 @@ public class Parser {
     Expression unary() {
         if (token == null)
             throw new VectorException("Unexpected end");
-        String name = token.string();
-        if (uops.containsKey(name)) {
+        Function<Expression, Expression> e;
+        if ((e = uops.get(token.string())) != null) {
             get();
-            Expression e = unary();
-            return uops.get(name).apply(e);
+            Expression u = unary();
+            return e.apply(u);
         } else
             return vector();
     }
@@ -138,6 +148,8 @@ public class Parser {
     }
 
     public Expression expression() {
+        if (token == null)
+            return null;
         Expression e = term();
         while (true)
             if (eat('+')) {
@@ -152,6 +164,8 @@ public class Parser {
     }
 
     public Expression statement() {
+        if (token == null)
+            return null;
         Expression e = expression();
         if (eat('=')) {
             if (e instanceof Variable v) {
