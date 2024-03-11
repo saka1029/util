@@ -115,6 +115,7 @@ public class Lexer {
             case '%':
             case '^':
             case '=':
+            case '!':
                 int t = ch;
                 get();
                 return new Token(t);

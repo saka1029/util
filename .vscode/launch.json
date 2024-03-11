@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "saka1029.util.dentaku.Main",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
             "name": "Cal",
             "request": "launch",
             "mainClass": "saka1029.util.main.Cal",
