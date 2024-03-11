@@ -24,7 +24,7 @@ public class Dentaku {
     }
 
     static void syntax(PrintWriter out) {
-        out.println(" SYNTAX:");
+        out.println(" statement  = [ ID '=' ] expression");
         out.println(" expression = term { ( '+' | '-' ) term }");
         out.println(" term       = factor { ( '*' | '/' ) factor }");
         out.println(" factor     = unary { '^' factor }");
@@ -133,7 +133,8 @@ public class Dentaku {
         Reader input = new InputStreamReader(System.in);
         Writer output = new OutputStreamWriter(System.out);
         String prompt = "    ";
-        run(input, output, prompt);
+        // run(input, output, prompt);
+        run(prompt);
     }
 
 }

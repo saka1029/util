@@ -7,12 +7,15 @@ import saka1029.util.dentaku.Lexer.Token;
  
 /**
  * SYNTAX:
+ * <pre>
+ * statement  = [ ID '=' ] expression
  * expression = term { ( '+' | '-' ) term }
  * term       = factor { ( '*' | '/' ) factor }
  * factor     = unary { '^' factor }
  * unary      = vector | UOP unary
  * vector     = primary { primary }
  * primary    = '(' expression ')' | ID | NUMBER
+ * </pre>
  */
 public class Parser {
     final Lexer lexer;
