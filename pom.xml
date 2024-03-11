@@ -20,11 +20,11 @@
 
   <dependencies>
 
-   <dependency>
-     <groupId>org.jsoup</groupId>
-     <artifactId>jsoup</artifactId>
-     <version>1.14.3</version>
-   </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.14.3</version>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -32,17 +32,34 @@
       <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>com.itextpdf</groupId>
       <artifactId>layout</artifactId>
       <version>7.2.2</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.jline/jline-terminal -->
+    <dependency>
+        <groupId>org.jline</groupId>
+        <artifactId>jline-terminal</artifactId>
+        <version>3.25.1</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.jline/jline-reader -->
+    <dependency>
+        <groupId>org.jline</groupId>
+        <artifactId>jline-reader</artifactId>
+        <version>3.25.1</version>
+    </dependency>
+
  </dependencies>
 
   <build>
