@@ -70,6 +70,7 @@ public class TestParser {
         assertEquals(Vector.of(6), eval(c, "+ 1 2 3"));
         assertEquals(Vector.of(8), eval(c, "+ 1 2 3 + 2"));
         assertEquals(Vector.of(8), eval(c, "2 + + 1 2 3"));
+        assertEquals(Vector.of(8), eval(c, "2 + sum 1 2 3"));
         assertEquals(Vector.of(sqrt(1), sqrt(2), sqrt(3)), eval(c, "sqrt 1 2 3"));
         assertEquals(Vector.of(3), eval(c, "length 1 2 3"));
         assertEquals(Vector.of(24), eval(c, "* 1 2 3 4"));
@@ -77,7 +78,7 @@ public class TestParser {
         assertEquals(Vector.of(0, 1, 2, 3), eval(c, "iota 4 - 1"));
         assertEquals(Vector.of(1, 4, 9, 16), eval(c, "iota 4 ^ 2"));
         assertEquals(Vector.of(2, 4, 8, 16), eval(c, "2 ^ iota 4"));
-        assertEquals(Vector.of(div(10,4)), eval(c, "ave iota 4"));
+        assertEquals(Vector.of(div(55,10)), eval(c, "ave iota 10"));
         assertEquals(Vector.of(2432902008176640000D), eval(c, "* iota 20"));
     }
 
