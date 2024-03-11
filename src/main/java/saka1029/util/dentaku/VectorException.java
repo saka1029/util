@@ -1,4 +1,4 @@
-package saka1029.util.vector;
+package saka1029.util.dentaku;
 
 public class VectorException extends RuntimeException {
     public VectorException(String format, Object... arguments) {

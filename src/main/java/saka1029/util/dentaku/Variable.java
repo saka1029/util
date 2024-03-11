@@ -1,4 +1,4 @@
-package saka1029.util.vector;
+package saka1029.util.dentaku;
 
 import java.util.HashMap;
 import java.util.Map;

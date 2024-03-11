@@ -1,13 +1,13 @@
-package test.saka1029.util.vector;
+package test.saka1029.util.dentaku;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import org.junit.Test;
-import saka1029.util.vector.Context;
-import saka1029.util.vector.Parser;
-import saka1029.util.vector.Vector;
-import saka1029.util.vector.VectorException;
+import saka1029.util.dentaku.Context;
+import saka1029.util.dentaku.Parser;
+import saka1029.util.dentaku.Vector;
+import saka1029.util.dentaku.VectorException;
 
 public class TestParser {
 

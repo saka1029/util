@@ -1,4 +1,4 @@
-package test.saka1029.util.vector;
+package test.saka1029.util.dentaku;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import org.junit.Test;
-import saka1029.util.vector.Lexer;
-import saka1029.util.vector.Lexer.Token;
+import saka1029.util.dentaku.Lexer;
+import saka1029.util.dentaku.Lexer.Token;
 
 public class TestLexer {
 

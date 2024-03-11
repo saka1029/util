@@ -1,9 +1,9 @@
-package saka1029.util.vector;
+package saka1029.util.dentaku;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import saka1029.util.vector.Lexer.Token;
+import saka1029.util.dentaku.Lexer.Token;
  
 /**
  * SYNTAX:
