@@ -141,6 +141,9 @@ public class Parser {
             } else if (eat('/')) {
                 Expression l = e, r = factor();
                 e = c -> l.eval(c).apply((a, b) -> Vector.divide(a, b), r.eval(c));
+            } else if (eat('%')) {
+                Expression l = e, r = factor();
+                e = c -> l.eval(c).apply((a, b) -> Vector.remainder(a, b), r.eval(c));
             } else
                 break;
         return e;

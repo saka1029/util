@@ -53,6 +53,8 @@ public class TestParser {
         assertEquals(Vector.of(2, 4, 6), eval(c, "2 * 1 2 3"));
         assertEquals(Vector.of(div(1,1), div(1,2), div(1,3)), eval(c, "1 / 1 2 3"));
         assertEquals(Vector.of(div(3,1), div(4,2), div(5,3)), eval(c, "3 4 5 / 1 2 3"));
+        assertEquals(Vector.of(6, 0, 1), eval(c, "1000 1001 1002 % 7"));
+        assertEquals(Vector.of("2.33334", "0.00001", "1.00001"), eval(c, "9 10 11 % 3.33333"));
     }
 
     @Test

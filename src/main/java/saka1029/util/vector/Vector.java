@@ -23,6 +23,12 @@ public class Vector implements Expression {
         return new Vector(elements);
     }
 
+    public static Vector of(String... elements) {
+        return of(Arrays.stream(elements)
+            .map(s -> number(s))
+            .toArray(BigDecimal[]::new));
+    }
+
     public static BigDecimal number(double value) {
         return new BigDecimal(value, MATH_CONTEXT);
     }
@@ -34,6 +40,10 @@ public class Vector implements Expression {
 
     public static BigDecimal divide(BigDecimal left, BigDecimal right) {
         return left.divide(right, MATH_CONTEXT);
+    }
+
+    public static BigDecimal remainder(BigDecimal left, BigDecimal right) {
+        return left.remainder(right, MATH_CONTEXT);
     }
 
     public static BigDecimal pow(BigDecimal left, BigDecimal right) {
