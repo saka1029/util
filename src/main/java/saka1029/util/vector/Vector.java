@@ -3,6 +3,8 @@ package saka1029.util.vector;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
+import java.util.function.BinaryOperator;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public class Vector implements Expression {
@@ -79,7 +81,7 @@ public class Vector implements Expression {
         return new Vector(n);
     }
 
-    public Vector apply(Unary operator) {
+    public Vector apply(UnaryOperator<BigDecimal> operator) {
         int size = elements.length;
         BigDecimal[] r = new BigDecimal[size];
         for (int i = 0; i < size; ++i)
@@ -87,7 +89,7 @@ public class Vector implements Expression {
         return new Vector(r);
     }
 
-    public Vector apply(Binary operator, Vector right) {
+    public Vector apply(BinaryOperator<BigDecimal> operator, Vector right) {
         int lSize = elements.length, rSize = right.elements.length;
         BigDecimal[] a;
         if (lSize == 1) {
@@ -108,7 +110,7 @@ public class Vector implements Expression {
         return new Vector(a);
     }
     
-    public Vector insert(Binary operator) {
+    public Vector insert(BinaryOperator<BigDecimal> operator) {
         int size = elements.length;
         BigDecimal r = elements[0];
         for (int i = 1; i < size; ++i)
