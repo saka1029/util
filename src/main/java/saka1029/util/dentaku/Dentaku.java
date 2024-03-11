@@ -104,7 +104,7 @@ public class Dentaku {
             LOOP: while (true) {
                 String line = lineReader.readLine(prompt);
                 if (line == null)
-                    break;
+                    break LOOP;
                 line = line.trim();
                 switch (line) {
                     case "/exit":
