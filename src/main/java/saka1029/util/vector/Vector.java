@@ -51,6 +51,13 @@ public class Vector implements Expression {
         return of(a);
     }
 
+    public static Vector iota0(int n) {
+        BigDecimal[] a = new BigDecimal[n];
+        for (int i = 0; i < n; ++i)
+            a[i] = number(i);
+        return of(a);
+    }
+
     public int length() {
         return elements.length;
     }
