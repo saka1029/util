@@ -8,6 +8,10 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Map.Entry;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 public class Dentaku {
 
@@ -89,6 +93,39 @@ public class Dentaku {
     static void usage() {
         System.err.printf("java %s%n", Dentaku.class.getName());
         System.exit(1);
+    }
+
+    public static void run(String prompt) throws IOException {
+        try (Terminal terminal = TerminalBuilder.terminal()) {
+            LineReader lineReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .build();
+            Context context = Context.of();
+            LOOP: while (true) {
+                String line = lineReader.readLine(prompt);
+                if (line == null)
+                    break;
+                line = line.trim();
+                switch (line) {
+                    case "/exit":
+                    case "/quit":
+                        break LOOP;
+                    case "/syntax":
+                        syntax(terminal.writer());
+                        break;
+                    case "/help":
+                        help(terminal.writer());
+                        break;
+                    case "/vars":
+                        vars(terminal.writer(), context);
+                        break;
+                    default:
+                        eval(line, terminal.writer(), context);
+                        break;
+                }
+            }
+            terminal.writer().println();
+        }
     }
 
     public static void main(String[] args) throws IOException {
