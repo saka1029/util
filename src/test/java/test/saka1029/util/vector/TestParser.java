@@ -77,6 +77,16 @@ public class TestParser {
         assertEquals(Vector.of(0, 1, 2, 3), eval(c, "iota 4 - 1"));
         assertEquals(Vector.of(1, 4, 9, 16), eval(c, "iota 4 ^ 2"));
         assertEquals(Vector.of(2, 4, 8, 16), eval(c, "2 ^ iota 4"));
+        assertEquals(Vector.of(div(10,4)), eval(c, "ave iota 4"));
+        assertEquals(Vector.of(2432902008176640000D), eval(c, "* iota 20"));
+    }
+
+    @Test
+    public void testAssignment() {
+        Context c = Context.of();
+        assertEquals(Vector.NaN, eval(c, "a = iota 4"));
+        assertEquals(Vector.of(div(10,4)), eval(c, "+ a / length a"));
+        assertEquals(Vector.of(div(10,4)), eval(c, "+ iota 4 / length iota 4"));
     }
 
 }

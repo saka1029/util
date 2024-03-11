@@ -30,6 +30,10 @@ public class Parser {
                 throw new VectorException("Required one argument but %d", v.length());
             return Vector.iota(v.get(0).intValue());
         });
+        uops.put("ave", e -> c -> {
+            Vector v = e.eval(c);
+            return Vector.of(Vector.divide(v.insert((a, b) -> a.add(b)).get(0), Vector.number(v.length())));
+        });
     }
 
     Token token;
@@ -91,7 +95,6 @@ public class Parser {
     }
 
     Expression unary() {
-        int type = token.type();
         String name = token.string();
         if (uops.containsKey(name)) {
             get();

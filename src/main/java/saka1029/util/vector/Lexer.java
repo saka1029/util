@@ -14,7 +14,10 @@ public class Lexer {
 
         @Override
         public final String toString() {
-            return "%c%s".formatted((char)type, string == null ? "" : ":" + string);
+            if (Character.toString(type).equals(string))
+                return "%c".formatted((char)type);
+            else
+                return "%c:%s".formatted((char)type, string);
         }
     }
 
@@ -111,6 +114,7 @@ public class Lexer {
             case '/':
             case '%':
             case '^':
+            case '=':
                 int t = ch;
                 get();
                 return new Token(t);
