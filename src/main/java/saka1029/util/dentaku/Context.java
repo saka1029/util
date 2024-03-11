@@ -2,6 +2,8 @@ package saka1029.util.dentaku;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class Context {
     final Map<String, Expression> variables = new HashMap<>();
@@ -16,5 +18,9 @@ public class Context {
 
     public void variable(String name, Expression e) {
         variables.put(name, e);
+    }
+
+    public Set<Entry<String, Expression>> variables() {
+        return variables.entrySet();
     }
 }
