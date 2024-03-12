@@ -121,7 +121,7 @@ public class Dentaku {
             Vector v = e.eval(context);
             if (v != Vector.NaN)
                 out.println(v);
-        } catch (VectorException ex) {
+        } catch (VectorException | ArithmeticException ex) {
             out.println(ex.getMessage());
         }
     }

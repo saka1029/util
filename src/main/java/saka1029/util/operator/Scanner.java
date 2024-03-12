@@ -6,7 +6,7 @@ import java.util.Set;
 public class Scanner {
 
     public enum Type {
-        LP, RP, EQ, ID, SPECIAL, NUMBER
+        LP, RP, EQ, ID, SP, NUM
     }
 
     public record Token(Type type, String string) {
@@ -21,13 +21,12 @@ public class Scanner {
 
         @Override
         public final String toString() {
-            return type + (string == null ? "" : type + ":" + string);
+            return type + (string == null ? "" : ":" + string);
         }
     }
 
     static final Token LP = new Token(Type.LP);
     static final Token RP = new Token(Type.RP);
-    static final Token EQ = new Token(Type.EQ);
 
     final int[] input;
     int index, ch;
@@ -54,7 +53,8 @@ public class Scanner {
 
     static final Set<Integer> SPECIALS = Set.of(
         (int)'+', (int)'-', (int)'*', (int)'/', (int)'%',
-        (int)'$', (int)'&', (int)'<', (int)'>'
+        (int)'$', (int)'&', (int)'<', (int)'>', (int)'=',
+        (int)'@', (int)'!'
     );
 
     static boolean isSpecial(int ch) {
@@ -89,7 +89,7 @@ public class Scanner {
         do {
             appendGet();
         } while (isSpecial(ch));
-        return new Token(Type.SPECIAL, sb.toString());
+        return new Token(Type.SP, sb.toString());
     }
 
     Token id() {
@@ -121,7 +121,7 @@ public class Scanner {
                 appendGet();
             digits();
         }
-        return new Token(Type.NUMBER, sb.toString());
+        return new Token(Type.NUM, sb.toString());
     }
 
     public Token read() {
@@ -135,9 +135,6 @@ public class Scanner {
             case ')':
                 get();
                 return RP;
-            case '=':
-                get();
-                return EQ;
             default:
                 if (isSpecial(ch))
                     return special();

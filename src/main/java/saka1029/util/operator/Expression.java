@@ -13,9 +13,12 @@ package saka1029.util.operator;
  * NUMBER     = DIGITS [ '.' DIGITS ] [ ( 'e' | 'E' ) [ '+' | '-' ] DIGITS ]
  * UOP        = SPECIALS | ID
  * BOP        = SPECIALS | ID
- * SPECIAL    = '+' | '-' | '*' | '/' | '%' | '$' | '&' | '<' | '>'
+ * SPECIAL    = '+' | '-' | '*' | '/' | '%' | '$' | '&' | '<' | '>' | '@' | '!'
  * SPECIALS   = SPECIAL { SPECIAL }
  * VAR        = ID
+ * ID         = ID-FIRST { ID-REST }
+ * ID-FIRST   = <Character.isAlphabetic>
+ * ID-REST    = <Character.isDigit>
  * </pre>
  * 
  * <pre>
