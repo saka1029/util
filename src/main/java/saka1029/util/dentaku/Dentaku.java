@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -54,8 +55,10 @@ public class Dentaku {
 
         JlineConsole() throws IOException {
             terminal = TerminalBuilder.builder().build();
+            org.jline.reader.Parser parser = new DefaultParser().eofOnEscapedNewLine(true);
             lineReader = LineReaderBuilder.builder()
                 .terminal(terminal)
+                .parser(parser)
                 .build();
             out = terminal.writer();
         }
