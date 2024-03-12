@@ -46,17 +46,9 @@
       <version>7.2.2</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.jline/jline-terminal -->
     <dependency>
         <groupId>org.jline</groupId>
-        <artifactId>jline-terminal</artifactId>
-        <version>3.25.1</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.jline/jline-reader -->
-    <dependency>
-        <groupId>org.jline</groupId>
-        <artifactId>jline-reader</artifactId>
+        <artifactId>jline</artifactId>
         <version>3.25.1</version>
     </dependency>
 
