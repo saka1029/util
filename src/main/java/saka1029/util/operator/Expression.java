@@ -13,6 +13,8 @@ package saka1029.util.operator;
  * NUMBER     = DIGITS [ '.' DIGITS ] [ ( 'e' | 'E' ) [ '+' | '-' ] DIGITS ]
  * UOP        = SPECIALS | ID
  * BOP        = SPECIALS | ID
+ * SPECIAL    = '+' | '-' | '*' | '/' | '%' | '$' | '&' | '<' | '>'
+ * SPECIALS   = SPECIAL { SPECIAL }
  * VAR        = ID
  * </pre>
  * 
