@@ -162,7 +162,7 @@ public class Dentaku {
 
     public static void main(String[] args) throws IOException {
         // usage();
-        String prompt = "    ";
+        String prompt = "$ ";
         try (Term term = new JlineConsole()) {
             run(term, prompt);
         }
