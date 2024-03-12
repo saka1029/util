@@ -1,19 +1,84 @@
 package saka1029.util.dentaku;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.Map.Entry;
+import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 public class Dentaku {
+
+    interface Term extends Closeable {
+        String readLine(String prompt) throws IOException;
+        PrintWriter writer();
+    }
+
+    static class Console implements Term {
+        final BufferedReader in;
+        final PrintWriter out;
+
+        Console() {
+            in = new BufferedReader(new InputStreamReader(System.in));
+            out = new PrintWriter(new OutputStreamWriter(System.out));
+        }
+
+        @Override
+        public void close() throws IOException {
+            // do nothing
+        }
+
+        @Override
+        public String readLine(String prompt) throws IOException {
+            out.print(prompt);
+            out.flush();;
+            return in.readLine();
+        }
+
+        @Override
+        public PrintWriter writer() {
+            return out;
+        }
+    }
+
+    static class JlineConsole implements Term {
+        final Terminal terminal;
+        final LineReader lineReader;
+        final PrintWriter out;
+
+        JlineConsole() throws IOException {
+            terminal = TerminalBuilder.builder().build();
+            lineReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .build();
+            out = terminal.writer();
+        }
+
+        @Override
+        public void close() throws IOException {
+            terminal.close();
+        }
+
+        @Override
+        public String readLine(String prompt) throws IOException {
+            try {
+                return lineReader.readLine(prompt);
+            } catch (EndOfFileException e) {
+                return null;
+            }
+        }
+
+        @Override
+        public PrintWriter writer() {
+            return out;
+        }
+    }
 
     static void help(PrintWriter out) {
         out.println("/exit    Exit program");
@@ -58,16 +123,18 @@ public class Dentaku {
         }
     }
 
-    static void run(Reader input, Writer output, String prompt) throws IOException {
-        BufferedReader in = new BufferedReader(input);
-        PrintWriter out = new PrintWriter(output, true);
+    static void usage() {
+        System.err.printf("java %s%n", Dentaku.class.getName());
+        System.exit(1);
+    }
+
+    public static void run(Term term, String prompt) throws IOException {
+        PrintWriter out = term.writer();
         Context context = Context.of();
         LOOP: while (true) {
-            out.print(prompt);
-            out.flush();
-            String line = in.readLine();
+            String line = term.readLine(prompt);
             if (line == null)
-                break;
+                break LOOP;
             line = line.trim();
             switch (line) {
                 case "/exit":
@@ -87,54 +154,15 @@ public class Dentaku {
                     break;
             }
         }
-        out.println();
-    }
-
-    static void usage() {
-        System.err.printf("java %s%n", Dentaku.class.getName());
-        System.exit(1);
-    }
-
-    public static void run(String prompt) throws IOException {
-        try (Terminal terminal = TerminalBuilder.terminal()) {
-            LineReader lineReader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .build();
-            Context context = Context.of();
-            LOOP: while (true) {
-                String line = lineReader.readLine(prompt);
-                if (line == null)
-                    break LOOP;
-                line = line.trim();
-                switch (line) {
-                    case "/exit":
-                    case "/quit":
-                        break LOOP;
-                    case "/syntax":
-                        syntax(terminal.writer());
-                        break;
-                    case "/help":
-                        help(terminal.writer());
-                        break;
-                    case "/vars":
-                        vars(terminal.writer(), context);
-                        break;
-                    default:
-                        eval(line, terminal.writer(), context);
-                        break;
-                }
-            }
-            terminal.writer().println();
-        }
+            out.println();
     }
 
     public static void main(String[] args) throws IOException {
         // usage();
-        Reader input = new InputStreamReader(System.in);
-        Writer output = new OutputStreamWriter(System.out);
         String prompt = "    ";
-        // run(input, output, prompt);
-        run(prompt);
+        try (Term term = new JlineConsole()) {
+            run(term, prompt);
+        }
     }
 
 }
