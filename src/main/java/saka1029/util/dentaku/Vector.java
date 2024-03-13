@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
 import java.util.function.BinaryOperator;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -57,17 +58,10 @@ public class Vector implements Expression {
         return of(a);
     }
 
-    public static Vector iota(int n) {
+    public static Vector iota(int n, int offset) {
         BigDecimal[] a = new BigDecimal[n];
         for (int i = 0; i < n; ++i)
-            a[i] = number(i + 1);
-        return of(a);
-    }
-
-    public static Vector iota0(int n) {
-        BigDecimal[] a = new BigDecimal[n];
-        for (int i = 0; i < n; ++i)
-            a[i] = number(i);
+            a[i] = number(i + offset);
         return of(a);
     }
 
@@ -90,6 +84,10 @@ public class Vector implements Expression {
         System.arraycopy(elements, 0, n, 0, lSize);
         System.arraycopy(right.elements, 0, n, lSize, rSize);
         return new Vector(n);
+    }
+
+    public static UnaryOperator<BigDecimal> unaryDouble(DoubleUnaryOperator operator) {
+        return b -> number(operator.applyAsDouble(b.doubleValue()));
     }
 
     public Vector apply(UnaryOperator<BigDecimal> operator) {

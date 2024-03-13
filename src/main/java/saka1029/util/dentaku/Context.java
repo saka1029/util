@@ -9,7 +9,10 @@ public class Context {
     final Map<String, Expression> variables = new HashMap<>();
 
     public static Context of() {
-        return new Context();
+        Context context = new Context();
+        context.variables.put("pi", c -> Vector.of(Math.PI));
+        context.variables.put("e", c -> Vector.of(Math.E));
+        return context;
     }
 
     public Expression variable(String name) {

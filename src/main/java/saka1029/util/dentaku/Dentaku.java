@@ -158,7 +158,7 @@ public class Dentaku {
                     break;
             }
         }
-            out.println();
+        out.println();
     }
 
     public static void main(String[] args) throws IOException {
@@ -168,5 +168,4 @@ public class Dentaku {
             run(term, prompt);
         }
     }
-
 }
