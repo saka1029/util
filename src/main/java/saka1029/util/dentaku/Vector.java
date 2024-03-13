@@ -86,6 +86,14 @@ public class Vector implements Expression {
         return new Vector(n);
     }
 
+    public Vector reverse() {
+        int size = elements.length;
+        BigDecimal[] n = new BigDecimal[size];
+        for (int i = 0, j = size - 1; i < size; ++i, --j)
+            n[j] = elements[i];
+        return new Vector(n);
+    }
+
     public static UnaryOperator<BigDecimal> unaryDouble(DoubleUnaryOperator operator) {
         return b -> number(operator.applyAsDouble(b.doubleValue()));
     }

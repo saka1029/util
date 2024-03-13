@@ -34,6 +34,7 @@ public class Parser {
         uops.put("+", e -> c -> e.eval(c).insert((a, b) -> a.add(b)));
         uops.put("*", e -> c -> e.eval(c).insert((a, b) -> a.multiply(b)));
         uops.put("length", e -> c -> Vector.of(e.eval(c).length()));
+        uops.put("reverse", e -> c -> e.eval(c).reverse());
         uops.put("iota", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 1));
         uops.put("iota0", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 0));
         uops.put("ave", e -> c -> {
