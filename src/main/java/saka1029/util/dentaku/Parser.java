@@ -1,9 +1,11 @@
 package saka1029.util.dentaku;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import saka1029.util.dentaku.Lexer.Token;
+import saka1029.util.dentaku.Lexer.Type;
  
 /**
  * SYNTAX:
@@ -18,7 +20,6 @@ import saka1029.util.dentaku.Lexer.Token;
  * </pre>
  */
 public class Parser {
-    final Lexer lexer;
     static final Map<String, Function<Expression, Expression>> uops = new HashMap<>();
     static {
         uops.put("-", e -> c -> e.eval(c).apply(a -> a.negate()));
@@ -45,10 +46,13 @@ public class Parser {
         });
     }
 
+    final List<Token> tokens;
+    int index;
     Token token;
 
     Parser(String input) {
-        lexer = Lexer.of(input);
+        this.tokens = Lexer.of(input).tokens();
+        this.index = 0;
         get();
     }
 
@@ -61,17 +65,17 @@ public class Parser {
         Expression e = parser.statement();
         if (e == null)
             throw new VectorException("No expression");
-        if (parser.token != null)
+        if (parser.token != Token.END)
             throw new VectorException("Extra string '%s'", parser.token.string());
         return e;
     }
 
     Token get() {
-        return token = lexer.read();
+        return token = index < tokens.size() ? tokens.get(index++) : Token.END;
     }
 
-    boolean eat(int expected) {
-        if (token != null && token.type() == expected) {
+    boolean eat(Token expected) {
+        if (token == expected) {
             get();
             return true;
         }
@@ -80,14 +84,14 @@ public class Parser {
 
     Expression primary() {
         Expression e;
-        if (eat('(')) {
+        if (eat(Token.LP)) {
             e = expression();
-            if (!eat(')'))
+            if (!eat(Token.RP))
                 throw new VectorException("')' expected");
-        } else if (token.type() == 'i') {
+        } else if (token.type() == Type.ID) {
             e = Variable.of(token.string());
             get();
-        } else if (token.type() == 'n') {
+        } else if (token.type() == Type.NUMBER) {
             e = Vector.of(token.number());
             get();
         } else
@@ -96,12 +100,12 @@ public class Parser {
     }
 
     static boolean isPrime(Token token) {
-        if (token == null)
+        if (token == Token.LP)
+            return true;
+        else if (token.type() == Type.ID || token.type() == Type.NUMBER)
+            return true;
+        else
             return false;
-        return switch (token.type()) {
-            case '(', 'n', 'i' -> true;
-            default -> false;
-        };
     }
 
     Expression vector() {
@@ -114,7 +118,7 @@ public class Parser {
     }
 
     Expression unary() {
-        if (token == null)
+        if (token == Token.END)
             throw new VectorException("Unexpected end");
         Function<Expression, Expression> e;
         if ((e = uops.get(token.string())) != null) {
@@ -127,7 +131,7 @@ public class Parser {
 
     Expression factor() {
         Expression e = unary();
-        while (eat('^')) {
+        while (eat(Token.CARET)) {
             Expression l = e, r = factor();
             e = c -> l.eval(c).apply(
                 (a, b) -> Vector.pow(a, b), r.eval(c));
@@ -138,13 +142,13 @@ public class Parser {
     Expression term() {
         Expression e = factor();
         while (true)
-            if (eat('*')) {
+            if (eat(Token.STAR)) {
                 Expression l = e, r = factor();
                 e = c -> l.eval(c).apply((a, b) -> a.multiply(b), r.eval(c));
-            } else if (eat('/')) {
+            } else if (eat(Token.SLASH)) {
                 Expression l = e, r = factor();
                 e = c -> l.eval(c).apply((a, b) -> Vector.divide(a, b), r.eval(c));
-            } else if (eat('%')) {
+            } else if (eat(Token.PERCENT)) {
                 Expression l = e, r = factor();
                 e = c -> l.eval(c).apply((a, b) -> Vector.remainder(a, b), r.eval(c));
             } else
@@ -154,14 +158,14 @@ public class Parser {
     }
 
     public Expression expression() {
-        if (token == null)
+        if (token == Token.END)
             return null;
         Expression e = term();
         while (true)
-            if (eat('+')) {
+            if (eat(Token.PLUS)) {
                 Expression l = e, r = term();
                 e = c -> l.eval(c).apply((a, b) -> a.add(b), r.eval(c));
-            } else if (eat('-')) {
+            } else if (eat(Token.MINUS)) {
                 Expression l = e, r = term();
                 e = c -> l.eval(c).apply((a, b) -> a.subtract(b), r.eval(c));
             } else
@@ -170,10 +174,10 @@ public class Parser {
     }
 
     public Expression statement() {
-        if (token == null)
+        if (token == Token.END)
             return null;
         Expression e = expression();
-        if (eat('=')) {
+        if (eat(Token.EQ)) {
             if (e instanceof Variable v) {
                 Expression value = expression();
                 return c -> { c.variable(v.name, value); return Vector.NaN; };

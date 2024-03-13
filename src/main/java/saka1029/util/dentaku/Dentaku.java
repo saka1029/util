@@ -111,7 +111,7 @@ public class Dentaku {
                 } catch (VectorException ex) {
                     value = ex.getMessage();
                 }
-                out.printf("%s -> %s%n", e.getKey(), value);
+                out.printf("%s = %s%n", e.getKey(), value);
             });
     }
 
@@ -134,22 +134,23 @@ public class Dentaku {
     public static void run(Term term, String prompt) throws IOException {
         PrintWriter out = term.writer();
         Context context = Context.of();
+        out.println("Type '.help' to get help");
         LOOP: while (true) {
             String line = term.readLine(prompt);
             if (line == null)
                 break LOOP;
             line = line.trim();
             switch (line) {
-                case "/exit":
-                case "/quit":
+                case ".exit":
+                case ".quit":
                     break LOOP;
-                case "/syntax":
+                case ".syntax":
                     syntax(out);
                     break;
-                case "/help":
+                case ".help":
                     help(out);
                     break;
-                case "/vars":
+                case ".vars":
                     vars(out, context);
                     break;
                 default:

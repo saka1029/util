@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import saka1029.util.dentaku.Lexer;
 import saka1029.util.dentaku.Lexer.Token;
@@ -44,20 +45,17 @@ public class TestLexer {
     }
 
     static String lex(String input) {
-        Lexer l = Lexer.of(input);
-        StringBuilder sb = new StringBuilder();
-        Token t;
-        while ((t = l.read()) != null)
-            sb.append(" ").append(t);
-        return sb.substring(1);
+        return Lexer.of(input).tokens().stream()
+            .map(t -> t.toString())
+            .collect(Collectors.joining(" "));
     }
 
     @Test
     public void testRead() {
-        assertEquals("( n:1 + n:234 )", lex("  ( 1 + 234 )"));
-        assertEquals("n:234.30e-3", lex("234.30e-3"));
+        assertEquals("( NUMBER:1 + NUMBER:234 )", lex("  ( 1 + 234 )"));
+        assertEquals("NUMBER:234.30e-3", lex("234.30e-3"));
         assertEquals("+ - * / % ^", lex("+-*/%^"));
-        assertEquals("i:漢字 i:𩸽２", lex(" 漢字  𩸽２  "));
+        assertEquals("ID:漢字 ID:𩸽２", lex(" 漢字  𩸽２  "));
     }
 
 }

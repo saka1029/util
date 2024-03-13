@@ -1,12 +1,27 @@
 package saka1029.util.dentaku;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Lexer {
-    public record Token(int type, String string) {
-        public Token(int type) {
-            this(type, Character.toString(type));
-        }
+
+    public enum Type {
+        NUMBER, ID, OTHER
+    }
+
+    public record Token(Type type, String string) {
+
+        public static final Token END = new Token(Type.OTHER, "*END*");
+        public static final Token LP = new Token(Type.OTHER, "(");
+        public static final Token RP = new Token(Type.OTHER, ")");
+        public static final Token PLUS = new Token(Type.OTHER, "+");
+        public static final Token MINUS = new Token(Type.OTHER, "-");
+        public static final Token STAR = new Token(Type.OTHER, "*");
+        public static final Token SLASH = new Token(Type.OTHER, "/");
+        public static final Token PERCENT = new Token(Type.OTHER, "%");
+        public static final Token CARET = new Token(Type.OTHER, "^");
+        public static final Token EQ = new Token(Type.OTHER, "=");
 
         public BigDecimal number() {
             return Vector.number(string);
@@ -14,10 +29,10 @@ public class Lexer {
 
         @Override
         public final String toString() {
-            if (Character.toString(type).equals(string))
-                return "%c".formatted((char)type);
+            if (type == Type.OTHER)
+                return string;
             else
-                return "%c:%s".formatted((char)type, string);
+                return "%s:%s".formatted(type, string);
         }
     }
 
@@ -91,34 +106,48 @@ public class Lexer {
                 appendGet();
             digit();
         }
-        return new Token('n', sb.toString());
+        return new Token(Type.NUMBER, sb.toString());
     }
 
     Token id() {
         clear();
         while (isIdRest(ch))
             appendGet();
-        return new Token('i', sb.toString());
+        return new Token(Type.ID, sb.toString());
     }
 
     public Token read() {
         spaces();
-        if (ch == -1)
-            return null;
         switch (ch) {
+            case -1:
+                return Token.END;
             case '(':
-            case ')':
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-            case '%':
-            case '^':
-            case '=':
-            case '!':
-                int t = ch;
                 get();
-                return new Token(t);
+                return Token.LP;
+            case ')':
+                get();
+                return Token.RP;
+            case '+':
+                get();
+                return Token.PLUS;
+            case '-':
+                get();
+                return Token.MINUS;
+            case '*':
+                get();
+                return Token.STAR;
+            case '/':
+                get();
+                return Token.SLASH;
+            case '%':
+                get();
+                return Token.PERCENT;
+            case '^':
+                get();
+                return Token.CARET;
+            case '=':
+                get();
+                return Token.EQ;
             default:
                 if (isDigit(ch))
                     return number();
@@ -127,5 +156,13 @@ public class Lexer {
                 else
                     throw new VectorException("Unknown char 0x%02X", ch);
         }
+    }
+
+    public List<Token> tokens() {
+        List<Token> tokens = new ArrayList<>();
+        Token token;
+        while ((token = read()) != Token.END)
+            tokens.add(token);
+        return tokens;
     }
 }
