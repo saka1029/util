@@ -1,12 +1,14 @@
 package saka1029.util.operator;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class Scanner {
 
     public enum Type {
-        LP, RP, EQ, ID, SP, NUM
+        END, LP, RP, ID, SPECIAL, NUM
     }
 
     public record Token(Type type, String string) {
@@ -14,6 +16,10 @@ public class Scanner {
         public Token(Type type) {
             this(type, null);
         }
+
+        public static final Token END = new Token(Type.END);
+        public static final Token LP = new Token(Type.LP);
+        public static final Token RP = new Token(Type.RP);
 
         public BigDecimal number() {
             return Value.number(string);
@@ -24,9 +30,6 @@ public class Scanner {
             return type + (string == null ? "" : ":" + string);
         }
     }
-
-    static final Token LP = new Token(Type.LP);
-    static final Token RP = new Token(Type.RP);
 
     final int[] input;
     int index, ch;
@@ -89,7 +92,7 @@ public class Scanner {
         do {
             appendGet();
         } while (isSpecial(ch));
-        return new Token(Type.SP, sb.toString());
+        return new Token(Type.SPECIAL, sb.toString());
     }
 
     Token id() {
@@ -128,13 +131,13 @@ public class Scanner {
         spaces();
         switch (ch) {
             case -1:
-                return null;
+                return Token.END;
             case '(':
                 get();
-                return LP;
+                return Token.LP;
             case ')':
                 get();
-                return RP;
+                return Token.RP;
             default:
                 if (isSpecial(ch))
                     return special();
@@ -145,5 +148,13 @@ public class Scanner {
                 else
                     throw new OperatorException("Unknown char 0x%04x", ch);
         }
+    }
+
+    public List<Token> tokens() {
+        List<Token> tokens = new ArrayList<>();
+        Token t;
+        while ((t = read()) != Token.END)
+            tokens.add(t);
+        return tokens;
     }
 }
