@@ -8,7 +8,6 @@ import java.math.MathContext;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import saka1029.util.dentaku.Lexer;
-import saka1029.util.dentaku.Lexer.Token;
 
 public class TestLexer {
 
