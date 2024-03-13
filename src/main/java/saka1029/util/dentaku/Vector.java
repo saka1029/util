@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
 import java.util.function.BinaryOperator;
-import java.util.function.DoubleUnaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -94,8 +93,10 @@ public class Vector implements Expression {
         return new Vector(n);
     }
 
-    public static UnaryOperator<BigDecimal> unaryDouble(DoubleUnaryOperator operator) {
-        return b -> number(operator.applyAsDouble(b.doubleValue()));
+    public Vector sort() {
+        BigDecimal[] n = Arrays.copyOf(elements, elements.length);
+        Arrays.sort(n);
+        return new Vector(n);
     }
 
     public Vector apply(UnaryOperator<BigDecimal> operator) {

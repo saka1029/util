@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import saka1029.util.dentaku.Lexer.Token;
 import saka1029.util.dentaku.Lexer.Type;
  
@@ -22,12 +24,18 @@ import saka1029.util.dentaku.Lexer.Type;
  */
 public class Parser {
     static final Map<String, Function<Expression, Expression>> uops = new HashMap<>();
+
     static Vector evalOne(Expression e, Context c) {
         Vector v = e.eval(c);
         if (v.length() != 1)
             throw new VectorException("Required one argument but %d", v.length());
         return v;
     }
+
+    public static UnaryOperator<BigDecimal> unaryDouble(DoubleUnaryOperator operator) {
+        return b -> Vector.number(operator.applyAsDouble(b.doubleValue()));
+    }
+
     static {
         uops.put("-", e -> c -> e.eval(c).apply(a -> a.negate()));
         uops.put("sum", e -> c -> e.eval(c).insert((a, b) -> a.add(b)));
@@ -35,6 +43,7 @@ public class Parser {
         uops.put("*", e -> c -> e.eval(c).insert((a, b) -> a.multiply(b)));
         uops.put("length", e -> c -> Vector.of(e.eval(c).length()));
         uops.put("reverse", e -> c -> e.eval(c).reverse());
+        uops.put("sort", e -> c -> e.eval(c).sort());
         uops.put("iota", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 1));
         uops.put("iota0", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 0));
         uops.put("ave", e -> c -> {
@@ -43,14 +52,14 @@ public class Parser {
         });
         uops.put("sqrt", e -> c -> e.eval(c).apply(a -> a.sqrt(Vector.MATH_CONTEXT)));
         uops.put("abs", e -> c -> e.eval(c).apply(BigDecimal::abs));
-        uops.put("sin", e -> c -> e.eval(c).apply(Vector.unaryDouble(Math::sin)));
-        uops.put("asin", e -> c -> e.eval(c).apply(Vector.unaryDouble(Math::asin)));
-        uops.put("cos", e -> c -> e.eval(c).apply(Vector.unaryDouble(Math::cos)));
-        uops.put("acos", e -> c -> e.eval(c).apply(Vector.unaryDouble(Math::acos)));
-        uops.put("tan", e -> c -> e.eval(c).apply(Vector.unaryDouble(Math::tan)));
-        uops.put("atan", e -> c -> e.eval(c).apply(Vector.unaryDouble(Math::atan)));
-        uops.put("log", e -> c -> e.eval(c).apply(Vector.unaryDouble(Math::log)));
-        uops.put("log10", e -> c -> e.eval(c).apply(Vector.unaryDouble(Math::log10)));
+        uops.put("sin", e -> c -> e.eval(c).apply(unaryDouble(Math::sin)));
+        uops.put("asin", e -> c -> e.eval(c).apply(unaryDouble(Math::asin)));
+        uops.put("cos", e -> c -> e.eval(c).apply(unaryDouble(Math::cos)));
+        uops.put("acos", e -> c -> e.eval(c).apply(unaryDouble(Math::acos)));
+        uops.put("tan", e -> c -> e.eval(c).apply(unaryDouble(Math::tan)));
+        uops.put("atan", e -> c -> e.eval(c).apply(unaryDouble(Math::atan)));
+        uops.put("log", e -> c -> e.eval(c).apply(unaryDouble(Math::log)));
+        uops.put("log10", e -> c -> e.eval(c).apply(unaryDouble(Math::log10)));
     }
 
     final List<Token> tokens;
