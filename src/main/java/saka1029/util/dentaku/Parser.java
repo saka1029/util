@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import saka1029.util.dentaku.Lexer.Token;
 import saka1029.util.dentaku.Lexer.Type;
@@ -23,7 +22,7 @@ import saka1029.util.dentaku.Lexer.Type;
  * </pre>
  */
 public class Parser {
-    static final Map<String, Function<Expression, Expression>> uops = new HashMap<>();
+    static final Map<String, UnaryOperator<Expression>> uops = new HashMap<>();
 
     static Vector evalOne(Expression e, Context c) {
         Vector v = e.eval(c);
@@ -136,7 +135,7 @@ public class Parser {
     Expression unary() {
         if (token == Token.END)
             throw new VectorException("Unexpected end");
-        Function<Expression, Expression> e;
+        UnaryOperator<Expression> e;
         if ((e = uops.get(token.string())) != null) {
             get();
             Expression u = unary();
