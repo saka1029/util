@@ -107,6 +107,16 @@ public class TestParser {
     }
 
     @Test
+    public void testDefineUnary() {
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
+        assertEquals(Vector.NaN, eval(c, "average x = + x / length x"));
+        assertEquals(Vector.of(5.5), eval(c, "average iota 10"));
+        assertEquals(Vector.NaN, eval(c, "ave x = average x"));
+        assertEquals(Vector.of(5.5), eval(c, "ave iota 10"));
+    }
+
+    @Test
     public void testException() {
         Operators ops = Operators.of();
         Context c = Context.of(ops);

@@ -15,7 +15,7 @@ public class UnaryCall implements UnaryOperator<Expression> {
     public Expression apply(Expression t) {
         return c -> {
             Context child = c.child();
-            child.variable(variable, t);
+            child.variable(variable, x -> t.eval(c));
             return body.eval(child);
         };
     }

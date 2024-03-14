@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map.Entry;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -131,10 +134,27 @@ public class Dentaku {
         System.exit(1);
     }
 
+    static final String CONFIG_FILE = "config.txt";
+    static void initContext(Context context) {
+        String filepath = Dentaku.class.getResource(CONFIG_FILE).getPath();
+        Path path = Paths.get(filepath); // java.nio.file.InvalidPathException
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Expression e = Parser.parse(context.operators(), line);
+                e.eval(context);
+            }
+        } catch (IOException | VectorException e) {
+            System.err.println(e);
+            System.exit(1);
+        }
+    }
+
     public static void run(Term term, String prompt) throws IOException {
         PrintWriter out = term.writer();
         Operators ops = Operators.of();
         Context context = Context.of(ops);
+        initContext(context);
         out.println("Type '.help' to get help");
         LOOP: while (true) {
             String line = term.readLine(prompt);

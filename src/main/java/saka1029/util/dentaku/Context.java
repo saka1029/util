@@ -9,22 +9,20 @@ import java.util.Set;
 public class Context {
     final Context parent;
     final Map<String, Expression> variables = new HashMap<>();
-    final Operators ops;
+    final Operators operators;
 
     Context(Operators ops) {
-        this.ops = ops;
+        this.operators = ops;
         this.parent = null;
     }
 
     Context(Context parent) {
-        this.ops = parent.ops;
+        this.operators = parent.operators;
         this.parent = parent;
     }
 
     public static Context of(Operators ops) {
         Context context = new Context(ops);
-        context.variables.put("pi", c -> Vector.of(Math.PI));
-        context.variables.put("e", c -> Vector.of(Math.E));
         return context;
     }
 
@@ -39,6 +37,7 @@ public class Context {
 
     public void variable(String name, Expression e) {
         variables.put(name, e);
+        operators.unary(name, null);
     }
 
     public Set<Entry<String, Expression>> variables() {
@@ -46,14 +45,15 @@ public class Context {
     }
 
     public Operators operators() {
-        return ops;
+        return operators;
     }
 
     public UnaryOperator<Expression> unary(String name) {
-        return ops.unary(name);
+        return operators.unary(name);
     }
 
     public void unary(String name, UnaryOperator<Expression> body) {
-        ops.unary(name, body);
+        operators.unary(name, body);
+        variables.put(name, null);
     }
 }
