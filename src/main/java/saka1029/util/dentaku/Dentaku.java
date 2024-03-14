@@ -87,11 +87,12 @@ public class Dentaku {
     }
 
     static void help(PrintWriter out) {
-        out.println("/exit    Exit program");
-        out.println("/help    Show available commands");
-        out.println("/syntax  Show expression syntax");
-        out.println("/vars    Show variables");
-        out.println("/quit    Quit program");
+        out.println(".exit    Exit program");
+        out.println(".help    Show available commands");
+        out.println(".syntax  Show expression syntax");
+        out.println(".vars    Show variables");
+        out.println(".unary   Show unary operators");
+        out.println(".quit    Quit program");
     }
 
     static void syntax(PrintWriter out) {
@@ -118,6 +119,12 @@ public class Dentaku {
             });
     }
 
+    static void unary(PrintWriter out, Context context) {
+        context.operators().names().stream()
+            .sorted()
+            .forEach(e -> out.printf("%s%n", e));
+    }
+
     static void eval(String line, PrintWriter out, Context context) {
         try {
             Expression e = Parser.parse(context.operators(), line);
@@ -141,6 +148,8 @@ public class Dentaku {
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             String line;
             while ((line = reader.readLine()) != null) {
+                if (line.trim().startsWith("#"))
+                    continue;
                 Expression e = Parser.parse(context.operators(), line);
                 e.eval(context);
             }
@@ -161,6 +170,8 @@ public class Dentaku {
             if (line == null)
                 break LOOP;
             line = line.trim();
+            if (line.startsWith("#"))
+                continue LOOP;
             switch (line) {
                 case ".exit":
                 case ".quit":
@@ -173,6 +184,9 @@ public class Dentaku {
                     break;
                 case ".vars":
                     vars(out, context);
+                    break;
+                case ".unary":
+                    unary(out, context);
                     break;
                 default:
                     eval(line, out, context);

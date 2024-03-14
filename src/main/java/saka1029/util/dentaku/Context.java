@@ -37,7 +37,7 @@ public class Context {
 
     public void variable(String name, Expression e) {
         variables.put(name, e);
-        operators.unary(name, null);
+        operators.unaryOperators.remove(name);
     }
 
     public Set<Entry<String, Expression>> variables() {
@@ -54,6 +54,6 @@ public class Context {
 
     public void unary(String name, UnaryOperator<Expression> body) {
         operators.unary(name, body);
-        variables.put(name, null);
+        variables.remove(name);
     }
 }
