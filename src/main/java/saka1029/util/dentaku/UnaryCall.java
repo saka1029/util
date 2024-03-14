@@ -14,8 +14,9 @@ public class UnaryCall implements UnaryOperator<Expression> {
     @Override
     public Expression apply(Expression t) {
         return c -> {
+            Vector v = t.eval(c);
             Context child = c.child();
-            child.variable(variable, x -> t.eval(c));
+            child.variable(variable, x -> v);
             return body.eval(child);
         };
     }
