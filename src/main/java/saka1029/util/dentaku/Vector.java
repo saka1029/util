@@ -8,7 +8,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public class Vector implements Expression {
-    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
+    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
     public static final Vector NaN = new Vector();
 
     private final BigDecimal[] elements;
