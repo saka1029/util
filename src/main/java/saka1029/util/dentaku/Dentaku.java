@@ -8,6 +8,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -119,9 +121,10 @@ public class Dentaku {
             });
     }
 
-    static void unary(PrintWriter out, Context context) {
+    static void unary(PrintWriter out, Context context, Map<String, String> defs) {
         context.operators().names().stream()
             .sorted()
+            .map(s -> defs.containsKey(s) ? defs.get(s) : s)
             .forEach(e -> out.printf("%s%n", e));
     }
 
@@ -142,16 +145,18 @@ public class Dentaku {
     }
 
     static final String CONFIG_FILE = "config.txt";
-    static void initContext(Context context) {
+    static void initContext(Context context, Map<String, String> defs) {
         try (InputStream is = Dentaku.class.getResourceAsStream(CONFIG_FILE);
             Reader r = new InputStreamReader(is, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(r)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.trim().startsWith("#"))
+                line = line.trim();
+                if (line.startsWith("#"))
                     continue;
                 Expression e = Parser.parse(context.operators(), line);
                 e.eval(context);
+                defs.put(line.replaceFirst("(\\s|=).*", ""), line);
             }
         } catch (IOException | VectorException e) {
             System.err.println(e);
@@ -163,7 +168,8 @@ public class Dentaku {
         PrintWriter out = term.writer();
         Operators ops = Operators.of();
         Context context = Context.of(ops);
-        initContext(context);
+        Map<String, String> defs = new HashMap<>();
+        initContext(context, defs);
         out.println("Type '.help' to get help");
         LOOP: while (true) {
             String line = term.readLine(prompt);
@@ -186,7 +192,7 @@ public class Dentaku {
                     vars(out, context);
                     break;
                 case ".unary":
-                    unary(out, context);
+                    unary(out, context, defs);
                     break;
                 default:
                     eval(line, out, context);
