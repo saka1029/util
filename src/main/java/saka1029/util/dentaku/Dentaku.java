@@ -117,7 +117,7 @@ public class Dentaku {
 
     static void eval(String line, PrintWriter out, Context context) {
         try {
-            Expression e = Parser.parse(line);
+            Expression e = Parser.parse(context.operators(), line);
             Vector v = e.eval(context);
             if (v != Vector.NaN)
                 out.println(v);
@@ -133,7 +133,8 @@ public class Dentaku {
 
     public static void run(Term term, String prompt) throws IOException {
         PrintWriter out = term.writer();
-        Context context = Context.of();
+        Operators ops = Operators.of();
+        Context context = Context.of(ops);
         out.println("Type '.help' to get help");
         LOOP: while (true) {
             String line = term.readLine(prompt);

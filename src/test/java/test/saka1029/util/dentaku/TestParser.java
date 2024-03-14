@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import org.junit.Test;
 import saka1029.util.dentaku.Context;
+import saka1029.util.dentaku.Operators;
 import saka1029.util.dentaku.Parser;
 import saka1029.util.dentaku.Vector;
 import saka1029.util.dentaku.VectorException;
@@ -12,18 +13,20 @@ import saka1029.util.dentaku.VectorException;
 public class TestParser {
 
     static Vector eval(Context c, String input) {
-        return Parser.parse(input).eval(c);
+        return Parser.parse(c.operators(), input).eval(c);
     }
 
     @Test
     public void testVector() {
-        Context c = Context.of();
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
         assertEquals(Vector.of(1, 2, 3), eval(c, "1 2 3"));
     }
 
     @Test
     public void testExpression() {
-        Context c = Context.of();
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
         assertEquals(Vector.of(2, 3, 4), eval(c, "1 2 3 + 1"));
         assertEquals(Vector.of(2, 3, 4), eval(c, "1 + 1 2 3"));
         assertEquals(Vector.of(0, -1, -2), eval(c, "1 - 1 2 3"));
@@ -48,7 +51,8 @@ public class TestParser {
 
     @Test
     public void testTerm() {
-        Context c = Context.of();
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
         assertEquals(Vector.of(2, 4, 6), eval(c, "1 2 3 * 2"));
         assertEquals(Vector.of(2, 4, 6), eval(c, "2 * 1 2 3"));
         assertEquals(Vector.of(div(1,1), div(1,2), div(1,3)), eval(c, "1 / 1 2 3"));
@@ -59,7 +63,8 @@ public class TestParser {
 
     @Test
     public void testFactor() {
-        Context c = Context.of();
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
         assertEquals(Vector.of(1, 4, 9), eval(c, "1 2 3 ^ 2"));
         assertEquals(Vector.of(pow(1,0.5), pow(2,0.5), pow(3,0.5)), eval(c, "1 2 3 ^ 0.5"));
         assertEquals(Vector.of(2, 4, 8), eval(c, "2 ^ 1 2 3"));
@@ -67,7 +72,8 @@ public class TestParser {
 
     @Test
     public void testUnary() {
-        Context c = Context.of();
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
         assertEquals(Vector.of(-1, -2, -3), eval(c, "- 1 2 3"));
         assertEquals(Vector.of(6), eval(c, "sum 1 2 3"));
         assertEquals(Vector.of(-6), eval(c, "sum - 1 2 3"));
@@ -92,8 +98,9 @@ public class TestParser {
     }
 
     @Test
-    public void testAssignment() {
-        Context c = Context.of();
+    public void testDefineVariable() {
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
         assertEquals(Vector.NaN, eval(c, "a = iota 4"));
         assertEquals(Vector.of(div(10,4)), eval(c, "+ a / length a"));
         assertEquals(Vector.of(div(10,4)), eval(c, "+ iota 4 / length iota 4"));
@@ -101,7 +108,8 @@ public class TestParser {
 
     @Test
     public void testException() {
-        Context c = Context.of();
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
         try {
             eval(c, "3 + ");
             fail();
@@ -121,5 +129,4 @@ public class TestParser {
             assertEquals("Extra string ')'", e.getMessage());
         }
     }
-
 }

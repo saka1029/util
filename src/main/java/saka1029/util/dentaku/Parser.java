@@ -1,10 +1,6 @@
 package saka1029.util.dentaku;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.DoubleUnaryOperator;
 import java.util.function.UnaryOperator;
 import saka1029.util.dentaku.Lexer.Token;
 import saka1029.util.dentaku.Lexer.Type;
@@ -22,61 +18,24 @@ import saka1029.util.dentaku.Lexer.Type;
  * </pre>
  */
 public class Parser {
-    static final Map<String, UnaryOperator<Expression>> uops = new HashMap<>();
-
-    static Vector evalOne(Expression e, Context c) {
-        Vector v = e.eval(c);
-        if (v.length() != 1)
-            throw new VectorException("Required one argument but %d", v.length());
-        return v;
-    }
-
-    public static UnaryOperator<BigDecimal> unaryDouble(DoubleUnaryOperator operator) {
-        return b -> Vector.number(operator.applyAsDouble(b.doubleValue()));
-    }
-
-    static {
-        uops.put("-", e -> c -> e.eval(c).apply(a -> a.negate()));
-        uops.put("sum", e -> c -> e.eval(c).insert((a, b) -> a.add(b)));
-        uops.put("+", e -> c -> e.eval(c).insert((a, b) -> a.add(b)));
-        uops.put("*", e -> c -> e.eval(c).insert((a, b) -> a.multiply(b)));
-        uops.put("length", e -> c -> Vector.of(e.eval(c).length()));
-        uops.put("reverse", e -> c -> e.eval(c).reverse());
-        uops.put("sort", e -> c -> e.eval(c).sort());
-        uops.put("iota", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 1));
-        uops.put("iota0", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 0));
-        uops.put("ave", e -> c -> {
-            Vector v = e.eval(c);
-            return Vector.of(Vector.divide(v.insert((a, b) -> a.add(b)).get(0), Vector.number(v.length())));
-        });
-        uops.put("sqrt", e -> c -> e.eval(c).apply(a -> a.sqrt(Vector.MATH_CONTEXT)));
-        uops.put("abs", e -> c -> e.eval(c).apply(BigDecimal::abs));
-        uops.put("sin", e -> c -> e.eval(c).apply(unaryDouble(Math::sin)));
-        uops.put("asin", e -> c -> e.eval(c).apply(unaryDouble(Math::asin)));
-        uops.put("cos", e -> c -> e.eval(c).apply(unaryDouble(Math::cos)));
-        uops.put("acos", e -> c -> e.eval(c).apply(unaryDouble(Math::acos)));
-        uops.put("tan", e -> c -> e.eval(c).apply(unaryDouble(Math::tan)));
-        uops.put("atan", e -> c -> e.eval(c).apply(unaryDouble(Math::atan)));
-        uops.put("log", e -> c -> e.eval(c).apply(unaryDouble(Math::log)));
-        uops.put("log10", e -> c -> e.eval(c).apply(unaryDouble(Math::log10)));
-    }
-
+    final Operators ops;
     final List<Token> tokens;
     int index;
     Token token;
 
-    Parser(String input) {
+    Parser(Operators ops, String input) {
+        this.ops = ops;
         this.tokens = Lexer.of(input).tokens();
         this.index = 0;
         get();
     }
 
-    public static Parser of(String input) {
-        return new Parser(input);
+    public static Parser of(Operators ops, String input) {
+        return new Parser(ops, input);
     }
 
-    public static Expression parse(String input) {
-        Parser parser = new Parser(input);
+    public static Expression parse(Operators ops, String input) {
+        Parser parser = new Parser(ops, input);
         Expression e = parser.statement();
         if (e == null)
             throw new VectorException("No expression");
@@ -141,7 +100,7 @@ public class Parser {
         if (token == Token.END)
             throw new VectorException("Unexpected end");
         UnaryOperator<Expression> e;
-        if ((e = uops.get(token.string())) != null) {
+        if ((e = ops.unary(token.string())) != null) {
             get();
             Expression u = unary();
             return e.apply(u);
@@ -194,38 +153,37 @@ public class Parser {
     }
 
     public Expression defineVariable() {
-        if (token.type() == Type.ID) {
-            String name = token.string();
-            get(); // skip ID
-            get(); // skip '='
-            Expression value = expression();
-            return c -> { c.variable(name, value); return Vector.NaN; };
-        } else
+        if (token.type() != Type.ID)
             throw new VectorException("ID expected before '='");
+        String name = token.string();
+        get(); // skip ID
+        get(); // skip '='
+        Expression body = expression();
+        return c -> { c.variable(name, body); return Vector.NaN; };
     }
 
     public Expression defineUnary() {
-
+        if (token.type() != Type.ID || peek(0).type() != Type.ID)
+            throw new VectorException("Two IDs expected before '='");
+        String name = token.string();
+        get(); // skip ID 
+        String arg = token.string();
+        get(); // skip ID
+        get(); // skip '='
+        Expression body = expression();
+        UnaryCall call = new UnaryCall(arg, body);
+        return c -> { c.unary(name, call); return Vector.NaN; };
     }
 
     public Expression statement() {
         if (token == Token.END)
             return null;
-        if (peek(0) == Token.EQ)
+        else if (peek(0) == Token.EQ)
             return defineVariable();
         else if (peek(1) == Token.EQ)
             return defineUnary();
         else
             return expression();
-        // Expression e = expression();
-        // if (eat(Token.EQ)) {
-        //     if (e instanceof Variable v) {
-        //         Expression value = expression();
-        //         return c -> { c.variable(v.name, value); return Vector.NaN; };
-        //     } else
-        //         throw new VectorException("Variable expected before '='");
-        // } else
-        //     return e;
     }
 
 }
