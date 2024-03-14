@@ -89,6 +89,11 @@ public class Parser {
         return token = index < tokens.size() ? tokens.get(index++) : Token.END;
     }
 
+    Token peek(int offset) {
+        int i = index + offset;
+        return i < tokens.size() ? tokens.get(i) : Token.END;
+    }
+
     boolean eat(Token expected) {
         if (token == expected) {
             get();
@@ -188,18 +193,39 @@ public class Parser {
         return e;
     }
 
+    public Expression defineVariable() {
+        if (token.type() == Type.ID) {
+            String name = token.string();
+            get(); // skip ID
+            get(); // skip '='
+            Expression value = expression();
+            return c -> { c.variable(name, value); return Vector.NaN; };
+        } else
+            throw new VectorException("ID expected before '='");
+    }
+
+    public Expression defineUnary() {
+
+    }
+
     public Expression statement() {
         if (token == Token.END)
             return null;
-        Expression e = expression();
-        if (eat(Token.EQ)) {
-            if (e instanceof Variable v) {
-                Expression value = expression();
-                return c -> { c.variable(v.name, value); return Vector.NaN; };
-            } else
-                throw new VectorException("Variable expected before '='");
-        } else
-            return e;
+        if (peek(0) == Token.EQ)
+            return defineVariable();
+        else if (peek(1) == Token.EQ)
+            return defineUnary();
+        else
+            return expression();
+        // Expression e = expression();
+        // if (eat(Token.EQ)) {
+        //     if (e instanceof Variable v) {
+        //         Expression value = expression();
+        //         return c -> { c.variable(v.name, value); return Vector.NaN; };
+        //     } else
+        //         throw new VectorException("Variable expected before '='");
+        // } else
+        //     return e;
     }
 
 }
