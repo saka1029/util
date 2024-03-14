@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +18,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import java.io.InputStream;
 
 public class Dentaku {
 
@@ -143,9 +146,9 @@ public class Dentaku {
 
     static final String CONFIG_FILE = "config.txt";
     static void initContext(Context context) {
-        String filepath = Dentaku.class.getResource(CONFIG_FILE).getPath();
-        Path path = Paths.get(filepath); // java.nio.file.InvalidPathException
-        try (BufferedReader reader = Files.newBufferedReader(path)) {
+        try (InputStream is = Dentaku.class.getResourceAsStream(CONFIG_FILE);
+            Reader r = new InputStreamReader(is, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(r)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().startsWith("#"))
