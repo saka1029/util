@@ -57,10 +57,10 @@ public class Vector implements Expression {
         return of(a);
     }
 
-    public static Vector iota(int n, int offset) {
+    public static Vector iota(int n) {
         BigDecimal[] a = new BigDecimal[n];
         for (int i = 0; i < n; ++i)
-            a[i] = number(i + offset);
+            a[i] = number(i + 1);
         return of(a);
     }
 

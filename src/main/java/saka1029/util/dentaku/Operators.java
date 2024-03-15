@@ -47,7 +47,7 @@ public class Operators {
         unaryOperators.put("length", e -> c -> Vector.of(e.eval(c).length()));
         unaryOperators.put("reverse", e -> c -> e.eval(c).reverse());
         unaryOperators.put("sort", e -> c -> e.eval(c).sort());
-        unaryOperators.put("iota", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 1));
+        unaryOperators.put("iota", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue()));
         unaryOperators.put("sqrt", e -> c -> e.eval(c).apply(a -> a.sqrt(Vector.MATH_CONTEXT)));
         unaryOperators.put("abs", e -> c -> e.eval(c).apply(BigDecimal::abs));
         unaryOperators.put("sin", e -> c -> e.eval(c).apply(unaryDouble(Math::sin)));
