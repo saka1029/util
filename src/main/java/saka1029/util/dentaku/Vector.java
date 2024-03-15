@@ -50,6 +50,13 @@ public class Vector implements Expression {
         return Vector.number(Math.pow(left.doubleValue(), right.doubleValue()));
     }
 
+    public static BigDecimal fact(BigDecimal n) {
+        BigDecimal r = BigDecimal.ONE;
+        for (int i = 1, max = n.intValue(); i < max; ++i)
+            r = r.multiply(new BigDecimal(i));
+        return r;
+    }
+
     public static Vector of(double... elements) {
         BigDecimal[] a = Arrays.stream(elements)
             .mapToObj(s -> number(s))
