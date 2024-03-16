@@ -18,7 +18,7 @@ public class Value {
         return new Value(elements.clone());
     }
 
-    public Value unary(UnaryOperator<BigDecimal> operator) {
+    public Value map(UnaryOperator<BigDecimal> operator) {
         return new Value(Arrays.stream(elements)
             .map(e -> operator.apply(e))
             .toArray(BigDecimal[]::new));
