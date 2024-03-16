@@ -8,7 +8,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public class Vector implements Expression {
-    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
+    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
     public static final Vector NaN = new Vector();
 
     private final BigDecimal[] elements;
@@ -50,6 +50,13 @@ public class Vector implements Expression {
         return Vector.number(Math.pow(left.doubleValue(), right.doubleValue()));
     }
 
+    public static BigDecimal fact(BigDecimal n) {
+        BigDecimal r = BigDecimal.ONE;
+        for (int i = 1, max = n.intValue(); i < max; ++i)
+            r = r.multiply(new BigDecimal(i));
+        return r;
+    }
+
     public static Vector of(double... elements) {
         BigDecimal[] a = Arrays.stream(elements)
             .mapToObj(s -> number(s))
@@ -57,10 +64,10 @@ public class Vector implements Expression {
         return of(a);
     }
 
-    public static Vector iota(int n, int offset) {
+    public static Vector iota(int n) {
         BigDecimal[] a = new BigDecimal[n];
         for (int i = 0; i < n; ++i)
-            a[i] = number(i + offset);
+            a[i] = number(i + 1);
         return of(a);
     }
 

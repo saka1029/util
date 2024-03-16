@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -16,6 +17,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import java.io.InputStream;
 
 public class Dentaku {
 
@@ -87,11 +89,12 @@ public class Dentaku {
     }
 
     static void help(PrintWriter out) {
-        out.println("/exit    Exit program");
-        out.println("/help    Show available commands");
-        out.println("/syntax  Show expression syntax");
-        out.println("/vars    Show variables");
-        out.println("/quit    Quit program");
+        out.println(".exit    Exit program");
+        out.println(".help    Show available commands");
+        out.println(".syntax  Show expression syntax");
+        out.println(".vars    Show variables");
+        out.println(".unary   Show unary operators");
+        out.println(".quit    Quit program");
     }
 
     static void syntax(PrintWriter out) {
@@ -118,6 +121,13 @@ public class Dentaku {
             });
     }
 
+    static void unary(PrintWriter out, Context context, Map<String, String> defs) {
+        context.operators().names().stream()
+            .sorted()
+            .map(s -> defs.containsKey(s) ? defs.get(s) : s)
+            .forEach(e -> out.printf("%s%n", e));
+    }
+
     static void eval(String line, PrintWriter out, Context context) {
         try {
             Expression e = Parser.parse(context.operators(), line);
@@ -135,14 +145,18 @@ public class Dentaku {
     }
 
     static final String CONFIG_FILE = "config.txt";
-    static void initContext(Context context) {
-        String filepath = Dentaku.class.getResource(CONFIG_FILE).getPath();
-        Path path = Paths.get(filepath); // java.nio.file.InvalidPathException
-        try (BufferedReader reader = Files.newBufferedReader(path)) {
+    static void initContext(Context context, Map<String, String> defs) {
+        try (InputStream is = Dentaku.class.getResourceAsStream(CONFIG_FILE);
+            Reader r = new InputStreamReader(is, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(r)) {
             String line;
             while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("#"))
+                    continue;
                 Expression e = Parser.parse(context.operators(), line);
                 e.eval(context);
+                defs.put(line.replaceFirst("(\\s|=).*", ""), line);
             }
         } catch (IOException | VectorException e) {
             System.err.println(e);
@@ -154,13 +168,16 @@ public class Dentaku {
         PrintWriter out = term.writer();
         Operators ops = Operators.of();
         Context context = Context.of(ops);
-        initContext(context);
+        Map<String, String> defs = new HashMap<>();
+        initContext(context, defs);
         out.println("Type '.help' to get help");
         LOOP: while (true) {
             String line = term.readLine(prompt);
             if (line == null)
                 break LOOP;
             line = line.trim();
+            if (line.startsWith("#"))
+                continue LOOP;
             switch (line) {
                 case ".exit":
                 case ".quit":
@@ -173,6 +190,9 @@ public class Dentaku {
                     break;
                 case ".vars":
                     vars(out, context);
+                    break;
+                case ".unary":
+                    unary(out, context, defs);
                     break;
                 default:
                     eval(line, out, context);

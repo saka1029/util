@@ -3,6 +3,7 @@ package saka1029.util.dentaku;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.UnaryOperator;
 
@@ -21,6 +22,10 @@ public class Operators {
 
     public void unary(String name, UnaryOperator<Expression> body) {
         unaryOperators.put(name, body);
+    }
+
+    public Set<String> names() {
+        return unaryOperators.keySet();
     }
 
     static Vector evalOne(Expression e, Context c) {
@@ -42,12 +47,8 @@ public class Operators {
         unaryOperators.put("length", e -> c -> Vector.of(e.eval(c).length()));
         unaryOperators.put("reverse", e -> c -> e.eval(c).reverse());
         unaryOperators.put("sort", e -> c -> e.eval(c).sort());
-        unaryOperators.put("iota", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 1));
-        unaryOperators.put("iota0", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue(), 0));
-        // unaryOperators.put("ave", e -> c -> {
-        //     Vector v = e.eval(c);
-        //     return Vector.of(Vector.divide(v.insert((a, b) -> a.add(b)).get(0), Vector.number(v.length())));
-        // });
+        unaryOperators.put("iota", e -> c -> Vector.iota(evalOne(e, c).get(0).intValue()));
+        unaryOperators.put("fact", e -> c -> e.eval(c).apply(Vector::fact));
         unaryOperators.put("sqrt", e -> c -> e.eval(c).apply(a -> a.sqrt(Vector.MATH_CONTEXT)));
         unaryOperators.put("abs", e -> c -> e.eval(c).apply(BigDecimal::abs));
         unaryOperators.put("sin", e -> c -> e.eval(c).apply(unaryDouble(Math::sin)));
