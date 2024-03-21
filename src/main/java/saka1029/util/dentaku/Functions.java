@@ -127,6 +127,7 @@ public class Functions {
         unary("shuffle", (c, v) -> v.shuffle(), "shuffle M : Mのシャッフル");
         unary("is-prime", (c, v) -> v.map(x -> dec(Value.isPrime(x))), "is-prime M : 素数の場合1、それ以外の場合0");
         unary("prime", (c, v) -> v.prime(), "prime M : Mから素数のみを選択");
+        unary("factor", (c, v) -> v.factor(), "factor M : 素因数分解");
         // binary operators
         binary("+", (c, l, r) -> l.binary(BigDecimal::add, r), "M + N : 加算");
         binary("-", (c, l, r) -> l.binary(BigDecimal::subtract, r), "M - N : 減算");

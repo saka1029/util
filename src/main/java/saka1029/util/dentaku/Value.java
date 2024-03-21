@@ -182,6 +182,34 @@ public class Value implements Expression {
         return Value.of(result);
     }
 
+        public Value factor() {
+            BigDecimal d = oneElement();
+            List<BigDecimal> result = new ArrayList<>();
+            switch (d.signum()) {
+                case 0:
+                    result.add(BigDecimal.ZERO);
+                    break;
+                case -1:
+                    result.add(BigDecimal.ONE.negate());
+                    d = d.negate();
+                    // thru
+                default:
+                    BigDecimal max = d.sqrt(MATH_CONTEXT);
+                    for (BigDecimal f = BigDecimal.TWO; f.compareTo(max) <= 0; f = f.add(BigDecimal.ONE)) {
+                        while (true) {
+                            BigDecimal[] r = d.divideAndRemainder(f, MATH_CONTEXT);
+                            if (!r[1].equals(BigDecimal.ZERO))
+                                break;
+                            d = r[0];
+                            result.add(f);
+                        }
+                    }
+                    if (!d.equals(BigDecimal.ONE))
+                        result.add(d);
+            }
+        return Value.of(result);
+    }
+
     @Override
     public int hashCode() {
         return Arrays.hashCode(elements);
