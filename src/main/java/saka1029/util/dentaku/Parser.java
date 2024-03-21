@@ -1,189 +1,246 @@
 package saka1029.util.dentaku;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.UnaryOperator;
-import saka1029.util.dentaku.Lexer.Token;
-import saka1029.util.dentaku.Lexer.Type;
- 
+import saka1029.util.dentaku.Tokenizer.Token;
+import saka1029.util.dentaku.Tokenizer.Type;
+
 /**
- * SYNTAX:
+ * SYNTAX
  * <pre>
- * statement  = [ ID '=' ] expression
- * expression = term { ( '+' | '-' ) term }
- * term       = factor { ( '*' | '/' ) factor }
- * factor     = unary { '^' factor }
- * unary      = vector | UOP unary
- * vector     = primary { primary }
- * primary    = '(' expression ')' | ID | NUMBER
+ * statement       = define-variable
+ *                 | define-unary
+ *                 | define-binary
+ *                 | expression
+ * define-variable = ID '=' expression
+ * define-unary    = IDSPECIAL ID '=' expression
+ * define-binary   = ID IDSPECIAL ID '=' expression
+ * expression      = unary { BOP unary }
+ * unary           = sequence
+ *                 | UOP unary
+ *                 | MOP UOP unary'
+ * sequence        = primary { primary }
+ * primary         = '(' expression ')'
+ *                 | VAR
+ *                 | NUMBER { NUMBER }
  * </pre>
  */
 public class Parser {
-    final Operators ops;
+    final Functions functions;
+    final String input;
     final List<Token> tokens;
     int index;
     Token token;
 
-    Parser(Operators ops, String input) {
-        this.ops = ops;
-        this.tokens = Lexer.of(input).tokens();
+    private Parser(Functions functions, String input) {
+        this.functions = functions;
+        this.input = input.trim();
+        this.tokens = Tokenizer.tokens(this.input);
         this.index = 0;
         get();
     }
 
-    public static Parser of(Operators ops, String input) {
-        return new Parser(ops, input);
+    public static Parser of(Functions functions, String input) {
+        return new Parser(functions, input);
     }
 
-    public static Expression parse(Operators ops, String input) {
-        Parser parser = new Parser(ops, input);
-        Expression e = parser.statement();
-        if (e == null)
-            throw new VectorException("No expression");
-        if (parser.token != Token.END)
-            throw new VectorException("Extra string '%s'", parser.token.string());
-        return e;
+    public static Expression parse(Functions functions, String input) {
+        Parser parser = of(functions, input);
+        Expression result = parser.statement();
+        if (parser.token.type() != Type.END)
+            throw new ValueException("Extra tokens '%s'", parser.token.string());
+        return result;
     }
 
     Token get() {
-        return token = index < tokens.size() ? tokens.get(index++) : Token.END;
+        return token = index < tokens.size() ? tokens.get(index++) : Tokenizer.END;
     }
 
     Token peek(int offset) {
-        int i = index + offset;
-        return i < tokens.size() ? tokens.get(i) : Token.END;
+        int p = index + offset;
+        return p < tokens.size() ? tokens.get(p) : Tokenizer.END;
     }
 
-    boolean eat(Token expected) {
-        if (token == expected) {
-            get();
-            return true;
-        }
+    boolean is(Token token, Type... types) {
+        for (Type t : types)
+            if (token.type() == t)
+                return true;
         return false;
+    }
+
+    boolean is(Token token, String string) {
+        return token.string().equals(string);
+    }
+
+    Unary unary(Token token) {
+        if (!is(token, Type.ID, Type.SPECIAL))
+            return null;
+        return functions.unary(token.string());
+    }
+
+    Binary binary(Token token) {
+        if (!is(token, Type.ID, Type.SPECIAL))
+            return null;
+        return functions.binary(token.string());
+    }
+
+    High high(Token token) {
+        if (!is(token, Type.ID, Type.SPECIAL))
+            return null;
+        return functions.high(token.string());
+    }
+
+    String id(Token token) {
+        if (!is(token, Type.ID))
+            return null;
+        return token.string();
+    }
+
+    String idSpecial(Token token) {
+        if (!is(token, Type.ID, Type.SPECIAL))
+            return null;
+        return token.string();
+    }
+
+    Expression defineVariable() {
+        String name = id(token);
+        if (name == null)
+            throw new ValueException("ID expected but '%s'", token.string());
+        get(); // skip ID
+        get(); // skip '='
+        Expression e = expression();
+        return c -> { c.variable(name, e, input); return Value.NaN; };
+    }
+
+    Expression defineUnary() {
+        String operator = idSpecial(token);
+        if (operator == null)
+            throw new ValueException("ID or SPECIAL expected but '%s'", token.string());
+        get(); // skip operator
+        String variable = id(token);
+        if (variable == null)
+            throw new ValueException("ID expected but '%s'", token.string());
+        get(); // skip variable
+        get(); // skip '='
+        Expression body = expression();
+        Unary unary = new UnaryCall(variable, body);
+        return c -> { c.functions().unary(operator, unary, input); return Value.NaN; };
+    }
+
+    Expression defineBinary() {
+        String left = id(token);
+        if (left == null)
+            throw new ValueException("ID expected but '%s'", token.string());
+        get(); // skip left
+        String operator = idSpecial(token);
+        if (operator == null)
+            throw new ValueException("ID or SPECIAL expected but '%s'", token.string());
+        get(); // skip operator
+        String right = id(token);
+        if (right == null)
+            throw new ValueException("ID expected but '%s'", token.string());
+        get(); // skip right
+        get(); // skip '='
+        Expression body = expression();
+        Binary binary = new BinaryCall(left, right, body);
+        return c -> { c.functions().binary(operator, binary, input); return Value.NaN; };
     }
 
     Expression primary() {
         Expression e;
-        if (eat(Token.LP)) {
+        if (is(token, Type.LP)) {
+            get(); // skip '('
             e = expression();
-            if (!eat(Token.RP))
-                throw new VectorException("')' expected");
-        } else if (token.type() == Type.ID) {
+            if (!is(token, Type.RP))
+                throw new ValueException("')' expected");
+            get(); // skip ')'
+        } else if (is(token, Type.ID)) {
             e = Variable.of(token.string());
-            get();
-        } else if (token.type() == Type.NUMBER) {
-            e = Vector.of(token.number());
-            get();
+            get(); // ski ID
+        } else if (is(token, Type.NUMBER)) {
+            List<BigDecimal> list = new ArrayList<>();
+            do {
+                list.add(token.number());
+                get(); // skip NUMBER
+            } while (is(token, Type.NUMBER));
+            e = Value.of(list);
         } else
-            throw new VectorException("Unknown token: '%s'", token.string());
+            throw new ValueException("Unknown token '%s'", token.string());
         return e;
     }
 
-    static boolean isPrime(Token token) {
-        if (token == Token.LP)
-            return true;
-        else if (token.type() == Type.ID || token.type() == Type.NUMBER)
-            return true;
-        else
-            return false;
+    boolean isPrimary(Token token) {
+        return is(token, Type.LP, Type.NUMBER)
+            || is(token, Type.ID)
+                && unary(token) == null
+                && binary(token) == null
+                && high(token) == null;
     }
 
-    Expression vector() {
+    Expression sequence() {
         Expression e = primary();
-        while (isPrime(token)) {
-            Expression l = e, r = primary();
-            e = c -> l.eval(c).append(r.eval(c));
+        while (isPrimary(token)) {
+            Expression left = e, right = primary();
+            e = c -> left.eval(c).append(right.eval(c));
         }
         return e;
     }
 
     Expression unary() {
-        if (token == Token.END)
-            throw new VectorException("Unexpected end");
-        UnaryOperator<Expression> e;
-        if ((e = ops.unary(token.string())) != null) {
-            get();
-            Expression u = unary();
-            return e.apply(u);
+        High high;
+        Unary unary;
+        if ((high = high(token)) != null) {
+            String highName = token.string();
+            get();  // skip MOP
+            Binary binary;
+            if ((binary = binary(token)) != null) {
+                get();  // skip BOP
+                Expression e = unary();
+                return c -> high.apply(c, e.eval(c), binary);
+            } else
+                throw new ValueException("BOP expected after '%s'", highName);
+        } else if ((unary = unary(token)) != null) {
+            get();  // skip UOP
+            Expression e = unary();
+            return c -> unary.apply(c, e.eval(c));
         } else
-            return vector();
+            return sequence();
     }
 
-    Expression factor() {
+    Expression expression() {
         Expression e = unary();
-        while (eat(Token.CARET)) {
-            Expression l = e, r = factor();
-            e = c -> l.eval(c).apply(
-                (a, b) -> Vector.pow(a, b), r.eval(c));
+        Binary b;
+        while ((b = binary(token)) != null) {
+            get();  // skip BOP
+            Binary binary = b;
+            Expression left = e, right = unary();
+            e = c -> binary.apply(c, left.eval(c), right.eval(c));
         }
         return e;
     }
 
-    Expression term() {
-        Expression e = factor();
-        while (true)
-            if (eat(Token.STAR)) {
-                Expression l = e, r = factor();
-                e = c -> l.eval(c).apply((a, b) -> a.multiply(b), r.eval(c));
-            } else if (eat(Token.SLASH)) {
-                Expression l = e, r = factor();
-                e = c -> l.eval(c).apply((a, b) -> Vector.divide(a, b), r.eval(c));
-            } else if (eat(Token.PERCENT)) {
-                Expression l = e, r = factor();
-                e = c -> l.eval(c).apply((a, b) -> Vector.remainder(a, b), r.eval(c));
-            } else
-                break;
-        return e;
-
-    }
-
-    public Expression expression() {
-        if (token == Token.END)
-            return null;
-        Expression e = term();
-        while (true)
-            if (eat(Token.PLUS)) {
-                Expression l = e, r = term();
-                e = c -> l.eval(c).apply((a, b) -> a.add(b), r.eval(c));
-            } else if (eat(Token.MINUS)) {
-                Expression l = e, r = term();
-                e = c -> l.eval(c).apply((a, b) -> a.subtract(b), r.eval(c));
-            } else
-                break;
-        return e;
-    }
-
-    public Expression defineVariable() {
-        if (token.type() != Type.ID)
-            throw new VectorException("ID expected before '='");
-        String name = token.string();
-        get(); // skip ID
-        get(); // skip '='
-        Expression body = expression();
-        return c -> { c.variable(name, body); return Vector.NaN; };
-    }
-
-    public Expression defineUnary() {
-        if (token.type() != Type.ID || peek(0).type() != Type.ID)
-            throw new VectorException("Two IDs expected before '='");
-        String name = token.string();
-        get(); // skip ID 
-        String arg = token.string();
-        get(); // skip ID
-        get(); // skip '='
-        Expression body = expression();
-        UnaryCall call = new UnaryCall(arg, body);
-        return c -> { c.unary(name, call); return Vector.NaN; };
-    }
-
     public Expression statement() {
-        if (token == Token.END)
+        if (is(token, Type.END))
             return null;
-        else if (peek(0) == Token.EQ)
+        if (is(peek(0), "="))
             return defineVariable();
-        else if (peek(1) == Token.EQ)
+        if (is(peek(1), "="))
             return defineUnary();
-        else
-            return expression();
+        if (is(peek(2), "="))
+            return defineBinary();
+        else {
+            Expression e = expression();
+            return new Expression() {
+                @Override
+                public Value eval(Context context) {
+                    return e.eval(context);
+                }
+                @Override
+                public String toString() {
+                    return input;
+                }
+            };
+        }
     }
-
 }

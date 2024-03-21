@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Variable implements Expression {
-    static final Map<String, Variable> variables = new HashMap<>();
-
+    private static final Map<String, Variable> variables = new HashMap<>();
     public final String name;
 
-    Variable(String name) {
+    private Variable(String name) {
         this.name = name;
     }
 
@@ -17,10 +16,10 @@ public class Variable implements Expression {
     }
 
     @Override
-    public Vector eval(Context context) {
+    public Value eval(Context context) {
         Expression e = context.variable(name);
         if (e == null)
-            throw new VectorException("Variable '%s' is not defined", name);
+            throw new ValueException("Variable '%s' not defined", name);
         return e.eval(context);
     }
 
@@ -28,5 +27,4 @@ public class Variable implements Expression {
     public String toString() {
         return name;
     }
-
 }

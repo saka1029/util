@@ -1,59 +1,55 @@
 package saka1029.util.dentaku;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.UnaryOperator;
-import java.util.Set;
 
 public class Context {
     final Context parent;
-    final Map<String, Expression> variables = new HashMap<>();
-    final Operators operators;
+    final Functions functions;
+    final Map<String, Str<Expression>> variables = new HashMap<>();
 
-    Context(Operators ops) {
-        this.operators = ops;
-        this.parent = null;
-    }
-
-    Context(Context parent) {
-        this.operators = parent.operators;
+    private Context(Functions functions, Context parent) {
         this.parent = parent;
+        this.functions = functions;
     }
 
-    public static Context of(Operators ops) {
-        Context context = new Context(ops);
+    public static Context of(Functions functions) {
+        Context context = new Context(functions, null);
+        context.variable("PI", Value.PI);
+        context.variable("E", Value.E);
         return context;
     }
 
     public Context child() {
-        return new Context(this);
+        return new Context(functions, this);
     }
 
+    public Functions functions() {
+        return functions;
+    }
     public Expression variable(String name) {
-        Expression e = variables.get(name);
-        return e != null ? e : parent != null ? parent.variable(name) : null;
+        Str<Expression> e = variables.get(name);
+        return e != null ? e.op : parent != null ? parent.variable(name) : null;
     }
 
-    public void variable(String name, Expression e) {
-        variables.put(name, e);
-        operators.unaryOperators.remove(name);
+    public String variableString(String name) {
+        Str<Expression> e = variables.get(name);
+        return e != null ? e.string : parent != null ? parent.variableString(name) : null;
     }
 
-    public Set<Entry<String, Expression>> variables() {
-        return variables.entrySet();
+    public List<String> variables() {
+        return variables.values().stream()
+            .map(s -> s.string)
+            .toList();
     }
 
-    public Operators operators() {
-        return operators;
+    public void variable(String name, Expression e, String string) {
+        variables.put(name, Str.of(e, string));
     }
 
-    public UnaryOperator<Expression> unary(String name) {
-        return operators.unary(name);
+    public void variable(String name, Value value) {
+        variables.put(name, Str.of(x -> value, "%s = %s".formatted(name, value)));
     }
 
-    public void unary(String name, UnaryOperator<Expression> body) {
-        operators.unary(name, body);
-        variables.remove(name);
-    }
 }

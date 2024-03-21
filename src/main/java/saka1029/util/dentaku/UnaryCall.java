@@ -1,23 +1,11 @@
 package saka1029.util.dentaku;
 
-import java.util.function.UnaryOperator;
-
-public class UnaryCall implements UnaryOperator<Expression> {
-    final String variable;
-    final Expression body;
-
-    UnaryCall(String variable, Expression body) {
-        this.variable = variable;
-        this.body = body;
-    }
+public record UnaryCall(String variable, Expression body) implements Unary {
 
     @Override
-    public Expression apply(Expression t) {
-        return c -> {
-            Vector v = t.eval(c);
-            Context child = c.child();
-            child.variable(variable, x -> v);
-            return body.eval(child);
-        };
+    public Value apply(Context context, Value argument) {
+        Context child = context.child();
+        child.variable(variable, argument, variable);
+        return body.eval(child);
     }
 }
