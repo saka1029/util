@@ -1,10 +1,14 @@
 package saka1029.util.dentaku;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Context {
+    static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
     final Context parent;
     final Operators operators;
     final Map<String, Str<Expression>> variables = new HashMap<>();
@@ -51,13 +55,89 @@ public class Context {
         variables.put(name, Str.of(x -> value, "%s = %s".formatted(name, value)));
     }
 
-    void eval(String line) {
-        Parser.parse(operators, line).eval(this);
+    public Value eval(String line) {
+        return Parser.parse(operators, line).eval(this);
+    }
+
+    static BigDecimal dec(boolean b) {
+        return b ? BigDecimal.ONE : BigDecimal.ZERO;
+    }
+
+    static BigDecimal dec(int i) {
+        return new BigDecimal(i);
+    }
+
+    static BigDecimal dec(double d) {
+        return new BigDecimal(d);
+    }
+
+    static double d(BigDecimal d) {
+        return d.doubleValue();
+    }
+
+    static boolean b(BigDecimal d) {
+        return !d.equals(BigDecimal.ZERO);
     }
 
     private void initialize() {
-        variable("PI", Value.PI);
-        variable("E", Value.E);
+        // unary operators
+        operators.unary("length", (c, v) -> Value.of(dec(v.size())), "length V -> S : 長さ");
+        operators.unary("-", (c, v) -> v.map(BigDecimal::negate), "- V -> V: 符号反転");
+        operators.unary("+", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::add, r)), "+ V -> S : 和");
+        operators.unary("*", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::multiply, r)), "* V -> S : 積");
+        operators.unary("^", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary((a, b) -> dec(Math.pow(d(a), d(b))), r)), "^ V -> S : べき乗");
+        operators.unary("abs", (c, v) -> v.map(x -> x.abs()), "abs V -> V : 絶対値");
+        operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> V : 各要素の符号(-1, 0, 1)");
+        operators.unary("int", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.HALF_UP)), "int V -> V : 各要素の整数化(四捨五入)");
+        operators.unary("sqrt", (c, v) -> v.map(x -> x.sqrt(MATH_CONTEXT)), "sqrt V -> V : 平方根");
+        operators.unary("sin", (c, v) -> v.map(x -> dec(Math.sin(d(x)))), "sin V -> V : sin値");
+        operators.unary("asin", (c, v) -> v.map(x -> dec(Math.asin(d(x)))), "asin V -> V : sin⁻¹値");
+        operators.unary("cos", (c, v) -> v.map(x -> dec(Math.cos(d(x)))), "cos V -> V : cos値");
+        operators.unary("acos", (c, v) -> v.map(x -> dec(Math.acos(d(x)))), "acos V -> V : cos⁻¹値");
+        operators.unary("tan", (c, v) -> v.map(x -> dec(Math.tan(d(x)))), "tan V -> V : tan値");
+        operators.unary("atan", (c, v) -> v.map(x -> dec(Math.atan(d(x)))), "atan V -> V : tan⁻¹値");
+        operators.unary("log", (c, v) -> v.map(x -> dec(Math.log(d(x)))), "log V -> V : 対数値(底はe)");
+        operators.unary("log10", (c, v) -> v.map(x -> dec(Math.log10(d(x)))), "log10 V -> V : 対数値(底は10)");
+        operators.unary("not", (c, v) -> v.map(x -> dec(!b(x))), "not V -> V : 否定(0:偽⇔0以外:真)");
+        operators.unary("sort", (c, v) -> v.sort(), "sort V -> V : 上昇順にソート");
+        operators.unary("reverse", (c, v) -> v.reverse(), "reverse V -> V : 反転");
+        operators.unary("shuffle", (c, v) -> v.shuffle(), "shuffle V -> V : シャッフル");
+        operators.unary("is-prime", (c, v) -> v.map(x -> dec(Value.isPrime(x))), "is-prime V -> V : 素数の場合1、それ以外の場合0");
+        operators.unary("prime", (c, v) -> v.prime(), "prime V -> V : 素数のみを選択");
+        operators.unary("factor", (c, v) -> v.factor(), "factor V -> V : 素因数分解");
+        // binary operators
+        operators.binary("+", (c, l, r) -> l.binary(BigDecimal::add, r), "V + V -> V : 加算");
+        operators.binary("-", (c, l, r) -> l.binary(BigDecimal::subtract, r), "V - V -> V : 減算");
+        operators.binary("*", (c, l, r) -> l.binary(BigDecimal::multiply, r), "V * V -> V : 乗算");
+        operators.binary("/", (c, l, r) -> l.binary((a, b) -> a.divide(b, MATH_CONTEXT), r), "V / V -> V : 除算");
+        operators.binary("%", (c, l, r) -> l.binary((a, b) -> a.remainder(b, MATH_CONTEXT), r), "V % V -> V: 剰余");
+        operators.binary("^", (c, l, r) -> l.binary((a, b) -> dec(Math.pow(d(a), d(b))), r), "V ^ V -> V: べき乗");
+        operators.binary("round", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.HALF_UP), r), "V round S -> V : Vを小数点以下S桁に四捨五入");
+        operators.binary("ceiling", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.CEILING), r), "V ceiling S -> V : Vを正の無限大方向に向かって小数点以下S桁に切り上げ");
+        operators.binary("down", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.DOWN), r), "V down S -> V : Vをゼロに向かって小数点以下S桁に切り捨て");
+        operators.binary("floor", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.FLOOR), r), "V floor S -> V : Vを負の無限大方向に向かって小数点以下S桁に切り捨て");
+        operators.binary("up", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.UP), r), "V up S -> V : Vをゼロの逆に向かって小数点以下S桁に切り上げ");
+        operators.binary("==", (c, l, r) -> l.binary((a, b) -> dec(a.compareTo(b) == 0), r), "V == V -> V : 等しいとき1、そうでないとき0");
+        operators.binary("~", (c, l, r) -> l.binary((a, b) -> dec(a.subtract(b).abs().compareTo(c.variable("EPSILON").eval(c).oneElement()) < 0), r), "V ~ V -> V : 差の絶対値がEPSILON以下のとき1、そうでないとき0");
+        operators.binary("!=", (c, l, r) -> l.binary((a, b) -> dec(a.compareTo(b) != 0), r), "V != V -> V : 等しくないとき1、等しいとき0");
+        operators.binary("<", (c, l, r) -> l.binary((a, b) -> dec(a.compareTo(b) < 0), r), "V < V -> V : より小さいとき1、そうでないとき0");
+        operators.binary("<=", (c, l, r) -> l.binary((a, b) -> dec(a.compareTo(b) <= 0), r), "V <= V -> V : 小さいかまたは等しいとき1、そうでないとき0");
+        operators.binary(">", (c, l, r) -> l.binary((a, b) -> dec(a.compareTo(b) > 0), r), "V > V -> V : より大きいとき1、そうでないとき0");
+        operators.binary(">=", (c, l, r) -> l.binary((a, b) -> dec(a.compareTo(b) >= 0), r), "V >= V -> V : より大きいかまたは等しいとき1、そうでないとき0");
+        operators.binary("min", (c, l, r) -> l.binary(BigDecimal::min, r), "V min V -> V : 小さい方");
+        operators.binary("max", (c, l, r) -> l.binary(BigDecimal::max, r), "V max V -> V : 大きい方");
+        operators.binary("and", (c, l, r) -> l.binary((a, b) -> dec(b(a) & b(b)), r), "V and V -> V : 論理積(ゼロは偽、それ以外は真)");
+        operators.binary("or", (c, l, r) -> l.binary((a, b) -> dec(b(a) | b(b)), r), "V or -> V N : 論理和(ゼロは偽、それ以外は真)");
+        operators.binary("xor", (c, l, r) -> l.binary((a, b) -> dec(b(a) ^ b(b)), r), "V xor -> V N : 排他的論理和(ゼロは偽、それ以外は真)");
+        operators.binary("filter", (c, l, r) -> l.filter(r), "V filter V : 右辺の内、対応する左辺の要素が真のものだけを抽出(ゼロは偽、それ以外は真)");
+        operators.binary("to", (c, l, r) -> l.to(r), "S to S -> V : 左辺から右辺までの並び(左辺<右辺のときは下降順)");
+        // high order operations
+        operators.high("@", (c, v, b) -> v.reduce(c, b), "@ B V -> S : 二項演算子BでVを簡約(左から右に適用)");
+        operators.high("@<", (c, v, b) -> v.reduceRight(c, b), "@< B V -> S : 二項演算子BでVを簡約(右から左に適用)");
+        operators.high("@@", (c, v, b) -> v.cumulate(c, b), "@@ B V -> V : 二項演算子BでVを簡約しながら累積(左から右に適用)");
+        eval("PI = 3.1415926535897932384626433");
+        eval("E = 2.7182818284590452353602874");
+        eval("EPSILON = 5e-10");
         eval("ave x = + x / length x");
         eval("variance x = + (x - ave x ^ 2) / length x");
         eval("sd x = sqrt variance x");
