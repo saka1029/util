@@ -51,8 +51,8 @@ public class TestFunctions {
     public void testUnaryLogOperators() {
         Operators f = Operators.of();
         Context c = Context.of(f);
-        assertEquals(eval(c, "0 1 2 3"), eval(c, "log (E ^ (0 .. 3))"));
-        assertEquals(eval(c, "0 1 2 3"), eval(c, "log10 (10 ^ (0 .. 3))"));
+        assertEquals(eval(c, "0 1 2 3"), eval(c, "log (E ^ (0 to 3))"));
+        assertEquals(eval(c, "0 1 2 3"), eval(c, "log10 (10 ^ (0 to 3))"));
     }
 
     @Test
@@ -80,17 +80,17 @@ public class TestFunctions {
         assertEquals(eval(c, "1 0 1 0"), eval(c, "1 2 3 6 % 2"));
         assertEquals(eval(c, "1 2 3 5"), eval(c, "1.2 2.3 3.4 4.5 round 0"));
         assertEquals(eval(c, "1.2 2.3 3.5 4.6"), eval(c, "1.23 2.34 3.45 4.56 round 1"));
-        assertEquals(eval(c, "8 9 10"), eval(c, "8 .. 10"));
-        assertEquals(eval(c, "8"), eval(c, "8 .. 8"));
-        assertEquals(eval(c, "10 9 8"), eval(c, "10 .. 8"));
-        assertEquals(eval(c, "1 4 9 16"), eval(c, "1 .. 4 ^ 2"));
-        assertEquals(eval(c, "2 4 8 16"), eval(c, "2 ^ (1 .. 4)"));
+        assertEquals(eval(c, "8 9 10"), eval(c, "8 to 10"));
+        assertEquals(eval(c, "8"), eval(c, "8 to 8"));
+        assertEquals(eval(c, "10 9 8"), eval(c, "10 to 8"));
+        assertEquals(eval(c, "1 4 9 16"), eval(c, "1 to 4 ^ 2"));
+        assertEquals(eval(c, "2 4 8 16"), eval(c, "2 ^ (1 to 4)"));
         assertEquals(eval(c, "1"), eval(c, "1 min 4"));
         assertEquals(eval(c, "1 2 1"), eval(c, "1 2 3 min 3 2 1"));
         assertEquals(eval(c, "4"), eval(c, "1 max 4"));
         assertEquals(eval(c, "3 2 3"), eval(c, "1 2 3 max 3 2 1"));
-        assertEquals(eval(c, "1 3"), eval(c, "1 0 1 0 filter (1 .. 4)"));
-        assertEquals(Value.NaN, eval(c, "a = 1 .. 4"));
+        assertEquals(eval(c, "1 3"), eval(c, "1 0 1 0 filter (1 to 4)"));
+        assertEquals(Value.NaN, eval(c, "a = 1 to 4"));
         assertEquals(eval(c, "0 0 1 1"), eval(c, "a > 2"));
         assertEquals(eval(c, "3 4"), eval(c, "0 0 1 1 filter a"));
         assertEquals(eval(c, "3 4"), eval(c, "a > 2 filter a"));
@@ -122,10 +122,10 @@ public class TestFunctions {
     public void testHighOrderOperators() {
         Operators f = Operators.of();
         Context c = Context.of(f);
-        assertEquals(eval(c, "55"), eval(c, "@ + (1 .. 10)"));
-        assertEquals(eval(c, "55"), eval(c, "+ (1 .. 10)"));
-        assertEquals(eval(c, "1 3 6 10"), eval(c, "@@ + (1 .. 4)"));
-        assertEquals(eval(c, "1 2 6 24 120"), eval(c, "@@ * (1 .. 5)"));
+        assertEquals(eval(c, "55"), eval(c, "@ + (1 to 10)"));
+        assertEquals(eval(c, "55"), eval(c, "+ (1 to 10)"));
+        assertEquals(eval(c, "1 3 6 10"), eval(c, "@@ + (1 to 4)"));
+        assertEquals(eval(c, "1 2 6 24 120"), eval(c, "@@ * (1 to 5)"));
         assertEquals(eval(c, "-2"), eval(c, "@ min 1 3 9 -2 0"));
         assertEquals(eval(c, "1 1 1 -2 -2"), eval(c, "@@ min 1 3 9 -2 0"));
         assertEquals(eval(c, "9"), eval(c, "@ max 1 3 9 -2 0"));
@@ -138,7 +138,7 @@ public class TestFunctions {
         Context c = Context.of(f);
         assertEquals(eval(c, "1 2 3 4 5"), eval(c, "sort 4 2 5 1 3"));
         assertEquals(eval(c, "5 4 3 2 1"), eval(c, "reverse sort 4 2 5 1 3"));
-        assertEquals(eval(c, "100 .. 1"), eval(c, "reverse (1 .. 100)"));
-        // assertEquals(eval(c, "1 .. 10"), eval(c, "shuffle (1 .. 10)"));
+        assertEquals(eval(c, "100 to 1"), eval(c, "reverse (1 to 100)"));
+        // assertEquals(eval(c, "1 .. 10"), eval(c, "shuffle (1 to 10)"));
     }
 }
