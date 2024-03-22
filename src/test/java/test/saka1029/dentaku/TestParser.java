@@ -114,11 +114,20 @@ public class TestParser {
         assertEquals(eval(c, "2 4 6 8 10"), eval(c, "even (1 to 10)"));
     }
 
+    @Test
+    public void testFibonacci() {
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
+        assertEquals(Value.NaN, eval(c, "fib x = x (x at -2 + (x at -1))"));
+        assertEquals(Value.NaN, eval(c, "f = fib fib fib fib 0 1"));
+        assertEquals(eval(c, "0 1 1 2 3 5"), eval(c, "f"));
+    }
+
     /**
      * フィボナッチ数列の一般項 
      */
     @Test
-    public void testFibonacci() {
+    public void testFibonacciGeneral() {
         Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(Value.NaN, eval(c,

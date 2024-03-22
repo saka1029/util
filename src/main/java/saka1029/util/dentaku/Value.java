@@ -125,6 +125,15 @@ public class Value implements Expression {
         return new Value(list);
     }
 
+    public Value at(Value right) {
+        int index = right.oneElement().intValue();
+        if (index < 0)
+            index += elements.length;
+        if (index < 0 || index >= elements.length)
+            throw new ValueException("Index out of bounds: %d", index);
+        return Value.of(elements[index]);
+    }
+
     static boolean bool(BigDecimal d) {
         return !d.equals(BigDecimal.ZERO);
     }

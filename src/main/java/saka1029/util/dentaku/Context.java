@@ -131,6 +131,7 @@ public class Context {
         operators.binary("xor", (c, l, r) -> l.binary((a, b) -> dec(b(a) ^ b(b)), r), "V xor -> V N : 排他的論理和(ゼロは偽、それ以外は真)");
         operators.binary("filter", (c, l, r) -> l.filter(r), "V filter V : 右辺の内、対応する左辺の要素が真のものだけを抽出(ゼロは偽、それ以外は真)");
         operators.binary("to", (c, l, r) -> l.to(r), "S to S -> V : 左辺から右辺までの並び(左辺<右辺のときは下降順)");
+        operators.binary("at", (c, l, r) -> l.at(r), "V at S -> V : 右辺番目の要素を取り出す。");
         // high order operations
         operators.high("@", (c, v, b) -> v.reduce(c, b), "@ B V -> S : 二項演算子BでVを簡約(左から右に適用)");
         operators.high("@<", (c, v, b) -> v.reduceRight(c, b), "@< B V -> S : 二項演算子BでVを簡約(右から左に適用)");
