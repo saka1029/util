@@ -4,23 +4,23 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import saka1029.util.dentaku.Context;
 import saka1029.util.dentaku.Expression;
-import saka1029.util.dentaku.Functions;
+import saka1029.util.dentaku.Operators;
 import saka1029.util.dentaku.Parser;
 import saka1029.util.dentaku.Value;
 
 public class TestParser {
 
-    static Expression parse(Functions ops, String input) {
+    static Expression parse(Operators ops, String input) {
         return Parser.parse(ops, input);
     }
 
     static Value eval(Context context, String input) {
-        return parse(context.functions(), input).eval(context);
+        return parse(context.operators(), input).eval(context);
     }
 
     @Test
     public void testToString() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         Expression e0 = parse(ops, "  1 + 2 + 3 ");
         assertEquals("1 + 2 + 3", e0.toString());
@@ -38,7 +38,7 @@ public class TestParser {
 
     @Test
     public void testNumber() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(eval(c, "1"), eval(c, "  1 "));
         assertEquals(eval(c, "1 2"), eval(c, "  1   2 "));
@@ -46,7 +46,7 @@ public class TestParser {
 
     @Test
     public void testBinary() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(eval(c, "3"), eval(c, "  1  + 2"));
         assertEquals(eval(c, "4 6"), eval(c, "1 2 + 3 4"));
@@ -55,7 +55,7 @@ public class TestParser {
 
     @Test
     public void testUnary() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(eval(c, "4"), eval(c, "length 1 2 3 4"));
         assertEquals(eval(c, "-1 -2 -3 -4"), eval(c, "- 1 2 3 4"));
@@ -66,7 +66,7 @@ public class TestParser {
 
     @Test
     public void testDefineVariable() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(Value.NaN, eval(c, "a = 1 2 3"));
         assertEquals(eval(c, "1 2 3"), eval(c, "a"));
@@ -82,7 +82,7 @@ public class TestParser {
 
     @Test
     public void testHighOperator() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(eval(c, "6"), eval(c, "@ + 1 2 3"));
         assertEquals(eval(c, "1 3 6"), eval(c, "@@ + 1 2 3"));
@@ -92,7 +92,7 @@ public class TestParser {
 
     @Test
     public void testTo() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(eval(c, "3 4 5"), eval(c, "3 .. 5"));
         assertEquals(eval(c, "5 4 3"), eval(c, "5 .. 3"));
@@ -100,7 +100,7 @@ public class TestParser {
 
     @Test
     public void testDefineUnary() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(Value.NaN, eval(c, "a = 1 .. 4"));
         assertEquals(eval(c, "3 4"), eval(c, "a > 2 filter a"));
@@ -119,7 +119,7 @@ public class TestParser {
      */
     @Test
     public void testFibonacci() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(Value.NaN, eval(c,
             "fib n = 1 + sqrt 5 / 2 ^ n - (1 - sqrt 5 / 2 ^ n) / sqrt 5"));
@@ -131,7 +131,7 @@ public class TestParser {
      */
     @Test
     public void testLeibniz() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(Value.NaN, eval(c, "pi-term n = -1 ^ n / (2 * n + 1)"));
         assertEquals(Value.NaN, eval(c, "pi-sum range = 4 * + pi-term range"));
@@ -143,11 +143,23 @@ public class TestParser {
 
     @Test
     public void testDefineBinary() {
-        Functions ops = Functions.of();
+        Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(Value.NaN, eval(c, "a = 1 .. 4"));
         assertEquals(eval(c, "3 4"), eval(c, "a > 2 filter a"));
         assertEquals(Value.NaN, eval(c, "p select-gt x = x > p filter x"));
         assertEquals(eval(c, "3 4"), eval(c, "2 select-gt a"));
+    }
+
+    @Test
+    public void testLateBinding() {
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
+        assertEquals(Value.NaN, eval(c, "f x = x + 1"));
+        assertEquals(Value.NaN, eval(c, "g x = f x + 1"));
+        assertEquals(eval(c, "2"), eval(c, "g 0"));
+        assertEquals(Value.NaN, eval(c, "f x = x + 2"));
+        assertEquals(eval(c, "3"), eval(c, "g 0"));
+
     }
 }

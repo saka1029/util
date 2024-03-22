@@ -79,25 +79,25 @@ public class Main {
                         .forEach(s -> out.println(s));
                         break;
                 case "unary":
-                    context.functions().unarys().stream()
+                    context.operators().unarys().stream()
                         .sorted()
                         .forEach(s -> out.println(s));
                         break;
                 case "binary":
-                    context.functions().binarys().stream()
+                    context.operators().binarys().stream()
                         .sorted()
                         .forEach(s -> out.println(s));
                         break;
                 case "high":
-                    context.functions().highs().stream()
+                    context.operators().highs().stream()
                         .sorted()
                         .forEach(s -> out.println(s));
                         break;
                 default:
                     println(out, context.variableString(name));
-                    println(out, context.functions().unaryString(name));
-                    println(out, context.functions().binaryString(name));
-                    println(out, context.functions().highString(name));
+                    println(out, context.operators().unaryString(name));
+                    println(out, context.operators().binaryString(name));
+                    println(out, context.operators().highString(name));
                     break;
             }
         }
@@ -105,7 +105,7 @@ public class Main {
 
     static void run(Term term) throws IOException {
         PrintWriter out = term.writer();
-        Functions functions = Functions.of();
+        Operators functions = Operators.of();
         Context context = Context.of(functions);
         out.println("Type '.help' for help.");
         L: while (true) {

@@ -27,13 +27,13 @@ import saka1029.util.dentaku.Tokenizer.Type;
  * </pre>
  */
 public class Parser {
-    final Functions functions;
+    final Operators functions;
     final String input;
     final List<Token> tokens;
     int index;
     Token token;
 
-    private Parser(Functions functions, String input) {
+    private Parser(Operators functions, String input) {
         this.functions = functions;
         this.input = input.trim();
         this.tokens = Tokenizer.tokens(this.input);
@@ -41,11 +41,11 @@ public class Parser {
         get();
     }
 
-    public static Parser of(Functions functions, String input) {
+    public static Parser of(Operators functions, String input) {
         return new Parser(functions, input);
     }
 
-    public static Expression parse(Functions functions, String input) {
+    public static Expression parse(Operators functions, String input) {
         Parser parser = of(functions, input);
         Expression result = parser.statement();
         if (parser.token.type() != Type.END)
@@ -73,22 +73,19 @@ public class Parser {
         return token.string().equals(string);
     }
 
-    Unary unary(Token token) {
-        if (!is(token, Type.ID, Type.SPECIAL))
-            return null;
-        return functions.unary(token.string());
+    boolean isUnary(Token token) {
+        return is(token, Type.ID, Type.SPECIAL)
+            && functions.unary(token.string()) != null;
     }
 
-    Binary binary(Token token) {
-        if (!is(token, Type.ID, Type.SPECIAL))
-            return null;
-        return functions.binary(token.string());
+    boolean isBinary(Token token) {
+        return is(token, Type.ID, Type.SPECIAL)
+            && functions.binary(token.string()) != null;
     }
 
-    High high(Token token) {
-        if (!is(token, Type.ID, Type.SPECIAL))
-            return null;
-        return functions.high(token.string());
+    boolean isHigh(Token token) {
+        return is(token, Type.ID, Type.SPECIAL)
+            && functions.high(token.string()) != null;
     }
 
     String id(Token token) {
@@ -125,7 +122,7 @@ public class Parser {
         get(); // skip '='
         Expression body = expression();
         Unary unary = new UnaryCall(variable, body);
-        return c -> { c.functions().unary(operator, unary, input); return Value.NaN; };
+        return c -> { c.operators().unary(operator, unary, input); return Value.NaN; };
     }
 
     Expression defineBinary() {
@@ -144,7 +141,7 @@ public class Parser {
         get(); // skip '='
         Expression body = expression();
         Binary binary = new BinaryCall(left, right, body);
-        return c -> { c.functions().binary(operator, binary, input); return Value.NaN; };
+        return c -> { c.operators().binary(operator, binary, input); return Value.NaN; };
     }
 
     Expression primary() {
@@ -173,9 +170,9 @@ public class Parser {
     boolean isPrimary(Token token) {
         return is(token, Type.LP, Type.NUMBER)
             || is(token, Type.ID)
-                && unary(token) == null
-                && binary(token) == null
-                && high(token) == null;
+                && !isUnary(token)
+                && !isBinary(token)
+                && !isHigh(token);
     }
 
     Expression sequence() {
@@ -188,34 +185,34 @@ public class Parser {
     }
 
     Expression unary() {
-        High high;
-        Unary unary;
-        if ((high = high(token)) != null) {
+        if (isHigh(token)) {
             String highName = token.string();
-            get();  // skip MOP
-            Binary binary;
-            if ((binary = binary(token)) != null) {
-                get();  // skip BOP
+            get();  // skip high operator
+            if (isBinary(token)) {
+                String binaryName = token.string();
+                get();  // skip binary operator
                 Expression e = unary();
-                return c -> high.apply(c, e.eval(c), binary);
+                return c -> c.operators().high(highName)
+                    .apply(c, e.eval(c), c.operators().binary(binaryName));
             } else
-                throw new ValueException("BOP expected after '%s'", highName);
-        } else if ((unary = unary(token)) != null) {
-            get();  // skip UOP
+                throw new ValueException("Binary operator expected after '%s'", highName);
+        } else if (isUnary(token)) {
+            String unaryName = token.string();
+            get();  // skip unary operator
             Expression e = unary();
-            return c -> unary.apply(c, e.eval(c));
+            return c -> c.operators().unary(unaryName).apply(c, e.eval(c));
         } else
             return sequence();
     }
 
     Expression expression() {
         Expression e = unary();
-        Binary b;
-        while ((b = binary(token)) != null) {
-            get();  // skip BOP
-            Binary binary = b;
+        while (isBinary(token)) {
+            String binaryName = token.string();
+            get();  // skip binary operator
             Expression left = e, right = unary();
-            e = c -> binary.apply(c, left.eval(c), right.eval(c));
+            e = c -> c.operators().binary(binaryName)
+                .apply(c, left.eval(c), right.eval(c));
         }
         return e;
     }

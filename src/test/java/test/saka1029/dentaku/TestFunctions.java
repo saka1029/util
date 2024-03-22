@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import org.junit.Test;
 import saka1029.util.dentaku.Context;
-import saka1029.util.dentaku.Functions;
+import saka1029.util.dentaku.Operators;
 import saka1029.util.dentaku.Parser;
 import saka1029.util.dentaku.Value;
 
@@ -22,12 +22,12 @@ public class TestFunctions {
     }
 
     static Value eval(Context context, String input) {
-        return Parser.parse(context.functions(), input).eval(context);
+        return Parser.parse(context.operators(), input).eval(context);
     }
 
     @Test
     public void testUnaryArithmeticOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "-1 -2 -3"), eval(c, "- 1 2 3"));
         assertEquals(eval(c, "6"), eval(c, "+ 1 2 3"));
@@ -37,7 +37,7 @@ public class TestFunctions {
 
     @Test
     public void tesUnarytTrigonometricOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "0 1 -1 0"), eval(c, "sin 0 (PI / 2) (-PI / 2) PI round 0"));
         assertEquals(eval(c, "1 0 0 -1"), eval(c, "cos 0 (PI / 2) (-PI / 2) PI round 0"));
@@ -49,7 +49,7 @@ public class TestFunctions {
 
     @Test
     public void testUnaryLogOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "0 1 2 3"), eval(c, "log (E ^ (0 .. 3))"));
         assertEquals(eval(c, "0 1 2 3"), eval(c, "log10 (10 ^ (0 .. 3))"));
@@ -57,14 +57,14 @@ public class TestFunctions {
 
     @Test
     public void testUnaryLogicalOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "0 1"), eval(c, "not -1 0"));
     }
 
     @Test
     public void testBinaryArithmeticOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "5 7 9"), eval(c, "1 2 3 + 4 5 6"));
         assertEquals(eval(c, "5 6 7"), eval(c, "1 2 3 + 4"));
@@ -99,7 +99,7 @@ public class TestFunctions {
 
     @Test
     public void testBinaryCompareOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "0 1 0"), eval(c, "0 == -1 0 1"));
         assertEquals(eval(c, "1 0 1"), eval(c, "0 != -1 0 1"));
@@ -111,7 +111,7 @@ public class TestFunctions {
 
     @Test
     public void testBinaryLogicalOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "1 0 0 0"), eval(c, "1 1 0 0 and 1 0 1 0"));
         assertEquals(eval(c, "1 1 1 0"), eval(c, "1 1 0 0 or  1 0 1 0"));
@@ -120,7 +120,7 @@ public class TestFunctions {
 
     @Test
     public void testHighOrderOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "55"), eval(c, "@ + (1 .. 10)"));
         assertEquals(eval(c, "55"), eval(c, "+ (1 .. 10)"));
@@ -134,7 +134,7 @@ public class TestFunctions {
 
     @Test
     public void testSortAndReverseOperators() {
-        Functions f = Functions.of();
+        Operators f = Operators.of();
         Context c = Context.of(f);
         assertEquals(eval(c, "1 2 3 4 5"), eval(c, "sort 4 2 5 1 3"));
         assertEquals(eval(c, "5 4 3 2 1"), eval(c, "reverse sort 4 2 5 1 3"));

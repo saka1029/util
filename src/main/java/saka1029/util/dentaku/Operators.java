@@ -7,19 +7,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Functions {
+public class Operators {
     static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
     private Map<String, Str<Unary>> uops = new HashMap<>();
     private Map<String, Str<Binary>> bops = new HashMap<>();
     private Map<String, Str<High>> hops = new HashMap<>();
 
-    private Functions() {
+    private Operators() {
         initialize();
     }
 
-    public static Functions of() {
-        return new Functions();
+    public static Operators of() {
+        return new Operators();
     }
 
     public Unary unary(String name) {

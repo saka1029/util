@@ -6,15 +6,15 @@ import java.util.Map;
 
 public class Context {
     final Context parent;
-    final Functions functions;
+    final Operators functions;
     final Map<String, Str<Expression>> variables = new HashMap<>();
 
-    private Context(Functions functions, Context parent) {
+    private Context(Operators functions, Context parent) {
         this.parent = parent;
         this.functions = functions;
     }
 
-    public static Context of(Functions functions) {
+    public static Context of(Operators functions) {
         Context context = new Context(functions, null);
         context.variable("PI", Value.PI);
         context.variable("E", Value.E);
@@ -25,7 +25,7 @@ public class Context {
         return new Context(functions, this);
     }
 
-    public Functions functions() {
+    public Operators operators() {
         return functions;
     }
     public Expression variable(String name) {
