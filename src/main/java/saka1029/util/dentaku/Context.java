@@ -6,27 +6,26 @@ import java.util.Map;
 
 public class Context {
     final Context parent;
-    final Operators functions;
+    final Operators operators;
     final Map<String, Str<Expression>> variables = new HashMap<>();
 
-    private Context(Operators functions, Context parent) {
+    private Context(Operators operators, Context parent) {
         this.parent = parent;
-        this.functions = functions;
+        this.operators = operators;
     }
 
     public static Context of(Operators functions) {
         Context context = new Context(functions, null);
-        context.variable("PI", Value.PI);
-        context.variable("E", Value.E);
+        context.initialize();
         return context;
     }
 
     public Context child() {
-        return new Context(functions, this);
+        return new Context(operators, this);
     }
 
     public Operators operators() {
-        return functions;
+        return operators;
     }
     public Expression variable(String name) {
         Str<Expression> e = variables.get(name);
@@ -50,6 +49,19 @@ public class Context {
 
     public void variable(String name, Value value) {
         variables.put(name, Str.of(x -> value, "%s = %s".formatted(name, value)));
+    }
+
+    void eval(String line) {
+        Parser.parse(operators, line).eval(this);
+    }
+
+    private void initialize() {
+        variable("PI", Value.PI);
+        variable("E", Value.E);
+        eval("ave x = + x / length x");
+        eval("variance x = + (x - ave x ^ 2) / length x");
+        eval("sd x = sqrt variance x");
+        eval("t-score x = x - ave x / sd x * 10 + 50");
     }
 
 }

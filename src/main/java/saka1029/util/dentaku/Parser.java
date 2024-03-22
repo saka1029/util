@@ -27,14 +27,14 @@ import saka1029.util.dentaku.Tokenizer.Type;
  * </pre>
  */
 public class Parser {
-    final Operators functions;
+    final Operators operators;
     final String input;
     final List<Token> tokens;
     int index;
     Token token;
 
-    private Parser(Operators functions, String input) {
-        this.functions = functions;
+    private Parser(Operators operators, String input) {
+        this.operators = operators;
         this.input = input.trim();
         this.tokens = Tokenizer.tokens(this.input);
         this.index = 0;
@@ -75,17 +75,17 @@ public class Parser {
 
     boolean isUnary(Token token) {
         return is(token, Type.ID, Type.SPECIAL)
-            && functions.unary(token.string()) != null;
+            && operators.unary(token.string()) != null;
     }
 
     boolean isBinary(Token token) {
         return is(token, Type.ID, Type.SPECIAL)
-            && functions.binary(token.string()) != null;
+            && operators.binary(token.string()) != null;
     }
 
     boolean isHigh(Token token) {
         return is(token, Type.ID, Type.SPECIAL)
-            && functions.high(token.string()) != null;
+            && operators.high(token.string()) != null;
     }
 
     String id(Token token) {
@@ -220,11 +220,11 @@ public class Parser {
     public Expression statement() {
         if (is(token, Type.END))
             return null;
-        if (is(peek(0), "="))
+        else if (is(peek(0), "="))
             return defineVariable();
-        if (is(peek(1), "="))
+        else if (is(peek(1), "="))
             return defineUnary();
-        if (is(peek(2), "="))
+        else if (is(peek(2), "="))
             return defineBinary();
         else {
             Expression e = expression();
