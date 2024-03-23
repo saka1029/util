@@ -147,6 +147,7 @@ public class Context {
         eval("sd x = sqrt variance x");
         eval("t-score x = x - ave x / sd x * 10 + 50");
         eval("pascal n = n C (0 to n)");
+        eval("c poly x = + (x ^ (length c - 1 to 0) * c)");
     }
 
 }
