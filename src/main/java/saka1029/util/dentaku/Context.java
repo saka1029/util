@@ -112,6 +112,8 @@ public class Context {
         operators.binary("/", (c, l, r) -> l.binary((a, b) -> a.divide(b, MATH_CONTEXT), r), "V / V -> V : 除算");
         operators.binary("%", (c, l, r) -> l.binary((a, b) -> a.remainder(b, MATH_CONTEXT), r), "V % V -> V: 剰余");
         operators.binary("^", (c, l, r) -> l.binary((a, b) -> dec(Math.pow(d(a), d(b))), r), "V ^ V -> V: べき乗");
+        operators.binary("P", (c, l, r) -> l.binary(Value::permutation, r), "V P V -> V: 順列");
+        operators.binary("C", (c, l, r) -> l.binary(Value::combination, r), "V C V -> V: 組合せ");
         operators.binary("round", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.HALF_UP), r), "V round S -> V : Vを小数点以下S桁に四捨五入");
         operators.binary("ceiling", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.CEILING), r), "V ceiling S -> V : Vを正の無限大方向に向かって小数点以下S桁に切り上げ");
         operators.binary("down", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.DOWN), r), "V down S -> V : Vをゼロに向かって小数点以下S桁に切り捨て");

@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Value implements Expression {
+    public static final BigDecimal ZERO = BigDecimal.ZERO;
+    public static final BigDecimal ONE = BigDecimal.ONE;
     public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
     // public static final MathContext MATH_CONTEXT = new MathContext(500, RoundingMode.HALF_EVEN);
     public static final Value NaN = new Value();
@@ -215,6 +217,23 @@ public class Value implements Expression {
                         result.add(d);
             }
         return Value.of(result);
+    }
+
+    public static BigDecimal permutation(BigDecimal n, BigDecimal r) {
+        if (r.compareTo(r) < 0)
+            throw new ValueException("n must be >= r but n=%s r=%s", n, r);
+        BigDecimal result = ONE;
+        for (BigDecimal i = n.subtract(r).add(ONE); i.compareTo(n) <= 0; i = i.add(ONE))
+            result = result.multiply(i);
+        return result;
+    }
+
+    public static BigDecimal combination(BigDecimal n, BigDecimal r) {
+        BigDecimal den = permutation(n, r);
+        BigDecimal num = ONE;
+        for (BigDecimal i = r; i.compareTo(ONE) > 0; i = i.subtract(ONE))
+            num = num.multiply(i);
+        return den.divide(num);
     }
 
     @Override
