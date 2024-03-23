@@ -220,7 +220,11 @@ public class Value implements Expression {
     }
 
     public static BigDecimal permutation(BigDecimal n, BigDecimal r) {
-        if (r.compareTo(r) < 0)
+        if (n.compareTo(ZERO) < 0)
+            throw new ValueException("n be >= 0 n=%s", n);
+        if (r.compareTo(ZERO) < 0)
+            throw new ValueException("r be >= 0 r=%s", r);
+        if (n.compareTo(r) < 0)
             throw new ValueException("n must be >= r but n=%s r=%s", n, r);
         BigDecimal result = ONE;
         for (BigDecimal i = n.subtract(r).add(ONE); i.compareTo(n) <= 0; i = i.add(ONE))
@@ -229,6 +233,7 @@ public class Value implements Expression {
     }
 
     public static BigDecimal combination(BigDecimal n, BigDecimal r) {
+        r = r.min(n.subtract(r));
         BigDecimal den = permutation(n, r);
         BigDecimal num = ONE;
         for (BigDecimal i = r; i.compareTo(ONE) > 0; i = i.subtract(ONE))
