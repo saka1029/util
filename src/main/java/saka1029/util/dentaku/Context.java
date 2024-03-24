@@ -164,5 +164,4 @@ public class Context {
         eval("a distance b = sqrt + (a - b ^ 2)");
         eval("a days b = days b - days a");
     }
-
 }
