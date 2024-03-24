@@ -90,10 +90,11 @@ public class Context {
         operators.unary("-", (c, v) -> v.map(BigDecimal::negate), "- V -> V: 符号反転");
         operators.unary("+", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::add, r)), "+ V -> S : 和");
         operators.unary("*", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::multiply, r)), "* V -> S : 積");
-        operators.unary("^", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary((a, b) -> dec(Math.pow(d(a), d(b))), r)), "^ V -> S : べき乗");
+        operators.unary("^", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(Value::pow, r)), "^ V -> S : べき乗");
         operators.unary("abs", (c, v) -> v.map(x -> x.abs()), "abs V -> V : 絶対値");
-        operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> V : 各要素の符号(-1, 0, 1)");
-        operators.unary("int", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.HALF_UP)), "int V -> V : 各要素の整数化(四捨五入)");
+        operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> V : 符号(-1, 0, 1)");
+        operators.unary("int", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.HALF_UP)), "int V -> V : 整数化(四捨五入)");
+        operators.unary("trunc", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.DOWN)), "trunc V -> V : 整数化(四捨五入)");
         operators.unary("sqrt", (c, v) -> v.map(x -> x.sqrt(MATH_CONTEXT)), "sqrt V -> V : 平方根");
         operators.unary("sin", (c, v) -> v.map(x -> dec(Math.sin(d(x)))), "sin V -> V : sin値");
         operators.unary("asin", (c, v) -> v.map(x -> dec(Math.asin(d(x)))), "asin V -> V : sin⁻¹値");
@@ -122,7 +123,7 @@ public class Context {
         operators.binary("*", (c, l, r) -> l.binary(BigDecimal::multiply, r), "V * V -> V : 乗算");
         operators.binary("/", (c, l, r) -> l.binary((a, b) -> a.divide(b, MATH_CONTEXT), r), "V / V -> V : 除算");
         operators.binary("%", (c, l, r) -> l.binary((a, b) -> a.remainder(b, MATH_CONTEXT), r), "V % V -> V: 剰余");
-        operators.binary("^", (c, l, r) -> l.binary((a, b) -> dec(Math.pow(d(a), d(b))), r), "V ^ V -> V: べき乗");
+        operators.binary("^", (c, l, r) -> l.binary(Value::pow, r), "V ^ V -> V: べき乗");
         operators.binary("P", (c, l, r) -> l.binary(Value::permutation, r), "V P V -> V: 順列");
         operators.binary("C", (c, l, r) -> l.binary(Value::combination, r), "V C V -> V: 組合せ");
         operators.binary("round", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.HALF_UP), r), "V round S -> V : Vを小数点以下S桁に四捨五入");

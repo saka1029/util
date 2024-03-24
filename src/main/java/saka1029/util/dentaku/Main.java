@@ -130,7 +130,7 @@ public class Main {
                 Value value = e.eval(context);
                 if (value != Value.NaN)
                     out.println(value);
-            } catch (ValueException | ArithmeticException ex) {
+            } catch (ValueException | ArithmeticException | NumberFormatException ex) {
                 out.println(ex.getMessage());
             }
         }

@@ -2,6 +2,7 @@ package saka1029.util.dentaku;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
@@ -193,31 +194,31 @@ public class Value implements Expression {
         return Value.of(result);
     }
 
-        public Value factor() {
-            BigDecimal d = oneElement();
-            List<BigDecimal> result = new ArrayList<>();
-            switch (d.signum()) {
-                case 0:
-                    result.add(BigDecimal.ZERO);
-                    break;
-                case -1:
-                    result.add(BigDecimal.ONE.negate());
-                    d = d.negate();
-                    // thru
-                default:
-                    BigDecimal max = d.sqrt(MATH_CONTEXT);
-                    for (BigDecimal f = BigDecimal.TWO; f.compareTo(max) <= 0; f = f.add(BigDecimal.ONE)) {
-                        while (true) {
-                            BigDecimal[] r = d.divideAndRemainder(f, MATH_CONTEXT);
-                            if (!r[1].equals(BigDecimal.ZERO))
-                                break;
-                            d = r[0];
-                            result.add(f);
-                        }
+    public Value factor() {
+        BigDecimal d = oneElement();
+        List<BigDecimal> result = new ArrayList<>();
+        switch (d.signum()) {
+            case 0:
+                result.add(BigDecimal.ZERO);
+                break;
+            case -1:
+                result.add(BigDecimal.ONE.negate());
+                d = d.negate();
+                // thru
+            default:
+                BigDecimal max = d.sqrt(MATH_CONTEXT);
+                for (BigDecimal f = BigDecimal.TWO; f.compareTo(max) <= 0; f = f.add(BigDecimal.ONE)) {
+                    while (true) {
+                        BigDecimal[] r = d.divideAndRemainder(f, MATH_CONTEXT);
+                        if (!r[1].equals(BigDecimal.ZERO))
+                            break;
+                        d = r[0];
+                        result.add(f);
                     }
-                    if (!d.equals(BigDecimal.ONE))
-                        result.add(d);
-            }
+                }
+                if (!d.equals(BigDecimal.ONE))
+                    result.add(d);
+        }
         return Value.of(result);
     }
 
@@ -241,6 +242,17 @@ public class Value implements Expression {
         for (BigDecimal i = r; i.compareTo(ONE) > 0; i = i.subtract(ONE))
             num = num.multiply(i);
         return den.divide(num);
+    }
+
+    static final BigDecimal POW_MAX = new BigDecimal(Integer.MAX_VALUE);
+
+    public static BigDecimal pow(BigDecimal a, BigDecimal b) {
+        if (b.setScale(0, RoundingMode.DOWN).equals(b)
+            && b.compareTo(BigDecimal.ZERO) > 0
+            && b.compareTo(POW_MAX) <= 0)
+            return a.pow(b.intValue());
+        else
+            return new BigDecimal(Math.pow(a.doubleValue(), b.doubleValue()));
     }
 
     public static LocalDate date(BigDecimal d) {
