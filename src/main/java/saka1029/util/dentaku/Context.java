@@ -113,9 +113,9 @@ public class Context {
         operators.unary("year", (c, v) -> v.map(x -> Value.year(Value.date(x))), "year V -> V : YYYYMMDDのYYYY");
         operators.unary("month", (c, v) -> v.map(x -> Value.month(Value.date(x))), "month V -> V : YYYYMMDDのMM");
         operators.unary("day", (c, v) -> v.map(x -> Value.day(Value.date(x))), "day V -> V : YYYYMMDDのDD");
-        operators.unary("week", (c, v) -> v.map(x -> Value.week(Value.date(x))), "week V -> V : YYYYMMDDの曜日(0:日曜日..6:土曜日)");
-        operators.unary("days", (c, v) -> v.map(x -> Value.days(Value.date(x))), "week V -> V : YYYYMMDDの絶対日(0:19700101)");
-        operators.unary("date", (c, v) -> v.map(x -> Value.dec(Value.dateFromDays(x))), "date V -> V : 絶対日(0:19700101)から日付(YYYYMMDD)");
+        operators.unary("week", (c, v) -> v.map(x -> Value.week(Value.date(x))), "week V -> V : YYYYMMDDの曜日(1:月曜日..7:日曜日)");
+        operators.unary("days", (c, v) -> v.map(x -> Value.days(Value.date(x))), "days V -> V : YYYYMMDDの絶対日(0=1970年1月1日)");
+        operators.unary("date", (c, v) -> v.map(x -> Value.dec(Value.dateFromDays(x))), "date V -> V : 絶対日(0=1970年1月1日)から日付(YYYYMMDD)");
         // binary operators
         operators.binary("+", (c, l, r) -> l.binary(BigDecimal::add, r), "V + V -> V : 加算");
         operators.binary("-", (c, l, r) -> l.binary(BigDecimal::subtract, r), "V - V -> V : 減算");
@@ -150,10 +150,10 @@ public class Context {
         operators.high("@", (c, v, b) -> v.reduce(c, b), "@ B V -> S : 二項演算子BでVを簡約(左から右に適用)");
         operators.high("@<", (c, v, b) -> v.reduceRight(c, b), "@< B V -> S : 二項演算子BでVを簡約(右から左に適用)");
         operators.high("@@", (c, v, b) -> v.cumulate(c, b), "@@ B V -> V : 二項演算子BでVを簡約しながら累積(左から右に適用)");
-        variable("TODAY", c -> Value.of(Value.dec(LocalDate.now())), "今日");
-        variable("PI", c -> Value.of(dec("3.1415926535897932384626433")), "円周率");
-        variable("E", c -> Value.of(dec("2.7182818284590452353602874")), "自然対数の底");
-        variable("EPSILON", c -> Value.of(dec("5E-10")), "ほぼ等しいのしきい値");
+        variable("TODAY", c -> Value.of(Value.dec(LocalDate.now())), "TODAY : 今日");
+        variable("PI", c -> Value.of(dec("3.1415926535897932384626433")), "PI : 円周率");
+        variable("E", c -> Value.of(dec("2.7182818284590452353602874")), "E : 自然対数の底");
+        variable("EPSILON", c -> Value.of(dec("5E-10")), "EPSILON : ほぼ等しいのしきい値");
         eval("ave x = + x / length x");
         eval("variance x = + (x - ave x ^ 2) / length x");
         eval("sd x = sqrt variance x");
