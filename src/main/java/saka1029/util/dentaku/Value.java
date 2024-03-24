@@ -2,6 +2,8 @@ package saka1029.util.dentaku;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -239,6 +241,39 @@ public class Value implements Expression {
         for (BigDecimal i = r; i.compareTo(ONE) > 0; i = i.subtract(ONE))
             num = num.multiply(i);
         return den.divide(num);
+    }
+
+    public static LocalDate date(BigDecimal d) {
+        int date = d.intValue();
+        return LocalDate.of(date / 10000, date / 100 % 100, date % 100);
+    }
+
+    public static LocalDate dateFromDays(BigDecimal days) {
+        return LocalDate.ofEpochDay(days.intValue());
+    }
+
+    public static BigDecimal dec(LocalDate date) {
+        return BigDecimal.valueOf(((date.getYear() * 100) + date.getMonthValue()) * 100 + date.getDayOfMonth());
+    }
+
+    public static BigDecimal year(LocalDate date) {
+        return BigDecimal.valueOf(date.getYear());
+    }
+
+    public static BigDecimal month(LocalDate date) {
+        return BigDecimal.valueOf(date.getMonthValue());
+    }
+
+    public static BigDecimal day(LocalDate date) {
+        return BigDecimal.valueOf(date.getDayOfMonth());
+    }
+
+    public static BigDecimal week(LocalDate date) {
+        return BigDecimal.valueOf(date.getDayOfWeek().getValue());
+    }
+
+    public static BigDecimal days(LocalDate date) {
+        return BigDecimal.valueOf(date.getLong(ChronoField.EPOCH_DAY));
     }
 
     @Override

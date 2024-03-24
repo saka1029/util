@@ -3,6 +3,7 @@ package saka1029.util.dentaku;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,10 @@ public class Context {
         return new BigDecimal(d);
     }
 
+    static BigDecimal dec(String s) {
+        return new BigDecimal(s);
+    }
+
     static double d(BigDecimal d) {
         return d.doubleValue();
     }
@@ -105,6 +110,12 @@ public class Context {
         operators.unary("is-prime", (c, v) -> v.map(x -> dec(Value.isPrime(x))), "is-prime V -> V : 素数の場合1、それ以外の場合0");
         operators.unary("prime", (c, v) -> v.prime(), "prime V -> V : 素数のみを選択");
         operators.unary("factor", (c, v) -> v.factor(), "factor V -> V : 素因数分解");
+        operators.unary("year", (c, v) -> v.map(x -> Value.year(Value.date(x))), "year V -> V : YYYYMMDDのYYYY");
+        operators.unary("month", (c, v) -> v.map(x -> Value.month(Value.date(x))), "month V -> V : YYYYMMDDのMM");
+        operators.unary("day", (c, v) -> v.map(x -> Value.day(Value.date(x))), "day V -> V : YYYYMMDDのDD");
+        operators.unary("week", (c, v) -> v.map(x -> Value.week(Value.date(x))), "week V -> V : YYYYMMDDの曜日(0:日曜日..6:土曜日)");
+        operators.unary("days", (c, v) -> v.map(x -> Value.days(Value.date(x))), "week V -> V : YYYYMMDDの絶対日(0:19700101)");
+        operators.unary("date", (c, v) -> v.map(x -> Value.dec(Value.dateFromDays(x))), "date V -> V : 絶対日(0:19700101)から日付(YYYYMMDD)");
         // binary operators
         operators.binary("+", (c, l, r) -> l.binary(BigDecimal::add, r), "V + V -> V : 加算");
         operators.binary("-", (c, l, r) -> l.binary(BigDecimal::subtract, r), "V - V -> V : 減算");
@@ -139,9 +150,10 @@ public class Context {
         operators.high("@", (c, v, b) -> v.reduce(c, b), "@ B V -> S : 二項演算子BでVを簡約(左から右に適用)");
         operators.high("@<", (c, v, b) -> v.reduceRight(c, b), "@< B V -> S : 二項演算子BでVを簡約(右から左に適用)");
         operators.high("@@", (c, v, b) -> v.cumulate(c, b), "@@ B V -> V : 二項演算子BでVを簡約しながら累積(左から右に適用)");
-        eval("PI = 3.1415926535897932384626433");
-        eval("E = 2.7182818284590452353602874");
-        eval("EPSILON = 5e-10");
+        variable("TODAY", c -> Value.of(Value.dec(LocalDate.now())), "今日");
+        variable("PI", c -> Value.of(dec("3.1415926535897932384626433")), "円周率");
+        variable("E", c -> Value.of(dec("2.7182818284590452353602874")), "自然対数の底");
+        variable("EPSILON", c -> Value.of(dec("5E-10")), "ほぼ等しいのしきい値");
         eval("ave x = + x / length x");
         eval("variance x = + (x - ave x ^ 2) / length x");
         eval("sd x = sqrt variance x");
@@ -149,6 +161,7 @@ public class Context {
         eval("pascal n = n C (0 to n)");
         eval("c poly x = + (x ^ (length c - 1 to 0) * c)");
         eval("a distance b = sqrt + (a - b ^ 2)");
+        eval("a days b = days b - days a");
     }
 
 }
