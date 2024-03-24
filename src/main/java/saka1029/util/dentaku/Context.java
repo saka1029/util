@@ -150,7 +150,7 @@ public class Context {
         operators.high("@", (c, v, b) -> v.reduce(c, b), "@ B V -> S : 二項演算子BでVを簡約(左から右に適用)");
         operators.high("@<", (c, v, b) -> v.reduceRight(c, b), "@< B V -> S : 二項演算子BでVを簡約(右から左に適用)");
         operators.high("@@", (c, v, b) -> v.cumulate(c, b), "@@ B V -> V : 二項演算子BでVを簡約しながら累積(左から右に適用)");
-        variable("TODAY", c -> Value.of(Value.dec(LocalDate.now())), "TODAY : 今日");
+        variable("TODAY", c -> Value.of(Value.dec(LocalDate.now())), "TODAY : 今日(YYYYMMDD)");
         variable("PI", c -> Value.of(dec("3.1415926535897932384626433")), "PI : 円周率");
         variable("E", c -> Value.of(dec("2.7182818284590452353602874")), "E : 自然対数の底");
         variable("EPSILON", c -> Value.of(dec("5E-10")), "EPSILON : ほぼ等しいのしきい値");
