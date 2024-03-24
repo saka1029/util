@@ -288,6 +288,26 @@ public class Value implements Expression {
         return BigDecimal.valueOf(date.getLong(ChronoField.EPOCH_DAY));
     }
 
+    public static BigDecimal gcd(BigDecimal a, BigDecimal b) {
+        a = a.abs();
+        b = b.abs();
+        if (a.compareTo(b) < 0) {
+            var t = a;
+            a = b;
+            b = t;
+        }
+        while (b.compareTo(BigDecimal.ZERO) != 0) {
+            BigDecimal t = b;
+            b = a.remainder(b);
+            a = t;
+        }
+        return a;
+    }
+
+    public static BigDecimal lcm(BigDecimal a, BigDecimal b) {
+        return a.multiply(b).divide(gcd(a, b));
+    }
+
     @Override
     public int hashCode() {
         return Arrays.hashCode(elements);
