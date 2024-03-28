@@ -136,12 +136,12 @@ public class Value implements Expression {
     }
 
     public Value at(Value right) {
-        int index = right.oneElement().intValue();
-        if (index < 0)
-            index += elements.length;
-        if (index < 0 || index >= elements.length)
-            throw new ValueException("Index out of bounds: %d", index);
-        return Value.of(elements[index]);
+        List<BigDecimal> result = new ArrayList<>();
+        for (BigDecimal b : right.elements) {
+            int index = b.intValueExact();
+            result.add(elements[index >= 0 ? index : elements.length + index]);
+        }
+        return Value.of(result);
     }
 
     public Value filter(Value right) {
