@@ -13,6 +13,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import static saka1029.util.dentaku.Scalar.*;
 
 public class Value implements Expression {
     public static final BigDecimal ZERO = BigDecimal.ZERO;
@@ -139,17 +140,13 @@ public class Value implements Expression {
         return Value.of(elements[index]);
     }
 
-    static boolean bool(BigDecimal d) {
-        return !d.equals(BigDecimal.ZERO);
-    }
-
     public Value filter(Value right) {
         if (elements.length == 1)
-            return bool(elements[0]) ? right : EMPTY;
+            return b(elements[0]) ? right : EMPTY;
         else if (elements.length == right.elements.length) {
             List<BigDecimal> result = new ArrayList<>();
             for (int i = 0; i < elements.length; ++i)
-                if (bool(elements[i]))
+                if (b(elements[i]))
                     result.add(right.elements[i]);
             return new Value(result.toArray(BigDecimal[]::new));
         } else
