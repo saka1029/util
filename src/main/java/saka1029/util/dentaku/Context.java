@@ -122,7 +122,7 @@ public class Context {
         operators.binary("-", (c, l, r) -> l.binary(BigDecimal::subtract, r), "V - V -> V : 減算");
         operators.binary("*", (c, l, r) -> l.binary(BigDecimal::multiply, r), "V * V -> V : 乗算");
         operators.binary("/", (c, l, r) -> l.binary((a, b) -> a.divide(b, MATH_CONTEXT), r), "V / V -> V : 除算");
-        operators.binary("%", (c, l, r) -> l.binary((a, b) -> a.remainder(b, MATH_CONTEXT), r), "V % V -> V: 剰余");
+        operators.binary("%", (c, l, r) -> l.binary((a, b) -> a.remainder(b), r), "V % V -> V: 剰余");
         operators.binary("^", (c, l, r) -> l.binary(Value::pow, r), "V ^ V -> V: べき乗");
         operators.binary("gcd", (c, l, r) -> l.binary(Value::gcd, r), "Vi gcd Vi -> Vi: 最大公約数");
         operators.binary("lcm", (c, l, r) -> l.binary(Value::lcm, r), "Vi lcm Vi -> Vi: 最小公倍数");

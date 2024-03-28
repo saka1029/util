@@ -176,13 +176,15 @@ public class Value implements Expression {
     }
 
     public static boolean isPrime(BigDecimal v) {
-        if (v.compareTo(BigDecimal.ONE) <= 0)
+        BigInteger i = v.toBigIntegerExact();
+        int comp2 = i.compareTo(BigInteger.TWO);
+        if (comp2 < 0)
             return false;
-        if (v.compareTo(BigDecimal.TWO) == 0)
+        else if (comp2 == 0)
             return true;
-        BigDecimal max = v.sqrt(MATH_CONTEXT);
-        for (BigDecimal d = BigDecimal.TWO; d.compareTo(max) <= 0; d = d.add(BigDecimal.ONE))
-            if (v.remainder(d, MATH_CONTEXT).equals(BigDecimal.ZERO))
+        BigInteger max = i.sqrt();
+        for (BigInteger d = BigInteger.TWO; d.compareTo(max) <= 0; d = d.add(BigInteger.ONE))
+            if (i.remainder(d).equals(BigInteger.ZERO))
                 return false;
         return true;
     }
@@ -210,7 +212,7 @@ public class Value implements Expression {
                 BigDecimal max = d.sqrt(MATH_CONTEXT);
                 for (BigDecimal f = BigDecimal.TWO; f.compareTo(max) <= 0; f = f.add(BigDecimal.ONE)) {
                     while (true) {
-                        BigDecimal[] r = d.divideAndRemainder(f, MATH_CONTEXT);
+                        BigDecimal[] r = d.divideAndRemainder(f);
                         if (!r[1].equals(BigDecimal.ZERO))
                             break;
                         d = r[0];
@@ -257,16 +259,17 @@ public class Value implements Expression {
     }
 
     public static LocalDate date(BigDecimal d) {
-        int date = d.intValue();
+        int date = d.intValueExact();
         return LocalDate.of(date / 10000, date / 100 % 100, date % 100);
     }
 
     public static LocalDate dateFromDays(BigDecimal days) {
-        return LocalDate.ofEpochDay(days.intValue());
+        return LocalDate.ofEpochDay(days.intValueExact());
     }
 
     public static BigDecimal dec(LocalDate date) {
-        return BigDecimal.valueOf(((date.getYear() * 100) + date.getMonthValue()) * 100 + date.getDayOfMonth());
+        return BigDecimal.valueOf(
+            ((date.getYear() * 100) + date.getMonthValue()) * 100 + date.getDayOfMonth());
     }
 
     public static BigDecimal year(LocalDate date) {

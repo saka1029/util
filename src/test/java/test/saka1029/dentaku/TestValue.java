@@ -169,11 +169,11 @@ public class TestValue {
     public void testPrimes() {
         BitSet set = primes(10000);
         long[] ex = set.toLongArray();
-        System.out.println("length=" + ex.length);
-        System.out.println("long[] PRIMES_BITS = {");
-        System.out.print(Arrays.stream(ex).mapToObj(x -> "0x%XL".formatted(x))
-                .collect(Collectors.joining(", ")));
-        System.out.println("};");
+        // System.out.println("length=" + ex.length);
+        // System.out.println("long[] PRIMES_BITS = {");
+        // System.out.print(Arrays.stream(ex).mapToObj(x -> "0x%XL".formatted(x))
+        //         .collect(Collectors.joining(", ")));
+        // System.out.println("};");
     }
 
     public static long[] PRIMES_BITS = {0x28208A20A08A28ACL, 0x800228A202088288L,
