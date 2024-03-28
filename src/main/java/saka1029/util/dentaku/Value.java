@@ -230,13 +230,13 @@ public class Value implements Expression {
         if (i.compareTo(BigInteger.ONE) <= 0)
             return n;
         BigInteger x = BigInteger.ZERO, y = BigInteger.ONE;
-        while (i.compareTo(BigInteger.ZERO) > 0) {
+        while (i.compareTo(BigInteger.ONE) > 0) {
             var t = x.add(y);
             x = y;
             y = t;
             i = i.subtract(BigInteger.ONE);
         }
-        return new BigDecimal(x);
+        return new BigDecimal(y);
     }
 
     public static BigDecimal permutation(BigDecimal n, BigDecimal r) {
