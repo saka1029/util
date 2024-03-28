@@ -225,6 +225,20 @@ public class Value implements Expression {
         return Value.of(result);
     }
 
+    public static BigDecimal fib(BigDecimal n) {
+        BigInteger i = n.toBigIntegerExact();
+        if (i.compareTo(BigInteger.ONE) <= 0)
+            return n;
+        BigInteger x = BigInteger.ZERO, y = BigInteger.ONE;
+        while (i.compareTo(BigInteger.ZERO) > 0) {
+            var t = x.add(y);
+            x = y;
+            y = t;
+            i = i.subtract(BigInteger.ONE);
+        }
+        return new BigDecimal(x);
+    }
+
     public static BigDecimal permutation(BigDecimal n, BigDecimal r) {
         BigInteger x = n.toBigIntegerExact();
         BigInteger y = r.toBigIntegerExact();

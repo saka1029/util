@@ -222,4 +222,15 @@ public class TestValue {
         assertEquals(primes(10000), set);
     }
 
+    @Test
+    public void testFib() {
+        assertEquals(BigDecimal.valueOf(0), Value.fib(BigDecimal.valueOf(0)));
+        assertEquals(BigDecimal.valueOf(1), Value.fib(BigDecimal.valueOf(1)));
+        assertEquals(BigDecimal.valueOf(1), Value.fib(BigDecimal.valueOf(2)));
+        assertEquals(BigDecimal.valueOf(2), Value.fib(BigDecimal.valueOf(3)));
+        assertEquals(BigDecimal.valueOf(3), Value.fib(BigDecimal.valueOf(4)));
+        assertEquals(BigDecimal.valueOf(5), Value.fib(BigDecimal.valueOf(5)));
+        assertEquals(BigDecimal.valueOf(8), Value.fib(BigDecimal.valueOf(6)));
+    }
+
 }

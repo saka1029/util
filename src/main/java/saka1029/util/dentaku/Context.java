@@ -91,10 +91,11 @@ public class Context {
         operators.unary("+", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::add, r)), "+ V -> D : 和");
         operators.unary("*", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::multiply, r)), "* V -> D : 積");
         operators.unary("^", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(Value::pow, r)), "^ V -> D : べき乗");
-        operators.unary("abs", (c, v) -> v.map(x -> x.abs()), "abs V -> V : 絶対値");
+        operators.unary("abs", (c, v) -> v.map(BigDecimal::abs), "abs V -> V : 絶対値");
         operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> Vi : 符号(-1, 0, 1)");
         operators.unary("int", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.HALF_UP)), "int V -> Vi : 整数化(四捨五入)");
         operators.unary("trunc", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.DOWN)), "trunc V -> vi : 整数化(切り捨て)");
+        operators.unary("fib", (c, v) -> v.map(Value::fib), "fib Vi -> vi : フィボナッチ数");
         operators.unary("sqrt", (c, v) -> v.map(x -> x.sqrt(MATH_CONTEXT)), "sqrt V -> V : 平方根");
         operators.unary("sin", (c, v) -> v.map(x -> dec(Math.sin(d(x)))), "sin V -> V : sin値");
         operators.unary("asin", (c, v) -> v.map(x -> dec(Math.asin(d(x)))), "asin V -> V : sin⁻¹値");
@@ -165,6 +166,6 @@ public class Context {
         eval("c poly x = + (x ^ (length c - 1 to 0) * c)");
         eval("a distance b = sqrt + (a - b ^ 2)");
         eval("a days b = days b - days a");
-        eval("fib n = 1 + sqrt 5 / 2 ^ n - (1 - sqrt 5 / 2 ^ n) / sqrt 5");
+        eval("fibonacci n = 1 + sqrt 5 / 2 ^ n - (1 - sqrt 5 / 2 ^ n) / sqrt 5");
     }
 }
