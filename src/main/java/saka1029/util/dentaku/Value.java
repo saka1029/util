@@ -123,15 +123,15 @@ public class Value implements Expression {
     }
 
     public Value to(Value right) {
-        BigInteger start = this.oneElement().toBigIntegerExact();
-        BigInteger end = right.oneElement().toBigIntegerExact();
+        BigDecimal start = this.oneElement();
+        BigDecimal end = right.oneElement();
         List<BigDecimal> list = new ArrayList<>();
         if (start.compareTo(end) <= 0)
-            for (BigInteger i = start; i.compareTo(end) <= 0; i = i.add(BigInteger.ONE))
-                list.add(new BigDecimal(i));
+            for (BigDecimal i = start; i.compareTo(end) <= 0; i = i.add(BigDecimal.ONE))
+                list.add(i);
         else
-            for (BigInteger i = start; i.compareTo(end) >= 0; i = i.subtract(BigInteger.ONE))
-                list.add(new BigDecimal(1));
+            for (BigDecimal i = start; i.compareTo(end) >= 0; i = i.subtract(BigDecimal.ONE))
+                list.add(i);
         return new Value(list);
     }
 
@@ -290,19 +290,19 @@ public class Value implements Expression {
     }
 
     public static BigDecimal gcd(BigDecimal a, BigDecimal b) {
-        a = a.abs();
-        b = b.abs();
-        if (a.compareTo(b) < 0) {
-            var t = a;
-            a = b;
-            b = t;
+        BigInteger x = a.toBigIntegerExact().abs();
+        BigInteger y = b.toBigIntegerExact().abs();
+        if (x.compareTo(y) < 0) {
+            var t = x;
+            x = y;
+            y = t;
         }
-        while (b.compareTo(BigDecimal.ZERO) != 0) {
-            BigDecimal t = b;
-            b = a.remainder(b);
-            a = t;
+        while (y.compareTo(BigInteger.ZERO) != 0) {
+            BigInteger t = y;
+            y = x.remainder(y);
+            x = t;
         }
-        return a;
+        return new BigDecimal(x);
     }
 
     public static BigDecimal lcm(BigDecimal a, BigDecimal b) {
