@@ -69,7 +69,7 @@ public class Context {
     }
 
     static BigDecimal dec(double d) {
-        return new BigDecimal(Double.toString(d).replaceFirst("\\.0$", ""));
+        return BigDecimal.valueOf(d).stripTrailingZeros();
     }
 
     static BigDecimal dec(String s) {
@@ -104,7 +104,7 @@ public class Context {
         operators.unary("atan", (c, v) -> v.map(x -> dec(Math.atan(d(x)))), "atan V -> V : tan⁻¹値");
         operators.unary("log", (c, v) -> v.map(x -> dec(Math.log(d(x)))), "log V -> V : 対数値(底はe)");
         operators.unary("log10", (c, v) -> v.map(x -> dec(Math.log10(d(x)))), "log10 V -> V : 対数値(底は10)");
-        operators.unary("not", (c, v) -> v.map(x -> dec(!b(x))), "not B -> B : 否定(0:偽⇔0以外:真)");
+        operators.unary("not", (c, v) -> v.map(x -> dec(!b(x))), "not Vb -> Vb : 否定(0:偽⇔0以外:真)");
         operators.unary("sort", (c, v) -> v.sort(), "sort V -> V : 上昇順にソート");
         operators.unary("reverse", (c, v) -> v.reverse(), "reverse V -> V : 反転");
         operators.unary("shuffle", (c, v) -> v.shuffle(), "shuffle V -> V : シャッフル");
