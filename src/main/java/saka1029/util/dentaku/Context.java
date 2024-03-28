@@ -165,5 +165,6 @@ public class Context {
         eval("c poly x = + (x ^ (length c - 1 to 0) * c)");
         eval("a distance b = sqrt + (a - b ^ 2)");
         eval("a days b = days b - days a");
+        eval("fib n = 1 + sqrt 5 / 2 ^ n - (1 - sqrt 5 / 2 ^ n) / sqrt 5");
     }
 }
