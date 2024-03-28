@@ -226,16 +226,18 @@ public class Value implements Expression {
     }
 
     public static BigDecimal permutation(BigDecimal n, BigDecimal r) {
-        if (n.compareTo(ZERO) < 0)
-            throw new ValueException("n be >= 0 n=%s", n);
-        if (r.compareTo(ZERO) < 0)
-            throw new ValueException("r be >= 0 r=%s", r);
-        if (n.compareTo(r) < 0)
-            throw new ValueException("n must be >= r but n=%s r=%s", n, r);
-        BigDecimal result = ONE;
-        for (BigDecimal i = n.subtract(r).add(ONE); i.compareTo(n) <= 0; i = i.add(ONE))
+        BigInteger x = n.toBigIntegerExact();
+        BigInteger y = r.toBigIntegerExact();
+        if (x.compareTo(BigInteger.ZERO) < 0)
+            throw new ValueException("n must not be negative but %s", x);
+        if (y.compareTo(BigInteger.ZERO) < 0)
+            throw new ValueException("r must not be negative but %s", y);
+        if (x.compareTo(y) < 0)
+            throw new ValueException("n must be grater than or equals to r but n=%s r=%s", n, r);
+        BigInteger result = BigInteger.ONE;
+        for (BigInteger i = x.subtract(y).add(BigInteger.ONE); i.compareTo(x) <= 0; i = i.add(BigInteger.ONE))
             result = result.multiply(i);
-        return result;
+        return new BigDecimal(result);
     }
 
     public static BigDecimal combination(BigDecimal n, BigDecimal r) {

@@ -69,7 +69,7 @@ public class Context {
     }
 
     static BigDecimal dec(double d) {
-        return new BigDecimal(d);
+        return new BigDecimal(Double.toString(d).replaceFirst("\\.0$", ""));
     }
 
     static BigDecimal dec(String s) {

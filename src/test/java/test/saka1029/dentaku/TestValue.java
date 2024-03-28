@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.stream.Collectors;
 import org.junit.Test;
 import saka1029.util.dentaku.Value;
 
@@ -167,8 +166,8 @@ public class TestValue {
 
     @Test
     public void testPrimes() {
-        BitSet set = primes(10000);
-        long[] ex = set.toLongArray();
+        // BitSet set = primes(10000);
+        // long[] ex = set.toLongArray();
         // System.out.println("length=" + ex.length);
         // System.out.println("long[] PRIMES_BITS = {");
         // System.out.print(Arrays.stream(ex).mapToObj(x -> "0x%XL".formatted(x))

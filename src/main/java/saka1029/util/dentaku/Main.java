@@ -63,13 +63,16 @@ public class Main {
 
     static void help(Context context, PrintWriter out, String... items) {
         if (items.length <= 1) {
-            out.println(".exit (or .quit .end) : exit program");
-            out.println(".help                 : show this message");
-            out.println(".help variable        : show all variables");
-            out.println(".help unary           : show all unary operators");
-            out.println(".help binary          : show all binary operators");
-            out.println(".help high            : show all high-order operators");
-            out.println(".help NAME            : show help for NAME");
+            out.println("Ctrl-D          : exit program");
+            out.println(".exit           : exit program");
+            out.println(".quit           : exit program");
+            out.println(".end            : exit program");
+            out.println(".help           : show this message");
+            out.println(".help variable  : show all variables");
+            out.println(".help unary     : show all unary operators");
+            out.println(".help binary    : show all binary operators");
+            out.println(".help high      : show all high-order operators");
+            out.println(".help NAME      : show help for NAME");
         } else if (items.length == 2) {
             String name = items[1];
             switch (name) {
