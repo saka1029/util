@@ -1,6 +1,7 @@
 package saka1029.util.dentaku;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -13,7 +14,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import static saka1029.util.dentaku.Scalar.*;
 
 public class Value implements Expression {
     public static final BigDecimal ZERO = BigDecimal.ZERO;
@@ -39,6 +39,10 @@ public class Value implements Expression {
 
     public static Value of(List<BigDecimal> list) {
         return new Value(list.toArray(BigDecimal[]::new));
+    }
+
+    public static boolean b(BigDecimal d) {
+        return d.compareTo(BigDecimal.ZERO) != 0;
     }
 
     @Override
@@ -119,15 +123,15 @@ public class Value implements Expression {
     }
 
     public Value to(Value right) {
-        BigDecimal start = this.oneElement();
-        BigDecimal end = right.oneElement();
+        BigInteger start = this.oneElement().toBigIntegerExact();
+        BigInteger end = right.oneElement().toBigIntegerExact();
         List<BigDecimal> list = new ArrayList<>();
         if (start.compareTo(end) <= 0)
-            for (BigDecimal i = start; i.compareTo(end) <= 0; i = i.add(BigDecimal.ONE))
-                list.add(i);
+            for (BigInteger i = start; i.compareTo(end) <= 0; i = i.add(BigInteger.ONE))
+                list.add(new BigDecimal(i));
         else
-            for (BigDecimal i = start; i.compareTo(end) >= 0; i = i.subtract(BigDecimal.ONE))
-                list.add(i);
+            for (BigInteger i = start; i.compareTo(end) >= 0; i = i.subtract(BigInteger.ONE))
+                list.add(new BigDecimal(1));
         return new Value(list);
     }
 
