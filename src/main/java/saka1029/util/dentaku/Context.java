@@ -167,5 +167,7 @@ public class Context {
         eval("a distance b = sqrt + (a - b ^ 2)");
         eval("a days b = days b - days a");
         eval("fibonacci n = 1 + sqrt 5 / 2 ^ n - (1 - sqrt 5 / 2 ^ n) / sqrt 5");
+        eval("radian x = x * PI / 180");
+        eval("degree x = x * 180 / PI");
     }
 }
