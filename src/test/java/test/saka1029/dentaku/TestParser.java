@@ -169,6 +169,13 @@ public class TestParser {
         assertEquals(eval(c, "2"), eval(c, "g 0"));
         assertEquals(Value.NaN, eval(c, "f x = x + 2"));
         assertEquals(eval(c, "3"), eval(c, "g 0"));
-
     }
+
+    @Test
+    public void testSin() {
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
+        assertEquals(eval(c, "1.999999999999999861967979879025"), eval(c, "1 / sin radian 45 ^ 2"));
+    }
+
 }

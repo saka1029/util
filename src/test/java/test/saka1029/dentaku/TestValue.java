@@ -232,5 +232,4 @@ public class TestValue {
         assertEquals(BigDecimal.valueOf(5), Value.fib(BigDecimal.valueOf(5)));
         assertEquals(BigDecimal.valueOf(8), Value.fib(BigDecimal.valueOf(6)));
     }
-
 }
