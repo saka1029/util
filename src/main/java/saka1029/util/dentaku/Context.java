@@ -129,11 +129,11 @@ public class Context {
         operators.binary("lcm", (c, l, r) -> l.binary(Value::lcm, r), "Vi lcm Vi -> Vi: 最小公倍数");
         operators.binary("P", (c, l, r) -> l.binary(Value::permutation, r), "Vi P Vi -> Vi: 順列");
         operators.binary("C", (c, l, r) -> l.binary(Value::combination, r), "Vi C Vi -> Vi: 組合せ");
-        operators.binary("round", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.HALF_UP), r), "V round S -> V : Vを小数点以下S桁に四捨五入");
-        operators.binary("ceiling", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.CEILING), r), "V ceiling S -> V : Vを正の無限大方向に向かって小数点以下S桁に切り上げ");
-        operators.binary("down", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.DOWN), r), "V down S -> V : Vをゼロに向かって小数点以下S桁に切り捨て");
-        operators.binary("floor", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.FLOOR), r), "V floor S -> V : Vを負の無限大方向に向かって小数点以下S桁に切り捨て");
-        operators.binary("up", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.UP), r), "V up S -> V : Vをゼロの逆に向かって小数点以下S桁に切り上げ");
+        operators.binary("round", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.HALF_UP), r), "V round I -> V : Vを小数点以下I桁に四捨五入");
+        operators.binary("ceiling", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.CEILING), r), "V ceiling I -> V : Vを正の無限大方向に向かって小数点以下I桁に切り上げ");
+        operators.binary("down", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.DOWN), r), "V down I -> V : Vをゼロに向かって小数点以下I桁に切り捨て");
+        operators.binary("floor", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.FLOOR), r), "V floor I -> V : Vを負の無限大方向に向かって小数点以下I桁に切り捨て");
+        operators.binary("up", (c, l, r) -> l.binary((a, b) -> a.setScale(b.intValue(), RoundingMode.UP), r), "V up I -> V : Vをゼロの逆に向かって小数点以下I桁に切り上げ");
         operators.binary("==", (c, l, r) -> l.binary((a, b) -> dec(a.compareTo(b) == 0), r), "V == V -> Vb : 等しい(結果は1,0で返す)");
         operators.binary("~", (c, l, r) -> l.binary((a, b) -> dec(a.subtract(b).abs().compareTo(c.variable("EPSILON").eval(c).oneElement()) <= 0), r), "V ~ V -> Vb : ほぼ等しい(しきい値はEPSILON)");
         operators.binary("!~", (c, l, r) -> l.binary((a, b) -> dec(a.subtract(b).abs().compareTo(c.variable("EPSILON").eval(c).oneElement()) > 0), r), "V !~ V -> Vb : ほぼ等しくない(しきい値はEPSILON)");
