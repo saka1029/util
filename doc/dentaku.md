@@ -238,3 +238,34 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infin {(-1)^{n} \over {2n+1}}$$
 3
 ```
 
+# 機能拡張
+
+## select
+
+`select UNARY V`で`V`にフィルターを掛ける。
+`V`のうち`UNARY 要素`がゼロ以外を返したものだけを
+選択する。
+
+文法を以下のように変更する。
+```
+unary           = sequence
+                | UOP unary
+                | HUOP UOP unary
+                | HBOP BOP unary
+```
+そもそも`-`は`map -`の省略形であり、
+`+`は`reduce +`の省略形であった。
+
+## 二項演算子の単項演算子化
+
+以下のように定義すればできるが、
+定義無しでできるようにする。
+
+```
+positive x = x > 0
+```
+
+```
+select (> 0) -1 0 1 2
+-> 1 2
+```
