@@ -60,7 +60,7 @@ public class DriveTree {
         String message = String.format(
             "%nusage:%n"
             + "java %s VOLUME_NAME IN_DIR OUT_DIR%n",
-            Files.class.getName());
+            DriveTree.class.getName());
         throw new IllegalArgumentException(message);
     }
 
