@@ -61,18 +61,54 @@ public class Main {
             out.println(s);
     }
 
+    static void helpType(PrintWriter out) {
+        out.println("D      : 十進数(小数可)");
+        out.println("B      : 真偽値(0:偽, 1:真)");
+        out.println("I      : 整数");
+        out.println("V      : 十進数の並び");
+        out.println("Vb     : 真偽値の並び");
+        out.println("Vi     : 整数の並び");
+    }
+
+    static void helpSyntax(PrintWriter out) {
+        out.println("statement       = define-variable");
+        out.println("                | define-unary");
+        out.println("                | define-binary");
+        out.println("                | expression");
+        out.println("define-variable = ID '=' expression");
+        out.println("define-unary    = IDSPECIAL ID '=' expression");
+        out.println("define-binary   = ID IDSPECIAL ID '=' expression");
+        out.println("expression      = unary { BOP unary }");
+        out.println("unary           = sequence");
+        out.println("                | UOP unary");
+        out.println("                | MOP UOP unary'");
+        out.println("sequence        = primary { primary }");
+        out.println("primary         = '(' expression ')'");
+        out.println("                | VAR");
+        out.println("                | NUMBER { NUMBER }");
+    }
+
     static void help(Context context, PrintWriter out, String... items) {
         if (items.length <= 1) {
-            out.println(".exit (or .quit .end) : exit program");
-            out.println(".help                 : show this message");
-            out.println(".help variable        : show all variables");
-            out.println(".help unary           : show all unary operators");
-            out.println(".help binary          : show all binary operators");
-            out.println(".help high            : show all high-order operators");
-            out.println(".help NAME            : show help for NAME");
+            out.println("Ctrl-D          : exit program");
+            out.println(".exit           : exit program");
+            out.println(".quit           : exit program");
+            out.println(".end            : exit program");
+            out.println(".help           : show this message");
+            out.println(".help variable  : show all variables");
+            out.println(".help unary     : show all unary operators");
+            out.println(".help binary    : show all binary operators");
+            out.println(".help high      : show all high-order operators");
+            out.println(".help NAME      : show help for NAME");
         } else if (items.length == 2) {
             String name = items[1];
             switch (name) {
+                case "type":
+                    helpType(out);
+                    break;
+                case "syntax":
+                    helpSyntax(out);
+                    break;
                 case "variable":
                     context.variables().stream()
                         .sorted()

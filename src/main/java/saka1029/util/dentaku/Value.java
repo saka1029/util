@@ -1,6 +1,7 @@
 package saka1029.util.dentaku;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -38,6 +39,10 @@ public class Value implements Expression {
 
     public static Value of(List<BigDecimal> list) {
         return new Value(list.toArray(BigDecimal[]::new));
+    }
+
+    public static boolean b(BigDecimal d) {
+        return d.compareTo(BigDecimal.ZERO) != 0;
     }
 
     @Override
@@ -131,25 +136,21 @@ public class Value implements Expression {
     }
 
     public Value at(Value right) {
-        int index = right.oneElement().intValue();
-        if (index < 0)
-            index += elements.length;
-        if (index < 0 || index >= elements.length)
-            throw new ValueException("Index out of bounds: %d", index);
-        return Value.of(elements[index]);
-    }
-
-    static boolean bool(BigDecimal d) {
-        return !d.equals(BigDecimal.ZERO);
+        List<BigDecimal> result = new ArrayList<>();
+        for (BigDecimal b : right.elements) {
+            int index = b.intValueExact();
+            result.add(elements[index >= 0 ? index : elements.length + index]);
+        }
+        return Value.of(result);
     }
 
     public Value filter(Value right) {
         if (elements.length == 1)
-            return bool(elements[0]) ? right : EMPTY;
+            return b(elements[0]) ? right : EMPTY;
         else if (elements.length == right.elements.length) {
             List<BigDecimal> result = new ArrayList<>();
             for (int i = 0; i < elements.length; ++i)
-                if (bool(elements[i]))
+                if (b(elements[i]))
                     result.add(right.elements[i]);
             return new Value(result.toArray(BigDecimal[]::new));
         } else
@@ -175,13 +176,15 @@ public class Value implements Expression {
     }
 
     public static boolean isPrime(BigDecimal v) {
-        if (v.compareTo(BigDecimal.ONE) <= 0)
+        BigInteger i = v.toBigIntegerExact();
+        int comp2 = i.compareTo(BigInteger.TWO);
+        if (comp2 < 0)
             return false;
-        if (v.compareTo(BigDecimal.TWO) == 0)
+        else if (comp2 == 0)
             return true;
-        BigDecimal max = v.sqrt(MATH_CONTEXT);
-        for (BigDecimal d = BigDecimal.TWO; d.compareTo(max) <= 0; d = d.add(BigDecimal.ONE))
-            if (v.remainder(d, MATH_CONTEXT).equals(BigDecimal.ZERO))
+        BigInteger max = i.sqrt();
+        for (BigInteger d = BigInteger.TWO; d.compareTo(max) <= 0; d = d.add(BigInteger.ONE))
+            if (i.remainder(d).equals(BigInteger.ZERO))
                 return false;
         return true;
     }
@@ -209,7 +212,7 @@ public class Value implements Expression {
                 BigDecimal max = d.sqrt(MATH_CONTEXT);
                 for (BigDecimal f = BigDecimal.TWO; f.compareTo(max) <= 0; f = f.add(BigDecimal.ONE)) {
                     while (true) {
-                        BigDecimal[] r = d.divideAndRemainder(f, MATH_CONTEXT);
+                        BigDecimal[] r = d.divideAndRemainder(f);
                         if (!r[1].equals(BigDecimal.ZERO))
                             break;
                         d = r[0];
@@ -222,17 +225,33 @@ public class Value implements Expression {
         return Value.of(result);
     }
 
+    public static BigDecimal fib(BigDecimal n) {
+        BigInteger i = n.toBigIntegerExact();
+        if (i.compareTo(BigInteger.ONE) <= 0)
+            return n;
+        BigInteger x = BigInteger.ZERO, y = BigInteger.ONE;
+        while (i.compareTo(BigInteger.ONE) > 0) {
+            var t = x.add(y);
+            x = y;
+            y = t;
+            i = i.subtract(BigInteger.ONE);
+        }
+        return new BigDecimal(y);
+    }
+
     public static BigDecimal permutation(BigDecimal n, BigDecimal r) {
-        if (n.compareTo(ZERO) < 0)
-            throw new ValueException("n be >= 0 n=%s", n);
-        if (r.compareTo(ZERO) < 0)
-            throw new ValueException("r be >= 0 r=%s", r);
-        if (n.compareTo(r) < 0)
-            throw new ValueException("n must be >= r but n=%s r=%s", n, r);
-        BigDecimal result = ONE;
-        for (BigDecimal i = n.subtract(r).add(ONE); i.compareTo(n) <= 0; i = i.add(ONE))
+        BigInteger x = n.toBigIntegerExact();
+        BigInteger y = r.toBigIntegerExact();
+        if (x.compareTo(BigInteger.ZERO) < 0)
+            throw new ValueException("n must not be negative but %s", x);
+        if (y.compareTo(BigInteger.ZERO) < 0)
+            throw new ValueException("r must not be negative but %s", y);
+        if (x.compareTo(y) < 0)
+            throw new ValueException("n must be grater than or equals to r but n=%s r=%s", n, r);
+        BigInteger result = BigInteger.ONE;
+        for (BigInteger i = x.subtract(y).add(BigInteger.ONE); i.compareTo(x) <= 0; i = i.add(BigInteger.ONE))
             result = result.multiply(i);
-        return result;
+        return new BigDecimal(result);
     }
 
     public static BigDecimal combination(BigDecimal n, BigDecimal r) {
@@ -256,16 +275,17 @@ public class Value implements Expression {
     }
 
     public static LocalDate date(BigDecimal d) {
-        int date = d.intValue();
+        int date = d.intValueExact();
         return LocalDate.of(date / 10000, date / 100 % 100, date % 100);
     }
 
     public static LocalDate dateFromDays(BigDecimal days) {
-        return LocalDate.ofEpochDay(days.intValue());
+        return LocalDate.ofEpochDay(days.intValueExact());
     }
 
     public static BigDecimal dec(LocalDate date) {
-        return BigDecimal.valueOf(((date.getYear() * 100) + date.getMonthValue()) * 100 + date.getDayOfMonth());
+        return BigDecimal.valueOf(
+            ((date.getYear() * 100) + date.getMonthValue()) * 100 + date.getDayOfMonth());
     }
 
     public static BigDecimal year(LocalDate date) {
@@ -289,19 +309,19 @@ public class Value implements Expression {
     }
 
     public static BigDecimal gcd(BigDecimal a, BigDecimal b) {
-        a = a.abs();
-        b = b.abs();
-        if (a.compareTo(b) < 0) {
-            var t = a;
-            a = b;
-            b = t;
+        BigInteger x = a.toBigIntegerExact().abs();
+        BigInteger y = b.toBigIntegerExact().abs();
+        if (x.compareTo(y) < 0) {
+            var t = x;
+            x = y;
+            y = t;
         }
-        while (b.compareTo(BigDecimal.ZERO) != 0) {
-            BigDecimal t = b;
-            b = a.remainder(b);
-            a = t;
+        while (y.compareTo(BigInteger.ZERO) != 0) {
+            BigInteger t = y;
+            y = x.remainder(y);
+            x = t;
         }
-        return a;
+        return new BigDecimal(x);
     }
 
     public static BigDecimal lcm(BigDecimal a, BigDecimal b) {
