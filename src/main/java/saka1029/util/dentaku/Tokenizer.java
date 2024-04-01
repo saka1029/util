@@ -3,7 +3,6 @@ package saka1029.util.dentaku;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * <pre>
@@ -11,13 +10,11 @@ import java.util.Set;
  * RP       = ')'
  * ID       = ID-FIRST { ID-REST }
  * ID-FIRST = JAVA-ALPHABETIC | '_'
- * ID-REST  = ID-FIRST | JAVA-DIGIT | '-'
- * ID       = JAVA-ALPHABETIC { JAVA-ALPHABETIC | JAVA-DIGIT }
- * SPECIAL  = SP { SP }
- * SP       = '!' | '$' | '%' | '&' | '-'
- *          | '=' | '^' | '~' | '|' | '@'
- *          | '+' | '*' | '<' | '>' | '/'
- *          | '.'
+ * ID-REST  = ID-FIRST | JAVA-DIGIT | '-' | '.'
+ * SPECIAL  = '+' | '-' | '*' | '/' | '%' | '^'
+ *          | '==' | '!=' | '<' | '<=' | '>' | '>='
+ *          | '~' | '!~'
+ *          | '@'
  * NUMBER   = [ '-' ] DIGITS
  *            [ '.' DIGITS]
  *            [ ( 'e' | 'E') [ '+' | '-' ] DIGITS ]
@@ -80,23 +77,12 @@ public class Tokenizer {
         return false;
     }
 
-    static final Set<Integer> SPECIALS = Set.of(
-        (int)'!', (int)'$', (int)'%', (int)'&', (int)'-',
-        (int)'=', (int)'^', (int)'~', (int)'|', (int)'@',
-        (int)'+', (int)'*', (int)'<', (int)'>', (int)'/',
-        (int)'.'
-    );
-
-    static boolean isSpecial(int ch) {
-        return SPECIALS.contains(ch);
-    }
-
     static boolean isIdFirst(int ch) {
         return Character.isAlphabetic(ch) || ch == '_';
     }
 
     static boolean isIdRest(int ch) {
-        return isIdFirst(ch) || Character.isDigit(ch) || ch == '-';
+        return isIdFirst(ch) || Character.isDigit(ch) || ch == '-' || ch == '.';
     }
 
     static boolean isDigit(int ch) {
@@ -120,19 +106,13 @@ public class Tokenizer {
 
     Token numberOrSpecial() {
         append('-');
-        return isDigit(ch) ? number() : special();
+        return isDigit(ch) ? number() : new Token(Type.SPECIAL, "-");
     }
 
     Token id() {
         while (isIdRest(ch))
             appendCh();
         return new Token(Type.ID, sb.toString());
-    }
-
-    Token special() {
-        while (isSpecial(ch))
-            appendCh();
-        return new Token(Type.SPECIAL, sb.toString());
     }
 
     void digits() {
@@ -157,6 +137,60 @@ public class Tokenizer {
         return new Token(Type.NUMBER, sb.toString());
     }
 
+    Token special() {
+        String string;
+        switch (ch) {
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '%':
+            case '^':
+            case '@':
+                string = Character.toString(ch);
+                ch();
+                break;
+            case '=':
+                ch();
+                if (ch == '=') {
+                    string = "==";
+                    ch();
+                } else
+                    string = "=";
+                break;
+            case '!':
+                ch();
+                if (ch == '=') {
+                    string = "!=";
+                    ch();
+                } else if (ch == '~') {
+                    string = "!~";
+                    ch();
+                } else
+                    throw new ValueException("Unknown char '0x%04X' after '!'", ch);
+                break;
+            case '<':
+                ch();
+                if (ch == '=') {
+                    string = "<=";
+                    ch();
+                } else
+                    string = "<";
+                break;
+            case '>':
+                ch();
+                if (ch == '=') {
+                    string = ">=";
+                    ch();
+                } else
+                    string = ">";
+                break;
+            default:
+                throw new ValueException("Unknown char '0x%04X'", ch);
+        }
+        return new Token(Type.SPECIAL, string);
+    }
+
     public Token get() {
         while (Character.isWhitespace(ch))
             ch();
@@ -171,11 +205,9 @@ public class Tokenizer {
             return numberOrSpecial();
         else if (isIdFirst(ch))
             return id();
-        else if (isSpecial(ch))
-            return special();
         else if (isDigit(ch))
             return number();
-        else
-            throw new ValueException("Unknown char '0x%04X'", ch);
+        else 
+            return special();
     }
 }

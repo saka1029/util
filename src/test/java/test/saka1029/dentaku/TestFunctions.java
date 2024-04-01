@@ -118,19 +118,19 @@ public class TestFunctions {
         assertEquals(eval(c, "0 1 1 0"), eval(c, "1 1 0 0 xor 1 0 1 0"));
     }
 
-    @Test
-    public void testHighOrderOperators() {
-        Operators f = Operators.of();
-        Context c = Context.of(f);
-        assertEquals(eval(c, "55"), eval(c, "@ + (1 to 10)"));
-        assertEquals(eval(c, "55"), eval(c, "+ (1 to 10)"));
-        assertEquals(eval(c, "1 3 6 10"), eval(c, "@@ + (1 to 4)"));
-        assertEquals(eval(c, "1 2 6 24 120"), eval(c, "@@ * (1 to 5)"));
-        assertEquals(eval(c, "-2"), eval(c, "@ min 1 3 9 -2 0"));
-        assertEquals(eval(c, "1 1 1 -2 -2"), eval(c, "@@ min 1 3 9 -2 0"));
-        assertEquals(eval(c, "9"), eval(c, "@ max 1 3 9 -2 0"));
-        assertEquals(eval(c, "1 3 9 9 9"), eval(c, "@@ max 1 3 9 -2 0"));
-    }
+    // @Test
+    // public void testHighOrderOperators() {
+    //     Operators f = Operators.of();
+    //     Context c = Context.of(f);
+    //     assertEquals(eval(c, "55"), eval(c, "@ + (1 to 10)"));
+    //     assertEquals(eval(c, "55"), eval(c, "+ (1 to 10)"));
+    //     assertEquals(eval(c, "1 3 6 10"), eval(c, "@@ + (1 to 4)"));
+    //     assertEquals(eval(c, "1 2 6 24 120"), eval(c, "@@ * (1 to 5)"));
+    //     assertEquals(eval(c, "-2"), eval(c, "@ min 1 3 9 -2 0"));
+    //     assertEquals(eval(c, "1 1 1 -2 -2"), eval(c, "@@ min 1 3 9 -2 0"));
+    //     assertEquals(eval(c, "9"), eval(c, "@ max 1 3 9 -2 0"));
+    //     assertEquals(eval(c, "1 3 9 9 9"), eval(c, "@@ max 1 3 9 -2 0"));
+    // }
 
     @Test
     public void testSortAndReverseOperators() {

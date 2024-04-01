@@ -95,7 +95,8 @@ public class Context {
         operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> Vi : 符号(-1, 0, 1)");
         operators.unary("int", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.HALF_UP)), "int V -> Vi : 整数化(四捨五入)");
         operators.unary("trunc", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.DOWN)), "trunc V -> vi : 整数化(切り捨て)");
-        operators.unary("fib", (c, v) -> v.map(Value::fib), "fib Vi -> vi : フィボナッチ数");
+        operators.unary("fact", (c, v) -> v.map(Value::fact), "fact Vi -> Vi : 階乗");
+        operators.unary("fib", (c, v) -> v.map(Value::fib), "fib Vi -> Vi : フィボナッチ数");
         operators.unary("sqrt", (c, v) -> v.map(x -> x.sqrt(MATH_CONTEXT)), "sqrt V -> V : 平方根");
         operators.unary("sin", (c, v) -> v.map(x -> dec(Math.sin(d(x)))), "sin V -> V : sin値");
         operators.unary("asin", (c, v) -> v.map(x -> dec(Math.asin(d(x)))), "asin V -> V : sin⁻¹値");
@@ -105,7 +106,7 @@ public class Context {
         operators.unary("atan", (c, v) -> v.map(x -> dec(Math.atan(d(x)))), "atan V -> V : tan⁻¹値");
         operators.unary("log", (c, v) -> v.map(x -> dec(Math.log(d(x)))), "log V -> V : 対数値(底はe)");
         operators.unary("log10", (c, v) -> v.map(x -> dec(Math.log10(d(x)))), "log10 V -> V : 対数値(底は10)");
-        operators.unary("not", (c, v) -> v.map(x -> dec(!b(x))), "not Vb -> Vb : 否定(0:偽⇔0以外:真)");
+        operators.unary("not", (c, v) -> v.map(x -> dec(!b(x))), "not Vb -> Vb : 否定(0:偽<->0以外:真)");
         operators.unary("sort", (c, v) -> v.sort(), "sort V -> V : 上昇順にソート");
         operators.unary("reverse", (c, v) -> v.reverse(), "reverse V -> V : 反転");
         operators.unary("shuffle", (c, v) -> v.shuffle(), "shuffle V -> V : シャッフル");
@@ -150,10 +151,10 @@ public class Context {
         operators.binary("filter", (c, l, r) -> l.filter(r), "Vb filter V : 右辺の内、対応する左辺の要素が真のものだけを抽出(ゼロは偽、それ以外は真)");
         operators.binary("to", (c, l, r) -> l.to(r), "I to I -> Vi : 左辺から右辺までの並び(左辺<右辺のときは下降順)");
         operators.binary("at", (c, l, r) -> l.at(r), "V at Vi -> V : 右辺番目の要素を取り出す(先頭は0)");
-        // high order operations
-        operators.high("@", (c, v, b) -> v.reduce(c, b), "@ binary V -> D : 二項演算子binaryでVを簡約(左から右に適用)");
-        operators.high("@<", (c, v, b) -> v.reduceRight(c, b), "@< binary V -> D : 二項演算子binaryでVを簡約(右から左に適用)");
-        operators.high("@@", (c, v, b) -> v.cumulate(c, b), "@@ binary V -> V : 二項演算子binaryでVを簡約しながら累積(左から右に適用)");
+        // // high order operations
+        // operators.high("@", (c, v, b) -> v.reduce(c, b), "@ binary V -> D : 二項演算子binaryでVを簡約(左から右に適用)");
+        // operators.high("@<", (c, v, b) -> v.reduceRight(c, b), "@< binary V -> D : 二項演算子binaryでVを簡約(右から左に適用)");
+        // operators.high("@@", (c, v, b) -> v.cumulate(c, b), "@@ binary V -> V : 二項演算子binaryでVを簡約しながら累積(左から右に適用)");
         variable("TODAY", c -> Value.of(Value.dec(LocalDate.now())), "TODAY : 今日(YYYYMMDD)");
         variable("PI", c -> Value.of(dec("3.1415926535897932384626433")), "PI : 円周率");
         variable("E", c -> Value.of(dec("2.7182818284590452353602874")), "E : 自然対数の底");

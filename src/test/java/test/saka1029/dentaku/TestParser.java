@@ -80,15 +80,15 @@ public class TestParser {
         assertEquals(eval(c, "4"), eval(c, "b"));
     }
 
-    @Test
-    public void testHighOperator() {
-        Operators ops = Operators.of();
-        Context c = Context.of(ops);
-        assertEquals(eval(c, "6"), eval(c, "@ + 1 2 3"));
-        assertEquals(eval(c, "1 3 6"), eval(c, "@@ + 1 2 3"));
-        assertEquals(eval(c, "24"), eval(c, "@ * 1 2 3 4"));
-        assertEquals(eval(c, "1 2 6 24"), eval(c, "@@ * 1 2 3 4"));
-    }
+    // @Test
+    // public void testHighOperator() {
+    //     Operators ops = Operators.of();
+    //     Context c = Context.of(ops);
+    //     assertEquals(eval(c, "6"), eval(c, "@ + 1 2 3"));
+    //     assertEquals(eval(c, "1 3 6"), eval(c, "@@ + 1 2 3"));
+    //     assertEquals(eval(c, "24"), eval(c, "@ * 1 2 3 4"));
+    //     assertEquals(eval(c, "1 2 6 24"), eval(c, "@@ * 1 2 3 4"));
+    // }
 
     @Test
     public void testTo() {

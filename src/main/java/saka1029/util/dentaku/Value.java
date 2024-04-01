@@ -225,6 +225,13 @@ public class Value implements Expression {
         return Value.of(result);
     }
 
+    public static BigDecimal fact(BigDecimal n) {
+        BigInteger r = BigInteger.ONE;
+        for (BigInteger i = n.toBigIntegerExact(); i.compareTo(BigInteger.ONE) > 0; i = i.subtract(BigInteger.ONE))
+            r = r.multiply(i);
+        return new BigDecimal(r);
+    }
+
     public static BigDecimal fib(BigDecimal n) {
         BigInteger i = n.toBigIntegerExact();
         if (i.compareTo(BigInteger.ONE) <= 0)
