@@ -28,4 +28,22 @@ public class TestBigDecimal {
         assertEquals(new BigDecimal("123.46"), round(new BigDecimal("123.456789"), 2));
         assertEquals(new BigDecimal("123.457"), round(new BigDecimal("123.456789"), 3));
     }
+
+    static String digits(String s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0, max = s.length(); i < max; ++i) {
+            char c = s.charAt(i);
+            if (Character.isDigit(c))
+                sb.append(Character.digit(c, 10));
+            else
+                return null;
+        }
+        return sb.toString();
+    }
+
+    @Test
+    public void testDigits() {
+        assertEquals("12345", digits("１２３４５"));
+        // assertEquals(new BigDecimal("123.45"), new BigDecimal("１２３．４５"));
+    }
 }
