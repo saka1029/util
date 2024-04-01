@@ -15,6 +15,8 @@ set fileformats=unix,dos
 set ignorecase
 set belloff=all
 "set guifont=MS_Gothic:h12
+"set guifont=MS_Gothic:h12 
+set guifont=Noto\ Mono\ 12
 
 " CTRL-X are Cut
 "vnoremap <C-X> "+x
