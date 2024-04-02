@@ -114,14 +114,56 @@ number = [ '-' ]
   f n = * (1 to n)
   f 10
 3628800
-  f (1 to 20)
-One element expected but '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20'
+  f (1 to 10)
+One element expected but '1 2 3 4 5 6 7 8 9 10'
 ```
 
 `f`の引数として数値の並びが渡されたとき、
 エラーとなってしまう。
 これは `f`を実行するとき`(1 to 20)`をそのまま
 渡しているためである。
-`f`がmapであるならばそれでよいが
-単項演算子である場合は並びの要素を引数として
-繰り返し呼び出し、結果を連結すべきである。
+
+`UnaryCall`の`apply()`は以下のようになっている。
+
+```
+public Value apply(Context context, Value argument) {
+    Context child = context.child();
+    child.variable(variable, argument, variable);
+    return body.eval(child);
+}
+```
+
+これはあたかも`f`の引数が変数`n`にバインドされているかのように
+評価を行っているに等しい。
+
+単項演算子の定義`f n = * (1 to n)`を
+`UnaryOperator<BigDecimal>`に変換できれば
+`Value.map(UnaryOperator<BigDecimal>)`を使うことができる。
+
+```
+@Override
+public Value apply(Context context, Value argument) {
+    Context child = context.child();
+    return argument.map(a -> {
+        child.variable(variable, Value.of(a), variable);
+        return body.eval(child).oneElement();
+    });
+}
+```
+
+無駄にValueとBigDecimalの相互変換を行っているが、
+とりあえず動作する。
+
+```
+  f n = * (1 to n)
+  f (1 to 10)
+1 2 6 24 120 720 5040 40320 362880 3628800
+```
+
+ただし、今度は複数の要素をいっぺんに受け取りたい`ave`
+などが動作しなくなる。
+
+```
+  ave 1 2 3 4
+1 2 3 4
+```
