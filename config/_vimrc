@@ -23,3 +23,5 @@ vnoremap <C-X> "+x
 vnoremap <C-C> "+y
 " CTRL-V are Paste
 map <C-V>       "+gP
+
+inoremap <silent> <C-[> <ESC>:call system('zenhan 0')<CR>
