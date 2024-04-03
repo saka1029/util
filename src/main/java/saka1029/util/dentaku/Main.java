@@ -3,6 +3,7 @@ package saka1029.util.dentaku;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.DateTimeException;
 
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -166,7 +167,7 @@ public class Main {
                 Value value = e.eval(context);
                 if (value != Value.NaN)
                     out.println(value);
-            } catch (ValueException | ArithmeticException | NumberFormatException ex) {
+            } catch (ValueException | ArithmeticException | NumberFormatException | DateTimeException ex) {
                 out.println(ex.getMessage());
             }
         }
