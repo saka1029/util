@@ -3,12 +3,10 @@ package saka1029.util.dentaku;
 import java.util.ArrayList;
 import java.util.List;
 
-import saka1029.util.dentaku.Tokenizer.Type;
-
 public class Lexer {
 
     public enum Type {
-        END, ID, NUMBER, OTHER;
+        END, LP, RP, ID, NUMBER, OTHER;
     }
 
     public record Token(Type type, String string) {
@@ -95,7 +93,9 @@ public class Lexer {
         if (ch == -1)
             return END;
         Type type = switch (ch) {
-            case '(', ')', '+', '*', '/', '%', '^', '~' -> getReturn(Type.OTHER);
+            case '(' -> getReturn(Type.LP);
+            case ')' -> getReturn(Type.RP);
+            case '+', '*', '/', '%', '^', '~' -> getReturn(Type.OTHER);
             case '=', '<', '>' -> get() == '=' ? getReturn(Type.OTHER) : Type.OTHER;
             case '-' -> isDigit(get()) ? number() : Type.OTHER;
             case '!' -> get() == '=' || ch == '~' ? getReturn(Type.OTHER) : error("UnknownTOken '!");
