@@ -92,10 +92,8 @@ public class Lexer {
             return END;
         Type type = switch (ch) {
             case '(', ')', '+', '*', '/', '%', '^', '~' -> getReturn(Type.OTHER);
+            case '=', '<', '>' -> get() == '=' ? getReturn(Type.OTHER) : Type.OTHER;
             case '-' -> isDigit(get()) ? number() : Type.OTHER;
-            case '=' -> get() == '=' ? getReturn(Type.OTHER) : Type.OTHER;
-            case '<' -> get() == '=' ? getReturn(Type.OTHER) : Type.OTHER;
-            case '>' -> get() == '=' ? getReturn(Type.OTHER) : Type.OTHER;
             case '!' -> {
                 get();
                 if (ch == '=')
@@ -103,7 +101,7 @@ public class Lexer {
                 else if (ch == '~')
                     yield getReturn(Type.OTHER);
                 else
-                    throw new ValueException("Unknown char after '!' 0x04X", ch);
+                    throw new ValueException("Unknown token '!'");
             }
             default -> {
                 if (isDigit(ch))
