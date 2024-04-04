@@ -6,7 +6,7 @@ import java.util.List;
 public class Lexer {
 
     public enum Type {
-        END, LP, RP, ID, NUMBER, OTHER;
+        END, LP, RP, ID, NUMBER, SPECIAL;
     }
 
     public record Token(Type type, String string) {
@@ -95,10 +95,10 @@ public class Lexer {
         Type type = switch (ch) {
             case '(' -> getReturn(Type.LP);
             case ')' -> getReturn(Type.RP);
-            case '+', '*', '/', '%', '^', '~' -> getReturn(Type.OTHER);
-            case '=', '<', '>' -> get() == '=' ? getReturn(Type.OTHER) : Type.OTHER;
-            case '-' -> isDigit(get()) ? number() : Type.OTHER;
-            case '!' -> get() == '=' || ch == '~' ? getReturn(Type.OTHER) : error("UnknownTOken '!");
+            case '+', '*', '/', '%', '^', '~' -> getReturn(Type.SPECIAL);
+            case '=', '<', '>' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.SPECIAL;
+            case '-' -> isDigit(get()) ? number() : Type.SPECIAL;
+            case '!' -> get() == '=' || ch == '~' ? getReturn(Type.SPECIAL) : error("UnknownTOken '!");
             default -> isDigit(ch) ? number() : isIdFirst(ch) ? id() : error("Unknown char 0x%04X", ch);
         };
         return new Token(type, new String(input, start, current - start));
