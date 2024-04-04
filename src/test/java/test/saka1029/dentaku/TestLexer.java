@@ -48,5 +48,9 @@ public class TestLexer {
             new Token(Type.OTHER, "="),
             new Token(Type.OTHER, "<=")
         ), Lexer.tokens("  =<="));
+        assertEquals(List.of(
+            new Token(Type.OTHER, "!="),
+            new Token(Type.OTHER, "!~")
+        ), Lexer.tokens("  !=!~"));
     }
 }

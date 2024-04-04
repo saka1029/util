@@ -84,6 +84,10 @@ public class Lexer {
         return Type.ID;
     }
 
+    Type error(String format, Object... args) {
+        throw new ValueException(format, args);
+    }
+
     Token token() {
         while (Character.isWhitespace(ch))
             get();
@@ -94,23 +98,8 @@ public class Lexer {
             case '(', ')', '+', '*', '/', '%', '^', '~' -> getReturn(Type.OTHER);
             case '=', '<', '>' -> get() == '=' ? getReturn(Type.OTHER) : Type.OTHER;
             case '-' -> isDigit(get()) ? number() : Type.OTHER;
-            case '!' -> {
-                get();
-                if (ch == '=')
-                    yield getReturn(Type.OTHER);
-                else if (ch == '~')
-                    yield getReturn(Type.OTHER);
-                else
-                    throw new ValueException("Unknown token '!'");
-            }
-            default -> {
-                if (isDigit(ch))
-                    yield number();
-                else if (isIdFirst(ch))
-                    yield id();
-                else
-                    throw new ValueException("Unknown char 0x%04x", ch);
-            }
+            case '!' -> get() == '=' || ch == '~' ? getReturn(Type.OTHER) : error("UnknownTOken '!");
+            default -> isDigit(ch) ? number() : isIdFirst(ch) ? id() : error("Unknown char 0x%04X", ch);
         };
         return new Token(type, new String(input, start, current - start));
     }
