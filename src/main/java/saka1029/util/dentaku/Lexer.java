@@ -3,10 +3,27 @@ package saka1029.util.dentaku;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SYNTAX
+ * <pre>
+ * LP       = '('
+ * RP       = ')'
+ * ASSIGN   = '='
+ * SPECIAL  = '+' | '-' | '*' | '/' | '%' | '^'
+ *          | '==' | '!=' | '<' | '<=' | '>' | '>='
+ *          | '~' | '!~'
+ * ID       = id-first { id-rest }
+ * id-first = java-alphabetic | '_'
+ * id-rest  = id-first | java-digit | '-' | '.'
+ * NUMBER   = [ '-' ] digits
+ *            [ '.' digits ]
+ *            [ ( 'e' | 'E' ) [ '+' | '-' ] digits]
+ * </pre>
+ */
 public class Lexer {
 
     public enum Type {
-        END, LP, RP, ID, NUMBER, SPECIAL;
+        END, LP, RP, ASSIGN, ID, NUMBER, SPECIAL;
     }
 
     public record Token(Type type, String string) {
@@ -89,14 +106,15 @@ public class Lexer {
     Token token() {
         while (Character.isWhitespace(ch))
             get();
-        int start = current;
         if (ch == -1)
             return END;
+        int start = current;
         Type type = switch (ch) {
             case '(' -> getReturn(Type.LP);
             case ')' -> getReturn(Type.RP);
             case '+', '*', '/', '%', '^', '~' -> getReturn(Type.SPECIAL);
-            case '=', '<', '>' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.SPECIAL;
+            case '=' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.ASSIGN;
+            case '<', '>' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.SPECIAL;
             case '-' -> isDigit(get()) ? number() : Type.SPECIAL;
             case '!' -> get() == '=' || ch == '~' ? getReturn(Type.SPECIAL) : error("UnknownTOken '!");
             default -> isDigit(ch) ? number() : isIdFirst(ch) ? id() : error("Unknown char 0x%04X", ch);

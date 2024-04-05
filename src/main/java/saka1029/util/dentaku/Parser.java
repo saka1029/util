@@ -3,8 +3,8 @@ package saka1029.util.dentaku;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import saka1029.util.dentaku.Tokenizer.Token;
-import saka1029.util.dentaku.Tokenizer.Type;
+import saka1029.util.dentaku.Lexer.Token;
+import saka1029.util.dentaku.Lexer.Type;
 
 /**
  * SYNTAX
@@ -14,12 +14,11 @@ import saka1029.util.dentaku.Tokenizer.Type;
  *                 | define-binary
  *                 | expression
  * define-variable = ID '=' expression
- * define-unary    = IDSPECIAL ID '=' expression
- * define-binary   = ID IDSPECIAL ID '=' expression
+ * define-unary    = ID ID '=' expression
+ * define-binary   = ID ID ID '=' expression
  * expression      = unary { BOP unary }
  * unary           = sequence
  *                 | UOP unary
- *                 | MOP UOP unary'
  * sequence        = primary { primary }
  * primary         = '(' expression ')'
  *                 | VAR
@@ -36,7 +35,7 @@ public class Parser {
     private Parser(Operators operators, String input) {
         this.operators = operators;
         this.input = input.trim();
-        this.tokens = Tokenizer.tokens(this.input);
+        this.tokens = Lexer.tokens(this.input);
         this.index = 0;
         get();
     }
@@ -54,12 +53,12 @@ public class Parser {
     }
 
     Token get() {
-        return token = index < tokens.size() ? tokens.get(index++) : Tokenizer.END;
+        return token = index < tokens.size() ? tokens.get(index++) : Lexer.END;
     }
 
     Token peek(int offset) {
         int p = index + offset;
-        return p < tokens.size() ? tokens.get(p) : Tokenizer.END;
+        return p < tokens.size() ? tokens.get(p) : Lexer.END;
     }
 
     boolean is(Token token, Type... types) {
@@ -83,10 +82,10 @@ public class Parser {
             && operators.binary(token.string()) != null;
     }
 
-    boolean isHigh(Token token) {
-        return is(token, Type.ID, Type.SPECIAL)
-            && operators.high(token.string()) != null;
-    }
+    // boolean isHigh(Token token) {
+    //     return is(token, Type.ID, Type.SPECIAL)
+    //         && operators.high(token.string()) != null;
+    // }
 
     String id(Token token) {
         if (!is(token, Type.ID))
@@ -94,11 +93,11 @@ public class Parser {
         return token.string();
     }
 
-    String idSpecial(Token token) {
-        if (!is(token, Type.ID, Type.SPECIAL))
-            return null;
-        return token.string();
-    }
+    // String idSpecial(Token token) {
+    //     if (!is(token, Type.ID, Type.SPECIAL))
+    //         return null;
+    //     return token.string();
+    // }
 
     Expression defineVariable() {
         String name = id(token);
@@ -111,9 +110,9 @@ public class Parser {
     }
 
     Expression defineUnary() {
-        String operator = idSpecial(token);
+        String operator = id(token);
         if (operator == null)
-            throw new ValueException("ID or SPECIAL expected but '%s'", token.string());
+            throw new ValueException("ID expected but '%s'", token.string());
         get(); // skip operator
         String variable = id(token);
         if (variable == null)
@@ -130,9 +129,9 @@ public class Parser {
         if (left == null)
             throw new ValueException("ID expected but '%s'", token.string());
         get(); // skip left
-        String operator = idSpecial(token);
+        String operator = id(token);
         if (operator == null)
-            throw new ValueException("ID or SPECIAL expected but '%s'", token.string());
+            throw new ValueException("ID expected but '%s'", token.string());
         get(); // skip operator
         String right = id(token);
         if (right == null)
@@ -158,7 +157,7 @@ public class Parser {
         } else if (is(token, Type.NUMBER)) {
             List<BigDecimal> list = new ArrayList<>();
             do {
-                list.add(token.number());
+                list.add(new BigDecimal(token.string()));
                 get(); // skip NUMBER
             } while (is(token, Type.NUMBER));
             e = Value.of(list);
@@ -171,8 +170,8 @@ public class Parser {
         return is(token, Type.LP, Type.NUMBER)
             || is(token, Type.ID)
                 && !isUnary(token)
-                && !isBinary(token)
-                && !isHigh(token);
+                && !isBinary(token);
+                // && !isHigh(token);
     }
 
     Expression sequence() {
@@ -185,18 +184,19 @@ public class Parser {
     }
 
     Expression unary() {
-        if (isHigh(token)) {
-            String highName = token.string();
-            get();  // skip high operator
-            if (isBinary(token)) {
-                String binaryName = token.string();
-                get();  // skip binary operator
-                Expression e = unary();
-                return c -> c.operators().high(highName)
-                    .apply(c, e.eval(c), c.operators().binary(binaryName));
-            } else
-                throw new ValueException("Binary operator expected after '%s'", highName);
-        } else if (isUnary(token)) {
+        // if (isHigh(token)) {
+        //     String highName = token.string();
+        //     get();  // skip high operator
+        //     if (isBinary(token)) {
+        //         String binaryName = token.string();
+        //         get();  // skip binary operator
+        //         Expression e = unary();
+        //         return c -> c.operators().high(highName)
+        //             .apply(c, e.eval(c), c.operators().binary(binaryName));
+        //     } else
+        //         throw new ValueException("Binary operator expected after '%s'", highName);
+        // } else if (isUnary(token)) {
+        if (isUnary(token)) {
             String unaryName = token.string();
             get();  // skip unary operator
             Expression e = unary();

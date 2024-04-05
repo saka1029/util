@@ -45,7 +45,7 @@ public class TestLexer {
             new Token(Type.SPECIAL, "<")
         ), Lexer.tokens("  >=<"));
         assertEquals(List.of(
-            new Token(Type.SPECIAL, "="),
+            new Token(Type.ASSIGN, "="),
             new Token(Type.SPECIAL, "<=")
         ), Lexer.tokens("  =<="));
         assertEquals(List.of(
