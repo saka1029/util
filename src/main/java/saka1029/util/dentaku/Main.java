@@ -90,16 +90,13 @@ public class Main {
 
     static void help(Context context, PrintWriter out, String... items) {
         if (items.length <= 1) {
-            out.println("Ctrl-D          : exit program");
-            out.println(".exit           : exit program");
-            out.println(".quit           : exit program");
-            out.println(".end            : exit program");
-            out.println(".help           : show this message");
-            out.println(".help variable  : show all variables");
-            out.println(".help unary     : show all unary operators");
-            out.println(".help binary    : show all binary operators");
-            out.println(".help high      : show all high-order operators");
-            out.println(".help NAME      : show help for NAME");
+            out.println(" control-D        : exit program or (.exit .quit .end)");
+            out.println(".help             : show this message");
+            out.println(".help variable    : show all variables");
+            out.println(".help unary       : show all unary operators");
+            out.println(".help binary      : show all binary operators");
+            out.println(".help NAME        : show help for NAME");
+            out.println(".solve expression : show help for NAME");
         } else if (items.length == 2) {
             String name = items[1];
             switch (name) {
@@ -133,11 +130,16 @@ public class Main {
         }
     }
 
+    static void solve(Context c, String s, PrintWriter out) {
+        Expression e = Parser.parse(c.operators, s);
+        Value.solve(e, c, out::println);
+    }
+
     static void run(Term term) throws IOException {
         PrintWriter out = term.writer();
         Operators functions = Operators.of();
         Context context = Context.of(functions);
-        out.println("Type '.help' for help.");
+        out.println("Type '.help' for help, control-D to exit.");
         L: while (true) {
             String line = term.readLine();
             if (line == null)
@@ -153,6 +155,9 @@ public class Main {
                     break L;
                 case ".help":
                     help(context, out, items);
+                    continue L;
+                case ".solve":
+                    solve(context, line.replaceFirst("\\S+\\s*", ""), out);
                     continue L;
             }
             try {
