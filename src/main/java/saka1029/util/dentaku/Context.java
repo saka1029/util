@@ -90,6 +90,7 @@ public class Context {
         operators.unary("-", (c, v) -> v.map(BigDecimal::negate), "- V -> V: 符号反転");
         operators.unary("+", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::add, r)), "+ V -> D : 和");
         operators.unary("*", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::multiply, r)), "* V -> D : 積");
+        operators.unary("/", (c, v) -> v.map(x -> BigDecimal.ONE.divide(x, Value.MATH_CONTEXT)), "/ V -> D : 逆数");
         operators.unary("^", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(Value::pow, r)), "^ V -> D : べき乗");
         operators.unary("abs", (c, v) -> v.map(BigDecimal::abs), "abs V -> V : 絶対値");
         operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> Vi : 符号(-1, 0, 1)");
