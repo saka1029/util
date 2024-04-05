@@ -3,6 +3,9 @@ package saka1029.util.dentaku;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import saka1029.util.dentaku.Lexer.Token;
 import saka1029.util.dentaku.Lexer.Type;
 
@@ -31,6 +34,7 @@ public class Parser {
     final List<Token> tokens;
     int index;
     Token token;
+    final SortedSet<Variable> variableReferences = new TreeSet<>();
 
     private Parser(Operators operators, String input) {
         this.operators = operators;
@@ -137,7 +141,9 @@ public class Parser {
                 throw new ValueException("')' expected");
             get(); // skip ')'
         } else if (is(token, Type.ID)) {
-            e = Variable.of(token.string());
+            Variable v = Variable.of(token.string());
+            variableReferences.add(v);
+            e = v;
             get(); // ski ID
         } else if (is(token, Type.NUMBER)) {
             List<BigDecimal> list = new ArrayList<>();
@@ -201,10 +207,14 @@ public class Parser {
             return defineBinary();
         else {
             Expression e = expression();
-            return new Expression() {
+            return new ExpressionVars() {
                 @Override
                 public Value eval(Context context) {
                     return e.eval(context);
+                }
+                @Override
+                public Variable[] variableReferences() {
+                    return variableReferences.toArray(Variable[]::new);
                 }
                 @Override
                 public String toString() {

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -48,6 +49,38 @@ public class Value implements Expression {
     @Override
     public Value eval(Context context) {
         return this;
+    }
+
+    public static void solve(Expression expression, Context context, Consumer<String> out) {
+        if (!(expression instanceof ExpressionVars ev))
+            throw new ValueException("Cannot solve '%s'", expression);
+        Variable[] variables = ev.variableReferences();
+        Value[] values = Arrays.stream(variables)
+            .map(v -> v.eval(context))
+            .toArray(Value[]::new);
+        Context child = context.child();
+        new Object() {
+            void test() {
+                Value v = expression.eval(child);
+                if (v.elements.length < 0 || !b(v.elements[0]))
+                    return;
+                String result = Arrays.stream(variables)
+                    .map(n -> n + "=" + n.eval(child))
+                    .collect(Collectors.joining(" "));
+                out.accept(result);
+            }
+            void solve(int index) {
+                if (index >= variables.length)
+                    test();
+                else {
+                    BigDecimal[] elements = values[index].elements;
+                    for (int i = 0; i < elements.length; ++i) {
+                        child.variable(variables[index].name, Value.of(elements[i]));
+                        solve(index + 1);
+                    }
+                }
+            }
+        }.solve(0);
     }
 
     public int size() {

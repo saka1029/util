@@ -178,4 +178,15 @@ public class TestParser {
         assertEquals(eval(c, "1.999999999999999861967979879025"), eval(c, "1 / sin radian 45 ^ 2"));
     }
 
+    @Test
+    public void testSolve() {
+        Operators ops = Operators.of();
+        Context c = Context.of(ops);
+        eval(c, "a = 1 2 3");
+        eval(c, "b = 4 5 6");
+        StringBuilder sb = new StringBuilder();
+        Value.solve(Parser.parse(ops, "a + b == 7"), c, s -> sb.append(s).append(System.lineSeparator()));
+        assertEquals("a=1 b=6%na=2 b=5%na=3 b=4%n".formatted(), sb.toString());
+    }
+
 }
