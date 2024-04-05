@@ -68,10 +68,6 @@ public class Parser {
         return false;
     }
 
-    boolean is(Token token, String string) {
-        return token.string().equals(string);
-    }
-
     boolean isUnary(Token token) {
         return is(token, Type.ID, Type.SPECIAL)
             && operators.unary(token.string()) != null;
@@ -82,22 +78,11 @@ public class Parser {
             && operators.binary(token.string()) != null;
     }
 
-    // boolean isHigh(Token token) {
-    //     return is(token, Type.ID, Type.SPECIAL)
-    //         && operators.high(token.string()) != null;
-    // }
-
     String id(Token token) {
         if (!is(token, Type.ID))
             return null;
         return token.string();
     }
-
-    // String idSpecial(Token token) {
-    //     if (!is(token, Type.ID, Type.SPECIAL))
-    //         return null;
-    //     return token.string();
-    // }
 
     Expression defineVariable() {
         String name = id(token);
@@ -184,18 +169,6 @@ public class Parser {
     }
 
     Expression unary() {
-        // if (isHigh(token)) {
-        //     String highName = token.string();
-        //     get();  // skip high operator
-        //     if (isBinary(token)) {
-        //         String binaryName = token.string();
-        //         get();  // skip binary operator
-        //         Expression e = unary();
-        //         return c -> c.operators().high(highName)
-        //             .apply(c, e.eval(c), c.operators().binary(binaryName));
-        //     } else
-        //         throw new ValueException("Binary operator expected after '%s'", highName);
-        // } else if (isUnary(token)) {
         if (isUnary(token)) {
             String unaryName = token.string();
             get();  // skip unary operator
@@ -220,11 +193,11 @@ public class Parser {
     public Expression statement() {
         if (is(token, Type.END))
             return null;
-        else if (is(peek(0), "="))
+        else if (is(peek(0), Type.ASSIGN))
             return defineVariable();
-        else if (is(peek(1), "="))
+        else if (is(peek(1), Type.ASSIGN))
             return defineUnary();
-        else if (is(peek(2), "="))
+        else if (is(peek(2), Type.ASSIGN))
             return defineBinary();
         else {
             Expression e = expression();
