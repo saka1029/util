@@ -159,7 +159,7 @@ public class Context {
         eval("ave x = + x / length x");
         eval("variance x = + (x - ave x ^ 2) / length x");
         eval("sd x = sqrt variance x");
-        eval("t-score x = x - ave x / sd x * 10 + 50");
+        eval("t.score x = x - ave x / sd x * 10 + 50");
         eval("pascal n = n C (0 to n)");
         eval("c poly x = + (x ^ (length c - 1 to 0) * c)");
         eval("a distance b = sqrt + (a - b ^ 2)");

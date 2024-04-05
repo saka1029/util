@@ -104,9 +104,9 @@ public class TestParser {
         Context c = Context.of(ops);
         assertEquals(Value.NaN, eval(c, "a = 1 to 4"));
         assertEquals(eval(c, "3 4"), eval(c, "a > 2 filter a"));
-        assertEquals(Value.NaN, eval(c, "select-gt2 x = x > 2 filter x"));
-        assertEquals(eval(c, "3 4"), eval(c, "select-gt2 a"));
-        assertEquals(eval(c, "3 4"), eval(c, "select-gt2 (1 to 4)"));
+        assertEquals(Value.NaN, eval(c, "select.gt2 x = x > 2 filter x"));
+        assertEquals(eval(c, "3 4"), eval(c, "select.gt2 a"));
+        assertEquals(eval(c, "3 4"), eval(c, "select.gt2 (1 to 4)"));
         assertEquals(Value.NaN, eval(c, "average x = + x / length x"));
         assertEquals(eval(c, "2.5"), eval(c, "average a"));
         assertEquals(eval(c, "2 4"), eval(c, "not (a % 2) filter a"));
@@ -142,12 +142,12 @@ public class TestParser {
     public void testLeibniz() {
         Operators ops = Operators.of();
         Context c = Context.of(ops);
-        assertEquals(Value.NaN, eval(c, "pi-term n = -1 ^ n / (2 * n + 1)"));
-        assertEquals(Value.NaN, eval(c, "pi-sum range = 4 * + pi-term range"));
-        assertEquals(eval(c, "3.2323"), eval(c, "pi-sum (0 to 10) round 4"));
-        assertEquals(eval(c, "3.1515"), eval(c, "pi-sum (0 to 100) round 4"));
-        assertEquals(eval(c, "3.1426"), eval(c, "pi-sum (0 to 1000) round 4"));
-        assertEquals(eval(c, "3.1417"), eval(c, "pi-sum (0 to 10000) round 4"));
+        assertEquals(Value.NaN, eval(c, "pi.term n = -1 ^ n / (2 * n + 1)"));
+        assertEquals(Value.NaN, eval(c, "pi.sum range = 4 * + pi.term range"));
+        assertEquals(eval(c, "3.2323"), eval(c, "pi.sum (0 to 10) round 4"));
+        assertEquals(eval(c, "3.1515"), eval(c, "pi.sum (0 to 100) round 4"));
+        assertEquals(eval(c, "3.1426"), eval(c, "pi.sum (0 to 1000) round 4"));
+        assertEquals(eval(c, "3.1417"), eval(c, "pi.sum (0 to 10000) round 4"));
     }
 
     @Test
@@ -156,8 +156,8 @@ public class TestParser {
         Context c = Context.of(ops);
         assertEquals(Value.NaN, eval(c, "a = 1 to 4"));
         assertEquals(eval(c, "3 4"), eval(c, "a > 2 filter a"));
-        assertEquals(Value.NaN, eval(c, "p select-gt x = x > p filter x"));
-        assertEquals(eval(c, "3 4"), eval(c, "2 select-gt a"));
+        assertEquals(Value.NaN, eval(c, "p select.gt x = x > p filter x"));
+        assertEquals(eval(c, "3 4"), eval(c, "2 select.gt a"));
     }
 
     @Test

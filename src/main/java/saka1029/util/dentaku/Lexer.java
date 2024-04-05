@@ -14,7 +14,7 @@ import java.util.List;
  *          | '~' | '!~'
  * ID       = id-first { id-rest }
  * id-first = java-alphabetic | '_'
- * id-rest  = id-first | java-digit | '-' | '.'
+ * id-rest  = id-first | java-digit | '.'
  * NUMBER   = [ '-' ] digits
  *            [ '.' digits ]
  *            [ ( 'e' | 'E' ) [ '+' | '-' ] digits]
@@ -63,7 +63,7 @@ public class Lexer {
     }
 
     static boolean isIdRest(int ch) {
-        return isIdFirst(ch) || Character.isDigit(ch) || ch == '-' || ch == '.';
+        return isIdFirst(ch) || Character.isDigit(ch) || ch == '.';
     }
 
     Type getReturn(Type type) {
