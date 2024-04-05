@@ -3,7 +3,7 @@ package saka1029.util.dentaku;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Variable implements Expression, Comparable<Variable> {
+public class Variable implements Expression {
     private static final Map<String, Variable> variables = new HashMap<>();
     public final String name;
 
@@ -21,11 +21,6 @@ public class Variable implements Expression, Comparable<Variable> {
         if (e == null)
             throw new ValueException("Variable '%s' not defined", name);
         return e.eval(context);
-    }
-
-    @Override
-    public int compareTo(Variable o) {
-        return name.compareTo(o.name);
     }
 
     @Override

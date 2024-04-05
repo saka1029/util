@@ -2,6 +2,7 @@ package saka1029.util.dentaku;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -34,7 +35,7 @@ public class Parser {
     final List<Token> tokens;
     int index;
     Token token;
-    final SortedSet<Variable> variableReferences = new TreeSet<>();
+    final SortedSet<Variable> variableReferences = new TreeSet<>(Comparator.comparing(v -> v.name));
 
     private Parser(Operators operators, String input) {
         this.operators = operators;
