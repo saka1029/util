@@ -8,7 +8,7 @@ public class Operators {
 
     private Map<String, Str<Unary>> uops = new HashMap<>();
     private Map<String, Str<Binary>> bops = new HashMap<>();
-    private Map<String, Str<High>> hops = new HashMap<>();
+    // private Map<String, Str<High>> hops = new HashMap<>();
 
     private Operators() {
     }
@@ -55,25 +55,5 @@ public class Operators {
 
     public void binary(String name, Binary value, String string) {
         bops.put(name, Str.of(value, string));
-    }
-
-    public High high(String name) {
-        Str<High> e = hops.get(name);
-        return e != null ? e.op : null;
-    }
-
-    public String highString(String name) {
-        Str<High> e = hops.get(name);
-        return e != null ? e.string : null;
-    }
-
-    public List<String> highs() {
-        return hops.values().stream()
-            .map(e -> e.string)
-            .toList();
-    }
-
-    public void high(String name, High value, String string) {
-        hops.put(name, Str.of(value, string));
     }
 }

@@ -151,10 +151,6 @@ public class Context {
         operators.binary("filter", (c, l, r) -> l.filter(r), "Vb filter V : 右辺の内、対応する左辺の要素が真のものだけを抽出(ゼロは偽、それ以外は真)");
         operators.binary("to", (c, l, r) -> l.to(r), "I to I -> Vi : 左辺から右辺までの並び(左辺<右辺のときは下降順)");
         operators.binary("at", (c, l, r) -> l.at(r), "V at Vi -> V : 右辺番目の要素を取り出す(先頭は0)");
-        // // high order operations
-        // operators.high("@", (c, v, b) -> v.reduce(c, b), "@ binary V -> D : 二項演算子binaryでVを簡約(左から右に適用)");
-        // operators.high("@<", (c, v, b) -> v.reduceRight(c, b), "@< binary V -> D : 二項演算子binaryでVを簡約(右から左に適用)");
-        // operators.high("@@", (c, v, b) -> v.cumulate(c, b), "@@ binary V -> V : 二項演算子binaryでVを簡約しながら累積(左から右に適用)");
         variable("TODAY", c -> Value.of(Value.dec(LocalDate.now())), "TODAY : 今日(YYYYMMDD)");
         variable("PI", c -> Value.of(dec("3.1415926535897932384626433")), "PI : 円周率");
         variable("E", c -> Value.of(dec("2.7182818284590452353602874")), "E : 自然対数の底");

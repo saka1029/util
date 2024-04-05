@@ -77,12 +77,11 @@ public class Main {
         out.println("                | define-binary");
         out.println("                | expression");
         out.println("define-variable = ID '=' expression");
-        out.println("define-unary    = IDSPECIAL ID '=' expression");
-        out.println("define-binary   = ID IDSPECIAL ID '=' expression");
+        out.println("define-unary    = ID ID '=' expression");
+        out.println("define-binary   = ID ID ID '=' expression");
         out.println("expression      = unary { BOP unary }");
         out.println("unary           = sequence");
         out.println("                | UOP unary");
-        out.println("                | MOP UOP unary'");
         out.println("sequence        = primary { primary }");
         out.println("primary         = '(' expression ')'");
         out.println("                | VAR");
@@ -125,16 +124,10 @@ public class Main {
                         .sorted()
                         .forEach(s -> out.println(s));
                         break;
-                case "high":
-                    context.operators().highs().stream()
-                        .sorted()
-                        .forEach(s -> out.println(s));
-                        break;
                 default:
                     println(out, context.variableString(name));
                     println(out, context.operators().unaryString(name));
                     println(out, context.operators().binaryString(name));
-                    println(out, context.operators().highString(name));
                     break;
             }
         }
