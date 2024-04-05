@@ -131,8 +131,12 @@ public class Main {
     }
 
     static void solve(Context c, String s, PrintWriter out) {
-        Expression e = Parser.parse(c.operators, s);
-        Value.solve(e, c, out::println);
+        try {
+            Expression e = Parser.parse(c.operators, s);
+            Value.solve(e, c, out::println);
+        } catch (ValueException | ArithmeticException | NumberFormatException | DateTimeException ex) {
+            out.println(ex.getMessage());
+        }
     }
 
     static void run(Term term) throws IOException {
