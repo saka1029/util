@@ -9,6 +9,7 @@ import java.util.List;
  * LP       = '('
  * RP       = ')'
  * ASSIGN   = '='
+ * FILTER   = '@'
  * SPECIAL  = '+' | '-' | '*' | '/' | '%' | '^'
  *          | '==' | '!=' | '<' | '<=' | '>' | '>='
  *          | '~' | '!~'
@@ -23,7 +24,7 @@ import java.util.List;
 public class Lexer {
 
     public enum Type {
-        END, LP, RP, ASSIGN, ID, NUMBER, SPECIAL;
+        END, LP, RP, ASSIGN, FILTER, ID, NUMBER, SPECIAL;
     }
 
     public record Token(Type type, String string) {
@@ -113,6 +114,7 @@ public class Lexer {
             case '(' -> getReturn(Type.LP);
             case ')' -> getReturn(Type.RP);
             case '+', '*', '/', '%', '^', '~' -> getReturn(Type.SPECIAL);
+            case '@' -> getReturn(Type.FILTER);
             case '=' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.ASSIGN;
             case '<', '>' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.SPECIAL;
             case '-' -> isDigit(get()) ? number() : Type.SPECIAL;

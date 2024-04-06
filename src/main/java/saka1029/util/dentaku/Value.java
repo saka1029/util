@@ -196,6 +196,41 @@ public class Value implements Expression {
             throw new ValueException("Length mismatch %d and %d", elements.length, right.elements.length);
     }
 
+    public boolean bool() {
+        return elements.length > 0 && b(elements[0]);
+    }
+
+    public Value filter(Context context, Unary operator) {
+        if (elements.length == 0)
+            return EMPTY;
+        List<BigDecimal> result = new ArrayList<>();
+        for (BigDecimal e : elements)
+            if (operator.apply(context, Value.of(e)).bool())
+                result.add(e);
+        return new Value(result.toArray(BigDecimal[]::new));
+    }
+
+    public Value filter(Context context, Binary operator, Value right) {
+        if (elements.length == 0 && right.elements.length == 0)
+            return EMPTY;
+        List<BigDecimal> result = new ArrayList<>();
+        if (elements.length == 1) {
+            Value l = Value.of(elements[0]);
+            for (BigDecimal e : right.elements) {
+                if (operator.apply(context, l, Value.of(e)).bool())
+                    result.add(e);
+            }
+        } else if (right.elements.length == 1) {
+            Value r = Value.of(right.elements[0]);
+            for (BigDecimal e : elements) {
+                if (operator.apply(context, Value.of(e), r).bool())
+                    result.add(e);
+            }
+        } else
+            throw new ValueException("Size error l=%d r=%d", elements.length, right.elements.length);
+        return new Value(result.toArray(BigDecimal[]::new));
+    }
+
     public Value sort() {
         return Value.of(Arrays.stream(elements)
             .sorted()

@@ -20,9 +20,9 @@ import saka1029.util.dentaku.Lexer.Type;
  * define-variable = ID '=' expression
  * define-unary    = ID ID '=' expression
  * define-binary   = ID ID ID '=' expression
- * expression      = unary { BOP unary }
+ * expression      = unary { [ '@' ] BOP unary }
  * unary           = sequence
- *                 | UOP unary
+ *                 | [ '@' ] UOP unary
  * sequence        = primary { primary }
  * primary         = '(' expression ')'
  *                 | VAR
@@ -176,7 +176,16 @@ public class Parser {
     }
 
     Expression unary() {
-        if (isUnary(token)) {
+        if (is(token, Type.FILTER)) {
+            get(); // skip '@'
+            if (!isUnary(token))
+                throw new ValueException("Unary expected but '%s'", token.string());
+            String unaryName = token.string();
+            get(); // skip unary operator
+            Expression e = unary();
+            return c -> e.eval(c).filter(c, c.operators().unary(unaryName));
+
+        } else if (isUnary(token)) {
             String unaryName = token.string();
             get();  // skip unary operator
             Expression e = unary();
@@ -187,12 +196,24 @@ public class Parser {
 
     Expression expression() {
         Expression e = unary();
-        while (isBinary(token)) {
-            String binaryName = token.string();
-            get();  // skip binary operator
-            Expression left = e, right = unary();
-            e = c -> c.operators().binary(binaryName)
-                .apply(c, left.eval(c), right.eval(c));
+        while (true) {
+            if (is(token, Type.FILTER)) {
+                get(); // skip '@'
+                if (!isBinary(token))
+                    throw new ValueException("Binary expected but '%s'", token.string());
+                String binaryName = token.string();
+                get();  // skip binary operator
+                Expression left = e, right = unary();
+                e = c -> left.eval(c).filter(
+                    c, c.operators().binary(binaryName), right.eval(c));
+            } else if (isBinary(token)) {
+                String binaryName = token.string();
+                get();  // skip binary operator
+                Expression left = e, right = unary();
+                e = c -> c.operators().binary(binaryName)
+                    .apply(c, left.eval(c), right.eval(c));
+            } else
+                break;
         }
         return e;
     }
