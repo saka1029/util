@@ -61,6 +61,7 @@ public class Value implements Expression {
         Context child = context.child();
         return new Object() {
             int count = 0;
+
             void test() {
                 Value v = expression.eval(child);
                 if (v.elements.length < 0 || !b(v.elements[0]))
@@ -71,7 +72,8 @@ public class Value implements Expression {
                     .collect(Collectors.joining(" "));
                 out.accept(result);
             }
-            void solve(int index) {
+
+            int solve(int index) {
                 if (index >= variables.length)
                     test();
                 else {
@@ -81,12 +83,9 @@ public class Value implements Expression {
                         solve(index + 1);
                     }
                 }
-            }
-            int solve() {
-                solve(0);
                 return count;
             }
-        }.solve();
+        }.solve(0);
     }
 
     public int size() {
