@@ -133,7 +133,8 @@ public class Main {
     static void solve(Context c, String s, PrintWriter out) {
         try {
             Expression e = Parser.parse(c.operators, s);
-            Value.solve(e, c, out::println);
+            int count = Value.solve(e, c, out::println);
+            out.printf("number of solutions=%d%n", count);
         } catch (ValueException | ArithmeticException | NumberFormatException | DateTimeException ex) {
             out.println(ex.getMessage());
         }

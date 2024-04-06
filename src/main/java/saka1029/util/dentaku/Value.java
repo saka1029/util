@@ -51,7 +51,7 @@ public class Value implements Expression {
         return this;
     }
 
-    public static void solve(Expression expression, Context context, Consumer<String> out) {
+    public static int solve(Expression expression, Context context, Consumer<String> out) {
         if (!(expression instanceof ExpressionVars ev))
             throw new ValueException("Cannot solve '%s'", expression);
         Variable[] variables = ev.variableReferences();
@@ -59,11 +59,13 @@ public class Value implements Expression {
             .map(v -> v.eval(context))
             .toArray(Value[]::new);
         Context child = context.child();
-        new Object() {
+        return new Object() {
+            int count = 0;
             void test() {
                 Value v = expression.eval(child);
                 if (v.elements.length < 0 || !b(v.elements[0]))
                     return;
+                ++count;
                 String result = Arrays.stream(variables)
                     .map(n -> n + "=" + n.eval(child))
                     .collect(Collectors.joining(" "));
@@ -80,7 +82,11 @@ public class Value implements Expression {
                     }
                 }
             }
-        }.solve(0);
+            int solve() {
+                solve(0);
+                return count;
+            }
+        }.solve();
     }
 
     public int size() {

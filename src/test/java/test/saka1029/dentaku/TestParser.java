@@ -185,7 +185,8 @@ public class TestParser {
         eval(c, "a = 1 2 3");
         eval(c, "b = 4 5 6");
         StringBuilder sb = new StringBuilder();
-        Value.solve(Parser.parse(ops, "a + b == 7"), c, s -> sb.append(s).append(System.lineSeparator()));
+        int count = Value.solve(Parser.parse(ops, "a + b == 7"), c, s -> sb.append(s).append(System.lineSeparator()));
+        assertEquals(count, 3);
         assertEquals("a=1 b=6%na=2 b=5%na=3 b=4%n".formatted(), sb.toString());
     }
 
