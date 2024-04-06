@@ -8,12 +8,11 @@ statement       = define-variable
                 | define-binary
                 | expression
 define-variable = ID '=' expression
-define-unary    = ID-SPECIAL ID '=' expression
-define-binary   = ID ID-SPECIAL ID '=' expression
+define-unary    = ID ID '=' expression
+define-binary   = ID ID ID '=' expression
 expression      = unary { BOP unary }
 unary           = sequence
                 | UOP unary
-                | HOP BOP unary
 sequence        = primary { primary }
 primary         = '(' expression ')'
                 | VAR
@@ -22,18 +21,20 @@ primary         = '(' expression ')'
 
 
 ```
-ID              = JAVA-ALPHA { JAVA-ALPHA | JAVA-DIGIT}
-SPECAIL         = SP { SP }
-ID-SPECIAL      = ID | SPECIAL
-BOP             = ID | SPECIAL
-UOP             = ID | SPECIAL
-HOP             = ID | SPECIAL
-VAR             = ID
-NUMBER = DIGITS
-         [ '.' DIGITS ]
-         [ ( 'e' | 'E' ) [ '+' | '-' ] DIGITS ]
-DIGITS = DIGIT { DIGIT }
-DIGIT  = '0' .. '9'
+ID        = ID-FIRST { ID-REST }
+ID-FIRST  = JAVA-ALPHABETIC | '_'
+ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
+SPECIAL   = '+' | '-' | '*' | '/' | '%' | '^'
+          | '==' | '!=' | '<' | '<=' | '>' | '>='
+          | '~' | '!~'
+BOP       = ID | SPECIAL
+UOP       = ID | SPECIAL
+VAR       = ID
+NUMBER    = [ '-' ] DIGITS
+            [ '.' DIGITS ]
+            [ ( 'e' | 'E' ) [ '+' | '-' ] DIGITS ]
+DIGITS    = DIGIT { DIGIT }
+DIGIT     = '0' .. '9'
 ```
 
 ## UOP
@@ -73,6 +74,8 @@ DIGIT  = '0' .. '9'
 
 ## 評価例
 
+### `+`と`-`
+
 単項の`+`は`+`による簡約です。
 ```
   + 1 2 3
@@ -84,6 +87,8 @@ DIGIT  = '0' .. '9'
   - 1 2 3
 -1 -2 -3
 ```
+
+### 負の数値
 
 `-2`の中の`-`は演算子ではなく、`2`の符号です。
 ```
@@ -103,7 +108,7 @@ DIGIT  = '0' .. '9'
 3 4
 ```
 
-括弧を減らす工夫
+### 括弧を減らす工夫
 
 $$\sqrt{{11^4+100^4+111^4}\over 2}
 $$
@@ -215,6 +220,53 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infin {(-1)^{n} \over {2n+1}}$$
 ```
 おおよそ項の数が一桁増えると精度が一桁上がることがわかります。
 
+### ソルバー
+
+問題：$a b c d e f = a+b+c+d+e+f$を満たす自然数の組は何通りか。
+
+`.solve 式`は`式`を満たす変数の値の組を見つけて表示する。
+
+```
+  a = 1 to 10
+  b = 1 to 10
+  c = 1 to 10
+  d = 1 to 10
+  e = 1 to 10
+  f = 1 to 10
+  .solve * a b c d e f == + a b c d e f
+a=1 b=1 c=1 d=1 e=2 f=6
+a=1 b=1 c=1 d=1 e=6 f=2
+a=1 b=1 c=1 d=2 e=1 f=6
+a=1 b=1 c=1 d=2 e=6 f=1
+a=1 b=1 c=1 d=6 e=1 f=2
+a=1 b=1 c=1 d=6 e=2 f=1
+a=1 b=1 c=2 d=1 e=1 f=6
+a=1 b=1 c=2 d=1 e=6 f=1
+a=1 b=1 c=2 d=6 e=1 f=1
+a=1 b=1 c=6 d=1 e=1 f=2
+a=1 b=1 c=6 d=1 e=2 f=1
+a=1 b=1 c=6 d=2 e=1 f=1
+a=1 b=2 c=1 d=1 e=1 f=6
+a=1 b=2 c=1 d=1 e=6 f=1
+a=1 b=2 c=1 d=6 e=1 f=1
+a=1 b=2 c=6 d=1 e=1 f=1
+a=1 b=6 c=1 d=1 e=1 f=2
+a=1 b=6 c=1 d=1 e=2 f=1
+a=1 b=6 c=1 d=2 e=1 f=1
+a=1 b=6 c=2 d=1 e=1 f=1
+a=2 b=1 c=1 d=1 e=1 f=6
+a=2 b=1 c=1 d=1 e=6 f=1
+a=2 b=1 c=1 d=6 e=1 f=1
+a=2 b=1 c=6 d=1 e=1 f=1
+a=2 b=6 c=1 d=1 e=1 f=1
+a=6 b=1 c=1 d=1 e=1 f=2
+a=6 b=1 c=1 d=1 e=2 f=1
+a=6 b=1 c=1 d=2 e=1 f=1
+a=6 b=1 c=2 d=1 e=1 f=1
+a=6 b=2 c=1 d=1 e=1 f=1
+number of solutions=30
+```
+
 ## 優先順位
 
 1. 暗黙の連結（左優先）  
@@ -228,7 +280,7 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infin {(-1)^{n} \over {2n+1}}$$
   二項演算子間に優先順位はありません。
   `1 + 2 * 3`は`(1 + 3) * 2`と解釈されます。
 
-# Late binding
+# 遅延評価
 
 `g`オペレータが`f`オペレータを参照している場合、
 パース時に`f`オペレータの定義を取得するとすれば、
@@ -249,25 +301,39 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infin {(-1)^{n} \over {2n+1}}$$
 
 # 機能拡張
 
-## select
+## フィルター
 
-`select UNARY V`で`V`にフィルターを掛ける。
+### 単項フィルター
+
+`@ UNARY V`で`V`にフィルターを掛ける。
 `V`のうち`UNARY 要素`がゼロ以外を返したものだけを
 選択する。
 
 文法を以下のように変更する。
 ```
 unary           = sequence
-                | UOP unary
-                | HUOP UOP unary
-                | HBOP BOP unary
+                | [ '@' ] UOP unary
 ```
 そもそも`-`は`map -`の省略形であり、
 `+`は`reduce +`の省略形であった。
 `map +`は意味のない操作であり、
-`select +`も同様に意味のない操作であるため、
+`@ +`も同様に意味のない操作であるため、
 規定の操作として`reduce +`を選択するのは
 妥当であると思われる。
+
+### 二項フィルター
+`V @ BINARY W`で`V`または'W'にフィルターを掛ける。
+
+```
+  1 2 3 4 @ > 2
+3 4
+```
+
+```
+  2 @ >= 1 2 3 4
+1 2
+```
+
 
 ## 二項演算子の単項演算子化
 

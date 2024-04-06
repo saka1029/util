@@ -111,7 +111,7 @@ public class Context {
         operators.unary("sort", (c, v) -> v.sort(), "sort V -> V : 上昇順にソート");
         operators.unary("reverse", (c, v) -> v.reverse(), "reverse V -> V : 反転");
         operators.unary("shuffle", (c, v) -> v.shuffle(), "shuffle V -> V : シャッフル");
-        operators.unary("is-prime", (c, v) -> v.map(x -> dec(Value.isPrime(x))), "is-prime Vi -> Vb : 素数の場合1、それ以外の場合0");
+        operators.unary("is.prime", (c, v) -> v.map(x -> dec(Value.isPrime(x))), "is.prime Vi -> Vb : 素数の場合1、それ以外の場合0");
         operators.unary("prime", (c, v) -> v.prime(), "prime Vi -> Vi : 素数のみを選択");
         operators.unary("factor", (c, v) -> v.factor(), "factor Vi -> Vi : 素因数分解");
         operators.unary("year", (c, v) -> v.map(x -> Value.year(Value.date(x))), "year Vi -> Vi : YYYYMMDDのYYYY");
