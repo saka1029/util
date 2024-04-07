@@ -100,6 +100,7 @@ public class Context {
         operators.unary("odd", (c, v) -> v.map(x -> dec(!x.remainder(BigDecimal.TWO).equals(BigDecimal.ZERO))), "odd V -> vb : 奇数なら1、それ以外は0");
         operators.unary("fact", (c, v) -> v.map(Value::fact), "fact Vi -> Vi : 階乗");
         operators.unary("fib", (c, v) -> v.map(Value::fib), "fib Vi -> Vi : フィボナッチ数");
+        operators.unary("square", (c, v) -> v.map(x -> x.pow(2)), "square V -> V : 二乗");
         operators.unary("sqrt", (c, v) -> v.map(x -> x.sqrt(MATH_CONTEXT)), "sqrt V -> V : 平方根");
         operators.unary("sin", (c, v) -> v.map(x -> dec(Math.sin(d(x)))), "sin V -> V : sin値");
         operators.unary("asin", (c, v) -> v.map(x -> dec(Math.asin(d(x)))), "asin V -> V : sin⁻¹値");
