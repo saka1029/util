@@ -10,9 +10,9 @@ statement       = define-variable
 define-variable = ID '=' expression
 define-unary    = ID ID '=' expression
 define-binary   = ID ID ID '=' expression
-expression      = unary { BOP unary }
+expression      = unary { '@' BOP unary }
 unary           = sequence
-                | UOP unary
+                | '@' UOP unary
 sequence        = primary { primary }
 primary         = '(' expression ')'
                 | VAR
