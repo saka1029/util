@@ -331,7 +331,7 @@ select (0 <) -1 0 1 2
 
 ## ソルバー
 
-[実行例]
+### 実行例1
 変数`a`を1から5、変数`b`を0から10まで
 変えながら式$a ^ 2 + b ^ 2 = 25$を評価し、
 真(ゼロ以外)の場合に変数`a`および`b`の値を出力する。
@@ -343,4 +343,23 @@ a=3 b=4
 a=4 b=3
 a=5 b=0
 number of solutions=3
+```
+### 実行例2
+
+$ {3 \over a} + {5 \over b} = {7 \over c} $
+が整数となる素数$a, b, c$をすべて求めよ。
+
+```
+  isint n = int n == n
+  a = @prime (1 to 40)
+  b = @prime (1 to 40)
+  c = @prime (1 to 40)
+  .solve isint + (3 5 7 / a b c)
+a=2 b=2 c=7
+a=2 b=5 c=2
+a=3 b=2 c=2
+a=3 b=3 c=3
+a=3 b=5 c=7
+a=5 b=5 c=5
+number of solutions=6
 ```
