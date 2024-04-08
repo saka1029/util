@@ -90,13 +90,13 @@ public class Main {
 
     static void help(Context context, PrintWriter out, String... items) {
         if (items.length <= 1) {
-            out.println(" control-D        : exit program or (.exit .quit .end)");
-            out.println(".help             : show this message");
-            out.println(".help variable    : show all variables");
-            out.println(".help unary       : show all unary operators");
-            out.println(".help binary      : show all binary operators");
-            out.println(".help NAME        : show help for NAME");
-            out.println(".solve expression : show help for NAME");
+            out.println(" control-D        : Exit program or (.exit .quit .end)");
+            out.println(".help             : Show this message");
+            out.println(".help variable    : Show all variables");
+            out.println(".help unary       : Show all unary operators");
+            out.println(".help binary      : Show all binary operators");
+            out.println(".help NAME        : Show help for NAME");
+            out.println(".solve expression : Show values satisfy the expression");
         } else if (items.length == 2) {
             String name = items[1];
             switch (name) {
