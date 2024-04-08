@@ -92,6 +92,8 @@ public class Context {
         operators.unary("*", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::multiply, r)), "* V -> D : 積");
         operators.unary("/", (c, v) -> v.map(x -> BigDecimal.ONE.divide(x, Value.MATH_CONTEXT)), "/ V -> D : 逆数");
         operators.unary("^", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(Value::pow, r)), "^ V -> D : べき乗");
+        operators.unary("min", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::min, r)), "min V -> D : 最小値");
+        operators.unary("max", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::max, r)), "max V -> D : 最大値");
         operators.unary("abs", (c, v) -> v.map(BigDecimal::abs), "abs V -> V : 絶対値");
         operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> Vi : 符号(-1, 0, 1)");
         operators.unary("int", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.HALF_UP)), "int V -> Vi : 整数化(四捨五入)");
