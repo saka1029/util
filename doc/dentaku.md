@@ -346,7 +346,7 @@ number of solutions=3
 ```
 ### 実行例2
 
-$ {3 \over a} + {5 \over b} = {7 \over c} $
+$ {3 \over a} + {5 \over b} + {7 \over c} $
 が整数となる素数$a, b, c$をすべて求めよ。
 
 ```
