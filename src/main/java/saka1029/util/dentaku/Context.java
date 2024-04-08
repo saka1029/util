@@ -86,7 +86,7 @@ public class Context {
 
     private void initialize() {
         // unary operators
-        operators.unary("length", (c, v) -> Value.of(dec(v.size())), "length V -> I : 長さ");
+        operators.unary("count", (c, v) -> Value.of(dec(v.size())), "count V -> I : 要素数");
         operators.unary("-", (c, v) -> v.map(BigDecimal::negate), "- V -> V: 符号反転");
         operators.unary("+", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::add, r)), "+ V -> D : 和");
         operators.unary("*", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::multiply, r)), "* V -> D : 積");
