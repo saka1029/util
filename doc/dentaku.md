@@ -376,3 +376,16 @@ $2^{p-1}-1 = pq^2$を満たす$p, q$をすべて求めよ。
 p=7 q=3
 number of solutions=1
 ```
+
+### 実行例4
+
+${_{2n}C_n\over{n+1}}$が素数のとき、
+正の整数$n$をすべて求めよ。
+
+```
+  n = 1 to 100
+  .solve prime (2 * n C n / (n + 1))
+n=2
+n=3
+number of solutions=2
+```
