@@ -363,3 +363,16 @@ a=3 b=5 c=7
 a=5 b=5 c=5
 number of solutions=6
 ```
+
+### 実行例3
+
+$2^{p-1}-1 = pq^2$を満たす$p, q$をすべて求めよ。
+ただし$p,q$は異なる素数とする。
+
+```
+  p = @prime (1 to 1000)
+  q = @prime (1 to 1000)
+  .solve 2 ^ (p - 1) - 1 == (q ^ 2 * p) and (p != q)
+p=7 q=3
+number of solutions=1
+```
