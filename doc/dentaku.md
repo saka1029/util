@@ -404,3 +404,20 @@ x=4 y=3
 x=5 y=2
 number of solutions=4
 ```
+
+あるいは
+
+```
+  x = -100 to 100
+  y = -100 to 100
+  f x = x ^ 3 - x
+  .solve f x ^ 2 * f y == 86400
+x=-5 y=2
+x=-4 y=3
+x=4 y=3
+x=5 y=2
+number of solutions=4
+```
+
+単項演算子`f`の定義内で変数`x`を使用している点に注意する。
+この変数は`.solve`における式内の`x`とは区別されている。
