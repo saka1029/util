@@ -13,11 +13,11 @@ public class GenPass {
 		IntStream.rangeClosed('0', '9'),
 		IntStream.rangeClosed('A', 'Z'),
 		IntStream.rangeClosed('a', 'z'))
-		.flatMapToInt(i -> i)
-		.filter(i -> !EXCLUDE.contains((char)i))
-		.toArray();
+			.flatMapToInt(i -> i)
+			.filter(i -> !EXCLUDE.contains((char)i))
+			.toArray();
 
-	static final int DEFAULT_LENGTH = 12;
+	static final int DEFAULT_LENGTH = 16;
 	
 	public static void main(String[] args) {
 		int length = DEFAULT_LENGTH;
