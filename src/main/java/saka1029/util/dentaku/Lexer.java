@@ -118,7 +118,7 @@ public class Lexer {
             case '=' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.ASSIGN;
             case '<', '>' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.SPECIAL;
             case '-' -> isDigit(get()) ? number() : Type.SPECIAL;
-            case '!' -> get() == '=' || ch == '~' ? getReturn(Type.SPECIAL) : error("UnknownTOken '!");
+            case '!' -> get() == '=' || ch == '~' ? getReturn(Type.SPECIAL) : error("UnknownToken '!");
             default -> isDigit(ch) ? number() : isIdFirst(ch) ? id() : error("Unknown char 0x%04X", ch);
         };
         return new Token(type, new String(input, start, current - start));
