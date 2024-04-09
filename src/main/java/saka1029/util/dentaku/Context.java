@@ -152,6 +152,8 @@ public class Context {
         operators.binary(">=", (c, l, r) -> l.binary((a, b) -> dec(a.compareTo(b) >= 0), r), "V >= V -> Vb : 大きいかまたは等しい(結果は1,0で返す)");
         operators.binary("min", (c, l, r) -> l.binary(BigDecimal::min, r), "V min V -> V : 小さい方");
         operators.binary("max", (c, l, r) -> l.binary(BigDecimal::max, r), "V max V -> V : 大きい方");
+        operators.binary("encode", (c, l, r) -> l.encode(r), "V encode I -> I : エンコード");
+        operators.binary("decode", (c, l, r) -> l.decode(r), "I decode I -> V : デコード");
         operators.binary("and", (c, l, r) -> l.binary((a, b) -> dec(b(a) & b(b)), r), "Vb and Vb -> Vb : 論理積(ゼロは偽、それ以外は真)");
         operators.binary("or", (c, l, r) -> l.binary((a, b) -> dec(b(a) | b(b)), r), "Vb or Vb -> Vb : 論理和(ゼロは偽、それ以外は真)");
         operators.binary("xor", (c, l, r) -> l.binary((a, b) -> dec(b(a) ^ b(b)), r), "Vb xor Vb -> Vb : 排他的論理和(ゼロは偽、それ以外は真)");

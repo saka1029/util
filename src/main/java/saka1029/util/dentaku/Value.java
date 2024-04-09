@@ -9,6 +9,7 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -412,6 +413,26 @@ public class Value implements Expression {
 
     public static BigDecimal lcm(BigDecimal a, BigDecimal b) {
         return a.multiply(b).divide(gcd(a, b));
+    }
+
+    public Value encode(Value base) {
+        BigDecimal r = BigDecimal.ZERO;
+        BigDecimal b = base.oneElement();
+        for (BigDecimal d : elements)
+            r = r.multiply(b).add(d);
+        return Value.of(r);
+    }
+
+    public Value decode(Value base) {
+        BigDecimal v = oneElement();
+        BigDecimal b = base.oneElement();
+        List<BigDecimal> list = new LinkedList<>();
+        while (v.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal[] t = v.divideAndRemainder(b);
+            v = t[0];
+            list.addFirst(t[1]);
+        }
+        return Value.of(list.toArray(BigDecimal[]::new));
     }
 
     @Override
