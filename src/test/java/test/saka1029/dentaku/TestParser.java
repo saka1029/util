@@ -57,7 +57,7 @@ public class TestParser {
     public void testUnary() {
         Operators ops = Operators.of();
         Context c = Context.of(ops);
-        assertEquals(eval(c, "4"), eval(c, "length 1 2 3 4"));
+        assertEquals(eval(c, "4"), eval(c, "count 1 2 3 4"));
         assertEquals(eval(c, "-1 -2 -3 -4"), eval(c, "- 1 2 3 4"));
         assertEquals(eval(c, "10"), eval(c, "+ 1 2 3 4"));
         assertEquals(eval(c, "24"), eval(c, "* 1 2 3 4"));
@@ -107,7 +107,7 @@ public class TestParser {
         assertEquals(Value.NaN, eval(c, "select.gt2 x = x > 2 filter x"));
         assertEquals(eval(c, "3 4"), eval(c, "select.gt2 a"));
         assertEquals(eval(c, "3 4"), eval(c, "select.gt2 (1 to 4)"));
-        assertEquals(Value.NaN, eval(c, "average x = + x / length x"));
+        assertEquals(Value.NaN, eval(c, "average x = + x / count x"));
         assertEquals(eval(c, "2.5"), eval(c, "average a"));
         assertEquals(eval(c, "2 4"), eval(c, "not (a % 2) filter a"));
         assertEquals(Value.NaN, eval(c, "even x = not (x % 2) filter x"));
