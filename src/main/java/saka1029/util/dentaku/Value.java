@@ -39,6 +39,10 @@ public class Value implements Expression {
         return new Value(elements.clone());
     }
 
+    public static Value of(BigInteger... elements) {
+        return new Value(Arrays.stream(elements).map(i -> new BigDecimal(i)).toArray(BigDecimal[]::new));
+    }
+
     public static Value of(List<BigDecimal> list) {
         return new Value(list.toArray(BigDecimal[]::new));
     }
@@ -416,23 +420,27 @@ public class Value implements Expression {
     }
 
     public Value encode(Value base) {
-        BigDecimal r = BigDecimal.ZERO;
-        BigDecimal b = base.oneElement();
+        BigInteger r = BigInteger.ZERO;
+        BigInteger b = base.oneElement().toBigIntegerExact().abs();
+        if (b.compareTo(BigInteger.ONE) <= 0)
+            throw new ValueException("Base must be > 1 but %s", b);
         for (BigDecimal d : elements)
-            r = r.multiply(b).add(d);
+            r = r.multiply(b).add(d.toBigIntegerExact().abs());
         return Value.of(r);
     }
 
     public Value decode(Value base) {
-        BigDecimal v = oneElement();
-        BigDecimal b = base.oneElement();
-        List<BigDecimal> list = new LinkedList<>();
-        while (v.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal[] t = v.divideAndRemainder(b);
+        BigInteger v = oneElement().toBigIntegerExact().abs();
+        BigInteger b = base.oneElement().toBigIntegerExact().abs();
+        if (b.compareTo(BigInteger.ONE) <= 0)
+            throw new ValueException("Base must be > 1 but %s", b);
+        List<BigInteger> list = new LinkedList<>();
+        while (v.compareTo(BigInteger.ZERO) > 0) {
+            BigInteger[] t = v.divideAndRemainder(b);
             v = t[0];
             list.addFirst(t[1]);
         }
-        return Value.of(list.toArray(BigDecimal[]::new));
+        return Value.of(list.stream().map(i -> new BigDecimal(i)).toArray(BigDecimal[]::new));
     }
 
     @Override
