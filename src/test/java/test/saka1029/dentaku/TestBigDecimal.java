@@ -1,8 +1,12 @@
 package test.saka1029.dentaku;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.junit.Test;
 
 public class TestBigDecimal {
@@ -45,5 +49,40 @@ public class TestBigDecimal {
     public void testDigits() {
         assertEquals("12345", digits("１２３４５"));
         // assertEquals(new BigDecimal("123.45"), new BigDecimal("１２３．４５"));
+    }
+
+    static BigDecimal encode(BigDecimal b, BigDecimal... s) {
+        BigDecimal r = BigDecimal.ZERO;
+        for (BigDecimal d : s)
+            r = r.multiply(b).add(d);
+        return r;
+    }
+
+    @Test
+    public void testEncode() {
+        assertEquals(new BigDecimal("1234"), encode(BigDecimal.TEN,
+            new BigDecimal(1), new BigDecimal(2), new BigDecimal(3), new BigDecimal(4)));
+        assertEquals(new BigDecimal("1234"), encode(new BigDecimal("16"),
+            new BigDecimal(4), new BigDecimal(13), new BigDecimal(2)));
+    }
+
+    static BigDecimal[] decode(BigDecimal b, BigDecimal v) {
+        List<BigDecimal> r = new LinkedList<>();
+        while (v.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal[] t = v.divideAndRemainder(b);
+            v = t[0];
+            r.addFirst(t[1]);
+        }
+        return r.toArray(BigDecimal[]::new);
+    }
+
+    @Test
+    public void testDecode() {
+        assertArrayEquals(new BigDecimal[] {
+            new BigDecimal(1), new BigDecimal(2), new BigDecimal(3), new BigDecimal(4)},
+            decode(BigDecimal.TEN, new BigDecimal("1234")));
+        assertArrayEquals(new BigDecimal[] {
+            new BigDecimal(4), new BigDecimal(13), new BigDecimal(2)},
+            decode(new BigDecimal("16"), new BigDecimal("1234")));
     }
 }
