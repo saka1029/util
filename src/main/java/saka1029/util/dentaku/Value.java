@@ -236,6 +236,12 @@ public class Value implements Expression {
             .toArray(BigDecimal[]::new));
     }
 
+    public Value distinct() {
+        return Value.of(Arrays.stream(elements)
+            .distinct()
+            .toArray(BigDecimal[]::new));
+    }
+
     public Value reverse() {
         BigDecimal[] result = elements.clone();
         Collections.reverse(Arrays.asList(result));

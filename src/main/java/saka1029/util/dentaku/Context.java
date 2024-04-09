@@ -114,6 +114,7 @@ public class Context {
         operators.unary("log10", (c, v) -> v.map(x -> dec(Math.log10(d(x)))), "log10 V -> V : 対数値(底は10)");
         operators.unary("not", (c, v) -> v.map(x -> dec(!b(x))), "not Vb -> Vb : 否定(0:偽<->0以外:真)");
         operators.unary("sort", (c, v) -> v.sort(), "sort V -> V : 上昇順にソート");
+        operators.unary("distinct", (c, v) -> v.sort(), "distinct V -> V : 重複排除");
         operators.unary("reverse", (c, v) -> v.reverse(), "reverse V -> V : 反転");
         operators.unary("shuffle", (c, v) -> v.shuffle(), "shuffle V -> V : シャッフル");
         operators.unary("prime", (c, v) -> v.map(x -> dec(Value.isPrime(x))), "prime Vi -> Vb : 素数の場合1、それ以外の場合0");
