@@ -95,6 +95,8 @@ public class Context {
         operators.unary("min", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::min, r)), "min V -> D : 最小値");
         operators.unary("max", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::max, r)), "max V -> D : 最大値");
         operators.unary("abs", (c, v) -> v.map(BigDecimal::abs), "abs V -> V : 絶対値");
+        operators.unary("precision", (c, v) -> v.map(x -> dec(x.precision())), "precision V -> V : 整数部桁数");
+        operators.unary("scale", (c, v) -> v.map(x -> dec(x.scale())), "scale V -> V : 小数部桁数");
         operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> Vi : 符号(-1, 0, 1)");
         operators.unary("int", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.HALF_UP)), "int V -> Vi : 整数化(四捨五入)");
         operators.unary("trunc", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.DOWN)), "trunc V -> vi : 整数化(切り捨て)");
