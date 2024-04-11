@@ -180,15 +180,15 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infin {(-1)^{n} \over {2n+1}}$$
 合計する項の数を増やすしながら計算すると以下のようになります。
 
 ```
-  pi-term n = -1 ^ n / (2 * n + 1)
-  pi-sum range = 4 * + pi-term range
-  pi-sum (0 to 9) round 4
+  pi.term n = -1 ^ n / (2 * n + 1)
+  pi.sum range = 4 * + pi.term range
+  pi.sum (0 to 9) round 4
 3.0418
-  pi-sum (0 to 99) round 4
+  pi.sum (0 to 99) round 4
 3.1316
-  pi-sum (0 to 999) round 4
+  pi.sum (0 to 999) round 4
 3.1406
-  pi-sum (0 to 9999) round 4
+  pi.sum (0 to 9999) round 4
 3.1415
 ```
 おおよそ項の数が一桁増えると精度が一桁上がることがわかります。
