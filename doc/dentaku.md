@@ -511,3 +511,20 @@ a=6 b=4 c=1
 a=8 b=3 c=1
 number of solutions=3
 ```
+
+### 実行例9
+
+$p$が素数のとき、以下の式を満たす$m, n$を求めよ。
+
+$$
+5 ^ n - 3 ^ n = p ^ m
+$$
+```
+  p = @prime (1 to 100)
+  n = 1 to 100
+  m = 1 to 100
+  .solve 5 ^ n - (3 ^ n) == (p ^ m)
+m=1 n=1 p=2
+m=4 n=2 p=2
+number of solutions=2
+```
