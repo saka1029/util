@@ -166,12 +166,12 @@ public class Context {
         variable("PI", c -> Value.of(dec("3.1415926535897932384626433")), "PI : 円周率");
         variable("E", c -> Value.of(dec("2.7182818284590452353602874")), "E : 自然対数の底");
         variable("EPSILON", c -> Value.of(dec("5E-10")), "EPSILON : ほぼ等しいのしきい値");
-        eval("ave x = + x / length x");
-        eval("variance x = + (x - ave x ^ 2) / length x");
+        eval("ave x = + x / count x");
+        eval("variance x = + (x - ave x ^ 2) / count x");
         eval("sd x = sqrt variance x");
         eval("t.score x = x - ave x / sd x * 10 + 50");
         eval("pascal n = n C (0 to n)");
-        eval("c poly x = + (x ^ (length c - 1 to 0) * c)");
+        eval("c poly x = + (x ^ (count c - 1 to 0) * c)");
         eval("a distance b = sqrt + (a - b ^ 2)");
         eval("a days b = days b - days a");
         eval("fibonacci n = 1 + sqrt 5 / 2 ^ n - (1 - sqrt 5 / 2 ^ n) / sqrt 5");

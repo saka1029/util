@@ -103,10 +103,10 @@ $$
 |25|95|40|90|60|
 
 ```
-  ave x = + x / length x
-  variance x = + (x - ave x ^ 2) / length x
+  ave x = + x / count x
+  variance x = + (x - ave x ^ 2) / count x
   sd x = sqrt variance x
-  t-score x = x - ave x / sd x * 10 + 50
+  t.score x = x - ave x / sd x * 10 + 50
   kokugo = 55 60 70 60 65
   sansu = 25 95 40 90 60
   ave kokugo
@@ -121,9 +121,9 @@ $$
 5.099019513592785
   sd sansu
 27.31300056749533
-  t-score kokugo round 2
+  t.score kokugo round 2
 36.27 46.08 65.69 46.08 55.88
-  t-score sansu round 2
+  t.score sansu round 2
 36.45 62.08 41.95 60.25 49.27
 ```
 
@@ -180,18 +180,33 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infin {(-1)^{n} \over {2n+1}}$$
 合計する項の数を増やすしながら計算すると以下のようになります。
 
 ```
-  pi-term n = -1 ^ n / (2 * n + 1)
-  pi-sum range = 4 * + pi-term range
-  pi-sum (0 to 9) round 4
-3.0418
-  pi-sum (0 to 99) round 4
-3.1316
-  pi-sum (0 to 999) round 4
-3.1406
-  pi-sum (0 to 9999) round 4
-3.1415
+ term n = -1 ^ n / (2 * n + 1)
+  pi n = + term (0 to n) * 4
+  pi 9
+3.04183961892940212
+  pi 99
+3.131592903558552732
+  pi 999
+3.1405926538397929396
+  pi 9999
+3.14149265359004322800
+  pi 99999
+3.141582653589793475400
 ```
 おおよそ項の数が一桁増えると精度が一桁上がることがわかります。
+
+### シグマ
+
+$$
+\sum_{n=1}^{40000}{ 1\over{\sqrt n}}
+$$
+
+逆数を求める単項演算子`/`を使って以下のように求めることができる。
+
+```
+  + / sqrt (1 to 40000)
+398.542145485982080297
+```
 
 ### ソルバー
 
@@ -438,3 +453,4 @@ $$
 p=5 q=3 r=19
 number of solutions=1
 ```
+
