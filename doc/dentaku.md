@@ -360,9 +360,24 @@ a=4 b=3
 a=5 b=0
 number of solutions=3
 ```
+
+あるいは
+
+```
+  a = 1 to 5
+  b = 0 to 10
+  .solve + (a b ^ 2) == 25
+a=3 b=4
+a=4 b=3
+a=5 b=0
+number of solutions=3
+```
+
 ### 実行例2
 
-$ {3 \over a} + {5 \over b} + {7 \over c} $
+$$
+{3 \over a} + {5 \over b} + {7 \over c}
+$$
 が整数となる素数$a, b, c$をすべて求めよ。
 
 ```
