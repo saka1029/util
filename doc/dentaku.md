@@ -449,7 +449,7 @@ $$
   p = @prime (1 to 100 )
   q = @prime (1 to 100 )
   r = @prime (1 to 100 )
-  .solve p ^ 4 * 3 - (q ^ 4 * 5)  - (r ^ 2 * 4) == 26
+  .solve + (p q r ^ 4 4 2 * 3 -5 -4) == 26
 p=5 q=3 r=19
 number of solutions=1
 ```
