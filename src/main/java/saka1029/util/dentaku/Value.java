@@ -9,8 +9,10 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -282,16 +284,12 @@ public class Value implements Expression {
     }
 
     public Value factor() {
-        BigDecimal d = oneElement();
+        BigDecimal d = oneElement().abs();
         List<BigDecimal> result = new ArrayList<>();
         switch (d.signum()) {
             case 0:
                 result.add(BigDecimal.ZERO);
                 break;
-            case -1:
-                result.add(BigDecimal.ONE.negate());
-                d = d.negate();
-                // thru
             default:
                 BigDecimal max = d.sqrt(MATH_CONTEXT);
                 for (BigDecimal f = BigDecimal.TWO; f.compareTo(max) <= 0; f = f.add(BigDecimal.ONE)) {
@@ -307,6 +305,25 @@ public class Value implements Expression {
                     result.add(d);
         }
         return Value.of(result);
+    }
+
+    public Value divisor(boolean minus) {
+        BigInteger d = oneElement().toBigInteger().abs();
+        Set<BigInteger> set = new HashSet<>();
+        if (d.equals(BigInteger.ZERO))
+            set.add(BigInteger.ZERO);
+        else 
+            for (BigInteger i = d.sqrt(); i.compareTo(BigInteger.ZERO) > 0; i = i.subtract(BigInteger.ONE))
+                if (d.remainder(i).equals(BigInteger.ZERO)) {
+                    BigInteger rem = d.divide(i);
+                    set.add(i);
+                    set.add(rem);
+                    if (minus) {
+                        set.add(i.negate());
+                        set.add(rem.negate());
+                    }
+                }
+        return Value.of(set.stream().sorted().toArray(BigInteger[]::new));
     }
 
     public static BigDecimal fact(BigDecimal n) {

@@ -106,7 +106,7 @@ $$
   ave x = + x / count x
   variance x = + (x - ave x ^ 2) / count x
   sd x = sqrt variance x
-  t.score x = x - ave x / sd x * 10 + 50
+  tScore x = x - ave x / sd x * 10 + 50
   kokugo = 55 60 70 60 65
   sansu = 25 95 40 90 60
   ave kokugo
@@ -121,9 +121,9 @@ $$
 5.099019513592785
   sd sansu
 27.31300056749533
-  t.score kokugo round 2
+  tScore kokugo round 2
 36.27 46.08 65.69 46.08 55.88
-  t.score sansu round 2
+  tScore sansu round 2
 36.45 62.08 41.95 60.25 49.27
 ```
 
