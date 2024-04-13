@@ -108,17 +108,17 @@ public class Main {
                     break;
                 case "variable":
                     context.variables().stream()
-                        .sorted()
+                        .sorted(String::compareToIgnoreCase)
                         .forEach(s -> out.println(s));
                         break;
                 case "unary":
                     context.operators().unarys().stream()
-                        .sorted()
+                        .sorted(String::compareToIgnoreCase)
                         .forEach(s -> out.println(s));
                         break;
                 case "binary":
                     context.operators().binarys().stream()
-                        .sorted()
+                        .sorted(String::compareToIgnoreCase)
                         .forEach(s -> out.println(s));
                         break;
                 default:
