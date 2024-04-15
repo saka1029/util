@@ -110,7 +110,10 @@ public class Parser {
         get(); // skip variable
         get(); // skip '='
         Expression body = expression();
-        Unary unary = new UnaryCall(variable, body);
+        // operator名が大文字で始まるときはmap実装を呼ぶ。
+        Unary unary = Character.isUpperCase(operator.charAt(0))
+            ? new UnaryCallMap(variable, body)
+            : new UnaryCall(variable, body);
         return c -> { c.operators().unary(operator, unary, input); return Value.NaN; };
     }
 

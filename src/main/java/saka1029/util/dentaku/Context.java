@@ -120,8 +120,9 @@ public class Context {
         operators.unary("reverse", (c, v) -> v.reverse(), "reverse V -> V : 反転");
         operators.unary("shuffle", (c, v) -> v.shuffle(), "shuffle V -> V : シャッフル");
         operators.unary("prime", (c, v) -> v.map(x -> dec(Value.isPrime(x))), "prime Vi -> Vb : 素数の場合1、それ以外の場合0");
-        // operators.unary("prime", (c, v) -> v.prime(), "prime Vi -> Vi : 素数のみを選択");
-        operators.unary("factor", (c, v) -> v.factor(), "factor Vi -> Vi : 素因数分解");
+        operators.unary("divisor", (c, v) -> v.divisor(false), "divisor I -> Vi : 約数(負の数を含まない)");
+        operators.unary("signedDivisor", (c, v) -> v.divisor(true), "signedDivisor I -> Vi : 約数(負の数を含む)");
+        operators.unary("factor", (c, v) -> v.factor(), "factor I -> Vi : 素因数");
         operators.unary("year", (c, v) -> v.map(x -> Value.year(Value.date(x))), "year Vi -> Vi : YYYYMMDDのYYYY");
         operators.unary("month", (c, v) -> v.map(x -> Value.month(Value.date(x))), "month Vi -> Vi : YYYYMMDDのMM");
         operators.unary("day", (c, v) -> v.map(x -> Value.day(Value.date(x))), "day Vi -> Vi : YYYYMMDDのDD");
@@ -169,7 +170,7 @@ public class Context {
         eval("ave x = + x / count x");
         eval("variance x = + (x - ave x ^ 2) / count x");
         eval("sd x = sqrt variance x");
-        eval("t.score x = x - ave x / sd x * 10 + 50");
+        eval("standardScore x = x - ave x / sd x * 10 + 50");
         eval("pascal n = n C (0 to n)");
         eval("c poly x = + (x ^ (count c - 1 to 0) * c)");
         eval("a distance b = sqrt + (a - b ^ 2)");

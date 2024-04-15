@@ -106,7 +106,7 @@ $$
   ave x = + x / count x
   variance x = + (x - ave x ^ 2) / count x
   sd x = sqrt variance x
-  t.score x = x - ave x / sd x * 10 + 50
+  standardScore x = x - ave x / sd x * 10 + 50
   kokugo = 55 60 70 60 65
   sansu = 25 95 40 90 60
   ave kokugo
@@ -121,9 +121,9 @@ $$
 5.099019513592785
   sd sansu
 27.31300056749533
-  t.score kokugo round 2
+  standardScore kokugo round 2
 36.27 46.08 65.69 46.08 55.88
-  t.score sansu round 2
+  standardScore sansu round 2
 36.45 62.08 41.95 60.25 49.27
 ```
 
@@ -527,4 +527,35 @@ $$
 m=1 n=1 p=2
 m=4 n=2 p=2
 number of solutions=2
+```
+自然数$n$の約数は4個でその和は84である。
+
+### 実行例10
+
+```
+  n = 1 to 100
+  .solve count divisor n == 4 and (+ divisor n == 84)
+n=65
+number of solutions=1
+```
+# Schemeの単項演算子
+
+
+加算および乗算の場合
+
+```
+(+ 3 4)                     =>  7
+(+ 3)                       =>  3
+(+)                         =>  0
+(* 4)                       =>  4
+(*)                         =>  1
+```
+
+減算および除算の場合
+```
+(- 3 4)                     =>  -1
+(- 3 4 5)                   =>  -6
+(- 3)                       =>  -3
+(/ 3 4 5)                   =>  3/20
+(/ 3)                       =>  1/3
 ```
