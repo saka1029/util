@@ -33,7 +33,8 @@ public class TestDentaku {
                 } else {
                     Expression e = Parser.parse(context.operators(), line);
                     Value value = e.eval(context);
-                    append.accept(value == Value.NaN ? "" : value.toString());
+                    if (value != Value.NaN)
+                        append.accept(value.toString());
                 }
             } catch (ValueException | ArithmeticException
                     | NumberFormatException | DateTimeException ex) {
@@ -97,7 +98,6 @@ public class TestDentaku {
             a
             a > 2 filter a
             """, """
-            
             1 2 3 4
             3 4
             """);
@@ -132,8 +132,6 @@ public class TestDentaku {
             standardScore kokugo round 2
             standardScore sansu round 2
             """, """
-
-
             62
             62
             26
@@ -154,7 +152,6 @@ public class TestDentaku {
             a distance b = sqrt + (a - b ^ 2)
             0 0 distance 1 1
             """, """
-
             1.414213562373095
             """);
         test(c,
@@ -162,6 +159,28 @@ public class TestDentaku {
             0 0 0 distance 1 1 1
             """, """
             1.732050807568877
+            """);
+    }
+
+    @Test
+    public void testPi() {
+        Operators functions = Operators.of();
+        Context c = Context.of(functions);
+        test(c,
+            """
+            term n = -1 ^ n / (2 * n + 1)
+            Pi n = + term (0 to n) * 4
+            Pi 9
+            Pi 99
+            Pi 999
+            Pi 9999
+            Pi 99999
+            """, """
+            3.04183961892940212
+            3.131592903558552732
+            3.1405926538397929396
+            3.14149265359004322800
+            3.141582653589793475400 
             """);
     }
 
