@@ -67,7 +67,7 @@ public class Lexer {
         return isIdFirst(ch) || Character.isDigit(ch) || ch == '.';
     }
 
-    Type getReturn(Type type) {
+    Type advance(Type type) {
         get();
         return type;
     }
@@ -111,14 +111,15 @@ public class Lexer {
             return END;
         int start = current;
         Type type = switch (ch) {
-            case '(' -> getReturn(Type.LP);
-            case ')' -> getReturn(Type.RP);
-            case '+', '*', '/', '%', '^', '~' -> getReturn(Type.SPECIAL);
-            case '@' -> getReturn(Type.FILTER);
-            case '=' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.ASSIGN;
-            case '<', '>' -> get() == '=' ? getReturn(Type.SPECIAL) : Type.SPECIAL;
-            case '-' -> isDigit(get()) ? number() : Type.SPECIAL;
-            case '!' -> get() == '=' || ch == '~' ? getReturn(Type.SPECIAL) : error("UnknownToken '!");
+            case '(' -> advance(Type.LP);
+            case ')' -> advance(Type.RP);
+            case '+', '*', '/', '%', '^', '~' -> advance(Type.SPECIAL);
+            case '@' -> advance(Type.FILTER);
+            case '=' -> get() == '=' ? advance(Type.SPECIAL) : Type.ASSIGN;
+            case '<', '>' -> get() == '=' ? advance(Type.SPECIAL) : Type.SPECIAL;
+            // case '-' -> isDigit(get()) ? number() : Type.SPECIAL;
+            case '-' -> advance(Type.SPECIAL);
+            case '!' -> get() == '=' || ch == '~' ? advance(Type.SPECIAL) : error("UnknownToken '!");
             default -> isDigit(ch) ? number() : isIdFirst(ch) ? id() : error("Unknown char 0x%04X", ch);
         };
         return new Token(type, new String(input, start, current - start));

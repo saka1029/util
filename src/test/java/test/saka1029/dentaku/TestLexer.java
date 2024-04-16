@@ -17,7 +17,7 @@ public class TestLexer {
             new Token(Type.SPECIAL, "+"),
             new Token(Type.RP, ")")
         ), Lexer.tokens("(+)"));
-        assertEquals(List.of(new Token(Type.NUMBER, "-123.45e2")), Lexer.tokens("  -123.45e2"));
+        assertEquals(List.of(new Token(Type.SPECIAL, "-"), new Token(Type.NUMBER, "123.45e2")), Lexer.tokens("  -123.45e2"));
         assertEquals(List.of(new Token(Type.SPECIAL, "-")), Lexer.tokens("  -"));
         assertEquals(List.of(
             new Token(Type.ID, "aB2"),
@@ -29,7 +29,8 @@ public class TestLexer {
         ), Lexer.tokens("  <-"));
         assertEquals(List.of(
             new Token(Type.SPECIAL, "<"),
-            new Token(Type.NUMBER, "-2")
+            new Token(Type.SPECIAL, "-"),
+            new Token(Type.NUMBER, "2")
         ), Lexer.tokens("  <-2"));
         assertEquals(List.of(
             new Token(Type.SPECIAL, "-"),

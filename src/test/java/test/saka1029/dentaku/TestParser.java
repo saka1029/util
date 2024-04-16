@@ -58,10 +58,10 @@ public class TestParser {
         Operators ops = Operators.of();
         Context c = Context.of(ops);
         assertEquals(eval(c, "4"), eval(c, "count 1 2 3 4"));
-        assertEquals(eval(c, "-1 -2 -3 -4"), eval(c, "- 1 2 3 4"));
+        assertEquals(eval(c, "-8"), eval(c, "- 1 2 3 4"));
         assertEquals(eval(c, "10"), eval(c, "+ 1 2 3 4"));
         assertEquals(eval(c, "24"), eval(c, "* 1 2 3 4"));
-        assertEquals(eval(c, "1 -1 0"), eval(c, "sign 5 -2 0"));
+        assertEquals(eval(c, "1 (-1) 0"), eval(c, "sign 5 (-2) 0"));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class TestParser {
         assertEquals(Value.NaN, eval(c, "a = (1 2 3)"));
         assertEquals(eval(c, "1 2 3"), eval(c, "a"));
         assertEquals(Value.NaN, eval(c, "a = - 1 2 3"));
-        assertEquals(eval(c, "-1 -2 -3"), eval(c, "a"));
+        assertEquals(eval(c, "-4"), eval(c, "a"));
         assertEquals(Value.NaN, eval(c, "b = a + 1"));
         assertEquals(eval(c, "0 -1 -2"), eval(c, "b"));
         assertEquals(Value.NaN, eval(c, "a = 3"));

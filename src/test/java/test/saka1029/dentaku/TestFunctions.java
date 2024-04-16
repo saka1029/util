@@ -29,22 +29,22 @@ public class TestFunctions {
     public void testUnaryArithmeticOperators() {
         Operators f = Operators.of();
         Context c = Context.of(f);
-        assertEquals(eval(c, "-1 -2 -3"), eval(c, "- 1 2 3"));
+        assertEquals(eval(c, "-4"), eval(c, "- 1 2 3"));
         assertEquals(eval(c, "6"), eval(c, "+ 1 2 3"));
         assertEquals(eval(c, "24"), eval(c, "* 1 2 3 4"));
-        assertEquals(eval(c, "-1 1 0"), eval(c, "sign -1 2 0"));
+        assertEquals(eval(c, "(-1) 1 0"), eval(c, "sign (-1) 2 0"));
     }
 
     @Test
     public void tesUnarytTrigonometricOperators() {
         Operators f = Operators.of();
         Context c = Context.of(f);
-        assertEquals(eval(c, "0 1 -1 0"), eval(c, "sin 0 (PI / 2) (-PI / 2) PI round 0"));
-        assertEquals(eval(c, "1 0 0 -1"), eval(c, "cos 0 (PI / 2) (-PI / 2) PI round 0"));
-        assertEquals(eval(c, "0 1 -1 0"), eval(c, "tan 0 (PI / 4) (-PI / 4) PI round 0"));
-        assertEquals(eval(c, "0 (PI / 2) (-PI / 2) 0 round 8"), eval(c, "asin 0 1 -1 0 round 8"));
-        assertEquals(eval(c, "0 (PI / 2) (PI / 2) PI round 8"), eval(c, "acos 1 0 0 -1 round 8"));
-        assertEquals(eval(c, "0 (PI / 4) (-PI / 4) 0 round 8"), eval(c, "atan 0 1 -1 0 round 8"));
+        assertEquals(eval(c, "0 1 (-1) 0"), eval(c, "sin 0 (PI / 2) (-PI / 2) PI round 0"));
+        assertEquals(eval(c, "1 0 0 (-1)"), eval(c, "cos 0 (PI / 2) (-PI / 2) PI round 0"));
+        assertEquals(eval(c, "0 1 (-1) 0"), eval(c, "tan 0 (PI / 4) (-PI / 4) PI round 0"));
+        assertEquals(eval(c, "0 (PI / 2) (-PI / 2) 0 round 8"), eval(c, "asin 0 1 (-1) 0 round 8"));
+        assertEquals(eval(c, "0 (PI / 2) (PI / 2) PI round 8"), eval(c, "acos 1 0 0 (-1) round 8"));
+        assertEquals(eval(c, "0 (PI / 4) (-PI / 4) 0 round 8"), eval(c, "atan 0 1 (-1) 0 round 8"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class TestFunctions {
     public void testUnaryLogicalOperators() {
         Operators f = Operators.of();
         Context c = Context.of(f);
-        assertEquals(eval(c, "0 1"), eval(c, "not -1 0"));
+        assertEquals(eval(c, "0 1"), eval(c, "not (-1) 0"));
     }
 
     @Test
@@ -69,8 +69,8 @@ public class TestFunctions {
         assertEquals(eval(c, "5 7 9"), eval(c, "1 2 3 + 4 5 6"));
         assertEquals(eval(c, "5 6 7"), eval(c, "1 2 3 + 4"));
         assertEquals(eval(c, "5 6 7"), eval(c, "4 + 1 2 3"));
-        assertEquals(eval(c, "-3 -3 -3"), eval(c, "1 2 3 - 4 5 6"));
-        assertEquals(eval(c, "-3 -2 -1"), eval(c, "1 2 3 - 4"));
+        assertEquals(eval(c, "(-3) (-3) (-3)"), eval(c, "1 2 3 - 4 5 6"));
+        assertEquals(eval(c, "(-3) (-2) (-1)"), eval(c, "1 2 3 - 4"));
         assertEquals(eval(c, "3 2 1"), eval(c, "4 - 1 2 3"));
         assertEquals(eval(c, "6 3 2 1"), eval(c, "6 / 1 2 3 6"));
         assertEquals(eval(c, "6 1.5 0.5 0.125"), eval(c, "6 3 2 1 / 1 2 4 8"));
@@ -101,12 +101,12 @@ public class TestFunctions {
     public void testBinaryCompareOperators() {
         Operators f = Operators.of();
         Context c = Context.of(f);
-        assertEquals(eval(c, "0 1 0"), eval(c, "0 == -1 0 1"));
-        assertEquals(eval(c, "1 0 1"), eval(c, "0 != -1 0 1"));
-        assertEquals(eval(c, "0 0 1"), eval(c, "0 < -1 0 1"));
-        assertEquals(eval(c, "0 1 1"), eval(c, "0 <= -1 0 1"));
-        assertEquals(eval(c, "1 0 0"), eval(c, "0 > -1 0 1"));
-        assertEquals(eval(c, "1 1 0"), eval(c, "0 >= -1 0 1"));
+        assertEquals(eval(c, "0 1 0"), eval(c, "0 == (-1) 0 1"));
+        assertEquals(eval(c, "1 0 1"), eval(c, "0 != (-1) 0 1"));
+        assertEquals(eval(c, "0 0 1"), eval(c, "0 < (-1) 0 1"));
+        assertEquals(eval(c, "0 1 1"), eval(c, "0 <= (-1) 0 1"));
+        assertEquals(eval(c, "1 0 0"), eval(c, "0 > (-1) 0 1"));
+        assertEquals(eval(c, "1 1 0"), eval(c, "0 >= (-1) 0 1"));
     }
 
     @Test

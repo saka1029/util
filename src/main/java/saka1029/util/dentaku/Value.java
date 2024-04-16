@@ -128,6 +128,33 @@ public class Value implements Expression {
         return result;
     }
 
+    public Value minus() {
+        BigDecimal result;
+        int length = elements.length;
+        if (length <= 0)
+            return EMPTY;
+        result = elements[0];
+        if (length == 1)
+            result = result.negate();
+        else
+            for (int i = 1; i < length; ++i)
+                result = result.subtract(elements[i]);
+        return Value.of(result);
+    }
+
+    public Value divide() {
+        BigDecimal result;
+        int length = elements.length;
+        if (length <= 0)
+            return EMPTY;
+        result = elements[0];
+        if (length == 1)
+            result = BigDecimal.ONE.divide(result, MATH_CONTEXT);
+        else
+            for (int i = 1; i < length; ++i)
+                result = result.divide(elements[i], MATH_CONTEXT);
+        return Value.of(result);
+    }
 
     public Value reduceRight(Context context, Binary operator) {
         int length = elements.length;

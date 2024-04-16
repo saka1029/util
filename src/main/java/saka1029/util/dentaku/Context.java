@@ -87,10 +87,10 @@ public class Context {
     private void initialize() {
         // unary operators
         operators.unary("count", (c, v) -> Value.of(dec(v.size())), "count V -> I : 要素数");
-        operators.unary("-", (c, v) -> v.map(BigDecimal::negate), "- V -> V: 符号反転");
+        operators.unary("-", (c, v) -> v.minus(), "- V -> D: 差");
         operators.unary("+", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::add, r)), "+ V -> D : 和");
         operators.unary("*", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::multiply, r)), "* V -> D : 積");
-        operators.unary("/", (c, v) -> v.map(x -> BigDecimal.ONE.divide(x, Value.MATH_CONTEXT)), "/ V -> D : 逆数");
+        operators.unary("/", (c, v) -> v.divide(), "/ V -> D : 除算");
         operators.unary("^", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(Value::pow, r)), "^ V -> D : べき乗");
         operators.unary("min", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::min, r)), "min V -> D : 最小値");
         operators.unary("max", (c, v) -> v.reduce(c, (c1, l, r) -> l.binary(BigDecimal::max, r)), "max V -> D : 最大値");
