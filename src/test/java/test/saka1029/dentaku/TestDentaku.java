@@ -29,7 +29,7 @@ public class TestDentaku {
                     line = line.replaceFirst("^\\S+\\s*", "");
                     Expression e = Parser.parse(context.operators(), line);
                     int count = Value.solve(e, context, append);
-                    append.accept("number of solutions=%d%n".formatted(count));
+                    append.accept("number of solutions=%d".formatted(count));
                 } else {
                     Expression e = Parser.parse(context.operators(), line);
                     Value value = e.eval(context);
@@ -181,6 +181,54 @@ public class TestDentaku {
             3.1405926538397929396
             3.14149265359004322800
             3.141582653589793475400 
+            """);
+    }
+
+    @Test
+    public void testSolver() {
+        Operators functions = Operators.of();
+        Context c = Context.of(functions);
+        test(c,
+            """
+            a = 1 to 10
+            b = 1 to 10
+            c = 1 to 10
+            d = 1 to 10
+            e = 1 to 10
+            f = 1 to 10
+            .solve * a b c d e f == + a b c d e f
+            """, """
+            a=1 b=1 c=1 d=1 e=2 f=6
+            a=1 b=1 c=1 d=1 e=6 f=2
+            a=1 b=1 c=1 d=2 e=1 f=6
+            a=1 b=1 c=1 d=2 e=6 f=1
+            a=1 b=1 c=1 d=6 e=1 f=2
+            a=1 b=1 c=1 d=6 e=2 f=1
+            a=1 b=1 c=2 d=1 e=1 f=6
+            a=1 b=1 c=2 d=1 e=6 f=1
+            a=1 b=1 c=2 d=6 e=1 f=1
+            a=1 b=1 c=6 d=1 e=1 f=2
+            a=1 b=1 c=6 d=1 e=2 f=1
+            a=1 b=1 c=6 d=2 e=1 f=1
+            a=1 b=2 c=1 d=1 e=1 f=6
+            a=1 b=2 c=1 d=1 e=6 f=1
+            a=1 b=2 c=1 d=6 e=1 f=1
+            a=1 b=2 c=6 d=1 e=1 f=1
+            a=1 b=6 c=1 d=1 e=1 f=2
+            a=1 b=6 c=1 d=1 e=2 f=1
+            a=1 b=6 c=1 d=2 e=1 f=1
+            a=1 b=6 c=2 d=1 e=1 f=1
+            a=2 b=1 c=1 d=1 e=1 f=6
+            a=2 b=1 c=1 d=1 e=6 f=1
+            a=2 b=1 c=1 d=6 e=1 f=1
+            a=2 b=1 c=6 d=1 e=1 f=1
+            a=2 b=6 c=1 d=1 e=1 f=1
+            a=6 b=1 c=1 d=1 e=1 f=2
+            a=6 b=1 c=1 d=1 e=2 f=1
+            a=6 b=1 c=1 d=2 e=1 f=1
+            a=6 b=1 c=2 d=1 e=1 f=1
+            a=6 b=2 c=1 d=1 e=1 f=1
+            number of solutions=30
             """);
     }
 
