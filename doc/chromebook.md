@@ -4,6 +4,8 @@
 
 [usb - DIY Chromebook debug cable (SuzyQable / Suzy Q Cable) - Electrical Engineering Stack Exchange](https://electronics.stackexchange.com/questions/629357/diy-chromebook-debug-cable-suzyqable-suzy-q-cable)
 
+![alt text](chromebook/image-3.png)
+
  Answer
 
 I found the problem, this breakout board is available as 'Male' and 'Female' version, the pcb silkscreen is intended for the socket version (female) so the plug version (male) is basically reversed.
@@ -32,9 +34,38 @@ chrome
 
 ## 配線
 
-|-|-|-|-|-|-|-|-|-|-|-|-|
-|-|-|-|-|-|-|-|-|-|-|-|-|
-|GND|B11|B10|ACC|B8|D-|D+|B5|VCC|B3|B2|SGND|
-|-|-|-|-|-|-|-|-|-|-|-|-|
-|GND|A2|A3|VCC|A5|D+|D-|A3|VCC|A10|A11|SGND|
-|-|-|-|-|-|-|-|-|-|-|-|-|
+![alt text](chromebook/typec.jpg)
+
+[上段]
+|端子|接続|-| 
+|-|-|-|
+|SGND|-|-|
+|GND|-|-|
+|B2|-|-|
+|B3|-|-|
+|VCC|55KΩ|-|
+|B5|白|-|
+|D+|-|-|
+|D-|-|-|
+|B8|55KΩ|-|
+|VCC|赤|-|
+|B10|-|-|
+|B11|-|-|
+|GND|黒|-|
+
+[下段]
+|端子|接続|-|
+|-|-|-|
+|SGND|-|-|
+|GND|-|-|
+|A11|-|-|
+|A10|-|-|
+|VCC||-|
+|A8|22KΩ|-|
+|D-|-|-|
+|D+|-|-|
+|A5|緑|-|
+|VCC|22KΩ|-|
+|A3|-|-|
+|A2|-|-|
+|GND|-|-|
