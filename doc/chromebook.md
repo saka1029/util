@@ -2,9 +2,14 @@
 
 ## SuzyQable
 
+Stack ExchangeにSuzyQableを自作しようとしたが、
+うまくいかない、という質問が挙がっている。
+
 [usb - DIY Chromebook debug cable (SuzyQable / Suzy Q Cable) - Electrical Engineering Stack Exchange](https://electronics.stackexchange.com/questions/629357/diy-chromebook-debug-cable-suzyqable-suzy-q-cable)
 
 ![alt text](chromebook/image-3.png)
+
+以下はそれに対する回答である。
 
  Answer
 
@@ -14,10 +19,13 @@ I found the problem, this breakout board is available as 'Male' and 'Female' ver
 
 The correct pinout for this specific breakout board is:
 
+```
 A5: D+
 B5: D-
 A8: 22K resistor to VCC
 B8: 56K resistor to VCC
+```
+
 A fully working cable only needs the two resistors and the USB plug cable, additional joints for VCC/GND are not needed (at least on my device).
 
 ![alt text](chromebook/image-1.png)
@@ -34,6 +42,12 @@ chrome
 
 ## 配線
 
+どうやらUSB Type-Cコネクタの基盤に印字された
+端子名が間違っているらしい。
+A5↔A8、B5↔B8が入れ替わっているようだ。
+これはAmazonの当該商品における評価にも、
+そのように記述されている（後述）。
+
 ![alt text](chromebook/typec.jpg)
 
 [上段]
@@ -43,11 +57,11 @@ chrome
 |GND|-|-|
 |B2|-|-|
 |B3|-|-|
-|VCC|55KΩ|-|
+|VCC|56KΩ|-|
 |B5|白|-|
 |D+|-|-|
 |D-|-|-|
-|B8|55KΩ|-|
+|B8|56KΩ|-|
 |VCC|赤|-|
 |B10|-|-|
 |B11|-|-|
@@ -69,3 +83,39 @@ chrome
 |A3|-|-|
 |A2|-|-|
 |GND|-|-|
+
+## USB Type-C コネクタ
+
+[Amazon.co.jp: Moechando CタイプUSBコネクタ Type-C 24P コネクタ DIY 実装済みUSBモジュール オス・メス （入荷予定あり）（オス） : パソコン・周辺機器](https://www.amazon.co.jp/gp/product/B08Y92L7R5/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&th=1)
+
+![x](image.png)
+
+### Amazonでの評価
+
+5つ星のうち4.0 
+
+オス側は基板上の表記が変？
+
+2022年1月29日に日本でレビュー済み
+
+スタイル: オスAmazonで購入
+USB Type-C のケーブルや延長コネクタの結線を確認するために、オス・メスセットで購入しました。
+早速、とあるデバイスのCCとVCON（A5,B5ピン）の結線を確認すると、何かおかしい．．．．
+どうもA8とB8に結線されているように見えます。
+
+で、購入したオス・メス両方のモジュール同士を直接繋いで確認すると、次のように繋がって見えます。
+
+```
+オス側　　メス側
+　A5 －－－ B8
+　A8 －－－ B5
+　B5 －－－ A8
+　B8 －－－ A5
+```
+
+そこで、メス側のモジュールをサンハヤトの「コネクター変換基板 USB Type-C メス CK-44」に替えてみたところ、やはり同じ結果となりました。
+このサンハヤトの変換基板は、これまでに何度も色々な検証実績があり信頼出来る製品です。またメス側は２つとも同じ結果だったことから、おそらく今回購入したオス側のモジュールの表記がおかしいと思われます。
+具体的には、上下（A側とB側）が逆になっているようです。
+
+そういうものだと理解して使えば、何の問題も無いので、このまま使い続けようと思います。
+というか、24ピン全結線のUSB-Cオスのテストボード、他に見つけられないので．．．．．
