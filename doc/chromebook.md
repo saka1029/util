@@ -29,3 +29,12 @@ answered Jul 30, 2022 at 21:29
 chrome's user avatar
 chrome
 10111 silver badge66 bronze badges
+
+## 配線
+
+|-|-|-|-|-|-|-|-|-|-|-|-|
+|-|-|-|-|-|-|-|-|-|-|-|-|
+|GND|B11|B10|ACC|B8|D-|D+|B5|VCC|B3|B2|SGND|
+|-|-|-|-|-|-|-|-|-|-|-|-|
+|GND|A2|A3|VCC|A5|D+|D-|A3|VCC|A10|A11|SGND|
+|-|-|-|-|-|-|-|-|-|-|-|-|
