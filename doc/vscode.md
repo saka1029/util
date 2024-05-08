@@ -4,6 +4,12 @@
 
 ![alt text](vscode/image.png)
 
+## setting.jsonの場所
+
+```
+$HOME/.config/Code/User
+```
+
 ## Vimのインサートモードから抜けるときIMEをオフにする
 
 [Windows]
