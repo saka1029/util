@@ -4,6 +4,12 @@
 
 ![alt text](vscode/image.png)
 
+## setting.jsonの場所
+
+```
+$HOME/.config/Code/User
+```
+
 ## Vimのインサートモードから抜けるときIMEをオフにする
 
 [Windows]
@@ -86,3 +92,15 @@ markdownファイル内は以下のようになる。
 ```
 
 テキスト中のリンクの記述を削除してもイメージは削除されないので注意する。
+
+## サーバ起動
+
+VSCodeをWebサーバとして起動する。
+
+```
+/usr/bin/code serve-web --without-connection-token --accept-server-license-terms
+```
+
+以下のURLでアクセスできる。
+
+http://localhost:8000
