@@ -71,7 +71,7 @@ public class TestBigDecimal {
         while (v.compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal[] t = v.divideAndRemainder(b);
             v = t[0];
-            r.addFirst(t[1]);
+            r.add(0, t[1]);
         }
         return r.toArray(BigDecimal[]::new);
     }

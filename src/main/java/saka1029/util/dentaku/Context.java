@@ -100,8 +100,8 @@ public class Context {
         operators.unary("sign", (c, v) -> v.map(x -> dec(x.signum())), "sign V -> Vi : 符号(-1, 0, 1)");
         operators.unary("int", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.HALF_UP)), "int V -> Vi : 整数化(四捨五入)");
         operators.unary("trunc", (c, v) -> v.map(x -> x.setScale(0, RoundingMode.DOWN)), "trunc V -> vi : 整数化(切り捨て)");
-        operators.unary("even", (c, v) -> v.map(x -> dec(x.remainder(BigDecimal.TWO).equals(BigDecimal.ZERO))), "even V -> vb : 偶数なら1、それ以外は0");
-        operators.unary("odd", (c, v) -> v.map(x -> dec(!x.remainder(BigDecimal.TWO).equals(BigDecimal.ZERO))), "odd V -> vb : 奇数なら1、それ以外は0");
+        operators.unary("even", (c, v) -> v.map(x -> dec(x.remainder(Value.TWO).equals(BigDecimal.ZERO))), "even V -> vb : 偶数なら1、それ以外は0");
+        operators.unary("odd", (c, v) -> v.map(x -> dec(!x.remainder(Value.TWO).equals(BigDecimal.ZERO))), "odd V -> vb : 奇数なら1、それ以外は0");
         operators.unary("fact", (c, v) -> v.map(Value::fact), "fact Vi -> Vi : 階乗");
         operators.unary("fib", (c, v) -> v.map(Value::fib), "fib Vi -> Vi : フィボナッチ数");
         operators.unary("square", (c, v) -> v.map(x -> x.pow(2)), "square V -> V : 二乗");

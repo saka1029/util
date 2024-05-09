@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
 public class Value implements Expression {
     public static final BigDecimal ZERO = BigDecimal.ZERO;
     public static final BigDecimal ONE = BigDecimal.ONE;
+    public static final BigDecimal TWO = BigDecimal.valueOf(2);
     public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
     // public static final MathContext MATH_CONTEXT = new MathContext(500, RoundingMode.HALF_EVEN);
     public static final Value NaN = new Value();
@@ -319,7 +320,7 @@ public class Value implements Expression {
                 break;
             default:
                 BigDecimal max = d.sqrt(MATH_CONTEXT);
-                for (BigDecimal f = BigDecimal.TWO; f.compareTo(max) <= 0; f = f.add(BigDecimal.ONE)) {
+                for (BigDecimal f = TWO; f.compareTo(max) <= 0; f = f.add(BigDecimal.ONE)) {
                     while (true) {
                         BigDecimal[] r = d.divideAndRemainder(f);
                         if (!r[1].equals(BigDecimal.ZERO))
@@ -482,7 +483,7 @@ public class Value implements Expression {
         while (v.compareTo(BigInteger.ZERO) > 0) {
             BigInteger[] t = v.divideAndRemainder(b);
             v = t[0];
-            list.addFirst(t[1]);
+            list.add(0, t[1]);
         }
         return Value.of(list.stream().map(i -> new BigDecimal(i)).toArray(BigDecimal[]::new));
     }
