@@ -1,5 +1,5 @@
 package test.saka1029.dentaku;
 
-public class TestValue {
+public class Expression {
 
 }

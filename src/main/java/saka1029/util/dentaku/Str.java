@@ -1,20 +1,20 @@
 package saka1029.util.dentaku;
 
 public class Str<T> {
-    public final T op;
+    public final T t;
     public final String string;
 
-    private Str(T op, String string) {
-        this.op = op;
+    Str(T t, String string) {
+        this.t = t;
         this.string = string;
     }
 
-    public static <T> Str<T> of(T op, String string) {
-        return new Str<>(op, string);
+    public static <T> Str<T> of(T t, String string) {
+        return new Str<>(t, string);
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return string;
     }
 }

@@ -1,5 +1,7 @@
 package saka1029.util.dentaku;
 
+import java.math.BigDecimal;
+
 public interface Expression {
-    Value eval(Context context);
+    BigDecimal[] eval(Context context);
 }
