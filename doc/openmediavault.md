@@ -9,7 +9,7 @@
 ### ソフトウェアソース
 
 `ftp.jaist.ac.jp`はうまく行かない。
-`debian.jp`を選択する。
+`ftp.jp.debian.org`を選択する。
 
 
 ### 起動後の設定
@@ -20,18 +20,32 @@
 
 ## qBittorrent
 
+aptでインストールする。
 ```
 sudo apt install qbittorrent-nox
-sudo adduser qbtuser
-(ENTER)  # for no password
 ```
+
+`qbtuser`を作成する。
+```
+sudo adduser qbtuser
+```
+`qbtuser`でWebUIを起動する。
 
 ```
 sudo su qbtuser
-qbittorrent-nox
+qbittorrent-nox -webui-port=8000
 ```
-ブラウザで`http://HOST:8080`にアクセスして
+(ポートを指定しないと8080で起動し、
+ブラウザでアクセスしたときに`Page Not Found`となる)
+
+ブラウザで`http://HOST:8000`にアクセスして
 qBttorrentの設定を変更する。
+```
+IPアドレス:	* ポート: 8000
+
+ホワイトリストに登録されたIPサブネットのクライアントは認証を行わない
+192.168.0.0/16
+```
 
 手動でのサービス開始
 
