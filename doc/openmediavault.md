@@ -61,3 +61,18 @@ sudo systemctl start qbittorrent-nox@qbtuser
 ```
 sudo systemctl enable qbittorrent-nox@qbtuser
 ```
+
+ダウンロード先の設定は共有フォルダの
+絶対パスをコピーして
+
+![alt text](openmediavault/image-1.png)
+
+
+qBittorrentの「オプション→ダウンロード→保存管理→デフォルトの保存パス」
+に貼り付け、末尾に「/Downloads」を追加する。
+
+
+```
+/srv/dev-disk-by-uuid-6F6FD10D11BC6397/Downloads
+```
+![alt text](openmediavault/image-2.png)
