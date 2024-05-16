@@ -77,3 +77,12 @@ qBittorrentの「オプション→ダウンロード→保存管理→デフォ
 /srv/dev-disk-by-uuid-6F6FD10D11BC6397/Downloads
 ```
 ![alt text](openmediavault/image-2.png)
+
+# シャットダウン
+
+シャットダウンはWebインタフェース画面右上の電源アイコンをクリック。
+あるいはrootでログインして
+
+```
+shutdown -h now
+```
