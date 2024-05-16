@@ -18,7 +18,8 @@
 `1 Configure Network Interface`を選択して、
 ネットワークの再設定を行う。
 
-共有フォルダのマウント場所は毎回変わるのか？
+共有フォルダのマウント場所は毎回変わるのか？→**変わらない**
+
 ![共有フォルダ](openmediavault/image.png)
 
 ## qBittorrent
