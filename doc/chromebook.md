@@ -119,3 +119,32 @@ USB Type-C のケーブルや延長コネクタの結線を確認するために
 
 そういうものだと理解して使えば、何の問題も無いので、このまま使い続けようと思います。
 というか、24ピン全結線のUSB-Cオスのテストボード、他に見つけられないので．．．．．
+
+## ファームウェアの置換
+[Developer Information for ChromeOS Devices](https://www.chromium.org/chromium-os/developer-library/reference/development/developer-information-for-chrome-os-devices/)
+
+```
+Release: 2023-03-31
+OEM: Lenovo
+Model: Lenovo IdeaPad Flex 3i Chromebook
+Code name: Pujjoflex
+Board name: Nissa
+Base board: Nissa
+User ABI: x86_64
+Kernel: 5.15
+Kernel ABI: x86_64
+Platform: AlderLake-N
+Form factor: Convertible
+USB Gadget: Yes
+Closed Case Debugging: Yes　<-　SuzyQableによる書き込み保護解除が可能
+Supported Devices
+MrChromebox.tech
+```
+
+```
+DeviceName: Lenovo IdeaPad Flex 3i Chromebook
+Board Name: PUJJOFLEX	
+RW_LEGACY( AltFw / edk2 ): ✅
+Full ROM( UEFI / edk2 ): ✅	
+WP Method: CR50 <- SuzyQableによる書き込み保護解除が可能
+```

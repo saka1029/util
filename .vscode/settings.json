@@ -1,4 +1,8 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
     "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "java.debug.settings.onBuildFailureProceed": true,
+    "markdown.copyFiles.destination": {
+        "**/*": "${documentBaseName}/${fileName}"
+    },
 }
