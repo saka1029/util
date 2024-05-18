@@ -61,3 +61,14 @@ sudo systemctl start qbittorrent-nox@qbtuser
 ```
 sudo systemctl enable qbittorrent-nox@qbtuser
 ```
+
+## ユーザー追加
+
+シェルを`/bin/bash`にする。
+所属グループを
+
+1. `users`
+1. `sudo` : sudoコマンドが使えるようにする。
+1. `_ssh` : sshコマンドでログインできるようにする。
+
+とする。
