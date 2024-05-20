@@ -12,7 +12,7 @@ define-unary    = ID ID '=' expression
 define-binary   = ID ID ID '=' expression
 expression      = binary { ',' binary }
 binary          = comp { BOP comp }
-comp            = add { ( '==' | '!=' | '>' | '>=' | '<' | '<=' ) add }
+comp            = add { ( '==' | '!=' | '<' | '<=' | '>' | '>=' ) add }
 add             = mult { ( '+' | '-' ) mult }
 mult            = power { ( '*' | '/' | '%' ) power }
 power           = unary [ '^' power ]
