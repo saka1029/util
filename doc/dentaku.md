@@ -27,12 +27,10 @@ primary         = '(' expression ')'
 ID        = ID-FIRST { ID-REST }
 ID-FIRST  = JAVA-ALPHABETIC | '_'
 ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
+COMP      = '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
 ADD       = '+' | '-'
 MULT      = '*' | '/' | '%'
 POWER     = '^'
-ADD       = '+' | '-' | '*' | '/' | '%' | '^'
-SPECIAL   = '+' | '-' | '*' | '/' | '%' | '^'
-COMP      = '==' | '!=' | '<' | '<=' | '>' | '>='
 BOP       = ID | SPECIAL
 UOP       = ID | SPECIAL
 VAR       = ID
