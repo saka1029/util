@@ -19,7 +19,7 @@ power           = unary [ '^' power ]
 unary           = primary | [ '@' ] UOP unary
 primary         = '(' expression ')'
                 | VAR
-                | NUMBER { NUMBER }
+                | NUMBER
 ```
 
 
