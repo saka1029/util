@@ -12,7 +12,7 @@ define-unary    = ID ID '=' expression
 define-binary   = ID ID ID '=' expression
 expression      = binary { ',' binary }
 binary          = comp { BOP comp }
-comp            = add { ( '==' | '!=' | '<' | '<=' | '>' | '>=' ) add }
+comp            = add { ( '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~' ) add }
 add             = mult { ( '+' | '-' ) mult }
 mult            = power { ( '*' | '/' | '%' ) power }
 power           = unary [ '^' power ]
@@ -27,9 +27,12 @@ primary         = '(' expression ')'
 ID        = ID-FIRST { ID-REST }
 ID-FIRST  = JAVA-ALPHABETIC | '_'
 ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
+ADD       = '+' | '-'
+MULT      = '*' | '/' | '%'
+POWER     = '^'
+ADD       = '+' | '-' | '*' | '/' | '%' | '^'
 SPECIAL   = '+' | '-' | '*' | '/' | '%' | '^'
-          | '==' | '!=' | '<' | '<=' | '>' | '>='
-          | '~' | '!~'
+COMP      = '==' | '!=' | '<' | '<=' | '>' | '>='
 BOP       = ID | SPECIAL
 UOP       = ID | SPECIAL
 VAR       = ID
