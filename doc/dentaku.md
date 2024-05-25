@@ -14,14 +14,14 @@ expression      = binary { ',' binary }
 binary          = or { BOP or }
 or              = and { '|' and }
 and             = comp { '&' comp }
-comp            = add { ( '==' | '!=' | '<' | '<=' | '>' | '>=' ) add }
+comp            = add { ( '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~' ) add }
 add             = mult { ( '+' | '-' ) mult }
 mult            = power { ( '*' | '/' | '%' ) power }
 power           = unary [ '^' power ]
 unary           = primary | [ '@' ] UOP unary
 primary         = '(' expression ')'
                 | VAR
-                | NUMBER { NUMBER }
+                | NUMBER
 ```
 
 
@@ -29,9 +29,10 @@ primary         = '(' expression ')'
 ID        = ID-FIRST { ID-REST }
 ID-FIRST  = JAVA-ALPHABETIC | '_'
 ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
-SPECIAL   = '+' | '-' | '*' | '/' | '%' | '^'
-          | '==' | '!=' | '<' | '<=' | '>' | '>='
-          | '~' | '!~'
+COMP      = '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
+ADD       = '+' | '-'
+MULT      = '*' | '/' | '%'
+POWER     = '^'
 BOP       = ID | SPECIAL
 UOP       = ID | SPECIAL
 VAR       = ID
