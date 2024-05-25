@@ -11,7 +11,9 @@ define-variable = ID '=' expression
 define-unary    = ID ID '=' expression
 define-binary   = ID ID ID '=' expression
 expression      = binary { ',' binary }
-binary          = comp { BOP comp }
+binary          = or { BOP or }
+or              = and { '|' and }
+and             = comp { '&' comp }
 comp            = add { ( '==' | '!=' | '<' | '<=' | '>' | '>=' ) add }
 add             = mult { ( '+' | '-' ) mult }
 mult            = power { ( '*' | '/' | '%' ) power }
