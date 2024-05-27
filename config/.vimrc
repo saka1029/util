@@ -29,3 +29,4 @@ set guifont=Noto\ Mono\ 12
 "  call system('fcitx-remote -c')
 "endfunction
 inoremap <silent> <C-[> <ESC>:call system('fcitx-remote -c')<CR>
+set clipboard=unnamedplus
