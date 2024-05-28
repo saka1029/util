@@ -10,15 +10,15 @@ statement       = define-variable
 define-variable = ID '=' expression
 define-unary    = ID ID '=' expression
 define-binary   = ID ID ID '=' expression
-expression      = binary { ',' binary }
+expression      = binary { CONCAT binary }
 binary          = or { BOP or }
-or              = and { 'or' and }
-and             = comp { 'and' comp }
-comp            = add { ( '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~' ) add }
-add             = mult { ( '+' | '-' ) mult }
-mult            = power { ( '*' | '/' | '%' ) power }
-power           = unary [ '^' power ]
-unary           = primary | [ '@' ] UOP unary
+or              = and { OR and }
+and             = comp { AND comp }
+comp            = add { COMP add }
+add             = mult { ADD mult }
+mult            = power { MULT power }
+power           = unary [ POWER power ]
+unary           = primary | [ SELECT ] UOP unary
 primary         = '(' expression ')'
                 | VAR
                 | NUMBER
@@ -29,10 +29,14 @@ primary         = '(' expression ')'
 ID        = ID-FIRST { ID-REST }
 ID-FIRST  = JAVA-ALPHABETIC | '_'
 ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
+CONCAT    = ','
+OR        = 'or'
+AND       = 'and'
 COMP      = '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
 ADD       = '+' | '-'
 MULT      = '*' | '/' | '%'
 POWER     = '^'
+SELECT    = '@'
 BOP       = ID | SPECIAL
 UOP       = ID | SPECIAL
 VAR       = ID
