@@ -13,6 +13,8 @@ public class Value {
     public static BigDecimal[] NaN = new BigDecimal[] {};
     public static BigDecimal TRUE = BigDecimal.ONE;
     public static BigDecimal FALSE = BigDecimal.ZERO;
+    public static BigDecimal[] TRUE_VALUE = new BigDecimal[] { TRUE };
+    public static BigDecimal[] FALSE_VALUE = new BigDecimal[] { FALSE };
 
     public static BigDecimal[] array(int size) {
         return size == 0 ? EMPTY : new BigDecimal[size];
@@ -53,6 +55,10 @@ public class Value {
 
     public static boolean b(BigDecimal d) {
         return !d.equals(BigDecimal.ZERO);
+    }
+
+    public static boolean b(BigDecimal[] d) {
+        return d.length == 1 && b(d[0]);
     }
 
     public static int i(BigDecimal d) {

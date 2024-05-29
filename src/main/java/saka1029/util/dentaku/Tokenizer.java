@@ -7,9 +7,11 @@ public class Tokenizer {
 
     public enum Type {
         END, ID, NUMBER, LP, RP,
-        SPECIAL, ASSIGN, SELECT,
+        SPECIAL,
+        ASSIGN,
         CONCAT,
-        // INSERT,
+        OR, AND, COMP, ADD, MULT, POWER,
+        SELECT,
     }
 
     public record Token(Type type, String string) {
@@ -92,7 +94,11 @@ public class Tokenizer {
     Type id() {
         while (isIdRest(ch))
             appendGet();
-        return Type.ID;
+        return switch (sb.toString()) {
+            case "and" -> Type.AND;
+            case "or" -> Type.OR;
+            default -> Type.ID;
+        };
     }
 
     Type error(String format, Object... args) {
@@ -109,13 +115,16 @@ public class Tokenizer {
         Type type = switch (ch) {
             case '(' -> advance(Type.LP);
             case ')' -> advance(Type.RP);
+            case ':' -> advance(Type.ASSIGN);
             case '@' -> advance(Type.SELECT);
             case ',' -> advance(Type.CONCAT);
-            case '+', '-', '*', '/', '%', '^', '~' -> advance(Type.SPECIAL);
-            case '=' -> get() == '=' ? advance(Type.SPECIAL) : Type.ASSIGN;
-            case '<', '>' -> get() == '=' ? advance(Type.SPECIAL) : Type.SPECIAL;
-            case '!' -> get() == '=' ?  advance(Type.SPECIAL)
-                : ch == '~' ? advance(Type.SPECIAL)
+            case '+', '-' -> advance(Type.ADD);
+            case '*', '/', '%' -> advance(Type.MULT);
+            case '^' -> advance(Type.POWER);
+            case '~', '=' -> advance(Type.COMP);
+            case '<', '>' -> get() == '=' ? advance(Type.COMP) : Type.COMP;
+            case '!' -> get() == '=' ?  advance(Type.COMP)
+                : ch == '~' ? advance(Type.COMP)
                 : error("Unknown token '!'");
             default -> isDigit(ch) ?  number()
                 : isIdFirst(ch) ? id()

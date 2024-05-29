@@ -112,12 +112,55 @@ public class Parser {
         return ExpressionVars.of(e, variables);
     }
 
+    Expression and() {
+        Expression e = comp();
+        while (true)
+            if (is(token, Type.AND)) {
+                get(); // skip AND
+                Expression l = e, r = comp();
+                e = c -> {
+                    BigDecimal[] b = l.eval(c);
+                    return b(b) ? r.eval(c) : FALSE_VALUE;
+                };
+            } else
+                break;
+        return ExpressionVars.of(e, variables);
+    }
+
+    Expression or() {
+        Expression e = and();
+        while (true)
+            if (is(token, Type.OR)) {
+                get(); // skip OR
+                Expression l = e, r = and();
+                e = c -> {
+                    BigDecimal[] b = l.eval(c);
+                    return b(b) ? b : r.eval(c);
+                };
+            } else
+                break;
+        return ExpressionVars.of(e, variables);
+    }
+
+    Expression binary() {
+        Expression e = or();
+        while (true)
+            if (context.isBinary(token.string())) {
+                String name = token.string();
+                get(); // skip BOP
+                Expression l = e, r = or();
+                e = c -> c.binary(name).t.apply(c, l.eval(c), r.eval(c));
+            } else
+                break;
+        return ExpressionVars.of(e, variables);
+    }
+
     Expression expression() {
-        Expression e = term();
+        Expression e = binary();
         while (true)
             if (is(token, Type.CONCAT)) {
                 get(); // skip ','
-                Expression l = e, r = term();
+                Expression l = e, r = binary();
                 e = c -> Context.concat(c, l.eval(c), r.eval(c));
             } else
                 break;

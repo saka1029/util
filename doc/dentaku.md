@@ -7,9 +7,9 @@ statement       = define-variable
                 | define-unary
                 | define-binary
                 | expression
-define-variable = ID '=' expression
-define-unary    = ID ID '=' expression
-define-binary   = ID ID ID '=' expression
+define-variable = ID ASSIGN expression
+define-unary    = ID ID ASSIGN expression
+define-binary   = ID ID ID ASSIGN expression
 expression      = binary { CONCAT binary }
 binary          = or { BOP or }
 or              = and { OR and }
@@ -29,10 +29,11 @@ primary         = '(' expression ')'
 ID        = ID-FIRST { ID-REST }
 ID-FIRST  = JAVA-ALPHABETIC | '_'
 ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
+ASSIGN    = ':'
 CONCAT    = ','
 OR        = 'or'
 AND       = 'and'
-COMP      = '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
+COMP      = '=' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
 ADD       = '+' | '-'
 MULT      = '*' | '/' | '%'
 POWER     = '^'
