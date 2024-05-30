@@ -71,7 +71,7 @@ public class Parser {
             throw new ValueException("Unknown token '%s'", token.string());
     }
 
-    Expression factor() {
+    Expression unary() {
         if (is(token, Type.SELECT)) {
             String selectName = token.string();
             get(); // skip select
@@ -79,37 +79,69 @@ public class Parser {
                 throw new ValueException("Unary expected after '%s'", selectName);
             String name = token.string();
             get(); // skip unary
-            Expression arg = factor();
+            Expression arg = unary();
             return c -> c.unary(name).t.select().apply(c, arg.eval(c));
         } else if (context.isUnary(token.string())) {
             String name = token.string();
             get(); // skip unary
-            Expression arg = factor();
+            Expression arg = unary();
             return c -> c.unary(name).t.apply(c, arg.eval(c));
         } else
             return primary();
     }
 
-    Expression term() {
-        Expression e = factor();
+    Expression power() {
+        Expression e = unary();
+        if (is(token, Type.POWER)) {
+            String name = token.string();
+            get(); // skip POWER
+            Binary b = context.builtInBinary(name).t;
+            Expression l = e, r = power();
+            e = c -> b.apply(c, l.eval(c), r.eval(c));
+        }
+        return e;
+    }
+
+    Expression mult() {
+        Expression e = power();
         while (true)
-            if (is(token, Type.SELECT)) {
-                String selectName = token.string();
-                get(); // skip select
-                if (!context.isBinary(token.string()))
-                    throw new ValueException("Binary expected after '%s'", selectName);
+            if (is(token, Type.MULT)) {
                 String name = token.string();
-                get(); // skip binary
-                Expression l = e, r = factor();
-                e = c -> c.binary(name).t.select().apply(c, l.eval(c), r.eval(c));
-            } else if (context.isBinary(token.string())) {
-                String name = token.string();
-                get(); // skip binary
-                Expression l = e, r = factor();
-                e = c -> c.binary(name).t.apply(c, l.eval(c), r.eval(c));
+                get(); // skip COMP
+                Binary b = context.builtInBinary(name).t;
+                Expression l = e, r = power();
+                e = c -> b.apply(c, l.eval(c), r.eval(c));
             } else
                 break;
-        return ExpressionVars.of(e, variables);
+        return e;
+    }
+
+    Expression add() {
+        Expression e = mult();
+        while (true)
+            if (is(token, Type.ADD)) {
+                String name = token.string();
+                get(); // skip COMP
+                Binary b = context.builtInBinary(name).t;
+                Expression l = e, r = mult();
+                e = c -> b.apply(c, l.eval(c), r.eval(c));
+            } else
+                break;
+        return e;
+    }
+
+    Expression comp() {
+        Expression e = add();
+        while (true)
+            if (is(token, Type.COMP)) {
+                String name = token.string();
+                get(); // skip COMP
+                Binary b = context.builtInBinary(name).t;
+                Expression l = e, r = add();
+                e = c -> b.apply(c, l.eval(c), r.eval(c));
+            } else
+                break;
+        return e;
     }
 
     Expression and() {
@@ -124,22 +156,23 @@ public class Parser {
                 };
             } else
                 break;
-        return ExpressionVars.of(e, variables);
+        return e;
     }
 
     Expression or() {
         Expression e = and();
         while (true)
             if (is(token, Type.OR)) {
+                String name = token.string();
                 get(); // skip OR
                 Expression l = e, r = and();
-                e = c -> {
-                    BigDecimal[] b = l.eval(c);
-                    return b(b) ? b : r.eval(c);
-                };
+                if (name.equals("xor"))
+                    e = c -> b(l.eval(c)) ^ b(r.eval(c)) ? TRUE_VALUE : FALSE_VALUE;
+                else
+                    e = c -> { BigDecimal[] b = l.eval(c); return b(b) ? b : r.eval(c); };
             } else
                 break;
-        return ExpressionVars.of(e, variables);
+        return e;
     }
 
     Expression binary() {
@@ -152,16 +185,18 @@ public class Parser {
                 e = c -> c.binary(name).t.apply(c, l.eval(c), r.eval(c));
             } else
                 break;
-        return ExpressionVars.of(e, variables);
+        return e;
     }
 
     Expression expression() {
         Expression e = binary();
         while (true)
             if (is(token, Type.CONCAT)) {
+                String name = token.string();
                 get(); // skip ','
+                Binary b = context.builtInBinary(name).t;
                 Expression l = e, r = binary();
-                e = c -> Context.concat(c, l.eval(c), r.eval(c));
+                e = c -> b.apply(c, l.eval(c), r.eval(c));
             } else
                 break;
         return ExpressionVars.of(e, variables);

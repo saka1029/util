@@ -24,6 +24,7 @@ public class Context {
     private final Context parent;
     private final Map<String, Str<Expression>> variables = new HashMap<>();
     private final Map<String, Str<Unary>> unarys = new HashMap<>();
+    private final Map<String, Str<Binary>> builtInBinarys = new HashMap<>();
     private final Map<String, Str<Binary>> binarys = new HashMap<>();
     public MathContext MC = new MathContext(200);
     public String EPSILON = "EPSILON";
@@ -105,8 +106,29 @@ public class Context {
     }
 
     public Stream<Str<String>> binarys() {
-        return binarys.entrySet().stream()
+        return Stream.of(binarys, builtInBinarys)
+            .flatMap(m -> m.entrySet().stream())
             .map(e -> Str.of(e.getKey(), e.getValue().string));
+    }
+
+    public void builtInBinary(String name, Binary e, String s) {
+        builtInBinarys.put(name, Str.of(e, s));
+    }
+
+    public Str<Binary> builtInBinary(String name) {
+        Str<Binary> b = builtInBinarys.get(name);
+        if (b != null)
+            return b;
+        else if (parent != null)
+            return parent.builtInBinary(name);
+        else
+            throw new ValueException("Undefined built-in binary '%s'", name);
+    }
+
+    public void binary(String name, Binary e, String s) {
+        if (isVariable(name))
+            throw new ValueException("'%s' is defined as variable", name);
+        binarys.put(name, Str.of(e, s));
     }
 
     public Str<Binary> binary(String name) {
@@ -117,12 +139,6 @@ public class Context {
             return parent.binary(name);
         else
             throw new ValueException("Undefined binary '%s'", name);
-    }
-
-    public void binary(String name, Binary e, String s) {
-        if (isVariable(name))
-            throw new ValueException("'%s' is defined as variable", name);
-        binarys.put(name, Str.of(e, s));
     }
 
     public BigDecimal[] eval(String input) {
@@ -281,34 +297,34 @@ public class Context {
                     return FALSE;
             return TRUE;
         }), "prime (I) -> (B) : 素数判定");
-        binary("+", BinaryMap.of(BigDecimal::add), "(D) + (D) -> (D) : 加算");
-        binary("-", BinaryMap.of(BigDecimal::subtract), "(D) - (D) -> (D) : 減算");
-        binary("*", BinaryMap.of(BigDecimal::multiply), "(D) * (D) -> (D) : 乗算");
-        binary("/", BinaryMap.of((l, r) -> l.divide(r, MC)), "(D) / (D) -> (D) : 除算");
-        binary("%", BinaryMap.of((l, r) -> l.remainder(r, MC)), "(D) % (D) -> (D) : 剰余");
-        binary("^", BinaryMap.of((l, r) -> BigDecimalMath.pow(l, r, MC).stripTrailingZeros()), "(D) ^ (D) -> (D) : べき乗");
+        builtInBinary("+", BinaryMap.of(BigDecimal::add), "(D) + (D) -> (D) : 加算");
+        builtInBinary("-", BinaryMap.of(BigDecimal::subtract), "(D) - (D) -> (D) : 減算");
+        builtInBinary("*", BinaryMap.of(BigDecimal::multiply), "(D) * (D) -> (D) : 乗算");
+        builtInBinary("/", BinaryMap.of((l, r) -> l.divide(r, MC)), "(D) / (D) -> (D) : 除算");
+        builtInBinary("%", BinaryMap.of((l, r) -> l.remainder(r, MC)), "(D) % (D) -> (D) : 剰余");
+        builtInBinary("^", BinaryMap.of((l, r) -> BigDecimalMath.pow(l, r, MC).stripTrailingZeros()), "(D) ^ (D) -> (D) : べき乗");
+        builtInBinary("==", BinaryMap.of((l, r) -> dec(l.compareTo(r) == 0)), "(D) == (D) -> (B) : 等しい");
+        builtInBinary("!=", BinaryMap.of((l, r) -> dec(l.compareTo(r) != 0)), "(D) != (D) -> (B) : 等しくない");
+        builtInBinary("<", BinaryMap.of((l, r) -> dec(l.compareTo(r) < 0)), "(D) < (D) -> (B) : 小さい");
+        builtInBinary("<=", BinaryMap.of((l, r) -> dec(l.compareTo(r) <= 0)), "(D) <= (D) -> (B) : 小さいか等しい");
+        builtInBinary(">", BinaryMap.of((l, r) -> dec(l.compareTo(r) > 0)), "(D) > (D) -> (B) : 大きい");
+        builtInBinary(">=", BinaryMap.of((l, r) -> dec(l.compareTo(r) >= 0)), "(D) >= (D) -> (B) : 大きいか等しい");
+        builtInBinary("~", BinaryMap.of((l, r) -> dec(l.subtract(r).abs().compareTo(epsilon()) <= 0)), "(D) ~ (D) -> (B) : ほぼ等しい");
+        builtInBinary("!~", BinaryMap.of((l, r) -> dec(l.subtract(r).abs().compareTo(epsilon()) > 0)), "(D) !~ (D) -> (B) : ほぼ等しくない");
+        builtInBinary("and", BinaryMap.of((l, r) -> dec(b(l) && b(r))), "(B) and (B) -> (B) : 論理積");
+        builtInBinary("or", BinaryMap.of((l, r) -> dec(b(l) || b(r))), "(B) or (B) -> (B) : 論理和");
+        builtInBinary("xor", BinaryMap.of((l, r) -> dec(b(l) ^ b(r))), "(B) xor (B) -> (B) : 排他的論理和");
+        builtInBinary(",", (c, l, r) -> {
+            BigDecimal[] result = new BigDecimal[l.length + r.length];
+            System.arraycopy(l, 0, result, 0, l.length);
+            System.arraycopy(r, 0, result, l.length, r.length);
+            return result;
+        }, "(D) , (D) -> (D) : 連結");
         binary("log", BinaryMap.of((l, r) -> BigDecimalMath.log(r, MC).divide(BigDecimalMath.log(l, MC), MC)), "(D) log (D) -> (D) : 対数");
-        binary("==", BinaryMap.of((l, r) -> dec(l.compareTo(r) == 0)), "(D) == (D) -> (B) : 等しい");
-        binary("!=", BinaryMap.of((l, r) -> dec(l.compareTo(r) != 0)), "(D) != (D) -> (B) : 等しくない");
-        binary("<", BinaryMap.of((l, r) -> dec(l.compareTo(r) < 0)), "(D) < (D) -> (B) : 小さい");
-        binary("<=", BinaryMap.of((l, r) -> dec(l.compareTo(r) <= 0)), "(D) <= (D) -> (B) : 小さいか等しい");
-        binary(">", BinaryMap.of((l, r) -> dec(l.compareTo(r) > 0)), "(D) > (D) -> (B) : 大きい");
-        binary(">=", BinaryMap.of((l, r) -> dec(l.compareTo(r) >= 0)), "(D) >= (D) -> (B) : 大きいか等しい");
-        binary("~", BinaryMap.of((l, r) -> dec(l.subtract(r).abs().compareTo(epsilon()) <= 0)), "(D) ~ (D) -> (B) : ほぼ等しい");
-        binary("!~", BinaryMap.of((l, r) -> dec(l.subtract(r).abs().compareTo(epsilon()) > 0)), "(D) !~ (D) -> (B) : ほぼ等しくない");
-        binary("and", BinaryMap.of((l, r) -> dec(b(l) && b(r))), "(B) and (B) -> (B) : 論理積");
-        binary("or", BinaryMap.of((l, r) -> dec(b(l) || b(r))), "(B) or (B) -> (B) : 論理和");
-        binary("xor", BinaryMap.of((l, r) -> dec(b(l) ^ b(r))), "(B) xor (B) -> (B) : 排他的論理和");
         binary("imply", BinaryMap.of((l, r) -> dec(!b(l) || b(r))), "(B) imply (B) -> (B) : 含意");
         binary("min", BinaryMap.of(BigDecimal::min), "(D) min (D) -> (D) : 小さい方");
         binary("max", BinaryMap.of(BigDecimal::max), "(D) max (D) -> (D) : 大きい方");
         binary("round", BinaryMap.of((l, r) -> l.setScale(i(r), RoundingMode.HALF_UP)), "(D) round I -> (D) : 指定桁数に四捨五入");
-        // binary(",", (c, l, r) -> {
-        //     BigDecimal[] result = new BigDecimal[l.length + r.length];
-        //     System.arraycopy(l, 0, result, 0, l.length);
-        //     System.arraycopy(r, 0, result, l.length, r.length);
-        //     return result;
-        // }, "(D) , (D) -> (D) : 連結");
         binary("to", (c, l, r) -> {
             if (l.length != 1 || r.length != 1)
                 throw new ValueException("Invalid arguments left=%s right=%s", str(l), str(r));
@@ -386,15 +402,15 @@ public class Context {
                 throw new ValueException("Illegal length left=%d rigth=%d", lsize, rsize);
             return new BigDecimal[] {result};
         }, "(I) decimal (I) -> I : 10進変換");
-        eval("ave x = + x / count x");
-        eval("variance x = + (x - ave x ^ 2) / count x");
-        eval("sd x = sqrt variance x");
-        eval("standard_score x = x - ave x / sd x * 10 + 50");
-        eval("pascal n = n C (0 to n)");
-        eval("c poly x = + (x ^ (count c - 1 to 0) * c)");
-        eval("a distance b = sqrt + (a - b ^ 2)");
+        eval("ave x : + (x / count x)");
+        eval("variance x : + ((x - ave x) ^ 2) / count x");
+        eval("sd x : sqrt variance x");
+        eval("standard_score x : (x - ave x) / sd x * 10 + 50");
+        eval("pascal n : n C (0 to n)");
+        eval("c poly x : + (x ^ (count c - 1 to 0) * c)");
+        eval("a distance b : sqrt + ((a - b) ^ 2)");
         // eval("a days b = days b - days a");
-        eval("fibonacci n = 1 + sqrt 5 / 2 ^ n - (1 - sqrt 5 / 2 ^ n) / sqrt 5");
+        eval("fibonacci n : 1 + sqrt 5 / 2 ^ n - ((1 - sqrt 5 / 2) ^ n) / sqrt 5");
     }
 
     public int solve(Expression expression, Consumer<String> out) {

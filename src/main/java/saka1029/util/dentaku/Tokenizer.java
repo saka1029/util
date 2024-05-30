@@ -96,7 +96,7 @@ public class Tokenizer {
             appendGet();
         return switch (sb.toString()) {
             case "and" -> Type.AND;
-            case "or" -> Type.OR;
+            case "or", "xor" -> Type.OR;
             default -> Type.ID;
         };
     }
