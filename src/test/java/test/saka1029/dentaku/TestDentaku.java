@@ -355,7 +355,7 @@ public class TestDentaku {
         assertTrue(NaN == eval(c, "y : 0 to 5"));
         assertTrue(NaN == eval(c, "z : 1"));
         List<String> vars = new ArrayList<>();
-        assertEquals(5, c.solve(Parser.parse(c, "x + y = (z + 3)"), s -> vars.add(s)));
+        assertEquals(5, c.solve(Parser.parse(c, "x + y = z + 3"), s -> vars.add(s)));
         assertEquals("x=-1 y=5 z=1", vars.get(0));
         assertEquals("x=0 y=4 z=1", vars.get(1));
         assertEquals("x=1 y=3 z=1", vars.get(2));
@@ -373,7 +373,7 @@ public class TestDentaku {
         assertTrue(NaN == eval(c, "e : 1 to 10"));
         assertTrue(NaN == eval(c, "f : 1 to 10"));
         List<String> vars = new ArrayList<>();
-        assertEquals(30, c.solve(Parser.parse(c, "(a * b * c * d * e * f) = (a + b + c + d + e + f)"), s -> vars.add(s)));
+        assertEquals(30, c.solve(Parser.parse(c, "a * b * c * d * e * f = a + b + c + d + e + f"), s -> vars.add(s)));
         assertEquals("a=1 b=1 c=1 d=1 e=2 f=6", vars.get(0));
     }
 
