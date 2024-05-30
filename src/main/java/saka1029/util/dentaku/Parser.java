@@ -148,12 +148,11 @@ public class Parser {
         Expression e = comp();
         while (true)
             if (is(token, Type.AND)) {
+                String name = token.string();
                 get(); // skip AND
+                Binary b = context.builtInBinary(name).t;
                 Expression l = e, r = comp();
-                e = c -> {
-                    BigDecimal[] b = l.eval(c);
-                    return b(b) ? r.eval(c) : FALSE_VALUE;
-                };
+                e = c -> b.apply(c, l.eval(c), r.eval(c));
             } else
                 break;
         return e;
@@ -165,11 +164,9 @@ public class Parser {
             if (is(token, Type.OR)) {
                 String name = token.string();
                 get(); // skip OR
+                Binary b = context.builtInBinary(name).t;
                 Expression l = e, r = and();
-                if (name.equals("xor"))
-                    e = c -> b(l.eval(c)) ^ b(r.eval(c)) ? TRUE_VALUE : FALSE_VALUE;
-                else
-                    e = c -> { BigDecimal[] b = l.eval(c); return b(b) ? b : r.eval(c); };
+                e = c -> b.apply(c, l.eval(c), r.eval(c));
             } else
                 break;
         return e;

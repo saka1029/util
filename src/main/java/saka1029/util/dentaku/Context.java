@@ -303,7 +303,7 @@ public class Context {
         builtInBinary("/", BinaryMap.of((l, r) -> l.divide(r, MC)), "(D) / (D) -> (D) : 除算");
         builtInBinary("%", BinaryMap.of((l, r) -> l.remainder(r, MC)), "(D) % (D) -> (D) : 剰余");
         builtInBinary("^", BinaryMap.of((l, r) -> BigDecimalMath.pow(l, r, MC).stripTrailingZeros()), "(D) ^ (D) -> (D) : べき乗");
-        builtInBinary("==", BinaryMap.of((l, r) -> dec(l.compareTo(r) == 0)), "(D) == (D) -> (B) : 等しい");
+        builtInBinary("=", BinaryMap.of((l, r) -> dec(l.compareTo(r) == 0)), "(D) == (D) -> (B) : 等しい");
         builtInBinary("!=", BinaryMap.of((l, r) -> dec(l.compareTo(r) != 0)), "(D) != (D) -> (B) : 等しくない");
         builtInBinary("<", BinaryMap.of((l, r) -> dec(l.compareTo(r) < 0)), "(D) < (D) -> (B) : 小さい");
         builtInBinary("<=", BinaryMap.of((l, r) -> dec(l.compareTo(r) <= 0)), "(D) <= (D) -> (B) : 小さいか等しい");
