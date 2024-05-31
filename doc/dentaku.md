@@ -274,24 +274,6 @@ a=6 b=2 c=1 d=1 e=1 f=1
 number of solutions=30
 ```
 
-JP
-￼
-ナビゲーションをスキップ
-￼
-￼
-￼
-￼
-￼
-￼
-￼
-ホーム
-ショート
-登録チャンネル
-マイページ
-チャンネル
-履歴
-再生リスト
-
 ## 優先順位
 
 |優先順位|演算子|結合|-|
@@ -303,29 +285,27 @@ JP
 |5|=, !=, <, <=, >, >=, ~, !~|左結合|比較|
 |6|and|左結合|論理積|
 |7|or, xor|左結合|(排他的)論理和|
-|8|BOP|左結合|二項演算子|
+|8|BOP|左結合|その他の二項演算子|
 |9|,|左結合|連結|
 
 # 遅延評価
 
-`g`オペレータが`f`オペレータを参照している場合、
-パース時に`f`オペレータの定義を取得するとすれば、
-後から`f`オペレータの定義を変更しても
-`g`オペレータの定義が変更されることはない。
-しかし`g`オペレータは実行時に`"f"`の名前で`f`
+`G`オペレータが`F`オペレータを参照している場合、
+パース時に`F`オペレータの定義を取得するとすれば、
+後から`F`オペレータの定義を変更しても
+`G`オペレータの定義が変更されることはない。
+しかし`G`オペレータは実行時に`"F"`の名前で`F`
 オペレータを参照するので問題はない。
 
 ```
-    f x : x + 1
-'f' is defined as variable
-    g x : f x + 1
-Extra token 'x'
-    g 0
-Extra token '0'
-    f x : x + 2
-'f' is defined as variable
-    g 0
-Extra token '0'
+    F x : x + 1
+    G x : F x + 1
+    G 0
+2
+    F x : x + 2
+'F' is already used as operator name
+    G 0
+2
 ```
 
 # 機能拡張
@@ -358,10 +338,8 @@ number of solutions=3
 あるいは
 
 ```
-    a = 1 to 5
-Invalid arguments left=1, 0, 0, 0, 0 right=5
-    b = 0 to 10
-Invalid arguments left=1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 right=10
+    a : 1 to 5
+    b : 0 to 10
     .solve + ((a, b) ^ 2) = 25
 a=3 b=4
 a=4 b=3
@@ -440,13 +418,16 @@ number of solutions=4
 ```
     x : -100 to 100
     y : -100 to 100
-    f x = x ^ 3 - x
-Extra token 'x'
-    .solve f x ^ 2 * f y = 86400
-Extra token 'x'
+    C3 x : x ^ 3 - x
+    .solve C3 x ^ 2 * C3 y = 86400
+x=-5 y=2
+x=-4 y=3
+x=4 y=3
+x=5 y=2
+number of solutions=4
 ```
 
-単項演算子`f`の定義内で変数`x`を使用している点に注意する。
+単項演算子`C3`の定義内で変数`x`を使用している点に注意する。
 この変数は`.solve`における式内の`x`とは区別されている。
 
 ### 実行例6
@@ -482,8 +463,8 @@ number of solutions=3
 
 ```
     m : 10 to 99
-    m ^ 2 % 100 = 36 filter m
-Extra token 'filter'
+    (m ^ 2 % 100 = 36) filter m
+44, 56, 94
 ```
 
 ### 実行例8
@@ -491,18 +472,40 @@ Extra token 'filter'
 以下の式を満たす自然数$a, b, c$を求めよ。
 
 $$
-a ^ 2 + b ^ 4 + c ^ 8 = 328
+a ^ 2 + b ^ 2 + c ^ 2 = 292
 $$
 
 ```
-    a :  1 to 100
-    b :  1 to 100
-    c :  1 to 100
-    .solve a ^ 2 + b ^ 4 + c ^ 8 = 328
-number of solutions=0
+    a : 1 to 100
+    b : 1 to 100
+    c : 1 to 100
+    .solve a ^ 2 + b ^ 2 + c ^ 2 = 292
+a=2 b=12 c=12
+a=12 b=2 c=12
+a=12 b=12 c=2
+number of solutions=3
 ```
 
 ### 実行例9
+
+以下の式を満たす自然数$a, b, c$を求めよ。
+
+$$
+2 ^ a + 4 ^ b + 8 ^ c = 328
+$$
+
+```
+    a : 1 to 100
+    b : 1 to 100
+    c : 1 to 100
+    .solve 2 ^ a + 4 ^ b + 8 ^ c = 328
+a=3 b=4 c=2
+a=6 b=4 c=1
+a=8 b=3 c=1
+number of solutions=3
+```
+
+### 実行例10
 
 $p$が素数のとき、以下の式を満たす$m, n$を求めよ。
 
@@ -520,48 +523,11 @@ number of solutions=2
 ```
 自然数$n$の約数は4個でその和は84である。
 
-### 実行例10
+### 実行例11
 
 ```
     n : 1 to 100
     .solve count divisor n = 4 and + divisor n = 84
 n=65
 number of solutions=1
-```
-# Schemeの単項演算子
-
-
-加算および乗算の場合
-
-```
-+ (3, 4)                     =>  7
-+ 3                       =>  3
-+ ()                         =>  0
-* 4                       =>  4
-* ()                         =>  1
-```
-
-減算および除算の場合
-```
-(- 3 4)                     =>  -1
-(- 3 4 5)                   =>  -6
-(- 3)                       =>  -3
-(/ 3 4 5)                   =>  3/20
-(/ 3)                       =>  1/3
-```
-
-# 連結二項演算子の導入
-
-`,`は連結の二項演算子です。
-現在、
-
-$$
-x^2 - 4x - 15
-$$
-
-は以下のように表現できます。
-
-```
-    (1, -4, -15) poly x
-map: Illegal length left=201 right=3
 ```

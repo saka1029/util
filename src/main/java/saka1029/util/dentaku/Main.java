@@ -5,6 +5,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -70,7 +71,7 @@ public class Main {
         MarkDownConsole(String prompt, String inFile) throws IOException {
             this.prompt = prompt;
             this.in = Files.newBufferedReader(Path.of(inFile));
-            this.out = new PrintWriter(inFile.replaceFirst("\\.[^.]*$", ".md"));
+            this.out = new PrintWriter(inFile.replaceFirst("\\.[^.]*$", ".md"), StandardCharsets.UTF_8);
         }
 
         @Override

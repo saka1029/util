@@ -339,6 +339,15 @@ public class Context {
                     result[index++] = dec(i);
             return result;
         }, "I to I -> (I) : 範囲");
+        binary("filter", (c, l, r) -> {
+            if (l.length != r.length)
+                throw new ValueException("Invalid arguments left=%s right=%s", str(l), str(r));
+            List<BigDecimal> result = new ArrayList<>();
+            for (int i = 0, max = l.length; i < max; ++i)
+                if (b(l[i]))
+                    result.add(r[i]);
+            return result.toArray(BigDecimal[]::new);
+        }, "(B) filter (D) -> (D) : フィルター");
         binary("P", BinaryMap.of((n, r) -> {
             return permutation(n, r);
         }), "(I) P (I) -> (I) : 順列");
