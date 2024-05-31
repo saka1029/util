@@ -88,15 +88,16 @@ DIGIT     = '0' .. '9'
 ```
 ```
 a : 1, 2, 3, 4
-a
+* a
 ```
 
-### 括弧を減らす工夫
+### 並びを使った計算
 
 $$\sqrt{{11^4+100^4+111^4}\over 2}
 $$
 
 ```
+sqrt ((11 ^ 4 + 100 ^ 4 + 111 ^ 4) / 2)
 sqrt + ((11, 100, 111) ^ 4 / 2)
 ```
 ### 偏差値の計算
@@ -112,20 +113,20 @@ sqrt + ((11, 100, 111) ^ 4 / 2)
 |25|95|40|90|60|
 
 ```
-ave x : + x / count x
-variance x : + ((x - ave x) ^ 2) / count x
-sd x = sqrt variance x
-standardScore x : (x - ave x) / sd x * 10 + 50
-kokugo = 55 60 70 60 65
-sansu = 25 95 40 90 60
-ave kokugo
-ave sansu
-variance kokugo
-variance sansu
-sd kokugo
-sd sansu
-standardScore kokugo round 2
-standardScore sansu round 2
+平均 x : + x / count x
+分散 x : + ((x - 平均 x) ^ 2) / count x
+標準偏差 x : sqrt 分散 x
+偏差値 x : (x - 平均 x) / 標準偏差 x * 10 + 50
+国語 : 55, 60, 70, 60, 65
+算数 : 25, 95, 40, 90, 60
+平均 国語
+平均 算数
+分散 国語
+分散 算数
+標準偏差 国語
+標準偏差 算数
+偏差値 国語 round 2
+偏差値 算数 round 2
 ```
 
 ### 2点間の距離
@@ -137,13 +138,13 @@ $$\sqrt{(a_x-b_x)^2+(a_y-b_y)^2}$$
 $(0,0)$と$(1,1)$の距離はは以下のように計算できます。
 
 ```
-a distance b = sqrt + ((a - b) ^ 2)
-0 0 distance 1 1
+a 距離 b : sqrt + ((a - b) ^ 2)
+(0, 0) 距離 (1, 1)
 ```
-この`distance`の定義は3次元以上の距離も同様に計算できます。
+この`距離`の定義は3次元以上の距離も同様に計算できます。
 
 ```
-0 0 0 distance 1 1 1
+(0, 0, 0) 距離 (1, 1, 1)
 ```
 
 ### フィボナッチ数列の一般項
@@ -156,8 +157,8 @@ $$F_n
 $$
 
 ```
-fib n : (((1 + sqrt 5) / 2) ^ n - ((1 - sqrt 5) / 2) ^ n) / sqrt 5
-int fib (0 to 10)
+フィボナッチ n : (((1 + sqrt 5) / 2) ^ n - ((1 - sqrt 5) / 2) ^ n) / sqrt 5
+int フィボナッチ (0 to 10)
 ```
 
 引数に自然数を与えても結果は必ずしも自然数にならないので`int`で結果を丸めています。
@@ -165,7 +166,7 @@ int fib (0 to 10)
 `round`の後の`0`は丸めた後の小数点以下の桁数です。
 
 ```
-  fib (0 to 10) round 0
+フィボナッチ (0 to 10) round 0
 ```
 
 ### πの計算
@@ -178,7 +179,7 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infin {(-1)^{n} \over {2n+1}}$$
 
 ```
 term n : -1 ^ n / (2 * n + 1)
-pi n = + term (0 to n) * 4
+pi n : + term (0 to n) * 4
 pi 9
 pi 99
 pi 999
@@ -215,6 +216,23 @@ f : 1 to 10
 .solve a * b * c * d * e * f = a + b + c + d + e + f
 ```
 
+JP
+￼
+ナビゲーションをスキップ
+￼
+￼
+￼
+￼
+￼
+￼
+￼
+ホーム
+ショート
+登録チャンネル
+マイページ
+チャンネル
+履歴
+再生リスト
 
 ## 優先順位
 
