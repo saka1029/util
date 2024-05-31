@@ -202,13 +202,13 @@ public class Parser {
     void checkId(Token token) {
         if (!is(token, Type.ID))
             throw new ValueException("ID expected but '%s'", token.string());
-        if (context.isOperator(token.string()))
-            throw new ValueException("'%s' is already used as operator name", token.string());
     }
 
     Expression defineVariable() {
         String name = token.string();
         checkId(token);
+        if (context.isOperator(token.string()))
+            throw new ValueException("'%s' is already used as an operator name", token.string());
         get(); // skip ID
         get(); // skip ASSIGN
         Expression e = expression();
