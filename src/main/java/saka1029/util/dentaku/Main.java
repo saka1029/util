@@ -177,12 +177,18 @@ public class Main {
         out.println("                | define-unary");
         out.println("                | define-binary");
         out.println("                | expression");
-        out.println("define-variable = ID '=' expression");
-        out.println("define-unary    = ID ID '=' expression");
-        out.println("define-binary   = ID ID ID '=' expression");
-        out.println("expression      = factor { [ '@' ] BOP factor }");
-        out.println("factor          = primary");
-        out.println("                | [ '@' ] UOP factor");
+        out.println("define-variable = ID ':' expression");
+        out.println("define-unary    = ID ID ':' expression");
+        out.println("define-binary   = ID ID ID ':' expression");
+        out.println("expression      = binary { ',' binary }");
+        out.println("binary          = or { BOP or }");
+        out.println("or              = and { 'or' and }");
+        out.println("and             = comp { 'and' comp }");
+        out.println("comp            = add { ( '=' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~' ) add }");
+        out.println("add             = mult { ( '+' | '-' ) mult }");
+        out.println("mult            = power { ( '*' | '/' | '%') power }");
+        out.println("power           = unary [ '^' power ]");
+        out.println("unary           = primary | [ '@' ] UOP unary");
         out.println("primary         = '(' expression ')'");
         out.println("                | VAR");
         out.println("                | NUMBER");
@@ -228,6 +234,8 @@ public class Main {
                         println(out, context.unary(name).string);
                     if (context.isBinary(name))
                         println(out, context.binary(name).string);
+                    if (context.isBuiltInBinary(name))
+                        println(out, context.builtInBinary(name).string);
                     break;
             }
         }

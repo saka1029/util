@@ -55,6 +55,10 @@ public class Context {
         return binarys.containsKey(name) || parent != null && parent.isBinary(name);
     }
 
+    public boolean isBuiltInBinary(String name) {
+        return builtInBinarys.containsKey(name) || parent != null && parent.isBuiltInBinary(name);
+    }
+
     public boolean isUnary(String name) {
         return unarys.containsKey(name) || parent != null && parent.isUnary(name);
     }
