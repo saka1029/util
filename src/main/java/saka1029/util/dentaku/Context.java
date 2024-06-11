@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -284,6 +285,25 @@ public class Context {
                 }
             return set.stream().sorted().map(i -> new BigDecimal(i)).toArray(BigDecimal[]::new);
         }, "divisor I -> (I) : 約数");
+        unary("sort", (c, a) -> {
+            return Arrays.stream(a)
+                .sorted()
+                .toArray(BigDecimal[]::new);
+        }, "sort (D) -> (D) : ソート");
+        unary("distinct", (c, a) -> {
+            return Arrays.stream(a)
+                .distinct()
+                .toArray(BigDecimal[]::new);
+        }, "sort (D) -> (D) : 重複排除");
+        unary("reverse", (c, a) -> {
+            BigDecimal[] result = a.clone();
+            for (int i = 0, j = a.length - 1; i < j; ++i, --j) {
+                BigDecimal temp = result[i];
+                result[i] = result[j];
+                result[j] = temp;
+            }
+            return result;
+        }, "reverse (D) -> (D) : 逆順に並べる");
         unary("prime?", UnaryMap.of(a -> {
             BigInteger i = a.toBigIntegerExact();
             int comp2 = i.compareTo(BigInteger.TWO);
