@@ -119,3 +119,10 @@ VSCodeをWebサーバとして起動する。
 以下のURLでアクセスできる。
 
 http://localhost:8000
+
+## PlantUML
+
+1. 拡張機能のPlantUMLをインストールする。
+1. graphvizをインストールする。
+    * Linuxは「sudo apt install graphviz」を実行する。
+    * Windowsは「https://graphviz.org/download/」からダウンロードする。
