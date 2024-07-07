@@ -25,3 +25,4 @@ vnoremap <C-C> "+y
 map <C-V>       "+gP
 
 inoremap <silent> <C-[> <ESC>:call system('zenhan 0')<CR>
+set clipboard=unnamed,autoselect
