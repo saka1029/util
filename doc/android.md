@@ -4,6 +4,14 @@
 
 ## termux
 
+「github termux-app」で検索する。
+ページ右側に「Releases」のリンクがあるのでクリック。
+
+アーキテクチャで.apkファイルを選択する。
+
+[termux-app_v0.118.1+github-debug_arm64-v8a.apk](https://github.com/termux/termux-app/releases/download/v0.118.1/termux-app_v0.118.1+github-debug_arm64-v8a.apk)
+
+
 ### vscode
 
 vscodeのサーバをインストールするのであれば
