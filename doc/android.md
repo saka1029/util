@@ -1,5 +1,24 @@
 # android
 
+# termux xfce4 debian インストール
+
+```
+proot-distro install debian
+proot-distro login debian
+apt update -y
+apt install vim adduser
+apt install sudo
+adduser droidmaster   # パスワードはdroidmaster
+vim /etc/sudoers # "droidmaster = ALL=(ALL:ALL) ALL"を追加
+su - droidmaster
+sudo apt install xfce4 -y # キーボードは English(US)
+exit # termuxのルートに戻る
+wget https://raw.githubusercontent.com/LinuxDriodMaster/Mtermux-Desktop/main/script/proot-debian/startxfce4-debian.sh
+chmod +x startxfce4-debian.sh
+./startxfce4-debian.sh
+```
+
+
 ## droidvim
 
 ## termux
