@@ -10,7 +10,6 @@
 ## Chrome拡張機能V2延長
 
 ```
-[Windows]
 Windows Registry Editor Version 5.00
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome]
