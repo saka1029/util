@@ -18,6 +18,13 @@ login saka1029
 password パスワード(アクセストークン)
 ```
 
+Windowsの場合は以下が推奨されているらしい。
+
+```
+git config --global credential.credentialStore wincredman
+```
+
+
 ## 文字化け
 
 マルチバイト文字の8進エンコードを避けるには
