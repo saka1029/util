@@ -15,3 +15,12 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome]
 "ExtensionManifestV2Availability"=dword:00000002
 ```
+
+## Windows10でログイン時ロック画面を表示しない
+
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Personalization]
+"NoLockScreen"=dword:00000001
+```
