@@ -1,6 +1,7 @@
 package saka1029.util.main;
 
 import java.io.IOException;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -9,7 +10,33 @@ import java.util.List;
 public class Mabiku {
 
     static void usage() {
-        throw new IllegalArgumentException("usage: java saka1029.util.main.Thin IN_DIR OUT_DIR SIZE");
+        throw new IllegalArgumentException(
+            "usage: java %s IN_DIR OUT_DIR SELECT_SIZE"
+            .formatted(Mabiku.class.getName()));
+    }
+
+    static int run(Path inDir, Path outDir, int selectSize) throws IOException {
+        List<Path> list = null;
+        try (var stream = Files.walk(inDir, 1)) {
+            list = stream
+                .filter(Files::isRegularFile)
+                .sorted(Comparator.comparing(Path::getFileName))
+                .toList();
+        }
+        // System.out.println("sorted:");
+        // list.stream().forEach(System.out::println);
+        // System.out.println("selected:");
+        if (!Files.exists(outDir))
+            Files.createDirectories(outDir);
+        int size = list.size(), count = 0;
+        double pos = 0, pitch = (double) size / selectSize;
+        for (int i = 0; i < size; pos += pitch, i = (int)pos) {
+            Path inFile = list.get(i);
+            Path outFile = outDir.resolve(inFile.getFileName());
+            Files.copy(inFile, outFile, StandardCopyOption.REPLACE_EXISTING);
+            ++count;
+        }
+        return count;
     }
 
     public static void main(String[] args) throws IOException {
@@ -21,25 +48,12 @@ public class Mabiku {
         if (!Files.isDirectory(inDir))
             throw new IllegalArgumentException("'%s' is not a directory".formatted(inDir));
         Path outDir = Path.of(args[1]);
-        if (!Files.exists(outDir))
-            Files.createDirectories(outDir);
         int selectSize = Integer.parseInt(args[2]);
-        System.out.println("directory=" + inDir);
-        System.out.println("file name=" + inDir.getFileName());
-        List<Path> list = null;
-        try (var stream = Files.walk(inDir, 1)) {
-            list = stream
-                .filter(Files::isRegularFile)
-                .sorted(Comparator.comparing(Path::getFileName))
-                .toList();
-        }
-        System.out.println("sorted:");
-        list.stream().forEach(System.out::println);
-        System.out.println("selected:");
-        int size = list.size();
-        double pitch = (double) size / selectSize;
-        for (int i = 0; i < size; i = (int) (i + pitch))
-            System.out.println(list.get(i));
+        System.out.println("IN_DIR=" + inDir.toAbsolutePath());
+        System.out.println("OUT_DIR=" + outDir.toAbsolutePath());
+        System.out.println("SELECT_SIZE=" + selectSize);
+        int count = run(inDir, outDir, selectSize);
+        System.out.printf("output file count = %d%n", count);
     }
 
 }

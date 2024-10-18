@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "saka1029.util.main.Mabiku",
             "projectName": "util",
-            "args": "src/main/java/saka1029/util/main 3"
+            "args": "src/main/java/saka1029/util/main target/mabiku-test 3"
         },
         {
             "type": "java",
