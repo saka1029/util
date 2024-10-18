@@ -4,7 +4,14 @@
     // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "type": "java",
+            "name": "Thin",
+            "request": "launch",
+            "mainClass": "saka1029.util.main.Thin",
+            "projectName": "util",
+            "args": "src/main/java/saka1029/util/main 10"
+        },
         {
             "type": "java",
             "name": "Dentaku",
