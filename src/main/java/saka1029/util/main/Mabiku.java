@@ -29,6 +29,8 @@ public class Mabiku {
         if (!Files.exists(outDir))
             Files.createDirectories(outDir);
         int size = list.size(), count = 0;
+        if (selectSize >= size)
+            throw new RuntimeException("select size(%d) >= size(%d)".formatted(selectSize, size));
         double pos = 0, pitch = (double) size / selectSize;
         for (int i = 0; i < size; pos += pitch, i = (int)pos) {
             Path inFile = list.get(i);
