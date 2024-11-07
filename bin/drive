@@ -1,4 +1,4 @@
 #!/bin/sh
 CP=~/git/util/target/util-1.0-jar-with-dependencies.jar
-T=~/git/mine/drive
+T=~/git/util/drive
 java -cp $CP saka1029.util.main.Drive $T "$@"
