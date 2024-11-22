@@ -300,7 +300,7 @@ public class Context {
                 if (i.remainder(d).equals(BigInteger.ZERO))
                     return FALSE;
             return TRUE;
-        }), "prime (I) -> (B) : 素数判定");
+        }), "prime? (I) -> (B) : 素数判定");
         builtInBinary("+", BinaryMap.of(BigDecimal::add), "(D) + (D) -> (D) : 加算");
         builtInBinary("-", BinaryMap.of(BigDecimal::subtract), "(D) - (D) -> (D) : 減算");
         builtInBinary("*", BinaryMap.of(BigDecimal::multiply), "(D) * (D) -> (D) : 乗算");
