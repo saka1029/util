@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -301,6 +302,18 @@ public class Context {
                     return FALSE;
             return TRUE;
         }), "prime? (I) -> (B) : 素数判定");
+        unary("days", (c, a) -> {
+            if (a.length != 3)
+                throw new ValueException("days (YYYY, MM, DD)");
+            int year = a[0].intValue(), month = a[1].intValue(), day = a[2].intValue();
+            return new BigDecimal[] {dec(LocalDate.of(year, month, day).toEpochDay())};
+        }, "days (YEAR, MONTH, DAY) -> (I) : 絶対日");
+        unary("date", (c, a) -> {
+            if (a.length != 1)
+                throw new ValueException("date 絶対日");
+            LocalDate date = LocalDate.ofEpochDay(a[0].longValue());
+            return new BigDecimal[] {dec(date.getYear()), dec(date.getMonth()), dec(date.getDayOfMonth());
+        }, "date 絶対日 -> (YEAR, MONTH, DAY) : 日付");
         builtInBinary("+", BinaryMap.of(BigDecimal::add), "(D) + (D) -> (D) : 加算");
         builtInBinary("-", BinaryMap.of(BigDecimal::subtract), "(D) - (D) -> (D) : 減算");
         builtInBinary("*", BinaryMap.of(BigDecimal::multiply), "(D) * (D) -> (D) : 乗算");
