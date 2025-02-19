@@ -205,7 +205,7 @@ public class Context {
         variable("E", c -> new BigDecimal[] {(BigDecimalMath.e(MC))}, "E : 自然対数の底");
         variable("EPSILON", c -> new BigDecimal[] {dec("5E-6")}, "EPSILON : 許容誤差");
         variable("TODAY", c -> new BigDecimal[] {dec(date(LocalDate.now()))}, "TODAY : 今日の絶対日");
-        unary("+", UnaryInsert.of(BigDecimal::add), "+ (D) -> D : 加算");
+        unary("+", UnaryInsert.of(BigDecimal::add), "+ (D) -> D : 合計");
         unary("-", UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate), "- (D) -> D : 減算");
         unary("*", UnaryInsert.of(BigDecimal::multiply), "* (D) -> D : 乗算");
         unary("/", UnaryInsert.of((l, r) -> l.divide(r, MC), a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> D : 除算");
