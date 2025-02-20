@@ -32,5 +32,4 @@ public class TestContext {
         assertTrue(set.contains("+"));
         assertTrue(set.contains("P"));
     }
-
 }

@@ -202,7 +202,7 @@ public class Context {
     }
 
     static LocalTime time(int hhmmss) {
-        return LocalTime.of(yymmss / 10000, hhmmss / 100 % 100, hhmmss % 100);
+        return LocalTime.of(hhmmss / 10000, hhmmss / 100 % 100, hhmmss % 100);
     }
 
     static int time(LocalTime time) {

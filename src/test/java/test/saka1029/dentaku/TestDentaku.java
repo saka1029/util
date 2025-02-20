@@ -247,6 +247,21 @@ public class TestDentaku {
     }
 
     @Test
+    public void testDate() {
+        Context c = Context.of();
+        assertArrayEquals(array("-4447"), eval(c, "days 19571029"));
+        assertArrayEquals(array("19571029"), eval(c, "date -4447"));
+        assertArrayEquals(array("2"), eval(c, "week 19571029"));
+    }
+
+    @Test
+    public void testTime() {
+        Context c = Context.of();
+        assertArrayEquals(array("3661"), eval(c, "seconds 010101"));
+        assertArrayEquals(array("010101"), eval(c, "time 3661"));
+    }
+
+    @Test
     public void testBinaryCat() {
         Context c = Context.of();
         assertArrayEquals(array("1 2"), eval(c, "1, 2"));
