@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -200,6 +201,14 @@ public class Context {
         return date.getYear() * 10000 + date.getMonthValue() * 100 + date.getDayOfMonth();
     }
 
+    static LocalTime time(int hhmmss) {
+        return LocalTime.of(yymmss / 10000, hhmmss / 100 % 100, hhmmss % 100);
+    }
+
+    static int time(LocalTime time) {
+        return time.getHour() * 10000 + time.getMinute() * 100 + time.getSecond();
+    }
+
     void initialize() {
         variable("PI", c -> new BigDecimal[] {(BigDecimalMath.pi(MC))}, "PI : 円周率");
         variable("E", c -> new BigDecimal[] {(BigDecimalMath.e(MC))}, "E : 自然対数の底");
@@ -311,9 +320,11 @@ public class Context {
                     return FALSE;
             return TRUE;
         }), "prime? (I) -> (B) : 素数判定");
-        unary("days", UnaryMap.of(a -> dec(date(a.intValue()).toEpochDay())), "days (YYYYMMDD) -> (I) : 絶対日");
-        unary("date", UnaryMap.of(a -> dec(date(LocalDate.ofEpochDay(a.intValue())))), "date (I) -> (YYYYMMDD) : 絶対日から日付");
-        unary("week", UnaryMap.of(a -> dec(date(a.intValue()).getDayOfWeek().getValue())), "week (YYYYMMDD) -> (I) : 曜日");
+        unary("days", UnaryMap.of(a -> dec(date(a.intValue()).toEpochDay())), "days (YYYYMMDD) -> (I) : 日付→絶対日");
+        unary("date", UnaryMap.of(a -> dec(date(LocalDate.ofEpochDay(a.intValue())))), "date (I) -> (YYYYMMDD) : 絶対日→日付");
+        unary("week", UnaryMap.of(a -> dec(date(a.intValue()).getDayOfWeek().getValue())), "week (YYYYMMDD) -> (I) : 日付→曜日");
+        unary("seconds", UnaryMap.of(a -> dec(time(a.intValue()).toSecondOfDay())), "secons (HHMMSS) -> (I) : 時分秒→秒数");
+        unary("time", UnaryMap.of(a -> dec(time(LocalTime.ofSecondOfDay(a.intValue())))), "time (I) -> (HHMMSS) : 秒→時分秒");
         builtInBinary("+", BinaryMap.of(BigDecimal::add), "(D) + (D) -> (D) : 加算");
         builtInBinary("-", BinaryMap.of(BigDecimal::subtract), "(D) - (D) -> (D) : 減算");
         builtInBinary("*", BinaryMap.of(BigDecimal::multiply), "(D) * (D) -> (D) : 乗算");
