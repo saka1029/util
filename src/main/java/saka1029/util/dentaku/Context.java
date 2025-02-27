@@ -112,6 +112,15 @@ public class Context {
         unarys.put(name, Str.of(e, s));
     }
 
+    public void unary(String name, String origin, String s) {
+        if (isVariable(name))
+            throw new ValueException("'%s' is defined as variable", name);
+        Str<Unary> org = unarys.get(origin);
+        if (org == null)
+            throw new ValueException("'%s' is not defined as unary", origin);
+        unarys.put(name, Str.of(org.t, s));
+    }
+
     public Stream<Str<String>> binarys() {
         return Stream.of(binarys, builtInBinarys)
             .flatMap(m -> m.entrySet().stream())
@@ -136,6 +145,15 @@ public class Context {
         if (isVariable(name))
             throw new ValueException("'%s' is defined as variable", name);
         binarys.put(name, Str.of(e, s));
+    }
+
+    public void binary(String name, String origin, String s) {
+        if (isVariable(name))
+            throw new ValueException("'%s' is defined as variable", name);
+        Str<Binary> org = binarys.get(origin);
+        if (org == null)
+            throw new ValueException("'%s' is defined as binary", origin);
+        binarys.put(name, Str.of(org.t, s));
     }
 
     public Str<Binary> binary(String name) {
@@ -212,6 +230,7 @@ public class Context {
 
     void initialize() {
         variable("PI", c -> new BigDecimal[] {(BigDecimalMath.pi(MC))}, "PI : 円周率");
+        variable("π", c -> new BigDecimal[] {(BigDecimalMath.pi(MC))}, "π : 円周率");
         variable("E", c -> new BigDecimal[] {(BigDecimalMath.e(MC))}, "E : 自然対数の底");
         variable("EPSILON", c -> new BigDecimal[] {dec("5E-6")}, "EPSILON : 許容誤差");
         variable("TODAY", c -> new BigDecimal[] {dec(date(LocalDate.now()))}, "TODAY : 今日の絶対日");
@@ -254,6 +273,7 @@ public class Context {
         unary("abs", UnaryMap.of(a -> a.abs()), "abs (D) -> (D) : 絶対値");
         unary("sign", UnaryMap.of(a -> dec(a.signum())), "sign (D) -> (D) : 符号(-1,0,1のいずれかを返す)");
         unary("sqrt", UnaryMap.of(a -> BigDecimalMath.sqrt(a, MC).stripTrailingZeros()), "sqrt (D) -> (D) : 平方根");
+        unary("√", "sqrt", "√ (D) -> (D) : 平方根");
         unary("square", UnaryMap.of(a -> a.multiply(a)), "square (D) -> (D) : 二乗");
         unary("cube", UnaryMap.of(a -> a.multiply(a).multiply(a)), "cube (D) -> (D) : 三乗");
         unary("sin", UnaryMap.of(a -> BigDecimalMath.sin(a, MC).stripTrailingZeros()), "sin (D) -> (D) : 正弦");

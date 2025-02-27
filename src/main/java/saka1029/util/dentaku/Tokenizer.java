@@ -44,7 +44,7 @@ public class Tokenizer {
     }
 
     static boolean isIdFirst(int ch) {
-        return Character.isAlphabetic(ch) || ch == '_' || ch == '?';
+        return Character.isAlphabetic(ch) || ch == '_' || ch == '?' || ch > 255;
     }
 
     static boolean isIdRest(int ch) {

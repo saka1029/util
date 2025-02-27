@@ -14,7 +14,7 @@ public class TestContext {
     @Test
     public void testVariables() {
         Context c = Context.of();
-        assertEquals(Set.of("E", "PI", "TODAY", "EPSILON"), c.variables().map(s -> s.t).collect(Collectors.toSet()));
+        assertEquals(Set.of("E", "PI", "π", "TODAY", "EPSILON"), c.variables().map(s -> s.t).collect(Collectors.toSet()));
     }
 
     @Test
