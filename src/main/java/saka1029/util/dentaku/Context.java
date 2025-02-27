@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static saka1029.util.dentaku.Value.*;
@@ -307,6 +308,22 @@ public class Context {
                 }
             return set.stream().sorted().map(i -> new BigDecimal(i)).toArray(BigDecimal[]::new);
         }, "divisor I -> (I) : 約数");
+        unary("iota", (c, a) -> {
+            if (a.length != 1)
+                throw new ValueException("Illegal count=%d", a.length);
+            int max = a[0].toBigIntegerExact().intValue();
+            return IntStream.rangeClosed(1, max)
+                .mapToObj(BigDecimal::valueOf)
+                .toArray(BigDecimal[]::new);
+        }, "iota n -> (I) : 1からnまでの整数の並び");
+        unary("iota0", (c, a) -> {
+            if (a.length != 1)
+                throw new ValueException("Illegal count=%d", a.length);
+            int max = a[0].toBigIntegerExact().intValue();
+            return IntStream.rangeClosed(0, max)
+                .mapToObj(BigDecimal::valueOf)
+                .toArray(BigDecimal[]::new);
+        }, "iota0 n -> (I) : 0からnまでの整数の並び");
         unary("prime?", UnaryMap.of(a -> {
             BigInteger i = a.toBigIntegerExact();
             int comp2 = i.compareTo(BigInteger.TWO);
