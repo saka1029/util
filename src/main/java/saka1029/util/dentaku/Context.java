@@ -290,6 +290,16 @@ public class Context {
         unary("precision", UnaryMap.of(a -> dec(a.precision())), "precision (D) -> (I) : 精度");
         unary("int_precision", UnaryMap.of(a -> dec(a.precision() - a.scale())), "int_precision (D) -> (I) : 整数部桁数");
         unary("scale", UnaryMap.of(a -> dec(a.scale())), "scale (D) -> (I) : 小数点以下桁数");
+        unary("reverse", (c, a) -> {
+            int size = a.length;
+            BigDecimal[] r = new BigDecimal[size];
+            for (int i = 0, j = size - 1; i < size; ++i, --j)
+                r[j] = a[i];
+            return r;
+        }, "reverse (D) -> (D) : 逆順にする");
+        unary("sort", (c, a) -> {
+            return Stream.of(a).sorted().toArray(BigDecimal[]::new);
+        }, "sort (D) -> (D) : ソート");
         unary("factor", (c, a) -> {
             if (a.length != 1)
                 throw new ValueException("Illegal count=%d", a.length);
@@ -418,7 +428,7 @@ public class Context {
         }, "(B) filter (D) -> (D) : フィルター");
         binary("P", BinaryMap.of((n, r) -> {
             return permutation(n, r);
-        }), "(I) P (I) -> (I) : 順列");
+        }), "(I) P (I) -> (I) : 順列数");
         binary("C", BinaryMap.of((n, r) -> {
             r = r.min(n.subtract(r));
             BigDecimal den = permutation(n, r);
@@ -426,7 +436,7 @@ public class Context {
             for (BigDecimal i = r; i.compareTo(BigDecimal.ONE) > 0; i = i.subtract(BigDecimal.ONE))
                 num = num.multiply(i);
             return den.divide(num);
-        }), "(I) C (I) -> (I) : 組合せ");
+        }), "(I) C (I) -> (I) : 組合せ数");
         binary("gcd", BinaryMap.of((a, b) -> {
             return gcd(a, b);
         }), "(D) gcd (D) -> (D) : 最大公約数");
@@ -483,7 +493,7 @@ public class Context {
         eval("variance x : + ((x - ave x) ^ 2) / count x");
         eval("sd x : sqrt variance x");
         eval("standard_score x : (x - ave x) / sd x * 10 + 50");
-        eval("pascal n : n C (0 to n)");
+        eval("pascal n : n C iota0 n");
         eval("c poly x : + (x ^ (count c - 1 to 0) * c)");
         eval("a distance b : sqrt + ((a - b) ^ 2)");
         // eval("a days b = days b - days a");
