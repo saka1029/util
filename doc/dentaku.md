@@ -171,11 +171,9 @@ $(0,0)$と$(1,1)$の距離はは以下のように計算できます。
 WikiPediaによるとフィボナッチ数列の一般項は以下のようになります。
 これは以下のように計算できます。
 
+$$F_n
+= \frac{1}{\sqrt{5}} \left\{ \left( \frac{1+\sqrt{5}}{2} \right)^n - \left( \frac{1-\sqrt{5}}{2} \right)^n \right\}
 $$
-F_{n}
-={\frac {1}{\sqrt {5}}}\left\{\left({\frac {1+{\sqrt {5}}}{2}}\right)^{n}-\left({\frac {1-{\sqrt {5}}}{2}}\right)^{n}\right\}
-$$
-
 
 ```
     フィボナッチ n : (((1 + sqrt 5) / 2) ^ n - ((1 - sqrt 5) / 2) ^ n) / sqrt 5
