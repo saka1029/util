@@ -238,6 +238,25 @@ public class Context {
         unary("-", UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate), "- (D) -> D : 減算");
         unary("*", UnaryInsert.of(BigDecimal::multiply), "* (D) -> D : 乗算");
         unary("/", UnaryInsert.of((l, r) -> l.divide(r, MC), a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> D : 除算");
+        unary("and", (c, a) -> {
+            boolean r = true;
+            for (BigDecimal e : a)
+                r = r && b(e);
+            return new BigDecimal[] {dec(r)};
+        }, "and (D) -> D : 論理積");
+        unary("or", (c, a) -> {
+            boolean r = false;
+            for (BigDecimal e : a)
+                r = r || b(e);
+            return new BigDecimal[] {dec(r)};
+        }, "or (D) -> D : 論理和");
+        unary("xor", (c, a) -> {
+            int r = 0;
+            for (BigDecimal e : a)
+                if (b(e))
+                    ++r;
+            return new BigDecimal[] {dec(r % 2)};
+        }, "xor (D) -> D : 排他的論理和");
         unary("min", UnaryInsert.of(BigDecimal::min), "min (D) -> D : 最小値");
         unary("max", UnaryInsert.of(BigDecimal::max), "man (D) -> D : 最大値");
         unary("count", (c, a) -> new BigDecimal[] {dec(a.length)}, "count (D) -> I : 要素数");
