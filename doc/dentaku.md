@@ -333,7 +333,7 @@ number of solutions=30
 
 ### 単項フィルター
 
-`@UNARY V`で`V`にフィルターを掛けます。
+`@ UNARY V`で`V`にフィルターを掛けます。
 `V`のうち`UNARY 要素`がゼロ以外を返したものだけを
 選択します。
 
@@ -375,9 +375,9 @@ $$
 
 ```
     isint n : int n = n
-    a : @prime? (1 to 40)
-    b : @prime? (1 to 40)
-    c : @prime? (1 to 40)
+    a : @ prime? iota 40
+    b : @ prime? iota 40
+    c : @ prime? iota 40
     .solve isint + ((3, 5, 7) / (a, b, c))
 a=2 b=2 c=7
 a=2 b=5 c=2
@@ -394,8 +394,8 @@ $2^{p-1}-1 = pq^2$を満たす$p, q$をすべて求めよ。
 ただし$p,q$は異なる素数とする。
 
 ```
-    p : @prime? (1 to 1000)
-    q : @prime? (1 to 1000)
+    p : @ prime? iota 1000
+    q : @ prime? iota 1000
     .solve 2 ^ (p - 1) - 1 = q ^ 2 * p and p != q
 p=7 q=3
 number of solutions=1
@@ -457,9 +457,9 @@ $$
 3p^4-5q^4-4r^2=26
 $$
 ```
-    p : @prime? (1 to 100 )
-    q : @prime? (1 to 100 )
-    r : @prime? (1 to 100 )
+    p : @ prime? iota 100
+    q : @ prime? iota 100
+    r : @ prime? iota 100
     .solve 3 * p ^ 4 - 5 * q ^ 4 - 4 * r ^ 2 = 26
 p=5 q=3 r=19
 number of solutions=1
@@ -498,7 +498,7 @@ $$
     a : 1 to 100
     b : 1 to 100
     c : 1 to 100
-    .solve a ^ 2 + b ^ 2 + c ^ 2 = 292
+    .solve + square (a, b, c) = 292
 a=2 b=12 c=12
 a=12 b=2 c=12
 a=12 b=12 c=2
@@ -514,9 +514,9 @@ $$
 $$
 
 ```
-    a : 1 to 100
-    b : 1 to 100
-    c : 1 to 100
+    a : iota 100
+    b : iota 100
+    c : iota 100
     .solve 2 ^ a + 4 ^ b + 8 ^ c = 328
 a=3 b=4 c=2
 a=6 b=4 c=1
@@ -532,9 +532,9 @@ $$
 5 ^ n - 3 ^ n = p ^ m
 $$
 ```
-    p : @prime? (1 to 100)
-    n : 1 to 100
-    m : 1 to 100
+    p : @ prime? iota 100
+    n : iota 100
+    m : iota 100
     .solve 5 ^ n - 3 ^ n = p ^ m
 m=1 n=1 p=2
 m=4 n=2 p=2
