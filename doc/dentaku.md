@@ -8,8 +8,8 @@ statement       = define-variable
                 | define-binary
                 | expression
 define-variable = ID ASSIGN expression
-define-unary    = ID ID ASSIGN expression
-define-binary   = ID ID ID ASSIGN expression
+define-unary    = UOP ID ASSIGN expression
+define-binary   = ID BOP ID ASSIGN expression
 expression      = binary { CONCAT binary }
 binary          = or { BOP or }
 or              = and { OR and }
@@ -24,6 +24,7 @@ primary         = '(' expression ')'
                 | NUMBER
 ```
 
+## token
 
 ```
 ID        = ID-FIRST { ID-REST }
@@ -55,6 +56,23 @@ DIGIT     = '0' .. '9'
 ## BOP
 
 二項演算子
+
+## 選択演算子
+
+`prime?`は素数判定を行い結果を`1`(真)または`0`(偽)として返します。
+1から10までの数列に対して適用すると以下のようになります。
+
+```
+    prime? iota 10
+0, 1, 1, 0, 1, 0, 1, 0, 0, 0
+```
+
+先頭に選択演算子`@`を付与すると真となった要素(素数)だけを抽出します。
+
+```
+    @ prime? iota 10
+2, 3, 5, 7
+```
 
 ## 評価例
 

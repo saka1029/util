@@ -55,6 +55,15 @@ public class Tokenizer {
         return Character.isDigit(ch);
     }
 
+    static boolean isSpecial(int ch) {
+        return switch (ch) {
+            case '!', '#', '$', '%', '&', '-', '=', '^', '~', '|',
+                '@', ';', '+', ':', '*',
+                ',', '<', '.', '>', '/', '?' -> true;
+            default -> false;
+        };
+    }
+
     Type advance(Type t) {
         get();
         return t;
@@ -101,6 +110,21 @@ public class Tokenizer {
         };
     }
 
+    Type special() {
+        while (isSpecial(ch))
+            appendGet();
+        return switch (sb.toString()) {
+            case ":" -> Type.ASSIGN;
+            case "@" -> Type.SELECT;
+            case "," -> Type.CONCAT;
+            case "+", "-" -> Type.ADD;
+            case "*", "/", "%" -> Type.MULT;
+            case "^" -> Type.POWER;
+            case "=", "!=","<", "<=", ">", ">=", "~", "!~" -> Type.COMP;
+            default -> Type.SPECIAL;
+        };
+    }
+
     Type error(String format, Object... args) {
         throw new ValueException(format, args);
     }
@@ -115,19 +139,20 @@ public class Tokenizer {
         Type type = switch (ch) {
             case '(' -> advance(Type.LP);
             case ')' -> advance(Type.RP);
-            case ':' -> advance(Type.ASSIGN);
-            case '@' -> advance(Type.SELECT);
-            case ',' -> advance(Type.CONCAT);
-            case '+', '-' -> advance(Type.ADD);
-            case '*', '/', '%' -> advance(Type.MULT);
-            case '^' -> advance(Type.POWER);
-            case '~', '=' -> advance(Type.COMP);
-            case '<', '>' -> get() == '=' ? advance(Type.COMP) : Type.COMP;
-            case '!' -> get() == '=' ?  advance(Type.COMP)
-                : ch == '~' ? advance(Type.COMP)
-                : error("Unknown token '!'");
+            // case ':' -> advance(Type.ASSIGN);
+            // case '@' -> advance(Type.SELECT);
+            // case ',' -> advance(Type.CONCAT);
+            // case '+', '-' -> advance(Type.ADD);
+            // case '*', '/', '%' -> advance(Type.MULT);
+            // case '^' -> advance(Type.POWER);
+            // case '~', '=' -> advance(Type.COMP);
+            // case '<', '>' -> get() == '=' ? advance(Type.COMP) : Type.COMP;
+            // case '!' -> get() == '=' ?  advance(Type.COMP)
+            //     : ch == '~' ? advance(Type.COMP)
+            //     : error("Unknown token '!'");
             default -> isDigit(ch) ?  number()
                 : isIdFirst(ch) ? id()
+                : isSpecial(ch) ? special()
                 : error("Unknown character '%c'(0x%04X)", ch, ch);
         };
         return new Token(type, new String(input, start, current - start));

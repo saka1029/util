@@ -204,6 +204,11 @@ public class Parser {
             throw new ValueException("ID expected but '%s'", token.string());
     }
 
+    void checkIdOrSpecial(Token token) {
+        if (!is(token, Type.ID) && !is(token, Type.SPECIAL))
+            throw new ValueException("ID or SPECIAL expected but '%s'", token.string());
+    }
+
     Expression defineVariable() {
         String name = token.string();
         checkId(token);
@@ -217,7 +222,7 @@ public class Parser {
 
     Expression defineUnary() {
         String name = token.string();
-        checkId(token);
+        checkIdOrSpecial(token);
         get(); // skip ID
         String variable = token.string();
         checkId(token);
@@ -235,7 +240,7 @@ public class Parser {
         checkId(token);
         get(); // skip ID
         String name = token.string();
-        checkId(token);
+        checkIdOrSpecial(token);
         get(); // skip ID
         String rightName = token.string();
         checkId(token);
