@@ -261,7 +261,7 @@ public class Context {
         unary("max", UnaryInsert.of(BigDecimal::max), "man (D) -> D : 最大値");
         unary("count", (c, a) -> new BigDecimal[] {dec(a.length)}, "count (D) -> I : 要素数");
         unary("int", UnaryMap.of(a -> a.setScale(0, RoundingMode.HALF_UP)), "int (D) -> (D) : 整数化(四捨五入)");
-        unary("/-", UnaryMap.of(a -> a.negate()), "/- (D) -> (D) : 符号反転");
+        unary("chs", UnaryMap.of(a -> a.negate()), "chs (D) -> (D) : 符号反転");
         unary("trunc", UnaryMap.of(a -> a.setScale(0, RoundingMode.DOWN)), "trunc (D) -> (D) : 整数化(切捨て)");
         unary("ceiling", UnaryMap.of(a -> a.setScale(0, RoundingMode.CEILING)), "ceiling (D) -> (D) : 整数化(無限大に向かって切り上げ)");
         unary("floor", UnaryMap.of(a -> a.setScale(0, RoundingMode.FLOOR)), "floor (D) -> (D) : 整数化(マイナス無限大に向かって切捨て)");
