@@ -35,14 +35,14 @@ public class TestTokenizer {
 
     @Test
     public void testComp() {
-        assertEquals(List.of(t(Type.COMP, "="), t(Type.COMP, "=")), Tokenizer.tokens("= ="));
-        assertEquals(List.of(t(Type.COMP, "!="), t(Type.COMP, "=")), Tokenizer.tokens("!= ="));
+        assertEquals(List.of(t(Type.COMP, "=="), t(Type.COMP, "==")), Tokenizer.tokens("== =="));
+        assertEquals(List.of(t(Type.COMP, "!="), t(Type.COMP, "==")), Tokenizer.tokens("!= =="));
         // assertEquals(List.of(t(Type.COMP, "<"), t(Type.INSERT, ":")), Tokenizer.tokens("<:"));
-        assertEquals(List.of(t(Type.COMP, "<="), t(Type.COMP, "=")), Tokenizer.tokens("<= ="));
+        assertEquals(List.of(t(Type.COMP, "<="), t(Type.COMP, "==")), Tokenizer.tokens("<= =="));
         assertEquals(List.of(t(Type.COMP, ">"), t(Type.SELECT, "@")), Tokenizer.tokens("> @"));
-        assertEquals(List.of(t(Type.COMP, ">="), t(Type.COMP, "=")), Tokenizer.tokens(">= ="));
+        assertEquals(List.of(t(Type.COMP, ">="), t(Type.COMP, "==")), Tokenizer.tokens(">= =="));
         assertEquals(List.of(t(Type.COMP, "~"), t(Type.SELECT, "@")), Tokenizer.tokens("~ @"));
-        assertEquals(List.of(t(Type.COMP, "!~"), t(Type.COMP, "=")), Tokenizer.tokens("!~ ="));
+        assertEquals(List.of(t(Type.COMP, "!~"), t(Type.COMP, "==")), Tokenizer.tokens("!~ =="));
     }
 
     @Test
@@ -59,8 +59,8 @@ public class TestTokenizer {
             t(Type.LP, "("),
             t(Type.LP, "("),
             t(Type.ADD, "+"),
-            t(Type.ASSIGN, ":"),
-            t(Type.COMP, "="),
+            t(Type.SPECIAL, ":"),
+            t(Type.ASSIGN, "="),
             t(Type.MULT, "%"),
             t(Type.COMP, "<="),
             t(Type.ADD, "-"),

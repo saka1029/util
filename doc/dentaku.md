@@ -30,11 +30,11 @@ primary         = '(' expression ')'
 ID        = ID-FIRST { ID-REST }
 ID-FIRST  = JAVA-ALPHABETIC | '_'
 ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
-ASSIGN    = ':'
+ASSIGN    = '='
 CONCAT    = ','
 OR        = 'or' | 'xor'
 AND       = 'and'
-COMP      = '=' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
+COMP      = '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
 ADD       = '+' | '-'
 MULT      = '*' | '/' | '%'
 POWER     = '^'
@@ -42,7 +42,7 @@ SELECT    = '@'
 BOP       = ID | SPECIAL
 UOP       = ID | SPECIAL
 VAR       = ID
-NUMBER    = [ '-' ] DIGITS
+NUMBER    = DIGITS
             [ '.' DIGITS ]
             [ ( 'e' | 'E' ) [ '+' | '-' ] DIGITS ]
 DIGITS    = DIGIT { DIGIT }
@@ -111,7 +111,7 @@ DIGIT     = '0' .. '9'
 24
 ```
 ```
-    a : 1, 2, 3, 4
+    a = 1, 2, 3, 4
     * a
 24
 ```
@@ -140,12 +140,12 @@ $$
 |25|95|40|90|60|
 
 ```
-    平均 x : + x / count x
-    分散 x : + ((x - 平均 x) ^ 2) / count x
-    標準偏差 x : sqrt 分散 x
-    偏差値 x : (x - 平均 x) / 標準偏差 x * 10 + 50
-    国語 : 55, 60, 70, 60, 65
-    算数 : 25, 95, 40, 90, 60
+    平均 x = + x / count x
+    分散 x = + ((x - 平均 x) ^ 2) / count x
+    標準偏差 x = sqrt 分散 x
+    偏差値 x = (x - 平均 x) / 標準偏差 x * 10 + 50
+    国語 = 55, 60, 70, 60, 65
+    算数 = 25, 95, 40, 90, 60
     平均 国語
 62
     平均 算数
@@ -173,7 +173,7 @@ $$\sqrt{(a_x-b_x)^2+(a_y-b_y)^2}$$
 $(0,0)$と$(1,1)$の距離は以下のように計算できます。
 
 ```
-    a 距離 b : sqrt + square (a - b)
+    a 距離 b = sqrt + square (a - b)
     (0, 0) 距離 (1, 1)
 1.4142135623730950488016887242096980785696718753769480731766797379907324784621070388503875343276415727350138462309122970249248360558507372126441214970999358314132226659275055927557999505011527820605715
 ```
@@ -196,7 +196,7 @@ $$
 
 
 ```
-    フィボナッチ n : (((1 + sqrt 5) / 2) ^ n - ((1 - sqrt 5) / 2) ^ n) / sqrt 5
+    フィボナッチ n = (((1 + sqrt 5) / 2) ^ n - ((1 - sqrt 5) / 2) ^ n) / sqrt 5
     int フィボナッチ iota0 10
 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55
 ```
@@ -219,8 +219,8 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infty {(-1)^{n} \over {2n+1}}$$
 合計する項の数を増やすしながら計算すると以下のようになります。
 
 ```
-    term n : -1 ^ n / (2 * n + 1)
-    pi n : + term iota0 n * 4
+    term n = -1 ^ n / (2 * n + 1)
+    pi n = + term iota0 n * 4
     pi 9
 3.041839618929402211135957265988225740547721971870578681724192560105872799371251383635284564077133736576461034665369030694108093488898442458813975841839618929402211135957265988225740547721971870578681740
     pi 99
@@ -254,13 +254,13 @@ $$
 `.solve 式`は`式`を満たす変数の値の組を見つけて表示する。
 
 ```
-    a : 1 to 10
-    b : 1 to 10
-    c : 1 to 10
-    d : 1 to 10
-    e : 1 to 10
-    f : 1 to 10
-    .solve a * b * c * d * e * f = a + b + c + d + e + f
+    a = 1 to 10
+    b = 1 to 10
+    c = 1 to 10
+    d = 1 to 10
+    e = 1 to 10
+    f = 1 to 10
+    .solve a * b * c * d * e * f == a + b + c + d + e + f
 a=1 b=1 c=1 d=1 e=2 f=6
 a=1 b=1 c=1 d=1 e=6 f=2
 a=1 b=1 c=1 d=2 e=1 f=6
@@ -302,7 +302,7 @@ number of solutions=30
 |2|^|右結合|べき乗|
 |3|*, /, %|左結合|乗除算|
 |4|+, -|左結合|加減算|
-|5|=, !=, <, <=, >, >=, ~, !~|左結合|比較|
+|5|==, !=, <, <=, >, >=, ~, !~|左結合|比較|
 |6|and|左結合|論理積|
 |7|or, xor|左結合|(排他的)論理和|
 |8|BOP|左結合|その他の二項演算子|
@@ -318,11 +318,11 @@ number of solutions=30
 オペレータを参照するので問題はない。
 
 ```
-    F x : x + 1
-    G x : F x + 1
+    F x = x + 1
+    G x = F x + 1
     G 0
 2
-    F x : x + 2
+    F x = x + 2
     G 0
 3
 ```
@@ -345,9 +345,9 @@ number of solutions=30
 変えながら式$a ^ 2 + b ^ 2 = 25$を評価し、
 真(ゼロ以外)の場合に変数`a`および`b`の値を出力します。
 ```
-    a : 1 to 5
-    b : 0 to 10
-    .solve a ^ 2 + b ^ 2 = 25
+    a = 1 to 5
+    b = 0 to 10
+    .solve a ^ 2 + b ^ 2 == 25
 a=3 b=4
 a=4 b=3
 a=5 b=0
@@ -357,9 +357,9 @@ number of solutions=3
 あるいは
 
 ```
-    a : 1 to 5
-    b : 0 to 10
-    .solve + ((a, b) ^ 2) = 25
+    a = 1 to 5
+    b = 0 to 10
+    .solve + ((a, b) ^ 2) == 25
 a=3 b=4
 a=4 b=3
 a=5 b=0
@@ -374,10 +374,10 @@ $$
 が整数となる素数$a, b, c$をすべて求めよ。
 
 ```
-    isint n : int n = n
-    a : @ prime? iota 40
-    b : @ prime? iota 40
-    c : @ prime? iota 40
+    isint n = int n == n
+    a = @ prime? iota 40
+    b = @ prime? iota 40
+    c = @ prime? iota 40
     .solve isint + ((3, 5, 7) / (a, b, c))
 a=2 b=2 c=7
 a=2 b=5 c=2
@@ -394,11 +394,10 @@ $2^{p-1}-1 = pq^2$を満たす$p, q$をすべて求めよ。
 ただし$p,q$は異なる素数とする。
 
 ```
-    p : @ prime? iota 1000
-    q : @ prime? iota 1000
+    p = @ prime? iota 1000
+    q = @ prime? iota 1000
     .solve 2 ^ (p - 1) - 1 = q ^ 2 * p and p != q
-p=7 q=3
-number of solutions=1
+Extra token '='
 ```
 `and p != q`がなくても同じ結果になる。
 
@@ -410,7 +409,7 @@ $$
 正の整数$n$をすべて求めよ。
 
 ```
-    n : 1 to 100
+    n = 1 to 100
     .solve prime? ((2 * n C n) / (n + 1))
 n=2
 n=3
@@ -422,9 +421,9 @@ number of solutions=2
 $(x^3-x)^2(y^3-y)=86400$を満たす整数$x, y$の組をすべて求めよ。
 
 ```
-    x : -100 to 100
-    y : -100 to 100
-    .solve (x ^ 3 - x) ^ 2 * (y ^ 3 - y) = 86400
+    x = -100 to 100
+    y = -100 to 100
+    .solve (x ^ 3 - x) ^ 2 * (y ^ 3 - y) == 86400
 x=-5 y=2
 x=-4 y=3
 x=4 y=3
@@ -435,10 +434,10 @@ number of solutions=4
 あるいは
 
 ```
-    x : -100 to 100
-    y : -100 to 100
-    C3 x : x ^ 3 - x
-    .solve C3 x ^ 2 * C3 y = 86400
+    x = -100 to 100
+    y = -100 to 100
+    C3 x = x ^ 3 - x
+    .solve C3 x ^ 2 * C3 y == 86400
 x=-5 y=2
 x=-4 y=3
 x=4 y=3
@@ -457,10 +456,10 @@ $$
 3p^4-5q^4-4r^2=26
 $$
 ```
-    p : @ prime? iota 100
-    q : @ prime? iota 100
-    r : @ prime? iota 100
-    .solve 3 * p ^ 4 - 5 * q ^ 4 - 4 * r ^ 2 = 26
+    p = @ prime? iota 100
+    q = @ prime? iota 100
+    r = @ prime? iota 100
+    .solve 3 * p ^ 4 - 5 * q ^ 4 - 4 * r ^ 2 == 26
 p=5 q=3 r=19
 number of solutions=1
 ```
@@ -470,8 +469,8 @@ number of solutions=1
 2桁の整数$m$を2乗すると下2桁が36になる。$m$をすべて求めよ。
 
 ```
-    m : 10 to 99
-    .solve m ^ 2 % 100 = 36
+    m = 10 to 99
+    .solve m ^ 2 % 100 == 36
 m=44
 m=56
 m=94
@@ -481,8 +480,8 @@ number of solutions=3
 ソルバーを使わずに求めることもできる。
 
 ```
-    m : 10 to 99
-    (m ^ 2 % 100 = 36) filter m
+    m = 10 to 99
+    (m ^ 2 % 100 == 36) filter m
 44, 56, 94
 ```
 
@@ -495,10 +494,10 @@ a ^ 2 + b ^ 2 + c ^ 2 = 292
 $$
 
 ```
-    a : 1 to 100
-    b : 1 to 100
-    c : 1 to 100
-    .solve + square (a, b, c) = 292
+    a = iota 100
+    b = iota 100
+    c = iota 100
+    .solve + square (a, b, c) == 292
 a=2 b=12 c=12
 a=12 b=2 c=12
 a=12 b=12 c=2
@@ -514,10 +513,10 @@ $$
 $$
 
 ```
-    a : iota 100
-    b : iota 100
-    c : iota 100
-    .solve 2 ^ a + 4 ^ b + 8 ^ c = 328
+    a = iota 100
+    b = iota 100
+    c = iota 100
+    .solve 2 ^ a + 4 ^ b + 8 ^ c == 328
 a=3 b=4 c=2
 a=6 b=4 c=1
 a=8 b=3 c=1
@@ -532,10 +531,10 @@ $$
 5 ^ n - 3 ^ n = p ^ m
 $$
 ```
-    p : @ prime? iota 100
-    n : iota 100
-    m : iota 100
-    .solve 5 ^ n - 3 ^ n = p ^ m
+    p = @ prime? iota 100
+    n = iota 100
+    m = iota 100
+    .solve 5 ^ n - 3 ^ n == p ^ m
 m=1 n=1 p=2
 m=4 n=2 p=2
 number of solutions=2
@@ -545,8 +544,8 @@ number of solutions=2
 ### 実行例11
 
 ```
-    n : 1 to 100
-    .solve count divisor n = 4 and + divisor n = 84
+    n = iota 100
+    .solve count divisor n == 4 and + divisor n == 84
 n=65
 number of solutions=1
 ```

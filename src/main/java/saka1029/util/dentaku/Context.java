@@ -401,7 +401,7 @@ public class Context {
                 BigDecimalMath.pow(l, r.longValue(), MC) :
                 BigDecimalMath.pow(l, r, MC).stripTrailingZeros())
             , "(D) ^ (D) -> (D) : べき乗");
-        builtInBinary("=", BinaryMap.of((l, r) -> dec(l.compareTo(r) == 0)), "(D) == (D) -> (B) : 等しい");
+        builtInBinary("==", BinaryMap.of((l, r) -> dec(l.compareTo(r) == 0)), "(D) == (D) -> (B) : 等しい");
         builtInBinary("!=", BinaryMap.of((l, r) -> dec(l.compareTo(r) != 0)), "(D) != (D) -> (B) : 等しくない");
         builtInBinary("<", BinaryMap.of((l, r) -> dec(l.compareTo(r) < 0)), "(D) < (D) -> (B) : 小さい");
         builtInBinary("<=", BinaryMap.of((l, r) -> dec(l.compareTo(r) <= 0)), "(D) <= (D) -> (B) : 小さいか等しい");
@@ -509,15 +509,15 @@ public class Context {
                 throw new ValueException("Illegal length left=%d rigth=%d", lsize, rsize);
             return new BigDecimal[] {result};
         }, "(I) decimal (I) -> I : 10進変換");
-        eval("ave x : + (x / count x)");
-        eval("variance x : + ((x - ave x) ^ 2) / count x");
-        eval("sd x : sqrt variance x");
-        eval("standard_score x : (x - ave x) / sd x * 10 + 50");
-        eval("pascal n : n C iota0 n");
-        eval("c poly x : + (x ^ (count c - 1 to 0) * c)");
-        eval("a distance b : sqrt + ((a - b) ^ 2)");
+        eval("ave x = + (x / count x)");
+        eval("variance x = + ((x - ave x) ^ 2) / count x");
+        eval("sd x = sqrt variance x");
+        eval("standard_score x = (x - ave x) / sd x * 10 + 50");
+        eval("pascal n = n C iota0 n");
+        eval("c poly x = + (x ^ (count c - 1 to 0) * c)");
+        eval("a distance b = sqrt + ((a - b) ^ 2)");
         // eval("a days b = days b - days a");
-        eval("fibonacci n : 1 + sqrt 5 / 2 ^ n - ((1 - sqrt 5 / 2) ^ n) / sqrt 5");
+        eval("fibonacci n = 1 + sqrt 5 / 2 ^ n - ((1 - sqrt 5 / 2) ^ n) / sqrt 5");
     }
 
     public int solve(Expression expression, Consumer<String> out) {

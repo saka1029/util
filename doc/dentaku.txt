@@ -30,11 +30,11 @@ primary         = '(' expression ')'
 ID        = ID-FIRST { ID-REST }
 ID-FIRST  = JAVA-ALPHABETIC | '_'
 ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
-ASSIGN    = ':'
+ASSIGN    = '='
 CONCAT    = ','
 OR        = 'or' | 'xor'
 AND       = 'and'
-COMP      = '=' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
+COMP      = '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
 ADD       = '+' | '-'
 MULT      = '*' | '/' | '%'
 POWER     = '^'
@@ -42,7 +42,7 @@ SELECT    = '@'
 BOP       = ID | SPECIAL
 UOP       = ID | SPECIAL
 VAR       = ID
-NUMBER    = [ '-' ] DIGITS
+NUMBER    = DIGITS
             [ '.' DIGITS ]
             [ ( 'e' | 'E' ) [ '+' | '-' ] DIGITS ]
 DIGITS    = DIGIT { DIGIT }
@@ -103,7 +103,7 @@ prime? iota 10
 * (1, 2, 3, 4)
 ```
 ```
-a : 1, 2, 3, 4
+a = 1, 2, 3, 4
 * a
 ```
 
@@ -129,12 +129,12 @@ sqrt + ((11, 100, 111) ^ 4 / 2)
 |25|95|40|90|60|
 
 ```
-平均 x : + x / count x
-分散 x : + ((x - 平均 x) ^ 2) / count x
-標準偏差 x : sqrt 分散 x
-偏差値 x : (x - 平均 x) / 標準偏差 x * 10 + 50
-国語 : 55, 60, 70, 60, 65
-算数 : 25, 95, 40, 90, 60
+平均 x = + x / count x
+分散 x = + ((x - 平均 x) ^ 2) / count x
+標準偏差 x = sqrt 分散 x
+偏差値 x = (x - 平均 x) / 標準偏差 x * 10 + 50
+国語 = 55, 60, 70, 60, 65
+算数 = 25, 95, 40, 90, 60
 平均 国語
 平均 算数
 分散 国語
@@ -154,7 +154,7 @@ $$\sqrt{(a_x-b_x)^2+(a_y-b_y)^2}$$
 $(0,0)$と$(1,1)$の距離は以下のように計算できます。
 
 ```
-a 距離 b : sqrt + square (a - b)
+a 距離 b = sqrt + square (a - b)
 (0, 0) 距離 (1, 1)
 ```
 この`距離`の定義は3次元以上の距離も同様に計算できます。
@@ -175,7 +175,7 @@ $$
 
 
 ```
-フィボナッチ n : (((1 + sqrt 5) / 2) ^ n - ((1 - sqrt 5) / 2) ^ n) / sqrt 5
+フィボナッチ n = (((1 + sqrt 5) / 2) ^ n - ((1 - sqrt 5) / 2) ^ n) / sqrt 5
 int フィボナッチ iota0 10
 ```
 
@@ -196,8 +196,8 @@ $$arctan\:1 = {\pi \over 4} = \sum_{n=0}^\infty {(-1)^{n} \over {2n+1}}$$
 合計する項の数を増やすしながら計算すると以下のようになります。
 
 ```
-term n : -1 ^ n / (2 * n + 1)
-pi n : + term iota0 n * 4
+term n = -1 ^ n / (2 * n + 1)
+pi n = + term iota0 n * 4
 pi 9
 pi 99
 pi 999
@@ -225,13 +225,13 @@ $$
 `.solve 式`は`式`を満たす変数の値の組を見つけて表示する。
 
 ```
-a : 1 to 10
-b : 1 to 10
-c : 1 to 10
-d : 1 to 10
-e : 1 to 10
-f : 1 to 10
-.solve a * b * c * d * e * f = a + b + c + d + e + f
+a = 1 to 10
+b = 1 to 10
+c = 1 to 10
+d = 1 to 10
+e = 1 to 10
+f = 1 to 10
+.solve a * b * c * d * e * f == a + b + c + d + e + f
 ```
 
 ## 優先順位
@@ -242,7 +242,7 @@ f : 1 to 10
 |2|^|右結合|べき乗|
 |3|*, /, %|左結合|乗除算|
 |4|+, -|左結合|加減算|
-|5|=, !=, <, <=, >, >=, ~, !~|左結合|比較|
+|5|==, !=, <, <=, >, >=, ~, !~|左結合|比較|
 |6|and|左結合|論理積|
 |7|or, xor|左結合|(排他的)論理和|
 |8|BOP|左結合|その他の二項演算子|
@@ -258,10 +258,10 @@ f : 1 to 10
 オペレータを参照するので問題はない。
 
 ```
-F x : x + 1
-G x : F x + 1
+F x = x + 1
+G x = F x + 1
 G 0
-F x : x + 2
+F x = x + 2
 G 0
 ```
 
@@ -283,17 +283,17 @@ G 0
 変えながら式$a ^ 2 + b ^ 2 = 25$を評価し、
 真(ゼロ以外)の場合に変数`a`および`b`の値を出力します。
 ```
-a : 1 to 5
-b : 0 to 10
-.solve a ^ 2 + b ^ 2 = 25
+a = 1 to 5
+b = 0 to 10
+.solve a ^ 2 + b ^ 2 == 25
 ```
 
 あるいは
 
 ```
-a : 1 to 5
-b : 0 to 10
-.solve + ((a, b) ^ 2) = 25
+a = 1 to 5
+b = 0 to 10
+.solve + ((a, b) ^ 2) == 25
 ```
 
 ### 実行例2
@@ -304,10 +304,10 @@ $$
 が整数となる素数$a, b, c$をすべて求めよ。
 
 ```
-isint n : int n = n
-a : @ prime? iota 40
-b : @ prime? iota 40
-c : @ prime? iota 40
+isint n = int n == n
+a = @ prime? iota 40
+b = @ prime? iota 40
+c = @ prime? iota 40
 .solve isint + ((3, 5, 7) / (a, b, c))
 ```
 
@@ -317,8 +317,8 @@ $2^{p-1}-1 = pq^2$を満たす$p, q$をすべて求めよ。
 ただし$p,q$は異なる素数とする。
 
 ```
-p : @ prime? iota 1000
-q : @ prime? iota 1000
+p = @ prime? iota 1000
+q = @ prime? iota 1000
 .solve 2 ^ (p - 1) - 1 = q ^ 2 * p and p != q
 ```
 `and p != q`がなくても同じ結果になる。
@@ -331,7 +331,7 @@ $$
 正の整数$n$をすべて求めよ。
 
 ```
-n : 1 to 100
+n = 1 to 100
 .solve prime? ((2 * n C n) / (n + 1))
 ```
 
@@ -340,18 +340,18 @@ n : 1 to 100
 $(x^3-x)^2(y^3-y)=86400$を満たす整数$x, y$の組をすべて求めよ。
 
 ```
-x : -100 to 100
-y : -100 to 100
-.solve (x ^ 3 - x) ^ 2 * (y ^ 3 - y) = 86400
+x = -100 to 100
+y = -100 to 100
+.solve (x ^ 3 - x) ^ 2 * (y ^ 3 - y) == 86400
 ```
 
 あるいは
 
 ```
-x : -100 to 100
-y : -100 to 100
-C3 x : x ^ 3 - x
-.solve C3 x ^ 2 * C3 y = 86400
+x = -100 to 100
+y = -100 to 100
+C3 x = x ^ 3 - x
+.solve C3 x ^ 2 * C3 y == 86400
 ```
 
 単項演算子`C3`の定義内で変数`x`を使用している点に注意する。
@@ -365,10 +365,10 @@ $$
 3p^4-5q^4-4r^2=26
 $$
 ```
-p : @ prime? iota 100
-q : @ prime? iota 100
-r : @ prime? iota 100
-.solve 3 * p ^ 4 - 5 * q ^ 4 - 4 * r ^ 2 = 26
+p = @ prime? iota 100
+q = @ prime? iota 100
+r = @ prime? iota 100
+.solve 3 * p ^ 4 - 5 * q ^ 4 - 4 * r ^ 2 == 26
 ```
 
 ### 実行例7
@@ -376,15 +376,15 @@ r : @ prime? iota 100
 2桁の整数$m$を2乗すると下2桁が36になる。$m$をすべて求めよ。
 
 ```
-m : 10 to 99
-.solve m ^ 2 % 100 = 36
+m = 10 to 99
+.solve m ^ 2 % 100 == 36
 ```
 
 ソルバーを使わずに求めることもできる。
 
 ```
-m : 10 to 99
-(m ^ 2 % 100 = 36) filter m
+m = 10 to 99
+(m ^ 2 % 100 == 36) filter m
 ```
 
 ### 実行例8
@@ -396,10 +396,10 @@ a ^ 2 + b ^ 2 + c ^ 2 = 292
 $$
 
 ```
-a : 1 to 100
-b : 1 to 100
-c : 1 to 100
-.solve + square (a, b, c) = 292
+a = iota 100
+b = iota 100
+c = iota 100
+.solve + square (a, b, c) == 292
 ```
 
 ### 実行例9
@@ -411,10 +411,10 @@ $$
 $$
 
 ```
-a : iota 100
-b : iota 100
-c : iota 100
-.solve 2 ^ a + 4 ^ b + 8 ^ c = 328
+a = iota 100
+b = iota 100
+c = iota 100
+.solve 2 ^ a + 4 ^ b + 8 ^ c == 328
 ```
 
 ### 実行例10
@@ -425,16 +425,16 @@ $$
 5 ^ n - 3 ^ n = p ^ m
 $$
 ```
-p : @ prime? iota 100
-n : iota 100
-m : iota 100
-.solve 5 ^ n - 3 ^ n = p ^ m
+p = @ prime? iota 100
+n = iota 100
+m = iota 100
+.solve 5 ^ n - 3 ^ n == p ^ m
 ```
 自然数$n$の約数は4個でその和は84である。
 
 ### 実行例11
 
 ```
-n : 1 to 100
-.solve count divisor n = 4 and + divisor n = 84
+n = iota 100
+.solve count divisor n == 4 and + divisor n == 84
 ```

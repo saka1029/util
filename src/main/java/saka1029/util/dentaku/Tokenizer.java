@@ -114,13 +114,13 @@ public class Tokenizer {
         while (isSpecial(ch))
             appendGet();
         return switch (sb.toString()) {
-            case ":" -> Type.ASSIGN;
+            case "=" -> Type.ASSIGN;
             case "@" -> Type.SELECT;
             case "," -> Type.CONCAT;
             case "+", "-" -> Type.ADD;
             case "*", "/", "%" -> Type.MULT;
             case "^" -> Type.POWER;
-            case "=", "!=","<", "<=", ">", ">=", "~", "!~" -> Type.COMP;
+            case "==", "!=","<", "<=", ">", ">=", "~", "!~" -> Type.COMP;
             default -> Type.SPECIAL;
         };
     }
