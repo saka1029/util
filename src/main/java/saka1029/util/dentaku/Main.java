@@ -177,14 +177,14 @@ public class Main {
         out.println("                | define-unary");
         out.println("                | define-binary");
         out.println("                | expression");
-        out.println("define-variable = VAR ':' expression");
-        out.println("define-unary    = UOP VAR ':' expression");
-        out.println("define-binary   = VAR BOP VAR ':' expression");
+        out.println("define-variable = VAR '=' expression");
+        out.println("define-unary    = UOP VAR '=' expression");
+        out.println("define-binary   = VAR BOP VAR '=' expression");
         out.println("expression      = binary { ',' binary }");
         out.println("binary          = or { BOP or }");
         out.println("or              = and { 'or' and }");
         out.println("and             = comp { 'and' comp }");
-        out.println("comp            = add { ( '=' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~' ) add }");
+        out.println("comp            = add { ( '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~' ) add }");
         out.println("add             = mult { ( '+' | '-' ) mult }");
         out.println("mult            = power { ( '*' | '/' | '%') power }");
         out.println("power           = unary [ '^' power ]");
