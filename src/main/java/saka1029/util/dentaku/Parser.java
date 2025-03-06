@@ -245,6 +245,7 @@ public class Parser {
         checkId(token);
         get(); // skip ID
         get(); // skip ASSIGN
+        context.unary(name, (Unary)null, name);  // 仮登録
         Expression e = expression();
         return c -> {
             c.unary(name, UnaryDefined.of(variable, e), input);
@@ -258,11 +259,12 @@ public class Parser {
         get(); // skip ID
         String name = token.string();
         checkIdOrSpecial(token);
-        get(); // skip ID
+        get(); // skip ID or SPECIAL
         String rightName = token.string();
         checkId(token);
         get(); // skip ID
         get(); // skip ASSIGN
+        context.binary(name, (Binary)null, name);  // 仮登録
         Expression e = expression();
         return c -> {
             c.binary(name, (context, left, right) -> {
