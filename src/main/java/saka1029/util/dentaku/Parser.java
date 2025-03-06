@@ -185,20 +185,31 @@ public class Parser {
         return e;
     }
 
-    Expression coditional() {
-	Expression e = binary();
-	if (is(token, Type.IF)) {
-	}
+    Expression conditional() {
+        Expression e = binary();
+        if (!is(token, Type.THEN))
+            return e;
+        get(); // skip '?'
+        Expression then = binary();
+        if (!is(token, Type.ELSE))
+            throw new ValueException("':' expected but '%s'", token.string());
+        get(); // skip ':'
+        Expression otherwize = conditional();  // 右結合
+        return c -> {
+            BigDecimal[] cond = e.eval(c);
+            return cond.length > 0 && !cond[0].equals(BigDecimal.ZERO) ?
+                then.eval(c) : otherwize.eval(c);
+        };
     }
 
     Expression expression() {
-        Expression e = binary();
+        Expression e = conditional();
         while (true)
             if (is(token, Type.CONCAT)) {
                 String name = token.string();
                 get(); // skip ','
                 Binary b = context.builtInBinary(name).t;
-                Expression l = e, r = binary();
+                Expression l = e, r = conditional();
                 e = c -> b.apply(c, l.eval(c), r.eval(c));
             } else
                 break;

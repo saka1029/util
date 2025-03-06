@@ -59,18 +59,18 @@ DIGIT     = '0' .. '9'
 
 ## 選択演算子
 
-`prime?`は素数判定を行い結果を`1`(真)または`0`(偽)として返します。
+`prime`は素数判定を行い結果を`1`(真)または`0`(偽)として返します。
 1から10までの数列に対して適用すると以下のようになります。
 
 ```
-    prime? iota 10
+    prime iota 10
 0, 1, 1, 0, 1, 0, 1, 0, 0, 0
 ```
 
 先頭に選択演算子`@`を付与すると真となった要素(素数)だけを抽出します。
 
 ```
-    @ prime? iota 10
+    @ prime iota 10
 2, 3, 5, 7
 ```
 
@@ -375,9 +375,9 @@ $$
 
 ```
     isint n = int n == n
-    a = @ prime? iota 40
-    b = @ prime? iota 40
-    c = @ prime? iota 40
+    a = @ prime iota 40
+    b = @ prime iota 40
+    c = @ prime iota 40
     .solve isint + ((3, 5, 7) / (a, b, c))
 a=2 b=2 c=7
 a=2 b=5 c=2
@@ -394,8 +394,8 @@ $2^{p-1}-1 = pq^2$を満たす$p, q$をすべて求めよ。
 ただし$p,q$は異なる素数とする。
 
 ```
-    p = @ prime? iota 1000
-    q = @ prime? iota 1000
+    p = @ prime iota 1000
+    q = @ prime iota 1000
     .solve 2 ^ (p - 1) - 1 = q ^ 2 * p and p != q
 Extra token '='
 ```
@@ -410,7 +410,7 @@ $$
 
 ```
     n = 1 to 100
-    .solve prime? ((2 * n C n) / (n + 1))
+    .solve prime ((2 * n C n) / (n + 1))
 n=2
 n=3
 number of solutions=2
@@ -456,9 +456,9 @@ $$
 3p^4-5q^4-4r^2=26
 $$
 ```
-    p = @ prime? iota 100
-    q = @ prime? iota 100
-    r = @ prime? iota 100
+    p = @ prime iota 100
+    q = @ prime iota 100
+    r = @ prime iota 100
     .solve 3 * p ^ 4 - 5 * q ^ 4 - 4 * r ^ 2 == 26
 p=5 q=3 r=19
 number of solutions=1
@@ -531,7 +531,7 @@ $$
 5 ^ n - 3 ^ n = p ^ m
 $$
 ```
-    p = @ prime? iota 100
+    p = @ prime iota 100
     n = iota 100
     m = iota 100
     .solve 5 ^ n - 3 ^ n == p ^ m

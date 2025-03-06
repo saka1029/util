@@ -265,8 +265,8 @@ public class Context {
         unary("trunc", UnaryMap.of(a -> a.setScale(0, RoundingMode.DOWN)), "trunc (D) -> (D) : 整数化(切捨て)");
         unary("ceiling", UnaryMap.of(a -> a.setScale(0, RoundingMode.CEILING)), "ceiling (D) -> (D) : 整数化(無限大に向かって切り上げ)");
         unary("floor", UnaryMap.of(a -> a.setScale(0, RoundingMode.FLOOR)), "floor (D) -> (D) : 整数化(マイナス無限大に向かって切捨て)");
-        unary("even?", UnaryMap.of(a -> dec(a.remainder(TWO).equals(BigDecimal.ZERO))), "even? (I) -> (B) : 偶数か？");
-        unary("odd?", UnaryMap.of(a -> dec(!a.remainder(TWO).equals(BigDecimal.ZERO))), "odd? (I) -> (B) : 奇数か？");
+        unary("even", UnaryMap.of(a -> dec(a.remainder(TWO).equals(BigDecimal.ZERO))), "even (I) -> (B) : 偶数か？");
+        unary("odd", UnaryMap.of(a -> dec(!a.remainder(TWO).equals(BigDecimal.ZERO))), "odd (I) -> (B) : 奇数か？");
         unary("fact", UnaryMap.of(a -> {
             BigInteger n = a.toBigIntegerExact(), r = BigInteger.ONE;
             for (BigInteger i = BigInteger.ONE; i.compareTo(n) <= 0; i = i.add(BigInteger.ONE))
@@ -374,7 +374,7 @@ public class Context {
                 .mapToObj(BigDecimal::valueOf)
                 .toArray(BigDecimal[]::new);
         }, "iota0 n -> (I) : 0からnまでの整数の並び");
-        unary("prime?", UnaryMap.of(a -> {
+        unary("prime", UnaryMap.of(a -> {
             BigInteger i = a.toBigIntegerExact();
             int comp2 = i.compareTo(BigInteger.TWO);
             if (comp2 < 0)
@@ -386,7 +386,7 @@ public class Context {
                 if (i.remainder(d).equals(BigInteger.ZERO))
                     return FALSE;
             return TRUE;
-        }), "prime? (I) -> (B) : 素数判定");
+        }), "prime (I) -> (B) : 素数判定");
         unary("days", UnaryMap.of(a -> dec(date(a.intValue()).toEpochDay())), "days (YYYYMMDD) -> (I) : 日付→絶対日");
         unary("date", UnaryMap.of(a -> dec(date(LocalDate.ofEpochDay(a.intValue())))), "date (I) -> (YYYYMMDD) : 絶対日→日付");
         unary("week", UnaryMap.of(a -> dec(date(a.intValue()).getDayOfWeek().getValue())), "week (YYYYMMDD) -> (I) : 日付→曜日");

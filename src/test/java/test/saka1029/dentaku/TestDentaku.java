@@ -101,7 +101,7 @@ public class TestDentaku {
     public void testUnaryCount() {
         Context c = Context.of();
         assertArrayEquals(array("3"), eval(c, "count (-3, -4, 5)"));
-        assertArrayEquals(array("25"), eval(c, "count @prime? (1 to 100)"));
+        assertArrayEquals(array("25"), eval(c, "count @prime (1 to 100)"));
     }
 
     @Test
@@ -116,8 +116,8 @@ public class TestDentaku {
     @Test
     public void testUnaryEvenOdd() {
         Context c = Context.of();
-        assertArrayEquals(array("0 1 0 1"), eval(c, "even? (-3, -4, 3, 4)"));
-        assertArrayEquals(array("1 0 1 0"), eval(c, "odd? (-3, -4, 3, 4)"));
+        assertArrayEquals(array("0 1 0 1"), eval(c, "even (-3, -4, 3, 4)"));
+        assertArrayEquals(array("1 0 1 0"), eval(c, "odd (-3, -4, 3, 4)"));
     }
 
     @Test
@@ -168,8 +168,8 @@ public class TestDentaku {
     @Test
     public void testUnaryPrimeP() {
         Context c = Context.of();
-        assertArrayEquals(array("0 1 1 0 1 0 1 0 0 0"), eval(c, "prime? (1 to 10)"));
-        assertArrayEquals(array("2 3 5 7"), eval(c, "@prime? (1 to 10)"));
+        assertArrayEquals(array("0 1 1 0 1 0 1 0 0 0"), eval(c, "prime (1 to 10)"));
+        assertArrayEquals(array("2 3 5 7"), eval(c, "@prime (1 to 10)"));
     }
 
     @Test

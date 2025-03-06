@@ -59,7 +59,8 @@ public class TestTokenizer {
             t(Type.LP, "("),
             t(Type.LP, "("),
             t(Type.ADD, "+"),
-            t(Type.SPECIAL, ":"),
+            t(Type.THEN, "?"),
+            t(Type.ELSE, ":"),
             t(Type.ASSIGN, "="),
             t(Type.MULT, "%"),
             t(Type.COMP, "<="),
@@ -68,7 +69,8 @@ public class TestTokenizer {
             t(Type.CONCAT, ","),
             t(Type.RP, ")"),
             t(Type.RP, ")"));
-        List<Token> actual = Tokenizer.tokens("((+ : = % <= - - ,))");
+        List<Token> actual = Tokenizer.tokens("((+ ? : = % <= - - ,))");
+        System.out.println(actual);
         assertEquals(expected, actual);
         assertEquals(List.of(t(Type.POWER, "^"), t(Type.MULT, "/")), Tokenizer.tokens("^ /"));
     }

@@ -11,6 +11,7 @@ public class Tokenizer {
         ASSIGN,
         CONCAT,
         OR, AND, COMP, ADD, MULT, POWER,
+        THEN, ELSE,
         SELECT,
     }
 
@@ -44,7 +45,7 @@ public class Tokenizer {
     }
 
     static boolean isIdFirst(int ch) {
-        return Character.isAlphabetic(ch) || ch == '_' || ch == '?' || ch > 255;
+        return Character.isAlphabetic(ch) || ch == '_' || ch > 255;
     }
 
     static boolean isIdRest(int ch) {
@@ -117,6 +118,8 @@ public class Tokenizer {
             case "=" -> Type.ASSIGN;
             case "@" -> Type.SELECT;
             case "," -> Type.CONCAT;
+            case "?" -> Type.THEN;
+            case ":" -> Type.ELSE;
             case "+", "-" -> Type.ADD;
             case "*", "/", "%" -> Type.MULT;
             case "^" -> Type.POWER;
