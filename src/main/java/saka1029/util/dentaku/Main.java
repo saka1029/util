@@ -180,7 +180,8 @@ public class Main {
         out.println("define-variable = VAR '=' expression");
         out.println("define-unary    = UOP VAR '=' expression");
         out.println("define-binary   = VAR BOP VAR '=' expression");
-        out.println("expression      = binary { ',' binary }");
+        out.println("expression      = conditional { ',' conditional }");
+        out.println("conditional     = binary [ '?' binary ':' conditional ]");
         out.println("binary          = or { BOP or }");
         out.println("or              = and { 'or' and }");
         out.println("and             = comp { 'and' comp }");
