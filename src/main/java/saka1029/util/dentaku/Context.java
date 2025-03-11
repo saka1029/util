@@ -389,7 +389,7 @@ public class Context {
         }), "prime (I) -> (B) : 素数判定");
         unary("days", UnaryMap.of(a -> dec(date(a.intValue()).toEpochDay())), "days (YYYYMMDD) -> (I) : 日付→絶対日");
         unary("date", UnaryMap.of(a -> dec(date(LocalDate.ofEpochDay(a.intValue())))), "date (I) -> (YYYYMMDD) : 絶対日→日付");
-        unary("week", UnaryMap.of(a -> dec(date(a.intValue()).getDayOfWeek().getValue())), "week (YYYYMMDD) -> (I) : 日付→曜日");
+        unary("week", UnaryMap.of(a -> dec(date(a.intValue()).getDayOfWeek().getValue())), "week (YYYYMMDD) -> (I) : 日付→曜日(月曜日:1,日曜日:7)");
         unary("seconds", UnaryMap.of(a -> dec(time(a.intValue()).toSecondOfDay())), "secons (HHMMSS) -> (I) : 時分秒→秒数");
         unary("time", UnaryMap.of(a -> dec(time(LocalTime.ofSecondOfDay(a.intValue())))), "time (I) -> (HHMMSS) : 秒→時分秒");
         builtInBinary("+", BinaryMap.of(BigDecimal::add), "(D) + (D) -> (D) : 加算");
