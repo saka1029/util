@@ -20,6 +20,10 @@ public class Value {
         return size == 0 ? EMPTY : new BigDecimal[size];
     }
 
+    public static BigDecimal[] array(BigDecimal... elements) {
+        return elements;
+    }
+
     public static BigDecimal[] array(String s) {
         s = s.trim();
         if (s.equals(""))

@@ -229,11 +229,11 @@ public class Context {
     }
 
     void initialize() {
-        variable("PI", c -> new BigDecimal[] {(BigDecimalMath.pi(MC))}, "PI : 円周率");
-        variable("π", c -> new BigDecimal[] {(BigDecimalMath.pi(MC))}, "π : 円周率");
-        variable("E", c -> new BigDecimal[] {(BigDecimalMath.e(MC))}, "E : 自然対数の底");
-        variable("EPSILON", c -> new BigDecimal[] {dec("5E-6")}, "EPSILON : 許容誤差");
-        variable("TODAY", c -> new BigDecimal[] {dec(date(LocalDate.now()))}, "TODAY : 今日の絶対日");
+        variable("PI", c -> array(BigDecimalMath.pi(MC)), "PI : 円周率");
+        variable("π", c -> array(BigDecimalMath.pi(MC)), "π : 円周率");
+        variable("E", c -> array(BigDecimalMath.e(MC)), "E : 自然対数の底");
+        variable("EPSILON", c -> array(dec("5E-6")), "EPSILON : 許容誤差");
+        variable("TODAY", c -> array(dec(date(LocalDate.now()))), "TODAY : 今日の絶対日");
         unary("+", UnaryInsert.of(BigDecimal::add), "+ (D) -> D : 合計");
         unary("-", UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate), "- (D) -> D : 減算");
         unary("*", UnaryInsert.of(BigDecimal::multiply), "* (D) -> D : 乗算");
