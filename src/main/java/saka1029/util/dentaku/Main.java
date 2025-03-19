@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.jline.builtins.Completers.Completer;
+import org.jline.reader.Completer;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -139,12 +139,12 @@ public class Main {
             out = terminal.writer();
         }
 
-        static StringsCompleter completer(Context context) {
+        static Completer completer(Context context) {
             List<String> names = Stream.of(
                 context.variables().map(s -> s.string.split(" +")[0]),
                 context.unarys().map(s -> s.string.split(" +")[0]),
                 context.binarys().map(s -> s.string.split(" +")[1]))
-                .flatMap(x -> x)
+                .flatMap(Function.identity())
                 .toList();
             return new StringsCompleter(names);
         }
