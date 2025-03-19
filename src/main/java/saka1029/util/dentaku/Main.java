@@ -141,6 +141,7 @@ public class Main {
 
         static Completer completer(Context context) {
             List<String> names = Stream.of(
+                Stream.of(".help", ".exit", ".quit", "syntax", "type", "variable", "unary", "binary"),
                 context.variables().map(s -> s.string.split(" +")[0]),
                 context.unarys().map(s -> s.string.split(" +")[0]),
                 context.binarys().map(s -> s.string.split(" +")[1]))
