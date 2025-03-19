@@ -235,9 +235,11 @@ public class Context {
         variable("EPSILON", c -> array(dec("5E-6")), "EPSILON : 許容誤差");
         variable("TODAY", c -> array(dec(date(LocalDate.now()))), "TODAY : 今日の絶対日");
         unary("+", UnaryInsert.of(BigDecimal::add), "+ (D) -> D : 合計");
-        unary("-", UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate), "- (D) -> D : 減算");
+        // unary("-", UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate), "- (D) -> D : 減算");
+        unary("-", UnaryMap.of(a -> a.negate()), "- (D) -> (D) : 符号反転");
         unary("*", UnaryInsert.of(BigDecimal::multiply), "* (D) -> D : 乗算");
-        unary("/", UnaryInsert.of((l, r) -> l.divide(r, MC), a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> D : 除算");
+        // unary("/", UnaryInsert.of((l, r) -> l.divide(r, MC), a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> D : 除算");
+        unary("/", UnaryMap.of(a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> (D) : 逆数");
         unary("and", (c, a) -> {
             boolean r = true;
             for (BigDecimal e : a)
@@ -261,7 +263,7 @@ public class Context {
         unary("max", UnaryInsert.of(BigDecimal::max), "man (D) -> D : 最大値");
         unary("count", (c, a) -> new BigDecimal[] {dec(a.length)}, "count (D) -> I : 要素数");
         unary("int", UnaryMap.of(a -> a.setScale(0, RoundingMode.HALF_UP)), "int (D) -> (D) : 整数化(四捨五入)");
-        unary("chs", UnaryMap.of(a -> a.negate()), "chs (D) -> (D) : 符号反転");
+        // unary("chs", UnaryMap.of(a -> a.negate()), "chs (D) -> (D) : 符号反転");
         unary("trunc", UnaryMap.of(a -> a.setScale(0, RoundingMode.DOWN)), "trunc (D) -> (D) : 整数化(切捨て)");
         unary("ceiling", UnaryMap.of(a -> a.setScale(0, RoundingMode.CEILING)), "ceiling (D) -> (D) : 整数化(無限大に向かって切り上げ)");
         unary("floor", UnaryMap.of(a -> a.setScale(0, RoundingMode.FLOOR)), "floor (D) -> (D) : 整数化(マイナス無限大に向かって切捨て)");
@@ -289,7 +291,7 @@ public class Context {
         }), "fib (I) -> (I) : フィボナッチ数");
         unary("minus", UnaryMap.of(BigDecimal::negate), "minus (D) -> (D) : 符号反転");
         unary("not", UnaryMap.of(a -> dec(!b(a))), "not (B) -> (B) : 否定");
-        unary("reciprocal", UnaryMap.of(a -> BigDecimalMath.reciprocal(a, MC)), "reciprocal (D) -> (D) : 逆数");
+        // unary("reciprocal", UnaryMap.of(a -> BigDecimalMath.reciprocal(a, MC)), "reciprocal (D) -> (D) : 逆数");
         unary("abs", UnaryMap.of(a -> a.abs()), "abs (D) -> (D) : 絶対値");
         unary("sign", UnaryMap.of(a -> dec(a.signum())), "sign (D) -> (D) : 符号(-1,0,1のいずれかを返す)");
         unary("sqrt", UnaryMap.of(a -> BigDecimalMath.sqrt(a, MC).stripTrailingZeros()), "sqrt (D) -> (D) : 平方根");
