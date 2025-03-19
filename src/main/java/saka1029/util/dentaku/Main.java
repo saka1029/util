@@ -11,11 +11,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DateTimeException;
 import java.util.Comparator;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
+import org.jline.builtins.Completers.Completer;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.DefaultParser;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -121,16 +126,27 @@ public class Main {
         final PrintWriter out;
         final String prompt;
 
-        JlineConsole(String prompt, String prompt2) throws IOException {
+        JlineConsole(Context context, String prompt, String prompt2) throws IOException {
             this.prompt = prompt;
             terminal = TerminalBuilder.builder().build();
             org.jline.reader.Parser parser = new DefaultParser().eofOnEscapedNewLine(true);
             lineReader = LineReaderBuilder.builder()
-                    .terminal(terminal)
-                    .parser(parser)
-                    .variable(LineReader.SECONDARY_PROMPT_PATTERN, prompt2)
-                    .build();
+                .terminal(terminal)
+                .parser(parser)
+                .completer(completer(context))
+                .variable(LineReader.SECONDARY_PROMPT_PATTERN, prompt2)
+                .build();
             out = terminal.writer();
+        }
+
+        static StringsCompleter completer(Context context) {
+            List<String> names = Stream.of(
+                context.variables().map(s -> s.string.split(" +")[0]),
+                context.unarys().map(s -> s.string.split(" +")[0]),
+                context.binarys().map(s -> s.string.split(" +")[1]))
+                .flatMap(x -> x)
+                .toList();
+            return new StringsCompleter(names);
         }
 
         @Override
@@ -255,9 +271,9 @@ public class Main {
         }
     }
 
-    static void run(Term term) throws IOException {
+    static void run(Context context, Term term) throws IOException {
         PrintWriter out = term.writer();
-        Context context = Context.of();
+        // Context context = Context.of();
         if (term.interactive())
             out.println("Type '.help' for help, control-D to exit.");
         L: while (true) {
@@ -316,6 +332,7 @@ public class Main {
         }
         if (file != null && !Files.exists(Paths.get(file)))
             error("No such file : " + file);
+        Context context = Context.of();
         Term term = null;
         try {
             if (markDown && file != null)
@@ -323,10 +340,10 @@ public class Main {
             else if (!markDown && file != null)
                 term = new FileConsole(prompt, file);
             else if (!markDown && file == null)
-                term = new JlineConsole(prompt, prompt2);
+                term = new JlineConsole(context, prompt, prompt2);
             else
                 usage();
-            run(term);
+            run(context, term);
         } finally {
             term.close();
         }
