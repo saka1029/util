@@ -42,16 +42,16 @@ public class TestDentaku {
     public void testUnarySubtract() {
         Context c = Context.of();
         assertArrayEquals(array("-3"), eval(c, "- 3"));
-        assertArrayEquals(array("-1"), eval(c, "- (3, 4)"));
-        assertArrayEquals(array("-6"), eval(c, "- (3, 4, 5)"));
+        assertArrayEquals(array("-3 -4"), eval(c, "- (3, 4)"));
+        assertArrayEquals(array("-3 -4 -5"), eval(c, "- (3, 4, 5)"));
     }
 
     @Test
     public void testUnaryDivide() {
         Context c = Context.of();
         assertArrayEquals(array("0.5"), eval(c, "/ 2"));
-        assertArrayEquals(array("0.25"), eval(c, "/ (1, 4)"));
-        assertArrayEquals(array("1"), eval(c, "/ (8, 4, 2)"));
+        assertArrayEquals(array("1 0.25"), eval(c, "/ (1, 4)"));
+        assertArrayEquals(array("0.125 0.25 0.5"), eval(c, "/ (8, 4, 2)"));
     }
 
     @Test
@@ -140,11 +140,11 @@ public class TestDentaku {
         assertArrayEquals(array("-1 -1 1 0"), eval(c, "sign (-3, -4, 5, 0)"));
     }
 
-    @Test
-    public void testUnaryMinus() {
-        Context c = Context.of();
-        assertArrayEquals(array("3 4 -5 0"), eval(c, "minus (-3, -4, 5, 0)"));
-    }
+    // @Test
+    // public void testUnaryMinus() {
+    //     Context c = Context.of();
+    //     assertArrayEquals(array("3 4 -5 0"), eval(c, "minus (-3, -4, 5, 0)"));
+    // }
 
     @Test
     public void testUnarySquareCube() {
@@ -153,11 +153,11 @@ public class TestDentaku {
         assertArrayEquals(array("0 1 64 2197"), eval(c, "cube (0, 1, 4, 13)"));
     }
 
-    @Test
-    public void testUnaryReciprocal() {
-        Context c = Context.of();
-        assertArrayEquals(array("-0.5 -0.25 0.5 0.25 2"), eval(c, "reciprocal (-2, -4, 2, 4, 0.5)"));
-    }
+    // @Test
+    // public void testUnaryReciprocal() {
+    //     Context c = Context.of();
+    //     assertArrayEquals(array("-0.5 -0.25 0.5 0.25 2"), eval(c, "reciprocal (-2, -4, 2, 4, 0.5)"));
+    // }
 
     @Test
     public void testUnarySqrt() {
@@ -196,9 +196,9 @@ public class TestDentaku {
     }
 
     @Test
-    public void testBinarySubtract() {
+    public void testUnaryMinus() {
         Context c = Context.of();
-        assertArrayEquals(array("-6"), eval(c, "- (340, 337, 3 ^ 2)"));
+        assertArrayEquals(array("-340 -337 -9"), eval(c, "- (340, 337, 3 ^ 2)"));
     }
 
     @Test

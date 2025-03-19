@@ -289,7 +289,7 @@ public class Context {
             }
             return dec(y);
         }), "fib (I) -> (I) : フィボナッチ数");
-        unary("minus", UnaryMap.of(BigDecimal::negate), "minus (D) -> (D) : 符号反転");
+        // unary("minus", UnaryMap.of(BigDecimal::negate), "minus (D) -> (D) : 符号反転");
         unary("not", UnaryMap.of(a -> dec(!b(a))), "not (B) -> (B) : 否定");
         // unary("reciprocal", UnaryMap.of(a -> BigDecimalMath.reciprocal(a, MC)), "reciprocal (D) -> (D) : 逆数");
         unary("abs", UnaryMap.of(a -> a.abs()), "abs (D) -> (D) : 絶対値");
