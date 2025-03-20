@@ -511,7 +511,7 @@ public class Context {
                 throw new ValueException("Illegal length left=%d rigth=%d", lsize, rsize);
             return new BigDecimal[] {result};
         }, "(I) decimal (I) -> I : 10進変換");
-        eval("ave x = + (x / count x)");
+        eval("ave x = + x / count x");
         eval("variance x = + ((x - ave x) ^ 2) / count x");
         eval("sd x = sqrt variance x");
         eval("standard_score x = (x - ave x) / sd x * 10 + 50");
