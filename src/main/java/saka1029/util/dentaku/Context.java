@@ -372,7 +372,7 @@ public class Context {
             if (a.length != 1)
                 throw new ValueException("Illegal count=%d", a.length);
             int max = a[0].toBigIntegerExact().intValue();
-            return IntStream.rangeClosed(0, max)
+            return IntStream.range(0, max)
                 .mapToObj(BigDecimal::valueOf)
                 .toArray(BigDecimal[]::new);
         }, "iota0 n -> (I) : 0からnまでの整数の並び");
