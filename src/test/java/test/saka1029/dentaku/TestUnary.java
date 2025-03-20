@@ -21,18 +21,18 @@ public class TestUnary {
     @Test
     public void testReduce() {
         Context c = Context.of();
-        assertArrayEquals(array("6"), UnaryInsert.of(BigDecimal::add).apply(c, array("1 2 3")));
-        assertArrayEquals(array("1"), UnaryInsert.of(BigDecimal::add).apply(c, array("1")));
-        assertArrayEquals(EMPTY, UnaryInsert.of(BigDecimal::add).apply(c, EMPTY));
+        assertArrayEquals(array("6"), UnaryInsert.of(BigDecimal::add, BigDecimal.ZERO).apply(c, array("1 2 3")));
+        assertArrayEquals(array("1"), UnaryInsert.of(BigDecimal::add, BigDecimal.ZERO).apply(c, array("1")));
+        assertArrayEquals(array("0"), UnaryInsert.of(BigDecimal::add, BigDecimal.ZERO).apply(c, EMPTY));
     }
 
     @Test
     public void testReduceSubtract() {
         Context c = Context.of();
-        assertArrayEquals(array("-4"), UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate).apply(c, array("1 2 3")));
-        assertArrayEquals(array("-1"), UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate).apply(c, array("1 2")));
-        assertArrayEquals(array("-1"), UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate).apply(c, array("1")));
-        assertArrayEquals(EMPTY, UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate).apply(c, EMPTY));
+        assertArrayEquals(array("-4"), UnaryInsert.of(BigDecimal::subtract, BigDecimal.ZERO, BigDecimal::negate).apply(c, array("1 2 3")));
+        assertArrayEquals(array("-1"), UnaryInsert.of(BigDecimal::subtract, BigDecimal.ZERO, BigDecimal::negate).apply(c, array("1 2")));
+        assertArrayEquals(array("-1"), UnaryInsert.of(BigDecimal::subtract, BigDecimal.ZERO, BigDecimal::negate).apply(c, array("1")));
+        assertArrayEquals(array("0"), UnaryInsert.of(BigDecimal::subtract, BigDecimal.ZERO, BigDecimal::negate).apply(c, EMPTY));
     }
 
     // @Test

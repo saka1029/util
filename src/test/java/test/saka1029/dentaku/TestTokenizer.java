@@ -70,7 +70,6 @@ public class TestTokenizer {
             t(Type.RP, ")"),
             t(Type.RP, ")"));
         List<Token> actual = Tokenizer.tokens("((+ ? : = % <= - - ,))");
-        System.out.println(actual);
         assertEquals(expected, actual);
         assertEquals(List.of(t(Type.POWER, "^"), t(Type.MULT, "/")), Tokenizer.tokens("^ /"));
     }
