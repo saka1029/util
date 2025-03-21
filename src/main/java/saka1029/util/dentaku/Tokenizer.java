@@ -144,7 +144,7 @@ public class Tokenizer {
             case ')' -> advance(Type.RP);
             // case ':' -> advance(Type.ASSIGN);
             // case '@' -> advance(Type.SELECT);
-            // case ',' -> advance(Type.CONCAT);
+            case ',' -> advance(Type.CONCAT);
             // case '+', '-' -> advance(Type.ADD);
             // case '*', '/', '%' -> advance(Type.MULT);
             // case '^' -> advance(Type.POWER);
