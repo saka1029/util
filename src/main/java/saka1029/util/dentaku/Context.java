@@ -375,7 +375,7 @@ public class Context {
             return IntStream.range(0, max)
                 .mapToObj(BigDecimal::valueOf)
                 .toArray(BigDecimal[]::new);
-        }, "iota0 n -> (I) : 0からnまでの整数の並び");
+        }, "iota0 n -> (I) : 0からn-1までの整数の並び");
         unary("prime", UnaryMap.of(a -> {
             BigInteger i = a.toBigIntegerExact();
             int comp2 = i.compareTo(BigInteger.TWO);
