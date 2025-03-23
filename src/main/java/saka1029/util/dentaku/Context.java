@@ -441,13 +441,13 @@ public class Context {
         }, "I to I -> (I) : 範囲");
         binary("filter", (c, l, r) -> {
             if (l.length != r.length)
-                throw new ValueException("Invalid arguments left=%s right=%s", str(l), str(r));
+                throw new ValueException("Different count left=%s right=%s", str(l), str(r));
             List<BigDecimal> result = new ArrayList<>();
-            for (int i = 0, max = l.length; i < max; ++i)
-                if (b(l[i]))
-                    result.add(r[i]);
+            for (int i = 0, max = r.length; i < max; ++i)
+                if (b(r[i]))
+                    result.add(l[i]);
             return result.toArray(BigDecimal[]::new);
-        }, "(B) filter (D) -> (D) : フィルター");
+        }, "(D) filter (B) -> (D) : フィルター");
         binary("P", BinaryMap.of((n, r) -> {
             return permutation(n, r);
         }), "(I) P (I) -> (I) : 順列数");
