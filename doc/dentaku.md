@@ -7,18 +7,19 @@ statement       = define-variable
                 | define-unary
                 | define-binary
                 | expression
-define-variable = ID ASSIGN expression
-define-unary    = UOP ID ASSIGN expression
-define-binary   = ID BOP ID ASSIGN expression
-expression      = binary { CONCAT binary }
+define-variable = ID '=' expression
+define-unary    = UOP ID '=' expression
+define-binary   = ID BOP ID '=' expression
+expression      = conditional { ',' conditional }
+conditional     = binary { '?' binary ':' conditional }
 binary          = or { BOP or }
-or              = and { OR and }
-and             = comp { AND comp }
-comp            = add { COMP add }
-add             = mult { ADD mult }
-mult            = power { MULT power }
-power           = unary [ POWER power ]
-unary           = primary | [ SELECT ] UOP unary
+or              = and { 'or' and }
+and             = comp { 'and' comp }
+comp            = add { ('==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~') add}
+add             = mult { ('+' | '-') mult }
+mult            = power { ('*' | '/' | '%') power }
+power           = unary [ '^' power ]
+unary           = primary | [ '@' ] UOP unary
 primary         = '(' expression ')'
                 | VAR
                 | NUMBER
@@ -30,15 +31,6 @@ primary         = '(' expression ')'
 ID        = ID-FIRST { ID-REST }
 ID-FIRST  = JAVA-ALPHABETIC | '_'
 ID-FIRST  = ID-FIRST | JAVA-DIGIT | '.'
-ASSIGN    = '='
-CONCAT    = ','
-OR        = 'or' | 'xor'
-AND       = 'and'
-COMP      = '==' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
-ADD       = '+' | '-'
-MULT      = '*' | '/' | '%'
-POWER     = '^'
-SELECT    = '@'
 BOP       = ID | SPECIAL
 UOP       = ID | SPECIAL
 VAR       = ID
@@ -478,6 +470,14 @@ number of solutions=3
 ```
 
 ソルバーを使わずに求めることもできる。
+
+```
+    sq36 m = m ^ 2 % 100 == 36
+    @ sq36 (10 to 99)
+44, 56, 94
+```
+
+あるいは
 
 ```
     m = 10 to 99
