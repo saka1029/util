@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -322,6 +323,12 @@ public class Context {
         unary("sort", (c, a) -> {
             return Stream.of(a).sorted().toArray(BigDecimal[]::new);
         }, "sort (D) -> (D) : ソート");
+        unary("uniq", (c, a) -> {
+            Set<BigDecimal> set = new TreeSet<>();
+            for (BigDecimal e : a)
+                set.add(e);
+            return set.toArray(BigDecimal[]::new);
+        }, "uniq (D) -> (D) : 重複の除去(結果は上昇順)");
         unary("factor", (c, a) -> {
             if (a.length != 1)
                 throw new ValueException("Illegal count=%d", a.length);
@@ -427,7 +434,7 @@ public class Context {
         binary("round", BinaryMap.of((l, r) -> l.setScale(i(r), RoundingMode.HALF_UP)), "(D) round I -> (D) : 指定桁数に四捨五入");
         binary("to", (c, l, r) -> {
             if (l.length != 1 || r.length != 1)
-                throw new ValueException("Invalid arguments left=%s right=%s", str(l), str(r));
+                throw new ValueException("Invalid arguments '%s to %s'", str(l), str(r));
             BigInteger ll = l[0].toBigIntegerExact(), rr = r[0].toBigIntegerExact();
             BigDecimal[] result = array(ll.subtract(rr).abs().intValue() + 1);
             int index = 0;
@@ -441,7 +448,7 @@ public class Context {
         }, "I to I -> (I) : 範囲");
         binary("filter", (c, l, r) -> {
             if (l.length != r.length)
-                throw new ValueException("Different count left=%s right=%s", str(l), str(r));
+                throw new ValueException("Must be same count '%s filter %s'", str(l), str(r));
             List<BigDecimal> result = new ArrayList<>();
             for (int i = 0, max = r.length; i < max; ++i)
                 if (b(r[i]))
