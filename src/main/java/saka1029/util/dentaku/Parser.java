@@ -53,6 +53,12 @@ public class Parser {
     Expression primary() {
         if (is(token, Type.LP)) {
             get(); // skip '('
+                   //
+                   //
+            if (is(token, Type.LP)) {
+                get();  // skip ')'
+                return c -> EMPTY;
+            }
             Expression e = expression();
             if (!is(token, Type.RP))
                 throw new ValueException("')' expected");
