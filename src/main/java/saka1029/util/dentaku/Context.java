@@ -235,48 +235,49 @@ public class Context {
         variable("E", c -> array(BigDecimalMath.e(MC)), "E : 自然対数の底");
         variable("EPSILON", c -> array(dec("5E-6")), "EPSILON : 許容誤差");
         variable("TODAY", c -> array(dec(date(LocalDate.now()))), "TODAY : 今日の絶対日");
-        unary("+", UnaryInsert.of(BigDecimal::add, BigDecimal.ZERO), "+ (D) -> D : 合計");
-        unary("-", UnaryInsert.of(BigDecimal::subtract, BigDecimal.ZERO, BigDecimal::negate), "- (D) -> D : 減算");
+        unary("+", UnaryInsert.of(BigDecimal::add, ZERO), "+ (D) -> D : 合計");
+        unary("-", UnaryInsert.of(BigDecimal::subtract, ZERO, BigDecimal::negate), "- (D) -> D : 減算");
         unary("negative", UnaryMap.of(a -> a.negate()), "negative (D) -> (D) : 符号反転");
-        unary("*", UnaryInsert.of(BigDecimal::multiply, BigDecimal.ONE), "* (D) -> D : 乗算");
-        unary("/", UnaryInsert.of((l, r) -> l.divide(r, MC), BigDecimal.ONE, a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> D : 除算");
+        unary("*", UnaryInsert.of(BigDecimal::multiply, ONE), "* (D) -> D : 乗算");
+        unary("/", UnaryInsert.of((l, r) -> l.divide(r, MC), ONE, a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> D : 除算");
         unary("reciprocal", UnaryMap.of(a -> BigDecimalMath.reciprocal(a, MC)), "reciprocal (D) -> (D) : 逆数");
         unary("and", (c, a) -> {
             boolean r = true;
             for (BigDecimal e : a)
                 r = r && b(e);
-            return new BigDecimal[] {dec(r)};
+            return array(dec(r));
         }, "and (D) -> D : 論理積");
         unary("or", (c, a) -> {
             boolean r = false;
             for (BigDecimal e : a)
                 r = r || b(e);
-            return new BigDecimal[] {dec(r)};
+            return array(dec(r));
         }, "or (D) -> D : 論理和");
         unary("xor", (c, a) -> {
             int r = 0;
             for (BigDecimal e : a)
                 if (b(e))
                     ++r;
-            return new BigDecimal[] {dec(r % 2)};
+            return array(dec(r % 2));
         }, "xor (D) -> D : 排他的論理和");
-        unary("min", UnaryInsert.of(BigDecimal::min, BigDecimal.ZERO), "min (D) -> D : 最小値");
-        unary("max", UnaryInsert.of(BigDecimal::max, BigDecimal.ZERO), "man (D) -> D : 最大値");
+        unary("min", UnaryInsert.of(BigDecimal::min, ZERO), "min (D) -> D : 最小値");
+        unary("max", UnaryInsert.of(BigDecimal::max, ZERO), "man (D) -> D : 最大値");
         unary("count", (c, a) -> new BigDecimal[] {dec(a.length)}, "count (D) -> I : 要素数");
         unary("int", UnaryMap.of(a -> a.setScale(0, RoundingMode.HALF_UP)), "int (D) -> (D) : 整数化(四捨五入)");
         // unary("chs", UnaryMap.of(a -> a.negate()), "chs (D) -> (D) : 符号反転");
         unary("trunc", UnaryMap.of(a -> a.setScale(0, RoundingMode.DOWN)), "trunc (D) -> (D) : 整数化(切捨て)");
         unary("ceiling", UnaryMap.of(a -> a.setScale(0, RoundingMode.CEILING)), "ceiling (D) -> (D) : 整数化(無限大に向かって切り上げ)");
         unary("floor", UnaryMap.of(a -> a.setScale(0, RoundingMode.FLOOR)), "floor (D) -> (D) : 整数化(マイナス無限大に向かって切捨て)");
-        unary("even", UnaryMap.of(a -> dec(a.remainder(TWO).equals(BigDecimal.ZERO))), "even (I) -> (B) : 偶数か？");
-        unary("odd", UnaryMap.of(a -> dec(!a.remainder(TWO).equals(BigDecimal.ZERO))), "odd (I) -> (B) : 奇数か？");
+        unary("even", UnaryMap.of(a -> dec(a.remainder(TWO).equals(ZERO))), "even (I) -> (B) : 偶数か？");
+        unary("odd", UnaryMap.of(a -> dec(!a.remainder(TWO).equals(ZERO))), "odd (I) -> (B) : 奇数か？");
         unary("fact", UnaryMap.of(a -> {
             BigInteger n = a.toBigIntegerExact(), r = BigInteger.ONE;
             for (BigInteger i = BigInteger.ONE; i.compareTo(n) <= 0; i = i.add(BigInteger.ONE))
                 r = r.multiply(i);
             return dec(r);
         }), "fact (I) ->  (I) : 階乗");
-        unary("gamma", UnaryMap.of(a -> BigDecimalMath.gamma(a, MC)), "gamma (I) -> (I) : ガンマ関数(自然数のみ計算可)");
+        unary("gamma", UnaryMap.of(a -> BigDecimalMath.gamma(a, MC)),
+            "gamma (I) -> (I) : ガンマ関数(自然数のみ計算可)");
         unary("fib", UnaryMap.of(a -> {
             BigInteger i = a.toBigIntegerExact();
             if (i.compareTo(BigInteger.ONE) <= 0)
@@ -290,9 +291,7 @@ public class Context {
             }
             return dec(y);
         }), "fib (I) -> (I) : フィボナッチ数");
-        // unary("minus", UnaryMap.of(BigDecimal::negate), "minus (D) -> (D) : 符号反転");
         unary("not", UnaryMap.of(a -> dec(!b(a))), "not (B) -> (B) : 否定");
-        // unary("reciprocal", UnaryMap.of(a -> BigDecimalMath.reciprocal(a, MC)), "reciprocal (D) -> (D) : 逆数");
         unary("abs", UnaryMap.of(a -> a.abs()), "abs (D) -> (D) : 絶対値");
         unary("sign", UnaryMap.of(a -> dec(a.signum())), "sign (D) -> (D) : 符号(-1,0,1のいずれかを返す)");
         unary("sqrt", UnaryMap.of(a -> BigDecimalMath.sqrt(a, MC).stripTrailingZeros()), "sqrt (D) -> (D) : 平方根");
@@ -461,8 +460,8 @@ public class Context {
         binary("C", BinaryMap.of((n, r) -> {
             r = r.min(n.subtract(r));
             BigDecimal den = permutation(n, r);
-            BigDecimal num = BigDecimal.ONE;
-            for (BigDecimal i = r; i.compareTo(BigDecimal.ONE) > 0; i = i.subtract(BigDecimal.ONE))
+            BigDecimal num = ONE;
+            for (BigDecimal i = r; i.compareTo(ONE) > 0; i = i.subtract(ONE))
                 num = num.multiply(i);
             return den.divide(num);
         }), "(I) C (I) -> (I) : 組合せ数");
@@ -558,7 +557,7 @@ public class Context {
                     for (int i = 0; i < elements.length; ++i) {
                         int ii = i;
                         String name = ev.variables.get(index);
-                        child.variable(name, x -> new BigDecimal[] {elements[ii]}, name);
+                        child.variable(name, x -> array(elements[ii]), name);
                         solve(index + 1);
                     }
                 }

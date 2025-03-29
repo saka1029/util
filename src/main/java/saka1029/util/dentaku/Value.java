@@ -11,6 +11,8 @@ public class Value {
 
     public static BigDecimal[] EMPTY = new BigDecimal[] {};
     public static BigDecimal[] NaN = new BigDecimal[] {};
+    public static BigDecimal ZERO = BigDecimal.ZERO;
+    public static BigDecimal ONE = BigDecimal.ONE;
     public static BigDecimal TRUE = BigDecimal.ONE;
     public static BigDecimal FALSE = BigDecimal.ZERO;
     public static BigDecimal[] TRUE_VALUE = new BigDecimal[] { TRUE };
