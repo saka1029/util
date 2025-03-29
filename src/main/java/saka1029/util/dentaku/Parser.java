@@ -53,9 +53,7 @@ public class Parser {
     Expression primary() {
         if (is(token, Type.LP)) {
             get(); // skip '('
-                   //
-                   //
-            if (is(token, Type.LP)) {
+            if (is(token, Type.RP)) {
                 get();  // skip ')'
                 return c -> EMPTY;
             }

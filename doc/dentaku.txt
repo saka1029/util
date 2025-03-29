@@ -20,7 +20,7 @@ add             = mult { ('+' | '-') mult }
 mult            = power { ('*' | '/' | '%') power }
 power           = unary [ '^' power ]
 unary           = primary | [ '@' ] UOP unary
-primary         = '(' expression ')'
+primary         = '(' [ expression ] ')'
                 | VAR
                 | NUMBER
 ````
