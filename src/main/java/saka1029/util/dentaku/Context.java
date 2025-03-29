@@ -236,11 +236,11 @@ public class Context {
         variable("EPSILON", c -> array(dec("5E-6")), "EPSILON : 許容誤差");
         variable("TODAY", c -> array(dec(date(LocalDate.now()))), "TODAY : 今日の絶対日");
         unary("+", UnaryInsert.of(BigDecimal::add, BigDecimal.ZERO), "+ (D) -> D : 合計");
-        // unary("-", UnaryInsert.of(BigDecimal::subtract, BigDecimal::negate), "- (D) -> D : 減算");
-        unary("-", UnaryMap.of(a -> a.negate()), "- (D) -> (D) : 符号反転");
+        unary("-", UnaryInsert.of(BigDecimal::subtract, BigDecimal.ZERO, BigDecimal::negate), "- (D) -> D : 減算");
+        unary("negative", UnaryMap.of(a -> a.negate()), "negative (D) -> (D) : 符号反転");
         unary("*", UnaryInsert.of(BigDecimal::multiply, BigDecimal.ONE), "* (D) -> D : 乗算");
-        // unary("/", UnaryInsert.of((l, r) -> l.divide(r, MC), a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> D : 除算");
-        unary("/", UnaryMap.of(a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> (D) : 逆数");
+        unary("/", UnaryInsert.of((l, r) -> l.divide(r, MC), BigDecimal.ONE, a -> BigDecimalMath.reciprocal(a, MC)), "/ (D) -> D : 除算");
+        unary("reciprocal", UnaryMap.of(a -> BigDecimalMath.reciprocal(a, MC)), "reciprocal (D) -> (D) : 逆数");
         unary("and", (c, a) -> {
             boolean r = true;
             for (BigDecimal e : a)
