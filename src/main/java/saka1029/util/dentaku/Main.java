@@ -207,7 +207,7 @@ public class Main {
         out.println("mult            = power { ( '*' | '/' | '%') power }");
         out.println("power           = unary [ '^' power ]");
         out.println("unary           = primary | [ '@' ] UOP unary");
-        out.println("primary         = '(' expression ')'");
+        out.println("primary         = '(' [ expression ] ')'");
         out.println("                | VAR");
         out.println("                | NUMBER");
     }
