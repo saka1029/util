@@ -522,7 +522,7 @@ public class Context {
         eval("sd x = sqrt variance x");
         eval("standard_score x = (x - ave x) / sd x * 10 + 50");
         eval("pascal n = n C iota0 n");
-        eval("c poly x = + (x ^ (count c - 1 to 0) * c)");
+        eval("c poly x = + (x ^ reverse iota0 count c * c)");
         eval("a distance b = sqrt + ((a - b) ^ 2)");
         // eval("a days b = days b - days a");
         eval("fibonacci n = 1 + sqrt 5 / 2 ^ n - ((1 - sqrt 5 / 2) ^ n) / sqrt 5");
