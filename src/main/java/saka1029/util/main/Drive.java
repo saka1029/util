@@ -60,7 +60,7 @@ public class Drive {
 
     static String USAGE = String.format(
         "USAGE:%n"
-        + "java %s [-a] IN_DIR STRING%n", Drive.class.getName()
+        + "java %s -d IN_DIR [-a] STRING%n", Drive.class.getName()
     );
 
     static void usage() {
@@ -74,6 +74,7 @@ public class Drive {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
+        Path inDir = null;
         boolean allFlag = false;
         int argsLength = args.length, i = 0;
         for (i = 0; i < argsLength; ++i)
@@ -82,14 +83,18 @@ public class Drive {
                     case "a":
                         allFlag = true;
                         break;
+                    case "d":
+                        if (++i >= argsLength)
+                            usage();
+                        inDir = Paths.get(args[i]);
+                        break;
                     default: usage();
                 }
             else
                 break;
-        if (args.length - i != 2)
+        if (args.length - i != 1 || inDir == null)
             usage();
-        Path inDir = Paths.get(args[i]);
-        String string = args[i + 1];
+        String string = args[i];
         find(inDir, string, allFlag);
         // System.out.printf("inDir=%s string=%s%n", inDir, string);
     }
