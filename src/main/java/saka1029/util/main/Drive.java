@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,7 +22,14 @@ public class Drive {
 
     static String[] names = new String[64];
 
-    static void find(Path inFile, Pattern pattern) {
+    static boolean found(Pattern pattern, int start, int max) {
+        for (int i = start; i < max; ++i)
+            if (pattern.matcher(names[i]).find())
+                return true;
+        return false;
+    }
+
+    static void find(Path inFile, Pattern pattern, boolean allFlag) {
         try (BufferedReader reader = Files.newBufferedReader(inFile)) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -31,8 +37,9 @@ public class Drive {
                 int i = Integer.parseInt(f[0]);
                 String name = f[1];
                 names[i] = name;
-                Matcher m = pattern.matcher(f[1]);
-                if (m.find())
+                if (found(pattern, allFlag ? 1 : i, i + 1))
+                // Matcher m = pattern.matcher(f[1]);
+                // if (m.find())
                     System.out.println(Arrays.stream(names)
                         .limit(i + 1)
                         .collect(Collectors.joining("/")));
@@ -43,18 +50,22 @@ public class Drive {
         }
     }
 
-    static void find(Path inDir, String string) throws IOException {
+    static void find(Path inDir, String string, boolean allFlag) throws IOException {
         try (Stream<Path> walk = Files.walk(inDir)) {
             Pattern pattern = escape(string);
             walk.filter(Files::isRegularFile)
-                .forEach(p -> find(p, pattern));
+                .forEach(p -> find(p, pattern, allFlag));
         }
     }
 
     static String USAGE = String.format(
         "USAGE:%n"
-        + "java %s IN_DIR STRING%n", Drive.class.getName()
+        + "java %s [-a] IN_DIR STRING%n", Drive.class.getName()
     );
+
+    static void usage() {
+        throw new IllegalArgumentException(USAGE);
+    }
 
     /**
      * USAGE:
@@ -63,11 +74,23 @@ public class Drive {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        if (args.length != 2)
-            throw new IllegalArgumentException(USAGE);
-        Path inDir = Paths.get(args[0]);
-        String string = args[1];
-        find(inDir, string);
+        boolean allFlag = false;
+        int argsLength = args.length, i = 0;
+        for (i = 0; i < argsLength; ++i)
+            if (args[i].startsWith("-"))
+                switch(args[i].substring(1)) {
+                    case "a":
+                        allFlag = true;
+                        break;
+                    default: usage();
+                }
+            else
+                break;
+        if (args.length - i != 2)
+            usage();
+        Path inDir = Paths.get(args[i]);
+        String string = args[i + 1];
+        find(inDir, string, allFlag);
         // System.out.printf("inDir=%s string=%s%n", inDir, string);
     }
 }
