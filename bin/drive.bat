@@ -1,3 +1,4 @@
+@echo off
 setlocal
 set BASE=%USERPROFILE%\git
 set T=%BASE%\util\drive
