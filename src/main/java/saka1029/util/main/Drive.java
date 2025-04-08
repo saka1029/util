@@ -60,7 +60,10 @@ public class Drive {
 
     static String USAGE = String.format(
         "USAGE:%n"
-        + "java %s -d IN_DIR [-a] STRING%n", Drive.class.getName()
+        + "java %s -d IN_DIR [-a] STRING%n"
+        + "  -d IN_DIR : ドライブファイルのあるディレクトリを指定する%n"
+        + "  -a        : パス名をすべて検索する%n"
+        + "              (通常はディレクトリ/ファイル名のみを検索する)%n", Drive.class.getName()
     );
 
     static void usage() {

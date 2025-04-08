@@ -39,7 +39,7 @@
             "request": "launch",
             "mainClass": "saka1029.util.main.Drive",
             "projectName": "util",
-            "args": "-a -d drive LinuxImage"
+            "args": "-a -x drive LinuxImage"
         },
         {
             "type": "java",
