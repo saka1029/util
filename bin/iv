@@ -1,4 +1,4 @@
 #!/bin/sh
-BASE=~/git/util
-CP=$BASE/target/util-1.0-jar-with-dependencies.jar
+B=~/git/util/target
+CP=$B/util-1.0.jar:$B/dependency/*
 java -cp $CP saka1029.util.main.ImageViewer "$@"

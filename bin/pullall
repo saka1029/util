@@ -1,5 +1,4 @@
 #!/bin/sh
-
 for f in ~/git/*/
 do
     echo '***' $f
