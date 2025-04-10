@@ -1,4 +1,4 @@
 #!/bin/sh
 T=~/git/util/target
-CP=$T/util-1.0.jar:$T/dependency/*
+CP=$T/classes:$T/dependency/*
 java -cp $CP saka1029.util.dentaku.Main "$@"
