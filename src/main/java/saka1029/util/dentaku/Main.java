@@ -19,12 +19,16 @@ import org.jline.reader.Completer;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 public class Main {
+
+    static final String EOF_ENTERED = "!EOF_ENTERED!";
+    static final String INTERRUPTED = "!INTERRUPTED!";
 
     interface Term extends Closeable {
         boolean interactive();
@@ -164,8 +168,10 @@ public class Main {
         public String readLine() throws IOException {
             try {
                 return lineReader.readLine(prompt);
-            } catch (EndOfFileException e) {
-                return null;
+            } catch (EndOfFileException e) {        // Ctrl-D pressed
+                return EOF_ENTERED;
+            } catch (UserInterruptException e) {    // Ctrl-C pressed
+                return INTERRUPTED;
             }
         }
 
@@ -276,11 +282,9 @@ public class Main {
         PrintWriter out = term.writer();
         // Context context = Context.of();
         if (term.interactive())
-            out.println("Type '.help' for help, control-D to exit.");
+            out.println("Type '.help' for help, CTRL-D to exit, CTRL-C to interrupt.");
         L: while (true) {
             String line = term.readLine();
-            if (line == null)
-                break;
             line = line.trim();
             if (line.isEmpty())
                 continue;
@@ -289,12 +293,16 @@ public class Main {
                 case ".quit":
                 case ".exit":
                 case ".end":
+                case EOF_ENTERED:
                     break L;
                 case ".help":
                     help(context, out, items);
                     continue L;
                 case ".solve":
                     solve(context, line.replaceFirst("\\S+\\s*", ""), out);
+                    continue L;
+                case INTERRUPTED:
+                    out.println("(interrupted)");
                     continue L;
             }
             try {
