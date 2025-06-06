@@ -27,8 +27,8 @@ import org.jline.terminal.TerminalBuilder;
 
 public class Main {
 
-    static final String EOF_ENTERED = "!EOF_ENTERED!";
-    static final String INTERRUPTED = "!INTERRUPTED!";
+    static final String EOF_ENTERED = ".EOF_ENTERED.";
+    static final String INTERRUPTED = ".INTERRUPTED.";
 
     interface Term extends Closeable {
         boolean interactive();
