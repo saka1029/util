@@ -79,9 +79,13 @@ public class Tokenizer {
         get();
     }
 
+    String character(int ch ) {
+        return ch == -1 ? "EOF" : "'%c'".formatted(ch);
+    }
+
     void digits() {
         if (!isDigit(ch))
-            error("Digit expected but '%c'", ch);
+            error("Digit expected but %s", character(ch));
         while (isDigit(ch))
             appendGet();
     }
@@ -156,7 +160,7 @@ public class Tokenizer {
             default -> isDigit(ch) ?  number()
                 : isIdFirst(ch) ? id()
                 : isSpecial(ch) ? special()
-                : error("Unknown character '%c'(0x%04X)", ch, ch);
+                : error("Unknown character %s", character(ch));
         };
         return new Token(type, new String(input, start, current - start));
     }
