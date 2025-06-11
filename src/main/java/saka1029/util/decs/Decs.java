@@ -1,6 +1,7 @@
 package saka1029.util.decs;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.function.BinaryOperator;
 import java.util.function.UnaryOperator;
@@ -8,11 +9,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
+
 public class Decs {
 
     public static final Decs EMPTY = Decs.of();
     public static final BigDecimal TRUE = BigDecimal.ONE;
     public static final BigDecimal FALSE = BigDecimal.ZERO;
+    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
 
     final BigDecimal[] elements;
 
@@ -58,30 +62,47 @@ public class Decs {
                 .collect(Collectors.joining(", "));
     }
 
+    // Unary method
+
+    public Decs reduce(BigDecimal unit, BinaryOperator<BigDecimal> op) {
+        return Decs.of(stream().reduce(unit, op));
+    }
+
+    public Decs reduce(BigDecimal unit, UnaryOperator<BigDecimal> one,BinaryOperator<BigDecimal> many) {
+        switch (size()) {
+            case 0: return Decs.of(unit);
+            case 1: return Decs.of(one.apply(elements[0]));
+            default: return Decs.of(stream().reduce(many).get());
+        }
+    }
+
     public Decs map(UnaryOperator<BigDecimal> mapper) {
         return Decs.of(stream().map(mapper));
     }
 
-    // Unary operators
-
     public Decs sum() {
-        return Decs.of(
-            stream().reduce(BigDecimal.ZERO, (a, b) -> a.add(b))
-        );
+        return reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
     }
 
     public Decs subtract() {
-        return Decs.of(
-            switch (size()) {
-                case 0, 1 -> stream().reduce(BigDecimal.ZERO, (a, b) -> a.subtract(b));
-                default -> stream().reduce((a, b) -> a.subtract(b)).get();
-            }
-        );
+        return reduce(BigDecimal.ZERO, BigDecimal::negate, (a, b) -> a.subtract(b));
+    }
+
+    public Decs mult() {
+        return reduce(BigDecimal.ONE, (a, b) -> a.multiply(b));
+    }
+
+    public Decs divide() {
+        return reduce(BigDecimal.ONE,
+            d -> BigDecimalMath.reciprocal(d, MATH_CONTEXT),
+            (a, b) -> a.divide(b, MATH_CONTEXT));
     }
 
     public Decs negate() {
         return map(BigDecimal::negate);
     }
+
+    // Binary method
 
     public Decs zip(BinaryOperator<BigDecimal> op, Decs right) {
         int lsize = size(), rsize = right.size();

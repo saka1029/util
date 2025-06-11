@@ -63,6 +63,22 @@ public class TestDecs {
     }
 
     @Test
+    public void testMult() {
+        assertEquals(decs(d(1)), decs().mult());
+        assertEquals(decs(d(1)), decs(d(1)).mult());
+        assertEquals(decs(d(3)), decs(d(1), d(3)).mult());
+        assertEquals(decs(d(15)), decs(d(1), d(3), d(5)).mult());
+    }
+
+    @Test
+    public void testDivide() {
+        assertEquals(decs(d(1)), decs().divide());
+        assertEquals(decs(d("0.5")), decs(d(2)).divide());
+        assertEquals(decs(d("0.25")), decs(d(1), d(4)).divide());
+        assertEquals(decs(d("0.1")), decs(d(1), d(2), d(5)).divide());
+    }
+
+    @Test
     public void testZip() {
         BinaryOperator<BigDecimal> op = (a, b) -> a.add(b);
         assertEquals(decs(), decs().zip(op, decs()));
