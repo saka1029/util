@@ -2,12 +2,15 @@ package test.saka1029.decs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.util.function.BinaryOperator;
 
 import org.junit.Test;
 
 import saka1029.util.decs.Decs;
+import saka1029.util.decs.DecsException;
 
 public class TestDecs {
 
@@ -29,7 +32,7 @@ public class TestDecs {
 
     @Test
     public void testToString() {
-        assertEquals("", decs().toString());
+        assertEquals("Empty", decs().toString());
         assertEquals("1", decs(d(1)).toString());
         assertEquals("1, 3", decs(d(1), d(3)).toString());
         assertEquals("1, 3, 5", decs(d(1), d(3), d(5)).toString());
@@ -57,6 +60,26 @@ public class TestDecs {
         assertEquals(decs(d(-1)), decs(d(1)).negate());
         assertEquals(decs(d(-1), d(-3)), decs(d(1), d(3)).negate());
         assertEquals(decs(d(-1), d(-3), d(-5)), decs(d(1), d(3), d(5)).negate());
+    }
+
+    @Test
+    public void testZip() {
+        BinaryOperator<BigDecimal> op = (a, b) -> a.add(b);
+        assertEquals(decs(), decs().zip(op, decs()));
+        assertEquals(decs(d(1)), decs().zip(op, decs(d(1))));
+        assertEquals(decs(d(1), d(2)), decs().zip(op, decs(d(1), d(2))));
+        assertEquals(decs(d(10)), decs(d(10)).zip(op, decs()));
+        assertEquals(decs(d(11)), decs(d(10)).zip(op, decs(d(1))));
+        assertEquals(decs(d(11), d(12)), decs(d(10)).zip(op, decs(d(1), d(2))));
+        assertEquals(decs(d(10), d(20)), decs(d(10), d(20)).zip(op, decs()));
+        assertEquals(decs(d(11), d(21)), decs(d(10), d(20)).zip(op, decs(d(1))));
+        assertEquals(decs(d(11), d(22)), decs(d(10), d(20)).zip(op, decs(d(1), d(2))));
+        try {
+            decs(d(10), d(20), d(30)).zip(op, decs(d(1), d(2)));
+            fail();
+        } catch (DecsException e) {
+            assertEquals("zip: Invalid size l=(10, 20, 30) r=(1, 2)", e.getMessage());
+        }
     }
 
 }
