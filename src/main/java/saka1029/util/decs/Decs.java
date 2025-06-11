@@ -87,13 +87,10 @@ public class Decs {
         int lsize = size(), rsize = right.size();
         if (lsize == 0)
             return right;
-        else if (lsize == 1)
-            if (rsize == 0)
-                return this;
-            else
-                return right.map(d -> op.apply(elements[0], d));
         else if (rsize == 0)
             return this;
+        else if (lsize == 1)
+            return right.map(d -> op.apply(elements[0], d));
         else if (rsize == 1)
             return this.map(d -> op.apply(d, right.elements[0]));
         else if (lsize == rsize)
