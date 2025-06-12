@@ -13,111 +13,108 @@ import ch.obermuhlner.math.big.BigDecimalMath;
 
 public class Decs {
 
-    public static final Decs EMPTY = Decs.of();
+    private Decs() {
+    }
+
+    public static final BigDecimal[] EMPTY = new BigDecimal[] {};
     public static final BigDecimal TRUE = BigDecimal.ONE;
     public static final BigDecimal FALSE = BigDecimal.ZERO;
     public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
 
-    final BigDecimal[] elements;
-
-    int size() {
-        return elements.length;
-    }
-
-    BigDecimal get(int index) {
-        return elements[index];
-    }
-
-    Stream<BigDecimal> stream() {
+    public static Stream<BigDecimal> stream(BigDecimal[] elements) {
         return Arrays.stream(elements);
     }
 
-    Decs(BigDecimal... elements) {
-        this.elements = elements;
+    public static BigDecimal[] decs(BigDecimal... elements) {
+        return elements.clone();
     }
 
-    public static Decs of(BigDecimal... elements) {
-        return new Decs(elements);
+    public static BigDecimal[] decs(Stream<BigDecimal> stream) {
+        return stream.toArray(BigDecimal[]::new);
     }
 
-    public static Decs of(Stream<BigDecimal> stream) {
-        return Decs.of(stream.toArray(BigDecimal[]::new));
+    public static int hashCode(BigDecimal[] decs) {
+        return Arrays.hashCode(decs);
     }
 
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(elements);
+    public static boolean equals(BigDecimal[] decs, BigDecimal[] right) {
+        return Arrays.equals(decs, right);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Decs d && Arrays.equals(d.elements, elements);
-    }
-
-    @Override
-    public String toString() {
-        return size() == 0 ? "Empty"
-            : stream()
-                .map(d -> d.toString())
-                .collect(Collectors.joining(", "));
+    public static String string(BigDecimal[] decs) {
+        return stream(decs)
+            .map(d -> d.toString())
+            .collect(Collectors.joining(", ", "(", ")"));
     }
 
     // Unary method
 
-    public Decs reduce(BigDecimal unit, BinaryOperator<BigDecimal> op) {
-        return Decs.of(stream().reduce(unit, op));
+    public static BigDecimal[] reduce(BigDecimal[] decs,
+            BigDecimal unit, BinaryOperator<BigDecimal> op) {
+        return decs(stream(decs).reduce(unit, op));
     }
 
-    public Decs reduce(BigDecimal unit, UnaryOperator<BigDecimal> one,BinaryOperator<BigDecimal> many) {
-        switch (size()) {
-            case 0: return Decs.of(unit);
-            case 1: return Decs.of(one.apply(elements[0]));
-            default: return Decs.of(stream().reduce(many).get());
+    public static BigDecimal[] reduce(BigDecimal[] decs,
+            BigDecimal unit, UnaryOperator<BigDecimal> one,BinaryOperator<BigDecimal> many) {
+        switch (decs.length) {
+            case 0: return decs(unit);
+            case 1: return decs(one.apply(decs[0]));
+            default: return decs(stream(decs).reduce(many).get());
         }
     }
 
-    public Decs map(UnaryOperator<BigDecimal> mapper) {
-        return Decs.of(stream().map(mapper));
+    public static BigDecimal[] map(BigDecimal[] decs, UnaryOperator<BigDecimal> mapper) {
+        return decs(stream(decs).map(mapper));
     }
 
-    public Decs sum() {
-        return reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
+    public static BigDecimal[] sum(BigDecimal[] decs) {
+        return reduce(decs, BigDecimal.ZERO, (a, b) -> a.add(b));
     }
 
-    public Decs subtract() {
-        return reduce(BigDecimal.ZERO, BigDecimal::negate, (a, b) -> a.subtract(b));
+    public static BigDecimal[] subtract(BigDecimal[] decs) {
+        return reduce(decs, BigDecimal.ZERO, BigDecimal::negate, (a, b) -> a.subtract(b));
     }
 
-    public Decs mult() {
-        return reduce(BigDecimal.ONE, (a, b) -> a.multiply(b));
+    public static BigDecimal[] mult(BigDecimal[] decs) {
+        return reduce(decs, BigDecimal.ONE, (a, b) -> a.multiply(b));
     }
 
-    public Decs divide() {
-        return reduce(BigDecimal.ONE,
+    public static BigDecimal[] divide(BigDecimal[] decs) {
+        return reduce(decs, BigDecimal.ONE,
             d -> BigDecimalMath.reciprocal(d, MATH_CONTEXT),
             (a, b) -> a.divide(b, MATH_CONTEXT));
     }
 
-    public Decs negate() {
-        return map(BigDecimal::negate);
+    public static BigDecimal[] negate(BigDecimal[] decs) {
+        return map(decs, BigDecimal::negate);
     }
 
     // Binary method
 
-    public Decs zip(BinaryOperator<BigDecimal> op, Decs right) {
-        int lsize = size(), rsize = right.size();
+    public static BigDecimal[] zip(BigDecimal[] left, BigDecimal[] right,
+            BinaryOperator<BigDecimal> op) {
+        int lsize = left.length, rsize = right.length;
         if (lsize == 0)
             return right;
         else if (rsize == 0)
-            return this;
+            return left;
         else if (lsize == 1)
-            return right.map(d -> op.apply(elements[0], d));
+            return map(right, d -> op.apply(left[0], d));
         else if (rsize == 1)
-            return this.map(d -> op.apply(d, right.elements[0]));
+            return map(left, d -> op.apply(d, right[0]));
         else if (lsize == rsize)
-            return Decs.of(IntStream.range(0, lsize)
-                .mapToObj(i -> op.apply(elements[i], right.elements[i])));
+            return decs(IntStream.range(0, lsize)
+                .mapToObj(i -> op.apply(left[i], right[i])));
         else
-            throw new DecsException("zip: Invalid size l=(%s) r=(%s)", this, right);
+            throw new DecsException(
+                "zip: Invalid size l=%s r=%s", string(left), string(right));
+    }
+
+    public static BigDecimal[] add(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, BigDecimal::add);
+    }
+
+    public static BigDecimal[] subtract(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, BigDecimal::subtract);
     }
 }
