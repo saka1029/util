@@ -113,7 +113,7 @@ public class TestDecs {
 
     @Test
     public void testSubtractBinary() {
-        assertArrayEquals(decs(), subtract(decs(), decs()));
+        assertArrayEquals(decs(""), subtract(decs(""), decs("")));
         assertArrayEquals(decs("1"), subtract(decs(), decs("1")));
         assertArrayEquals(decs("1 2"), subtract(decs(), decs("1 2")));
         assertArrayEquals(decs("10"), subtract(decs("10"), decs("")));
@@ -122,5 +122,45 @@ public class TestDecs {
         assertArrayEquals(decs("10 20"), subtract(decs("10 20"), decs("")));
         assertArrayEquals(decs("9 19"), subtract(decs("10 20"), decs("1")));
         assertArrayEquals(decs("9 18"), subtract(decs("10 20"), decs("1 2")));
+    }
+
+    @Test
+    public void testEqBinary() {
+        assertArrayEquals(decs("1"), eq(decs("1"), decs("1")));
+        assertArrayEquals(decs("0"), eq(decs("1"), decs("2")));
+        assertArrayEquals(decs("0"), eq(decs("2"), decs("1")));
+        assertArrayEquals(decs("1 0"), eq(decs("1 2"), decs("1 1")));
+        assertArrayEquals(decs("0 1"), eq(decs("1 1"), decs("2 1")));
+        assertArrayEquals(decs("0 1"), eq(decs("2 1"), decs("1 1")));
+    }
+
+    @Test
+    public void testNe() {
+        assertArrayEquals(decs("0"), ne(decs("1"), decs("1")));
+        assertArrayEquals(decs("1"), ne(decs("1"), decs("2")));
+        assertArrayEquals(decs("1"), ne(decs("2"), decs("1")));
+        assertArrayEquals(decs("0 1"), ne(decs("1 2"), decs("1 1")));
+        assertArrayEquals(decs("1 0"), ne(decs("1 1"), decs("2 1")));
+        assertArrayEquals(decs("1 0"), ne(decs("2 1"), decs("1 1")));
+    }
+
+    @Test
+    public void testLt() {
+        assertArrayEquals(decs("0"), lt(decs("1"), decs("1")));
+        assertArrayEquals(decs("1"), lt(decs("1"), decs("2")));
+        assertArrayEquals(decs("0"), lt(decs("2"), decs("1")));
+        assertArrayEquals(decs("0 0"), lt(decs("1 2"), decs("1 1")));
+        assertArrayEquals(decs("1 0"), lt(decs("1 1"), decs("2 1")));
+        assertArrayEquals(decs("0 0"), lt(decs("2 1"), decs("1 1")));
+    }
+
+    @Test
+    public void testLe() {
+        assertArrayEquals(decs("1"), le(decs("1"), decs("1")));
+        assertArrayEquals(decs("1"), le(decs("1"), decs("2")));
+        assertArrayEquals(decs("0"), le(decs("2"), decs("1")));
+        assertArrayEquals(decs("1 0"), le(decs("1 2"), decs("1 1")));
+        assertArrayEquals(decs("1 1"), le(decs("1 1"), decs("2 1")));
+        assertArrayEquals(decs("0 1"), le(decs("2 1"), decs("1 1")));
     }
 }
