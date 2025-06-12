@@ -20,9 +20,9 @@ public class Decs {
     public static final BigDecimal[] EMPTY = new BigDecimal[] {};
     public static final BigDecimal TRUE = BigDecimal.ONE;
     public static final BigDecimal FALSE = BigDecimal.ZERO;
-    public static final BigDecimal NEGATIVE = BigDecimal.valueOf(-1L);
+    public static final BigDecimal MINUS_ONE = BigDecimal.valueOf(-1L);
     public static final BigDecimal ZERO = BigDecimal.ZERO;
-    public static final BigDecimal POSITIVE = BigDecimal.ONE;
+    public static final BigDecimal ONE = BigDecimal.ONE;
     public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
 
     public static Stream<BigDecimal> stream(BigDecimal[] elements) {
@@ -78,7 +78,11 @@ public class Decs {
             .collect(Collectors.joining(", ", "(", ")"));
     }
 
-    // Unary method
+    static boolean bool(BigDecimal d) {
+        return !d.equals(ZERO);
+    }
+
+    // unary reduce method
 
     public static BigDecimal[] reduce(BigDecimal[] decs,
             BigDecimal unit, BinaryOperator<BigDecimal> op) {
@@ -94,11 +98,7 @@ public class Decs {
         }
     }
 
-    public static BigDecimal[] map(BigDecimal[] decs, UnaryOperator<BigDecimal> mapper) {
-        return decs(stream(decs).map(mapper));
-    }
-
-    public static BigDecimal[] sum(BigDecimal[] decs) {
+    public static BigDecimal[] add(BigDecimal[] decs) {
         return reduce(decs, BigDecimal.ZERO, (a, b) -> a.add(b));
     }
 
@@ -116,11 +116,29 @@ public class Decs {
             (a, b) -> a.divide(b, MATH_CONTEXT));
     }
 
+    public static BigDecimal[] and(BigDecimal[] decs) {
+        return reduce(decs, ONE, (a, b) -> dec(bool(a) && bool(b)));
+    }
+
+    public static BigDecimal[] or(BigDecimal[] decs) {
+        return reduce(decs, ZERO, (a, b) -> dec(bool(a) || bool(b)));
+    }
+
+    // unary map method
+
+    public static BigDecimal[] map(BigDecimal[] decs, UnaryOperator<BigDecimal> mapper) {
+        return decs(stream(decs).map(mapper));
+    }
+
     public static BigDecimal[] negate(BigDecimal[] decs) {
         return map(decs, BigDecimal::negate);
     }
 
-    // Binary method
+    public static BigDecimal[] not(BigDecimal[] decs) {
+        return map(decs, a -> dec(!bool(a)));
+    }
+
+    // binary zip method
 
     public static BigDecimal[] zip(BigDecimal[] left, BigDecimal[] right,
             BinaryOperator<BigDecimal> op) {
@@ -150,9 +168,9 @@ public class Decs {
     }
 
     public static BigDecimal sign(int sign) {
-        return sign < 0 ? NEGATIVE
+        return sign < 0 ? MINUS_ONE
             : sign == 0 ? ZERO
-            : POSITIVE;
+            : ONE;
     }
 
     public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right) {
