@@ -64,34 +64,34 @@ public class TestDecs {
 
     @Test
     public void testMultUnary() {
-        assertArrayEquals(decs(dec(1)), mult(decs()));
-        assertArrayEquals(decs(dec(1)), mult(decs(dec(1))));
-        assertArrayEquals(decs(dec(3)), mult(decs(dec(1), dec(3))));
-        assertArrayEquals(decs(dec(15)), mult(decs(dec(1), dec(3), dec(5))));
+        assertArrayEquals(decs("1"), mult(decs("")));
+        assertArrayEquals(decs("1"), mult(decs("1")));
+        assertArrayEquals(decs("3"), mult(decs("1 3")));
+        assertArrayEquals(decs("15"), mult(decs("1 3 5")));
     }
 
     @Test
     public void testDivideUnary() {
-        assertArrayEquals(decs(dec(1)), divide(decs()));
-        assertArrayEquals(decs(dec("0.5")), divide(decs(dec(2))));
-        assertArrayEquals(decs(dec("0.25")), divide(decs(dec(1), dec(4))));
-        assertArrayEquals(decs(dec("0.1")), divide(decs(dec(1), dec(2), dec(5))));
+        assertArrayEquals(decs("1"), divide(decs("")));
+        assertArrayEquals(decs("0.5"), divide(decs("2")));
+        assertArrayEquals(decs("0.25"), divide(decs("1 4")));
+        assertArrayEquals(decs("0.1"), divide(decs("1 2 5")));
     }
 
     @Test
     public void testZip() {
         BinaryOperator<BigDecimal> op = (a, b) -> a.add(b);
-        assertArrayEquals(decs(), zip(decs(), decs(), op));
-        assertArrayEquals(decs(dec(1)), zip(decs(), decs(dec(1)), op));
-        assertArrayEquals(decs(dec(1), dec(2)), zip(decs(), decs(dec(1), dec(2)), op));
-        assertArrayEquals(decs(dec(10)), zip(decs(dec(10)), decs(), op));
-        assertArrayEquals(decs(dec(11)), zip(decs(dec(10)), decs(dec(1)), op));
-        assertArrayEquals(decs(dec(11), dec(12)), zip(decs(dec(10)), decs(dec(1), dec(2)), op));
-        assertArrayEquals(decs(dec(10), dec(20)), zip(decs(dec(10), dec(20)), decs(), op));
-        assertArrayEquals(decs(dec(11), dec(21)), zip(decs(dec(10), dec(20)), decs(dec(1)), op));
-        assertArrayEquals(decs(dec(11), dec(22)), zip(decs(dec(10), dec(20)), decs(dec(1), dec(2)), op));
+        assertArrayEquals(decs(), zip(decs(""), decs(""), op));
+        assertArrayEquals(decs("1"), zip(decs(""), decs("1"), op));
+        assertArrayEquals(decs("1 2"), zip(decs(""), decs("1 2"), op));
+        assertArrayEquals(decs("10"), zip(decs("10"), decs(""), op));
+        assertArrayEquals(decs("11"), zip(decs("10"), decs("1"), op));
+        assertArrayEquals(decs("11 12"), zip(decs("10"), decs("1 2"), op));
+        assertArrayEquals(decs("10 20"), zip(decs("10 20"), decs(""), op));
+        assertArrayEquals(decs("11 21"), zip(decs("10 20"), decs("1"), op));
+        assertArrayEquals(decs("11 22"), zip(decs("10 20"), decs("1 2"), op));
         try {
-            zip(decs(dec(10), dec(20), dec(30)), decs(dec(1), dec(2)), op);
+            zip(decs("10 20 30"), decs("1 2"), op);
             fail();
         } catch (DecsException e) {
             assertEquals("zip: Invalid size l=(10, 20, 30) r=(1, 2)", e.getMessage());
@@ -100,27 +100,27 @@ public class TestDecs {
 
     @Test
     public void testAddBinary() {
-        assertArrayEquals(decs(), add(decs(), decs()));
-        assertArrayEquals(decs(dec(1)), add(decs(), decs(dec(1))));
-        assertArrayEquals(decs(dec(1), dec(2)), add(decs(), decs(dec(1), dec(2))));
-        assertArrayEquals(decs(dec(10)), add(decs(dec(10)), decs()));
-        assertArrayEquals(decs(dec(11)), add(decs(dec(10)), decs(dec(1))));
-        assertArrayEquals(decs(dec(11), dec(12)), add(decs(dec(10)), decs(dec(1), dec(2))));
-        assertArrayEquals(decs(dec(10), dec(20)), add(decs(dec(10), dec(20)), decs()));
-        assertArrayEquals(decs(dec(11), dec(21)), add(decs(dec(10), dec(20)), decs(dec(1))));
-        assertArrayEquals(decs(dec(11), dec(22)), add(decs(dec(10), dec(20)), decs(dec(1), dec(2))));
+        assertArrayEquals(decs(""), add(decs(""), decs("")));
+        assertArrayEquals(decs("1"), add(decs(""), decs("1")));
+        assertArrayEquals(decs("1 2"), add(decs(""), decs("1 2")));
+        assertArrayEquals(decs("10"), add(decs("10"), decs("")));
+        assertArrayEquals(decs("11"), add(decs("10"), decs("1")));
+        assertArrayEquals(decs("11 12"), add(decs("10"), decs("1 2")));
+        assertArrayEquals(decs("10 20"), add(decs("10 20"), decs("")));
+        assertArrayEquals(decs("11 21"), add(decs("10 20"), decs("1")));
+        assertArrayEquals(decs("11 22"), add(decs("10 20"), decs("1 2")));
     }
 
     @Test
     public void testSubtractBinary() {
         assertArrayEquals(decs(), subtract(decs(), decs()));
-        assertArrayEquals(decs(dec(1)), subtract(decs(), decs(dec(1))));
-        assertArrayEquals(decs(dec(1), dec(2)), subtract(decs(), decs(dec(1), dec(2))));
-        assertArrayEquals(decs(dec(10)), subtract(decs(dec(10)), decs()));
-        assertArrayEquals(decs(dec(9)), subtract(decs(dec(10)), decs(dec(1))));
-        assertArrayEquals(decs(dec(9), dec(8)), subtract(decs(dec(10)), decs(dec(1), dec(2))));
-        assertArrayEquals(decs(dec(10), dec(20)), subtract(decs(dec(10), dec(20)), decs()));
-        assertArrayEquals(decs(dec(9), dec(19)), subtract(decs(dec(10), dec(20)), decs(dec(1))));
-        assertArrayEquals(decs(dec(9), dec(18)), subtract(decs(dec(10), dec(20)), decs(dec(1), dec(2))));
+        assertArrayEquals(decs("1"), subtract(decs(), decs("1")));
+        assertArrayEquals(decs("1 2"), subtract(decs(), decs("1 2")));
+        assertArrayEquals(decs("10"), subtract(decs("10"), decs("")));
+        assertArrayEquals(decs("9"), subtract(decs("10"), decs("1")));
+        assertArrayEquals(decs("9 8"), subtract(decs("10"), decs("1 2")));
+        assertArrayEquals(decs("10 20"), subtract(decs("10 20"), decs("")));
+        assertArrayEquals(decs("9 19"), subtract(decs("10 20"), decs("1")));
+        assertArrayEquals(decs("9 18"), subtract(decs("10 20"), decs("1 2")));
     }
 }
