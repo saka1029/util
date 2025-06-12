@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,10 +20,33 @@ public class Decs {
     public static final BigDecimal[] EMPTY = new BigDecimal[] {};
     public static final BigDecimal TRUE = BigDecimal.ONE;
     public static final BigDecimal FALSE = BigDecimal.ZERO;
+    public static final BigDecimal NEGATIVE = BigDecimal.valueOf(-1L);
+    public static final BigDecimal ZERO = BigDecimal.ZERO;
+    public static final BigDecimal POSITIVE = BigDecimal.ONE;
     public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
 
     public static Stream<BigDecimal> stream(BigDecimal[] elements) {
         return Arrays.stream(elements);
+    }
+
+    public static BigDecimal dec(int i) {
+        return BigDecimal.valueOf(i);
+    }
+
+    public static BigDecimal dec(long i) {
+        return BigDecimal.valueOf(i);
+    }
+
+    public static BigDecimal dec(double i) {
+        return BigDecimal.valueOf(i);
+    }
+
+    public static BigDecimal dec(String s) {
+        return new BigDecimal(s);
+    }
+
+    public static BigDecimal dec(boolean b) {
+        return b ? TRUE : FALSE;
     }
 
     public static BigDecimal[] decs(BigDecimal... elements) {
@@ -31,6 +55,13 @@ public class Decs {
 
     public static BigDecimal[] decs(Stream<BigDecimal> stream) {
         return stream.toArray(BigDecimal[]::new);
+    }
+
+    public static BigDecimal[] decs(String s) {
+        s = s.trim();
+        return s.equals("") ? EMPTY
+            : decs(Stream.of(s.split("\\s+"))
+                .map(x -> dec(x)));
     }
 
     public static int hashCode(BigDecimal[] decs) {
@@ -116,5 +147,44 @@ public class Decs {
 
     public static BigDecimal[] subtract(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, BigDecimal::subtract);
+    }
+
+    public static BigDecimal sign(int sign) {
+        return sign < 0 ? NEGATIVE
+            : sign == 0 ? ZERO
+            : POSITIVE;
+    }
+
+    public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> sign(a.compareTo(b)));
+    }
+
+    public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right,
+            Function<Integer, BigDecimal> conv) {
+        return zip(left, right, (a, b) -> conv.apply(a.compareTo(b)));
+    }
+
+    public static BigDecimal[] eq(BigDecimal[] left, BigDecimal[] right) {
+        return compare(left, right, c -> dec(c == 0));
+    }
+
+    public static BigDecimal[] ne(BigDecimal[] left, BigDecimal[] right) {
+        return compare(left, right, c -> dec(c != 0));
+    }
+
+    public static BigDecimal[] lt(BigDecimal[] left, BigDecimal[] right) {
+        return compare(left, right, c -> dec(c < 0));
+    }
+
+    public static BigDecimal[] le(BigDecimal[] left, BigDecimal[] right) {
+        return compare(left, right, c -> dec(c <= 0));
+    }
+
+    public static BigDecimal[] gt(BigDecimal[] left, BigDecimal[] right) {
+        return compare(left, right, c -> dec(c > 0));
+    }
+
+    public static BigDecimal[] ge(BigDecimal[] left, BigDecimal[] right) {
+        return compare(left, right, c -> dec(c >= 0));
     }
 }
