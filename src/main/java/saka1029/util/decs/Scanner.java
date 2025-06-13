@@ -69,6 +69,8 @@ public class Scanner {
 
     TokenType dotid() {
         get(); // skip '.'
+        if (!isAlpha(ch))
+            error("Alphabet expected but %s", str(ch));
         id();
         return TokenType.DOTID;
     }
