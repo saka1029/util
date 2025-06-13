@@ -64,9 +64,9 @@ public class Decs {
                 .map(x -> dec(x)));
     }
 
-    public static int hashCode(BigDecimal[] decs) {
-        return Arrays.hashCode(decs);
-    }
+    // public static int hashCode(BigDecimal[] decs) {
+    //     return Arrays.hashCode(decs);
+    // }
 
     public static boolean equals(BigDecimal[] decs, BigDecimal[] right) {
         return Arrays.equals(decs, right);
