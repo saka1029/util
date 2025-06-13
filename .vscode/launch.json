@@ -21,6 +21,13 @@
         },
         {
             "type": "java",
+            "name": "decs",
+            "request": "launch",
+            "mainClass": "saka1029.util.decs.Main",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
             "name": "Cal",
             "request": "launch",
             "mainClass": "saka1029.util.main.Cal",

@@ -147,7 +147,7 @@ public class Main {
         // REPL
         while (true) {
             try {
-                lineReader.readLine("input > ");
+                lineReader.readLine("    ");
                 lineReader.printAbove(parser.result);
             } catch (EndOfFileException e) {        // catch Ctrl-D
                 break;
