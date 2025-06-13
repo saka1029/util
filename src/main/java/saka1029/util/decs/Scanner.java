@@ -6,7 +6,7 @@ import java.util.List;
 public class Scanner {
 
     public enum TokenType {
-        LP, RP, COMMA,
+        LP, RP, COMMA, AT,
         PLUS, MINUS, MULT, DIV, MOD,
         EQ, NE, GT, GE, LT, LE, NOT,
         ASSIGN, NUM, ID, DOTID,
@@ -111,6 +111,7 @@ public class Scanner {
             case '(' -> get(TokenType.LP);
             case ')' -> get(TokenType.RP);
             case ',' -> get(TokenType.COMMA);
+            case '@' -> get(TokenType.AT);
             case '+' -> get(TokenType.PLUS);
             case '-' -> get(TokenType.MINUS);
             case '*' -> get(TokenType.MULT);
