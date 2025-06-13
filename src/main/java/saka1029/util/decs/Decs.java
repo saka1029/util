@@ -64,12 +64,12 @@ public class Decs {
                 .map(x -> dec(x)));
     }
 
-    // public static int hashCode(BigDecimal[] decs) {
-    //     return Arrays.hashCode(decs);
-    // }
+    public static int hashCode(BigDecimal[] decs) {
+        return java.util.Arrays.hashCode(decs);
+    }
 
     public static boolean equals(BigDecimal[] decs, BigDecimal[] right) {
-        return Arrays.equals(decs, right);
+        return java.util.Arrays.equals(decs, right);
     }
 
     public static String string(BigDecimal[] decs) {
@@ -133,9 +133,27 @@ public class Decs {
     public static BigDecimal[] negate(BigDecimal[] decs) {
         return map(decs, BigDecimal::negate);
     }
-
     public static BigDecimal[] not(BigDecimal[] decs) {
         return map(decs, a -> dec(!bool(a)));
+    }
+
+    // unary single method
+
+    public static BigDecimal[] single(BigDecimal[] decs,
+            Function<BigDecimal, BigDecimal[]> operation) {
+        if (decs.length != 1)
+            throw new DecsException("Invalid argument %s", string(decs));
+        return operation.apply(decs[0]);
+    }
+
+    public static BigDecimal[] iota(BigDecimal[] decs) {
+        return single(decs, d -> decs(IntStream.rangeClosed(1, d.intValueExact())
+            .mapToObj(i -> BigDecimal.valueOf(i))));
+    }
+
+    public static BigDecimal[] iota0(BigDecimal[] decs) {
+        return single(decs, d -> decs(IntStream.range(0, d.intValueExact())
+            .mapToObj(i -> BigDecimal.valueOf(i))));
     }
 
     // binary zip method

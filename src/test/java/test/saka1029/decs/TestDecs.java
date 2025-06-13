@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.function.BinaryOperator;
+import java.util.Arrays;
 import org.junit.Test;
 
 import saka1029.util.decs.Decs;
@@ -20,18 +21,15 @@ public class TestDecs {
     @Test
     public void testDecs() {
         assertArrayEquals(decs(), decs("   "));
-        assertArrayEquals(decs(dec(1), dec(2.34)), decs("1 2.34"));
+        assertArrayEquals(decs(dec(1), dec(3L), dec(2.34)), decs("1 3 2.34"));
     }
 
-    // @Test
-    // public void testHashCode() {
-    //     assertEquals(Arrays.hashCode(EMPTY), Decs.hashCode(decs("")));
-    //     assertEquals(541, Arrays.hashCode(new BigDecimal[] {new BigDecimal("1")}));
-    //     assertEquals(541, Arrays.hashCode(decs("1")));
-    //     assertEquals(62, Decs.hashCode(decs("1")));
-    //     assertEquals(Arrays.hashCode(decs(dec("1"))), Decs.hashCode(decs("1")));
-    //     assertEquals(Arrays.hashCode(decs(dec(1), dec(2))), Decs.hashCode(decs("1 2")));
-    // }
+    @Test
+    public void testHashCode() {
+        assertEquals(Arrays.hashCode(EMPTY), Decs.hashCode(decs("")));
+        assertEquals(Arrays.hashCode(decs(dec("1"))), Decs.hashCode(decs("1")));
+        assertEquals(Arrays.hashCode(decs(dec(1), dec(2))), Decs.hashCode(decs("1 2")));
+    }
 
     @Test
     public void testEqual() {
@@ -75,14 +73,6 @@ public class TestDecs {
     }
 
     @Test
-    public void testNegateUnary() {
-        assertArrayEquals(decs(""), negate(decs("")));
-        assertArrayEquals(decs("-1"), negate(decs("1")));
-        assertArrayEquals(decs("-1 -3"), negate(decs("1 3")));
-        assertArrayEquals(decs("-1 -3 -5"), negate(decs("1 3 5")));
-    }
-
-    @Test
     public void testMultUnary() {
         assertArrayEquals(decs("1"), mult(decs("")));
         assertArrayEquals(decs("1"), mult(decs("1")));
@@ -96,14 +86,6 @@ public class TestDecs {
         assertArrayEquals(decs("0.5"), divide(decs("2")));
         assertArrayEquals(decs("0.25"), divide(decs("1 4")));
         assertArrayEquals(decs("0.1"), divide(decs("1 2 5")));
-    }
-
-    @Test
-    public void testNotUnary() {
-        assertArrayEquals(decs(""), not(decs("")));
-        assertArrayEquals(decs("0"), not(decs("3")));
-        assertArrayEquals(decs("0 1"), not(decs("3 0")));
-        assertArrayEquals(decs("1 0"), not(decs("0 3")));
     }
 
     @Test
@@ -126,6 +108,40 @@ public class TestDecs {
         assertArrayEquals(decs("1"), or(decs("2 0")));
         assertArrayEquals(decs("1"), or(decs("0 2")));
         assertArrayEquals(decs("0"), or(decs("0 0")));
+    }
+
+    @Test
+    public void testNegateUnary() {
+        assertArrayEquals(decs(""), negate(decs("")));
+        assertArrayEquals(decs("-1"), negate(decs("1")));
+        assertArrayEquals(decs("-1 -3"), negate(decs("1 3")));
+        assertArrayEquals(decs("-1 -3 -5"), negate(decs("1 3 5")));
+    }
+
+    @Test
+    public void testNotUnary() {
+        assertArrayEquals(decs(""), not(decs("")));
+        assertArrayEquals(decs("0"), not(decs("3")));
+        assertArrayEquals(decs("0 1"), not(decs("3 0")));
+        assertArrayEquals(decs("1 0"), not(decs("0 3")));
+    }
+
+    @Test
+    public void testIotaUnary() {
+        assertArrayEquals(decs("1 2 3"), iota(decs("3")));
+        assertArrayEquals(decs(""), iota(decs("-3")));
+        try {
+            iota(decs("1 2"));
+            fail();
+        } catch (DecsException e) {
+            assertEquals("Invalid argument (1, 2)", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testIota0Unary() {
+        assertArrayEquals(decs("0 1 2"), iota0(decs("3")));
+        assertArrayEquals(decs(""), iota0(decs("-3")));
     }
 
     @Test
