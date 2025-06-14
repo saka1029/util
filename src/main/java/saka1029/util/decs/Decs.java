@@ -23,7 +23,8 @@ public class Decs {
     public static final BigDecimal MINUS_ONE = BigDecimal.valueOf(-1L);
     public static final BigDecimal ZERO = BigDecimal.ZERO;
     public static final BigDecimal ONE = BigDecimal.ONE;
-    public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
+    // public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
+    public static final MathContext MATH_CONTEXT = new MathContext(100);
 
     public static Stream<BigDecimal> stream(BigDecimal[] elements) {
         return Arrays.stream(elements);
@@ -118,9 +119,9 @@ public class Decs {
 
     public static BigDecimal pow(BigDecimal left, BigDecimal right) {
         System.out.printf("pow(%s, %s)%n", left, right);
-        return BigDecimalMath.isLongValue(left)
+        return BigDecimalMath.isLongValue(right)
                 ? BigDecimalMath.pow(left, right.longValue(), MATH_CONTEXT)
-                : BigDecimalMath.pow(left, right, MATH_CONTEXT).stripTrailingZeros();
+                : BigDecimalMath.pow(left, right, MATH_CONTEXT);
     }
 
     /**
