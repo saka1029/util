@@ -116,6 +116,24 @@ public class Decs {
             (a, b) -> a.divide(b, MATH_CONTEXT));
     }
 
+    public static BigDecimal pow(BigDecimal left, BigDecimal right) {
+        return BigDecimalMath.isLongValue(left)
+                ? BigDecimalMath.pow(left, right.longValue(), MATH_CONTEXT)
+                : BigDecimalMath.pow(left, right, MATH_CONTEXT).stripTrailingZeros();
+    }
+
+    /**
+     * べき乗を計算する。
+     * 右結合である点に注意する。
+     * pow(2, 3, 2) = 2 ^ (3 ^ 2) = 512
+     * 
+     * @param decs
+     * @return
+     */
+    public static BigDecimal[] pow(BigDecimal[] decs) {
+        return reduce(reverse(decs), ONE, (a, b) -> pow(b, a));
+    }
+
     public static BigDecimal[] and(BigDecimal[] decs) {
         return reduce(decs, ONE, (a, b) -> dec(bool(a) && bool(b)));
     }
@@ -156,6 +174,16 @@ public class Decs {
             .mapToObj(i -> BigDecimal.valueOf(i))));
     }
 
+    // unary special method
+
+    public static BigDecimal[] reverse(BigDecimal[] decs) {
+        int length = decs.length;
+        BigDecimal[] result = new BigDecimal[length];
+        for (int i = 0, j = length - 1; i < length; ++i, --j)
+            result[j] = decs[i];
+        return result;
+    }
+
     // binary zip method
 
     public static BigDecimal[] zip(BigDecimal[] left, BigDecimal[] right,
@@ -183,6 +211,25 @@ public class Decs {
 
     public static BigDecimal[] subtract(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, BigDecimal::subtract);
+    }
+
+    public static BigDecimal[] multply(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, BigDecimal::multiply);
+    }
+
+    public static BigDecimal[] divide(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> a.divide(b, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] mod(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> a.remainder(b, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] pow(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) ->
+            BigDecimalMath.isLongValue(b)
+                ? BigDecimalMath.pow(a, b.longValue(), MATH_CONTEXT)
+                : BigDecimalMath.pow(a, b, MATH_CONTEXT).stripTrailingZeros());
     }
 
     public static BigDecimal sign(int sign) {

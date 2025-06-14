@@ -89,6 +89,14 @@ public class TestDecs {
     }
 
     @Test
+    public void testPowUnary() {
+        assertArrayEquals(decs("1"), pow(decs("")));
+        assertArrayEquals(decs("2"), pow(decs("2")));
+        assertArrayEquals(decs("8"), pow(decs("2 3")));
+        assertArrayEquals(decs("512"), pow(decs("2 3 2"))); // 2^(3^2)=512, (2^3)^2=64
+    }
+
+    @Test
     public void testAndUnary() {
         assertEquals(0, decs("").length);
         assertArrayEquals(decs("1"), and(decs("")));
