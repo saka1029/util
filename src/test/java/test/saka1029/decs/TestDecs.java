@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.function.BinaryOperator;
 import java.util.Arrays;
 import org.junit.Test;
-
+import ch.obermuhlner.math.big.BigDecimalMath;
 import saka1029.util.decs.Decs;
 import static saka1029.util.decs.Decs.*;
 import saka1029.util.decs.DecsException;
@@ -94,6 +94,13 @@ public class TestDecs {
         assertArrayEquals(decs("2"), pow(decs("2")));
         assertArrayEquals(decs("8"), pow(decs("2 3")));
         assertArrayEquals(decs("512"), pow(decs("2 3 2"))); // 2^(3^2)=512, (2^3)^2=64
+        assertEquals(Math.sqrt(2), BigDecimalMath.pow(
+            BigDecimal.valueOf(2), BigDecimal.valueOf(0.5), Decs.MATH_CONTEXT).doubleValue(), 0.0005);
+        BigDecimal[] decs = decs("2 0.5");
+        System.out.println(string(decs));
+        System.out.println(BigDecimalMath.pow(decs[0], decs[1], Decs.MATH_CONTEXT));
+
+        assertArrayEquals(decs(dec(Math.sqrt(2))), pow(decs("2 0.5")));
     }
 
     @Test

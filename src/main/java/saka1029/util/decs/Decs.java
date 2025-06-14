@@ -117,6 +117,7 @@ public class Decs {
     }
 
     public static BigDecimal pow(BigDecimal left, BigDecimal right) {
+        System.out.printf("pow(%s, %s)%n", left, right);
         return BigDecimalMath.isLongValue(left)
                 ? BigDecimalMath.pow(left, right.longValue(), MATH_CONTEXT)
                 : BigDecimalMath.pow(left, right, MATH_CONTEXT).stripTrailingZeros();
