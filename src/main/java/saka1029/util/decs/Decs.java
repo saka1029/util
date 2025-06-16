@@ -85,9 +85,13 @@ public class Decs {
         return java.util.Arrays.equals(decs, right);
     }
 
+    public static String string(BigDecimal dec) {
+        return dec.toString().replaceFirst("\\.0+$", "");
+    }
+
     public static String string(BigDecimal[] decs) {
         return stream(decs)
-            .map(d -> d.toString())
+            .map(d -> string(d))
             .collect(Collectors.joining(", ", "(", ")"));
     }
 
@@ -306,35 +310,35 @@ public class Decs {
 
     /**
      * 
-     * @param left 単一の正の整数
-     * @param right 単一または複数の正の整数
+     * @param left 単一の正の数
+     * @param right 単一または複数の正の数
      * @r
      * 
      */
+
     public static BigDecimal[] base(BigDecimal[] left, BigDecimal[] right) {
-        BigInteger[] lint = bigIneger(left), rint = bigIneger(right);
-        if (lint.length != 1)
+        if (left.length != 1)
             throw new DecsException("Single value expected but %s", string(left));
-        Deque<BigInteger> result = new LinkedList<>();
-        BigInteger r = lint[0].abs();
-        if (rint.length == 1) {
-            BigInteger base = rint[0].abs();
-            while (r.compareTo(BigInteger.ZERO) > 0) {
-                BigInteger[] dr = r.divideAndRemainder(base);
+        Deque<BigDecimal> result = new LinkedList<>();
+        BigDecimal r = left[0].abs();
+        if (right.length == 1) {
+            BigDecimal base = right[0].abs();
+            while (r.compareTo(ZERO) > 0) {
+                BigDecimal[] dr = r.divideAndRemainder(base);
                 result.addFirst(dr[1]);
                 r = dr[0];
             }
             if (result.size() == 0)
-                result.addFirst(BigInteger.ZERO);
+                result.addFirst(ZERO);
         } else {
-            for (int i = rint.length - 1; i >= 0 && r.compareTo(BigInteger.ZERO) > 0; --i) {
-                BigInteger[] dr = r.divideAndRemainder(rint[i].abs());
+            for (int i = right.length - 1; i >= 0 && r.compareTo(ZERO) > 0; --i) {
+                BigDecimal[] dr = r.divideAndRemainder(right[i].abs());
                 result.addFirst(dr[1]);
                 r = dr[0];
             }
-            if (result.size() == 0 || r.compareTo(BigInteger.ZERO) != 0)
+            if (result.size() == 0 || r.compareTo(ZERO) != 0)
                 result.addFirst(r);
         }
-        return decs(result.stream().map(Decs::dec));
+        return decs((List<BigDecimal>)result);
     }
 }

@@ -38,9 +38,7 @@ public class Json {
     public static boolean isDouble(Object value) { return value instanceof Double; }
     public static boolean isInt(Object value) { return value instanceof Integer; }
     public static boolean isLong(Object value) { return value instanceof Long; }
-    @SuppressWarnings("unchecked")
     public static Map<String, Object> asMap(Object value) { return (Map<String, Object>) value; }
-    @SuppressWarnings("unchecked")
     public static List<Object> asList(Object value) { return (List<Object>) value; }
     public static boolean asBoolean(Object value) { return (boolean) value; }
     public static String asString(Object value) { return (String) value; }
