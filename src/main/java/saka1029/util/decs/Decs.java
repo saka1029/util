@@ -335,7 +335,7 @@ public class Decs {
                 r = dr[0];
             }
             if (result.size() == 0 || r.compareTo(ZERO) != 0)
-                result.addFirst(r);
+            result.addFirst(r);
         }
         return decs(result);
     }

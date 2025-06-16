@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.function.BinaryOperator;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +39,8 @@ public class TestDecs {
         assertDecsEquals(decs("1 2"), decs("1 2"));
         assertNotEquals(decs("1 2"), decs("1"));
         assertNotEquals(decs("1 2"), "1 2");
+        assertDecsEquals(decs("1"), decs(dec(BigInteger.ONE)));
+        assertDecsEquals(decs("1"), decs(List.of(BigDecimal.ONE)));
     }
 
     @Test
@@ -344,7 +347,14 @@ public class TestDecs {
         assertDecsEquals(decs("0"), base(decs("0"), decs("16")));
         assertDecsEquals(decs("1957 10 29"), base(decs("19571029"), decs("100 100")));
         assertDecsEquals(decs("0"), base(decs("0"), decs("100 100")));
+        assertDecsEquals(decs("1 1"), base(decs("101"), decs("100 100")));
         System.out.println(string(base(decs("9"), decs("1.5"))));
         assertDecsEquals(decs("1 0.5 1.0 0.0 0.0"), base(decs("9"), decs("1.5")));
+        try {
+            base(decs("1 2"), decs("3"));
+            fail();
+        } catch (DecsException e) {
+            assertEquals("Single value expected but (1, 2)", e.getMessage());
+        }
     }
 }
