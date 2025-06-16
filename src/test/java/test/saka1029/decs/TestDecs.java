@@ -53,10 +53,12 @@ public class TestDecs {
         assertFalse(dec("10").equals(dec("1E1")));
         assertTrue(Decs.equals(dec("0"), dec("0.0")));
         assertTrue(Decs.equals(dec("10"), dec("1E1")));
+        assertFalse(Decs.equals(dec("12"), dec("1E1")));
         assertTrue(Decs.equals(decs("0"), decs("0.0")));
         assertTrue(Decs.equals(decs(""), decs("")));
         assertTrue(Decs.equals(decs("1"), decs("1")));
         assertTrue(Decs.equals(decs("1 2"), decs("1 2")));
+        assertFalse(Decs.equals(decs("1 2"), decs("1 3")));
         assertFalse(Decs.equals(decs("1 2"), decs("1")));
     }
 
@@ -211,6 +213,59 @@ public class TestDecs {
         assertDecsEquals(decs("10 20"), subtract(decs("10 20"), decs("")));
         assertDecsEquals(decs("9 19"), subtract(decs("10 20"), decs("1")));
         assertDecsEquals(decs("9 18"), subtract(decs("10 20"), decs("1 2")));
+    }
+
+    @Test
+    public void testMultiplyBinary() {
+        assertDecsEquals(decs(""), Decs.multiply(decs(""), decs("")));
+        assertDecsEquals(decs("1"), multiply(decs(), decs("1")));
+        assertDecsEquals(decs("1 2"), multiply(decs(), decs("1 2")));
+        assertDecsEquals(decs("10"), multiply(decs("10"), decs("")));
+        assertDecsEquals(decs("10"), multiply(decs("10"), decs("1")));
+        assertDecsEquals(decs("10 20"), multiply(decs("10"), decs("1 2")));
+        assertDecsEquals(decs("10 20"), multiply(decs("10 20"), decs("")));
+        assertDecsEquals(decs("10 20"), multiply(decs("10 20"), decs("1")));
+        assertDecsEquals(decs("10 40"), multiply(decs("10 20"), decs("1 2")));
+    }
+
+    @Test
+    public void testDivideBinary() {
+        assertDecsEquals(decs(""), Decs.divide(decs(""), decs("")));
+        assertDecsEquals(decs("1"), divide(decs(), decs("1")));
+        assertDecsEquals(decs("1 2"), divide(decs(), decs("1 2")));
+        assertDecsEquals(decs("10"), divide(decs("10"), decs("")));
+        assertDecsEquals(decs("10"), divide(decs("10"), decs("1")));
+        assertDecsEquals(decs("10 5"), divide(decs("10"), decs("1 2")));
+        assertDecsEquals(decs("10 20"), divide(decs("10 20"), decs("")));
+        assertDecsEquals(decs("10 20"), divide(decs("10 20"), decs("1")));
+        assertDecsEquals(decs("10 10"), divide(decs("10 20"), decs("1 2")));
+    }
+
+    @Test
+    public void testModBinary() {
+        assertDecsEquals(decs(""), Decs.mod(decs(""), decs("")));
+        assertDecsEquals(decs("1"), mod(decs(), decs("1")));
+        assertDecsEquals(decs("1 2"), mod(decs(), decs("1 2")));
+        assertDecsEquals(decs("10"), mod(decs("10"), decs("")));
+        assertDecsEquals(decs("0"), mod(decs("10"), decs("1")));
+        assertDecsEquals(decs("0 0"), mod(decs("10"), decs("1 2")));
+        assertDecsEquals(decs("10 20"), mod(decs("10 20"), decs("")));
+        assertDecsEquals(decs("0 0"), mod(decs("10 20"), decs("1")));
+        assertDecsEquals(decs("0 1"), mod(decs("10 21"), decs("1 2")));
+    }
+
+    @Test
+    public void testPowBinary() {
+        assertDecsEquals(decs(""), Decs.pow(decs(""), decs("")));
+        assertDecsEquals(decs("1"), pow(decs(), decs("1")));
+        assertDecsEquals(decs("1 2"), pow(decs(), decs("1 2")));
+        assertDecsEquals(decs("10"), pow(decs("10"), decs("")));
+        assertDecsEquals(decs("100"), pow(decs("10"), decs("2")));
+        assertDecsEquals(decs("10 100"), pow(decs("10"), decs("1 2")));
+        assertDecsEquals(decs("10 20"), pow(decs("10 20"), decs("")));
+        assertDecsEquals(decs("100 400"), pow(decs("10 20"), decs("2")));
+        assertDecsEquals(decs("10 144"), pow(decs("10 12"), decs("1 2")));
+        assertEquals(Math.sqrt(2), pow(decs("2"), decs("0.5"))[0].doubleValue(), 1e-6);
     }
 
     @Test

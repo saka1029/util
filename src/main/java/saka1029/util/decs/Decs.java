@@ -191,11 +191,11 @@ public class Decs {
         return decs[0];
     }
 
-    public static BigDecimal[] single(BigDecimal[] decs,
-            Function<BigDecimal, BigDecimal[]> operation) {
-            single(decs);
-        return operation.apply(decs[0]);
-    }
+    // public static BigDecimal[] single(BigDecimal[] decs,
+    //         Function<BigDecimal, BigDecimal[]> operation) {
+    //         single(decs);
+    //     return operation.apply(decs[0]);
+    // }
 
     public static BigDecimal[] iota(BigDecimal[] decs) {
         return decs(IntStream.rangeClosed(1, single(decs).intValue())
@@ -246,7 +246,7 @@ public class Decs {
         return zip(left, right, BigDecimal::subtract);
     }
 
-    public static BigDecimal[] multply(BigDecimal[] left, BigDecimal[] right) {
+    public static BigDecimal[] multiply(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, BigDecimal::multiply);
     }
 
@@ -305,12 +305,6 @@ public class Decs {
     }
     
     // binary special method
-
-    public static BigInteger[] bigIneger(BigDecimal[] decs) {
-        return Stream.of(decs)
-            .map(BigDecimal::toBigIntegerExact)
-            .toArray(BigInteger[]::new);
-    }
 
     /**
      * 
