@@ -144,7 +144,7 @@ public class TestDecs {
             iota(decs("1 2"));
             fail();
         } catch (DecsException e) {
-            assertEquals("Invalid argument (1, 2)", e.getMessage());
+            assertEquals("Single value expected but (1, 2)", e.getMessage());
         }
     }
 
@@ -268,5 +268,11 @@ public class TestDecs {
         assertArrayEquals(decs("1 1"), ge(decs("1 2"), decs("1 1")));
         assertArrayEquals(decs("0 1"), ge(decs("1 1"), decs("2 1")));
         assertArrayEquals(decs("1 1"), ge(decs("2 1"), decs("1 1")));
+    }
+
+    @Test
+    public void testBase() {
+        assertArrayEquals(decs("15 15 15 15"), base(decs("65535"), decs("16")));
+        assertArrayEquals(decs("1957 10 29"), base(decs("19571029"), decs("100 100")));
     }
 }

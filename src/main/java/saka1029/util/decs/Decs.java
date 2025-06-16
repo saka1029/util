@@ -1,8 +1,12 @@
 package saka1029.util.decs;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -50,8 +54,16 @@ public class Decs {
         return b ? TRUE : FALSE;
     }
 
+    public static BigDecimal dec(BigInteger i) {
+        return new BigDecimal(i);
+    }
+
     public static BigDecimal[] decs(BigDecimal... elements) {
         return elements.clone();
+    }
+
+    public static BigDecimal[] decs(List<BigDecimal> list) {
+        return decs(list.toArray(BigDecimal[]::new));
     }
 
     public static BigDecimal[] decs(Stream<BigDecimal> stream) {
@@ -159,21 +171,26 @@ public class Decs {
 
     // unary single method
 
+    public static BigDecimal single(BigDecimal[] decs) {
+        if (decs.length != 1)
+            throw new DecsException("Single value expected but %s", string(decs));
+        return decs[0];
+    }
+
     public static BigDecimal[] single(BigDecimal[] decs,
             Function<BigDecimal, BigDecimal[]> operation) {
-        if (decs.length != 1)
-            throw new DecsException("Invalid argument %s", string(decs));
+            single(decs);
         return operation.apply(decs[0]);
     }
 
     public static BigDecimal[] iota(BigDecimal[] decs) {
-        return single(decs, d -> decs(IntStream.rangeClosed(1, d.intValueExact())
-            .mapToObj(i -> BigDecimal.valueOf(i))));
+        return decs(IntStream.rangeClosed(1, single(decs).intValue())
+            .mapToObj(i -> dec(i)));
     }
 
     public static BigDecimal[] iota0(BigDecimal[] decs) {
-        return single(decs, d -> decs(IntStream.range(0, d.intValueExact())
-            .mapToObj(i -> BigDecimal.valueOf(i))));
+        return decs(IntStream.range(0, single(decs).intValue())
+            .mapToObj(i -> dec(i)));
     }
 
     // unary special method
@@ -271,5 +288,53 @@ public class Decs {
 
     public static BigDecimal[] ge(BigDecimal[] left, BigDecimal[] right) {
         return compare(left, right, c -> dec(c >= 0));
+    }
+    
+    // binary special method
+
+    // public static boolean isInteger(BigDecimal dec) {
+    //     return dec.signum() == 0
+    //         || dec.scale() <= 0
+    //         || dec.stripTrailingZeros().scale() <= 0;
+    // }
+
+    public static BigInteger[] bigIneger(BigDecimal[] decs) {
+        return Stream.of(decs)
+            .map(BigDecimal::toBigIntegerExact)
+            .toArray(BigInteger[]::new);
+    }
+
+    /**
+     * 
+     * @param left 単一の正の整数
+     * @param right 単一または複数の正の整数
+     * @r
+     * 
+     */
+    public static BigDecimal[] base(BigDecimal[] left, BigDecimal[] right) {
+        BigInteger[] lint = bigIneger(left), rint = bigIneger(right);
+        if (lint.length != 1)
+            throw new DecsException("Single value expected but %s", string(left));
+        Deque<BigInteger> result = new LinkedList<>();
+        BigInteger r = lint[0].abs();
+        if (rint.length == 1) {
+            BigInteger base = rint[0].abs();
+            while (r.compareTo(BigInteger.ZERO) > 0) {
+                BigInteger[] dr = r.divideAndRemainder(base);
+                result.addFirst(dr[1]);
+                r = dr[0];
+            }
+            if (result.size() == 0)
+                result.addFirst(BigInteger.ZERO);
+        } else {
+            for (int i = rint.length - 1; i >= 0; --i) {
+                BigInteger[] dr = r.divideAndRemainder(rint[i].abs());
+                result.addFirst(dr[1]);
+                r = dr[0];
+            }
+            if (r.compareTo(BigInteger.ZERO) != 0)
+                result.addFirst(r);
+        }
+        return decs(result.stream().map(Decs::dec));
     }
 }
