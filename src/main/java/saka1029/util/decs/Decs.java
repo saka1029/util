@@ -63,7 +63,11 @@ public class Decs {
     }
 
     public static BigDecimal[] decs(List<BigDecimal> list) {
-        return decs(list.toArray(BigDecimal[]::new));
+        return list.toArray(BigDecimal[]::new);
+    }
+
+    public static BigDecimal[] decs(Deque<BigDecimal> list) {
+        return list.toArray(BigDecimal[]::new);
     }
 
     public static BigDecimal[] decs(Stream<BigDecimal> stream) {
@@ -81,8 +85,14 @@ public class Decs {
         return java.util.Arrays.hashCode(decs);
     }
 
-    public static boolean equals(BigDecimal[] decs, BigDecimal[] right) {
-        return java.util.Arrays.equals(decs, right);
+    public static boolean equals(BigDecimal left, BigDecimal right) {
+        return left.compareTo(right) == 0;
+    }
+
+    public static boolean equals(BigDecimal[] left, BigDecimal[] right) {
+        return left.length == right.length
+            && IntStream.range(0, left.length)
+                .allMatch(i -> equals(left[i], right[i]));
     }
 
     public static String string(BigDecimal dec) {
@@ -333,6 +343,6 @@ public class Decs {
             if (result.size() == 0 || r.compareTo(ZERO) != 0)
                 result.addFirst(r);
         }
-        return decs((List<BigDecimal>)result);
+        return decs(result);
     }
 }

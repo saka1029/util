@@ -33,6 +33,11 @@ public class TestDecs {
     public void testDecs() {
         assertDecsEquals(decs(), decs("   "));
         assertDecsEquals(decs(dec(1), dec(3L), dec(2.34)), decs("1 3 2.34"));
+        assertDecsEquals(decs(""), decs(""));
+        assertDecsEquals(decs("1"), decs("1"));
+        assertDecsEquals(decs("1 2"), decs("1 2"));
+        assertNotEquals(decs("1 2"), decs("1"));
+        assertNotEquals(decs("1 2"), "1 2");
     }
 
     @Test
@@ -43,16 +48,12 @@ public class TestDecs {
     }
 
     @Test
-    public void testEqual() {
-        assertDecsEquals(decs(""), decs(""));
-        assertDecsEquals(decs("1"), decs("1"));
-        assertDecsEquals(decs("1 2"), decs("1 2"));
-        assertNotEquals(decs("1 2"), decs("1"));
-        assertNotEquals(decs("1 2"), "1 2");
-    }
-
-    @Test
     public void testEquals() {
+        assertFalse(dec("0").equals(dec("0.0")));
+        assertFalse(dec("10").equals(dec("1E1")));
+        assertTrue(Decs.equals(dec("0"), dec("0.0")));
+        assertTrue(Decs.equals(dec("10"), dec("1E1")));
+        assertTrue(Decs.equals(decs("0"), decs("0.0")));
         assertTrue(Decs.equals(decs(""), decs("")));
         assertTrue(Decs.equals(decs("1"), decs("1")));
         assertTrue(Decs.equals(decs("1 2"), decs("1 2")));
