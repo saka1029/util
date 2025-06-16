@@ -26,6 +26,7 @@ public class TestDecs {
         assertEquals("0", string(dec(0)).toString());
         assertEquals("(0)", string(decs("0")));
         assertEquals("(1E+1)", string(decs("1e1")));
+        assertEquals("10", dec("1e1").toPlainString());
     }
 
     @Test
