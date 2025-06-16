@@ -327,12 +327,12 @@ public class Decs {
             if (result.size() == 0)
                 result.addFirst(BigInteger.ZERO);
         } else {
-            for (int i = rint.length - 1; i >= 0; --i) {
+            for (int i = rint.length - 1; i >= 0 && r.compareTo(BigInteger.ZERO) > 0; --i) {
                 BigInteger[] dr = r.divideAndRemainder(rint[i].abs());
                 result.addFirst(dr[1]);
                 r = dr[0];
             }
-            if (r.compareTo(BigInteger.ZERO) != 0)
+            if (result.size() == 0 || r.compareTo(BigInteger.ZERO) != 0)
                 result.addFirst(r);
         }
         return decs(result.stream().map(Decs::dec));

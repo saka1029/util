@@ -273,6 +273,8 @@ public class TestDecs {
     @Test
     public void testBase() {
         assertArrayEquals(decs("15 15 15 15"), base(decs("65535"), decs("16")));
+        assertArrayEquals(decs("0"), base(decs("0"), decs("16")));
         assertArrayEquals(decs("1957 10 29"), base(decs("19571029"), decs("100 100")));
+        assertArrayEquals(decs("0"), base(decs("0"), decs("100 100")));
     }
 }
