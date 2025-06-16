@@ -25,6 +25,7 @@ public class TestDecs {
     public void testString() {
         assertEquals("0", string(dec(0)).toString());
         assertEquals("(0)", string(decs("0")));
+        assertEquals("(1E+1)", string(decs("1e1")));
     }
 
     @Test
