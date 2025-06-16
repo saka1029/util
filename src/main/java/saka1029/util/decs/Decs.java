@@ -296,12 +296,6 @@ public class Decs {
     
     // binary special method
 
-    // public static boolean isInteger(BigDecimal dec) {
-    //     return dec.signum() == 0
-    //         || dec.scale() <= 0
-    //         || dec.stripTrailingZeros().scale() <= 0;
-    // }
-
     public static BigInteger[] bigIneger(BigDecimal[] decs) {
         return Stream.of(decs)
             .map(BigDecimal::toBigIntegerExact)
