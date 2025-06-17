@@ -169,7 +169,31 @@ public class TestDecs {
         assertDecsEquals(decs(""), degree(decs("")));
         BigDecimal[] d180 = degree(decs(dec(Math.PI)));
         assertEquals(1, d180.length);
-        assertEquals(dec("180").doubleValue(), d180[0].doubleValue(), 1e-6);
+        assertEquals(180D, d180[0].doubleValue(), 1e-6);
+    }
+
+    @Test
+    public void testSinUnary() {
+        assertDecsEquals(decs(""), sin(decs("")));
+        BigDecimal[] sin90 = sin(decs(dec(Math.PI / 2)));
+        assertEquals(1, sin90.length);
+        assertEquals(1D, sin90[0].doubleValue(), 1e-6);
+    }
+
+    @Test
+    public void testCosUnary() {
+        assertDecsEquals(decs(""), cos(decs("")));
+        BigDecimal[] cos90 = cos(decs(dec(Math.PI / 2)));
+        assertEquals(1, cos90.length);
+        assertEquals(0D, cos90[0].doubleValue(), 1e-6);
+    }
+
+    @Test
+    public void testTanUnary() {
+        assertDecsEquals(decs(""), tan(decs("")));
+        BigDecimal[] tan90 = tan(decs(dec(Math.PI / 4)));
+        assertEquals(1, tan90.length);
+        assertEquals(1D, tan90[0].doubleValue(), 1e-6);
     }
 
     @Test
