@@ -390,7 +390,7 @@ public class TestDecs {
         assertDecsEquals(decs("1957 10 29"), base(decs("19571029"), decs("100 100")));
         assertDecsEquals(decs("0"), base(decs("0"), decs("100 100")));
         assertDecsEquals(decs("1 1"), base(decs("101"), decs("100 100")));
-        System.out.println(string(base(decs("9"), decs("1.5"))));
+        // System.out.println(string(base(decs("9"), decs("1.5"))));
         assertDecsEquals(decs("1 0.5 1.0 0.0 0.0"), base(decs("9"), decs("1.5")));
         try {
             base(decs("1 2"), decs("3"));
