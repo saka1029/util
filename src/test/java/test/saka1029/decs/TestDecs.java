@@ -12,6 +12,7 @@ import java.util.function.BinaryOperator;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
+import ch.obermuhlner.math.big.BigDecimalMath;
 import saka1029.util.decs.Decs;
 import static saka1029.util.decs.Decs.*;
 import saka1029.util.decs.DecsException;
@@ -152,6 +153,23 @@ public class TestDecs {
         assertDecsEquals(decs("0"), not(decs("3")));
         assertDecsEquals(decs("0 1"), not(decs("3 0")));
         assertDecsEquals(decs("1 0"), not(decs("0 3")));
+    }
+
+    @Test
+    public void testRadianUnary() {
+        assertDecsEquals(decs(""), radian(decs("")));
+        BigDecimal[] pi = radian(decs("180"));
+        assertEquals(1, pi.length);
+        assertEquals(BigDecimalMath.pi(Decs.MATH_CONTEXT).doubleValue(),
+            pi[0].doubleValue(), 1e-6);
+    }
+
+    @Test
+    public void testDegreeUnary() {
+        assertDecsEquals(decs(""), degree(decs("")));
+        BigDecimal[] d180 = degree(decs(dec(Math.PI)));
+        assertEquals(1, d180.length);
+        assertEquals(dec("180").doubleValue(), d180[0].doubleValue(), 1e-6);
     }
 
     @Test

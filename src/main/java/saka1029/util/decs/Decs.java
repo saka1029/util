@@ -179,8 +179,33 @@ public class Decs {
     public static BigDecimal[] negate(BigDecimal[] decs) {
         return map(decs, BigDecimal::negate);
     }
+
     public static BigDecimal[] not(BigDecimal[] decs) {
         return map(decs, a -> dec(!bool(a)));
+    }
+
+    public static BigDecimal PI = BigDecimalMath.pi(MATH_CONTEXT);
+    public static BigDecimal DEG180 = dec(180);
+    public static BigDecimal PI_DIV_DEG180 = PI.divide(DEG180, MATH_CONTEXT);
+
+    public static BigDecimal[] radian(BigDecimal[] decs) {
+        return map(decs, a -> a.multiply(PI_DIV_DEG180, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] degree(BigDecimal[] decs) {
+        return map(decs, a -> a.divide(PI_DIV_DEG180, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] sin(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.sin(a, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] cos(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.cos(a, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] tan(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.tan(a, MATH_CONTEXT));
     }
 
     // unary single method
