@@ -65,7 +65,7 @@ public class Scanner {
     }
 
     static TokenType error(String format, Object... args) {
-        throw new RuntimeException(format.formatted(args));
+        throw new DecsException(format, args);
     }
 
     static boolean isDigit(int ch) {
