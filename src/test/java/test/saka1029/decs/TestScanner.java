@@ -17,7 +17,7 @@ public class TestScanner {
     public void testScanner() {
         Scanner s = new Scanner();
         assertEquals(List.of(t(PLUS, "+"), t(NUM, "123.456e-2"), t(NE, "!=")), s.scan("  +  123.456e-2 !="));
-        assertEquals(List.of(t(DOTID, ".exit")), s.scan("  .exit  "));
+        assertEquals(List.of(t(EXIT, "exit")), s.scan("  exit  "));
     }
 
 }

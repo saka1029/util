@@ -9,15 +9,23 @@ public class Scanner {
     public enum TokenType {
         LP, RP, COMMA, AT,
         PLUS, MINUS, MULT, DIV, MOD, POW,
-        EQ, NE, GT, GE, LT, LE, NOT,
-        ASSIGN, NUM, ID, DOTID,
+        EQ, NE, GT, GE, LT, LE, NOT, ASSIGN,
+        HELP, SOLVE, EXIT,
+        NUM, ID,
     }
 
-    static final Map<String, TokenType> RESERVED = Map.of(
-        "+", TokenType.PLUS, "-", TokenType.MINUS, "*", TokenType.MULT, "/", TokenType.DIV,
-        "%", TokenType.MOD, "^", TokenType.POW
-        "=="
+    static final Map<String, TokenType> RESERVED = Map.ofEntries(
+        Map.entry("+", TokenType.PLUS), Map.entry("-", TokenType.MINUS),
+        Map.entry("*", TokenType.MULT), Map.entry("/", TokenType.DIV),
+        Map.entry("%", TokenType.MOD), Map.entry("^", TokenType.POW),
+        Map.entry("==", TokenType.EQ), Map.entry("!=", TokenType.NE),
+        Map.entry(">", TokenType.GT), Map.entry(">=", TokenType.GE),
+        Map.entry("<", TokenType.LT), Map.entry("<=", TokenType.LE),
+        Map.entry("!", TokenType.NOT), Map.entry("=", TokenType.ASSIGN),
+        Map.entry("help", TokenType.HELP), Map.entry("solve", TokenType.SOLVE),
+        Map.entry("exit", TokenType.EXIT)
     );
+
 
     public static class Token {
         public final TokenType type;
@@ -48,18 +56,13 @@ public class Scanner {
             get();
     }
 
-    boolean eat(int expected) {
-        get();
-        if (ch == expected) {
-            get();
-            return true;
-        }
-        return false;
-    }
-
     TokenType get(TokenType type) {
         get();
         return type;
+    }
+
+    static TokenType error(String format, Object... args) {
+        throw new RuntimeException(format.formatted(args));
     }
 
     static boolean isDigit(int ch) {
@@ -74,21 +77,13 @@ public class Scanner {
         return switch (ch) {
             case '+', '-', '*', '/', '%', '^',
                 '!', '=', '~', '<', '>', '&', '|',
-                '$', '?', ':' -> true;
+                '@', '$', '?', ':' -> true;
             default -> false;
         };
     }
 
     String str(int ch) {
         return ch == -1 ? "EOF" : "'%c'".formatted(ch);
-    }
-
-    TokenType dotid() {
-        get(); // skip '.'
-        if (!isAlpha(ch))
-            error("Alphabet expected but %s", str(ch));
-        id();
-        return TokenType.DOTID;
     }
 
     void digits() {
@@ -113,14 +108,28 @@ public class Scanner {
         return TokenType.NUM;
     }
 
-    TokenType id() {
-        while (isAlpha(ch) || isDigit(ch))
-            get();
-        return TokenType.ID;
+    TokenType checkReserved(int start) {
+        TokenType t = RESERVED.get(string(start));
+        return t != null ? t : TokenType.ID;
     }
 
-    static TokenType error(String format, Object... args) {
-        throw new RuntimeException(format.formatted(args));
+    TokenType id() {
+        int start = index - 1;
+        while (isAlpha(ch) || isDigit(ch))
+            get();
+        return checkReserved(start);
+    }
+
+    TokenType special() {
+        int start = index - 1;
+        while (isSpecial(ch))
+            get();
+        return checkReserved(start);
+    }
+
+    String string(int start) {
+        int end = ch == -1 ? index : index - 1;
+        return new String(input, start, end -start);
     }
 
     Token token() {
@@ -129,23 +138,12 @@ public class Scanner {
             case '(' -> get(TokenType.LP);
             case ')' -> get(TokenType.RP);
             case ',' -> get(TokenType.COMMA);
-            case '@' -> get(TokenType.AT);
-            case '+' -> get(TokenType.PLUS);
-            case '-' -> get(TokenType.MINUS);
-            case '*' -> get(TokenType.MULT);
-            case '/' -> get(TokenType.DIV);
-            case '%' -> get(TokenType.MOD);
-            case '=' -> eat('=') ? TokenType.EQ : TokenType.ASSIGN;
-            case '!' -> eat('=') ? TokenType.NE : TokenType.NOT;
-            case '>' -> eat('=') ? TokenType.GE : TokenType.GT;
-            case '<' -> eat('=') ? TokenType.LE : TokenType.LT;
-            case '.' -> dotid();
             default -> isDigit(ch) ? number()
                 : isAlpha(ch) ? id()
+                : isSpecial(ch) ? special()
                 : error("Unknown char %s", str(ch));
         };
-        int end = ch == -1 ? index : index - 1;
-        return new Token(type, new String(input, start, end - start));
+        return new Token(type, string(start));
     }
 
     public List<Token> scan(String input) {
