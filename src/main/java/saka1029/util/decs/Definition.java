@@ -13,41 +13,44 @@ public class Definition {
 
     final Map<String, Entry> definitions = new HashMap<>();
 
-    Entry get(String name) {
-        return definitions.computeIfAbsent(name, key -> new Entry());
-    }
-
-    public void variable(String name, boolean builtin, String help, Expression e) {
-        Entry entry = get(name);
-        entry.variable = new Def<>(e, builtin, help);
+    public void variable(String name, String help, Expression e) {
+        Entry entry = definitions.computeIfAbsent(name, key -> new Entry());
+        entry.variable = new Def<>(e, help);
+        entry.unary = null;
+        entry.binary = null;
     }
 
     public Def<Expression> variable(String name) {
-        if (!definitions.containsKey(name))
-            return null;
-        return definitions.get(name).variable;
+        Entry entry = definitions.get(name);
+        if (entry == null || entry.variable == null)
+            throw new DecsException("variable '%s' not defined", name);
+        return entry.variable;
     }
 
-    public void unary(String name, boolean builtin, String help, Unary e) {
-        Entry entry = get(name);
-        entry.unary = new Def<>(e, builtin, help);
+    public void unary(String name, String help, Unary e) {
+        Entry entry = definitions.computeIfAbsent(name, key -> new Entry());
+        entry.unary = new Def<>(e, help);
+        entry.variable = null;
     }
 
     public Def<Unary> unary(String name) {
-        if (!definitions.containsKey(name))
-            return null;
-        return definitions.get(name).unary;
+        Entry entry = definitions.get(name);
+        if (entry == null || entry.unary == null)
+            throw new DecsException("unary '%s' not defined", name);
+        return entry.unary;
     }
 
-    public void binary(String name, boolean builtin, String help, Binary e) {
-        Entry entry = get(name);
-        entry.binary = new Def<>(e, builtin, help);
+    public void binary(String name, String help, Binary e) {
+        Entry entry = definitions.computeIfAbsent(name, key -> new Entry());
+        entry.binary = new Def<>(e, help);
+        entry.variable = null;
     }
 
     public Def<Binary> binary(String name) {
-        if (!definitions.containsKey(name))
-            return null;
-        return definitions.get(name).binary;
+        Entry entry = definitions.get(name);
+        if (entry == null || entry.binary == null)
+            throw new DecsException("unary '%s' not defined", name);
+        return entry.binary;
     }
 
 }

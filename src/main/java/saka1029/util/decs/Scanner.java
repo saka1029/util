@@ -2,15 +2,22 @@ package saka1029.util.decs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Scanner {
 
     public enum TokenType {
         LP, RP, COMMA, AT,
-        PLUS, MINUS, MULT, DIV, MOD,
+        PLUS, MINUS, MULT, DIV, MOD, POW,
         EQ, NE, GT, GE, LT, LE, NOT,
         ASSIGN, NUM, ID, DOTID,
     }
+
+    static final Map<String, TokenType> RESERVED = Map.of(
+        "+", TokenType.PLUS, "-", TokenType.MINUS, "*", TokenType.MULT, "/", TokenType.DIV,
+        "%", TokenType.MOD, "^", TokenType.POW
+        "=="
+    );
 
     public static class Token {
         public final TokenType type;
@@ -61,6 +68,15 @@ public class Scanner {
 
     static boolean isAlpha(int ch) {
         return Character.isAlphabetic(ch);
+    }
+
+    static boolean isSpecial(int ch) {
+        return switch (ch) {
+            case '+', '-', '*', '/', '%', '^',
+                '!', '=', '~', '<', '>', '&', '|',
+                '$', '?', ':' -> true;
+            default -> false;
+        };
     }
 
     String str(int ch) {
