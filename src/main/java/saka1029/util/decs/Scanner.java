@@ -9,7 +9,8 @@ public class Scanner {
     public enum TokenType {
         LP, RP, COMMA, AT,
         PLUS, MINUS, MULT, DIV, MOD, POW,
-        EQ, NE, GT, GE, LT, LE, NOT, ASSIGN,
+        EQ, NE, GT, GE, LT, LE, ASSIGN,
+        NOT, AND, OR,
         HELP, SOLVE, EXIT,
         NUM, ID,
     }
@@ -21,7 +22,9 @@ public class Scanner {
         Map.entry("==", TokenType.EQ), Map.entry("!=", TokenType.NE),
         Map.entry(">", TokenType.GT), Map.entry(">=", TokenType.GE),
         Map.entry("<", TokenType.LT), Map.entry("<=", TokenType.LE),
-        Map.entry("!", TokenType.NOT), Map.entry("=", TokenType.ASSIGN),
+        Map.entry("=", TokenType.ASSIGN),
+        Map.entry("not", TokenType.NOT),
+        Map.entry("and", TokenType.AND), Map.entry("or", TokenType.OR),
         Map.entry("help", TokenType.HELP), Map.entry("solve", TokenType.SOLVE),
         Map.entry("exit", TokenType.EXIT)
     );
@@ -113,7 +116,7 @@ public class Scanner {
         return t != null ? t : TokenType.ID;
     }
 
-    TokenType id() {
+    TokenType alpha() {
         int start = index - 1;
         while (isAlpha(ch) || isDigit(ch))
             get();
@@ -139,7 +142,7 @@ public class Scanner {
             case ')' -> get(TokenType.RP);
             case ',' -> get(TokenType.COMMA);
             default -> isDigit(ch) ? number()
-                : isAlpha(ch) ? id()
+                : isAlpha(ch) ? alpha()
                 : isSpecial(ch) ? special()
                 : error("Unknown char %s", str(ch));
         };
