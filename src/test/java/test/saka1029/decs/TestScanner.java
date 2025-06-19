@@ -1,8 +1,10 @@
 package test.saka1029.decs;
 
 import org.junit.Test;
+import saka1029.util.decs.DecsException;
 import saka1029.util.decs.Scanner;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static saka1029.util.decs.Scanner.*;
 import static saka1029.util.decs.Scanner.TokenType.*;
 import java.util.List;
@@ -19,6 +21,10 @@ public class TestScanner {
         assertEquals(List.of(t(PLUS, "+"), t(NUM, "123.456e-2"), t(NE, "!=")),
             s.scan("  +  123.456e-2 !="));
         assertEquals(List.of(t(EXIT, "exit")), s.scan("  exit  "));
+        assertNotEquals(t(PLUS, "+"), t(MINUS, "+"));
+        assertNotEquals(t(PLUS, "+"), t(PLUS, "-"));
+        assertNotEquals(t(PLUS, "+"), "+");
+        assertEquals("Token(PLUS, +)", t(PLUS, "+").toString());
     }
 
     @Test
@@ -80,6 +86,26 @@ public class TestScanner {
             tokens.stream().map(t -> t.type).toList());
         assertEquals(List.of( "help", "solve", "exit"),
             tokens.stream().map(t -> t.string).toList());
+    }
+
+    @Test
+    public void testInvalidChar() {
+        Scanner scanner = new Scanner();
+        try {
+            scanner.scan("#");
+        } catch (DecsException e) {
+            assertEquals("Unknown char '#'", e.getMessage());
+        }
+        try {
+            scanner.scan("123.e2");
+        } catch (DecsException e) {
+            assertEquals("Digit expected but 'e'", e.getMessage());
+        }
+        try {
+            scanner.scan("123.");
+        } catch (DecsException e) {
+            assertEquals("Digit expected but EOF", e.getMessage());
+        }
     }
 
 }
