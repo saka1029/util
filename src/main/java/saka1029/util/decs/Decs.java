@@ -364,4 +364,11 @@ public class Decs {
         }
         return decs(result);
     }
+
+    public static BigDecimal[] concat(BigDecimal[] left, BigDecimal[] right) {
+        BigDecimal[] result = new BigDecimal[left.length + right.length];
+        System.arraycopy(left, 0, result, 0, left.length);
+        System.arraycopy(right, 0, result, left.length, right.length);
+        return result;
+    }
 }
