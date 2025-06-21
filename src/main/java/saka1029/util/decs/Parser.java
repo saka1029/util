@@ -229,6 +229,19 @@ public class Parser implements org.jline.reader.Parser {
                 c.variable(name, e, "variable " + name);
                 return Decs.NO_VALUE;
             };
+        } else if (tokens.size() >= index + 3
+            && token.type == TokenType.ID
+            && tokens.get(index).type == TokenType.ID 
+            && tokens.get(index + 1).type == TokenType.ASSIGN) {
+            String name = token.string;
+            get();   // skip ID
+            get();   // skip ID
+            get();   // skip '='
+            Expression e = expression();
+            return c -> {
+                c.variable(name, e, "variable " + name);
+                return Decs.NO_VALUE;
+            };
         } else
             return expression();
     }
