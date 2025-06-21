@@ -47,6 +47,10 @@ public class Parser implements org.jline.reader.Parser {
         this.context = context;
     }
 
+    public Parser() {
+        this(new Context());
+    }
+
     Token get() {
         return token = index < tokens.size() ? tokens.get(index++) : END;
     }
@@ -206,8 +210,27 @@ public class Parser implements org.jline.reader.Parser {
         return e;
     }
 
+    /**
+     * variable = 3 + 2
+     * input.length = 5
+     * index = 1;
+     * token = ID:"variable"
+     * @return
+     */
     Expression statement() {
-        return expression();
+        if (tokens.size() >= index + 2
+            && token.type == TokenType.ID
+            && tokens.get(index).type == TokenType.ASSIGN) {
+            String name = token.string;
+            get();   // skip ID
+            get();   // skip '='
+            Expression e = expression();
+            return c -> {
+                c.variable(name, e, "variable " + name);
+                return Decs.NO_VALUE;
+            };
+        } else
+            return expression();
     }
 
     public Expression parse(String input) {

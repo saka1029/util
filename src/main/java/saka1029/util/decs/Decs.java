@@ -22,6 +22,7 @@ public class Decs {
     }
 
     public static final BigDecimal[] EMPTY = new BigDecimal[] {};
+    public static final BigDecimal[] NO_VALUE = new BigDecimal[] {};
     public static final BigDecimal TRUE = BigDecimal.ONE;
     public static final BigDecimal FALSE = BigDecimal.ZERO;
     public static final BigDecimal MINUS_ONE = BigDecimal.valueOf(-1L);
