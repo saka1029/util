@@ -13,6 +13,7 @@ public class Scanner {
         NOT, AND, OR,
         HELP, SOLVE, EXIT,
         NUM, ID,
+        END,
     }
 
     static final Map<String, TokenType> RESERVED = Map.ofEntries(

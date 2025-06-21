@@ -133,7 +133,7 @@ public class Decs {
         return reduce(decs, BigDecimal.ZERO, BigDecimal::negate, (a, b) -> a.subtract(b));
     }
 
-    public static BigDecimal[] mult(BigDecimal[] decs) {
+    public static BigDecimal[] multiply(BigDecimal[] decs) {
         return reduce(decs, BigDecimal.ONE, (a, b) -> a.multiply(b));
     }
 
@@ -327,6 +327,14 @@ public class Decs {
 
     public static BigDecimal[] ge(BigDecimal[] left, BigDecimal[] right) {
         return compare(left, right, c -> dec(c >= 0));
+    }
+
+    public static BigDecimal[] and(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> dec(bool(a) && bool(b)));
+    }
+
+    public static BigDecimal[] or(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> dec(bool(a) || bool(b)));
     }
     
     // binary special method

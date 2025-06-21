@@ -16,9 +16,10 @@ public class TestParser {
 
     @Test
     public void testParser() {
-        Parser parser = new Parser();
         Context context = new Context();
-        assertDecsEquals(Decs.decs("3"), parser.parse(" 1 + 2 ").apply(context));
-        assertDecsEquals(Decs.decs("0"), parser.parse(" 1 + (2 - 3) ").apply(context));
+        Parser parser = new Parser(context);
+        assertDecsEquals(Decs.decs("3"), parser.eval(" 1 + 2 "));
+        assertDecsEquals(Decs.decs("10"), parser.eval(" 2 * (2 + 3) "));
+        assertDecsEquals(Decs.decs("8"), parser.eval(" 2 * 2 ^ 2 "));
     }
 }

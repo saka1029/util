@@ -92,10 +92,10 @@ public class TestDecs {
 
     @Test
     public void testMultUnary() {
-        assertDecsEquals(decs("1"), mult(decs("")));
-        assertDecsEquals(decs("1"), mult(decs("1")));
-        assertDecsEquals(decs("3"), mult(decs("1 3")));
-        assertDecsEquals(decs("15"), mult(decs("1 3 5")));
+        assertDecsEquals(decs("1"), multiply(decs("")));
+        assertDecsEquals(decs("1"), multiply(decs("1")));
+        assertDecsEquals(decs("3"), multiply(decs("1 3")));
+        assertDecsEquals(decs("15"), multiply(decs("1 3 5")));
     }
 
     @Test
