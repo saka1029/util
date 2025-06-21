@@ -65,14 +65,17 @@ public class Parser implements org.jline.reader.Parser {
     }
 
     Expression primary() {
-        if (eat(TokenType.NUM)) {
-            BigDecimal[] decs = Decs.decs(prev.string);
-            return c -> decs;
-        } else if (eat(TokenType.LP)) {
+        if (eat(TokenType.LP)) {
             Expression e = expression();
             if (!eat(TokenType.RP))
                 throw error("')' expected");
             return e;
+        } else if (eat(TokenType.NUM)) {
+            BigDecimal[] decs = Decs.decs(prev.string);
+            return c -> decs;
+        } else if (eat(TokenType.ID) && context.isVariable(prev.string)) {
+            String name = prev.string;
+            return c -> c.variable(name).expression.apply(c);
         } else
             throw error("Unexpected token '%s'", token.string);
     }
@@ -203,11 +206,15 @@ public class Parser implements org.jline.reader.Parser {
         return e;
     }
 
+    Expression statement() {
+        return expression();
+    }
+
     public Expression parse(String input) {
         tokens = scanner.scan(input);
         index = 0;
         get();
-        return expression();
+        return statement();
     }
 
     public BigDecimal[] eval(String input) {

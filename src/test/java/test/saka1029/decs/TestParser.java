@@ -20,6 +20,6 @@ public class TestParser {
         Parser parser = new Parser(context);
         assertDecsEquals(Decs.decs("3"), parser.eval(" 1 + 2 "));
         assertDecsEquals(Decs.decs("10"), parser.eval(" 2 * (2 + 3) "));
-        assertDecsEquals(Decs.decs("8"), parser.eval(" 2 * 2 ^ 2 "));
+        assertDecsEquals(Decs.decs("512"), parser.eval(" 2 ^ 3 ^ 2 "));
     }
 }
