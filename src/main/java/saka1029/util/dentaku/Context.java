@@ -445,6 +445,12 @@ public class Context {
                     result[index++] = dec(i);
             return result;
         }, "I to I -> (I) : 範囲");
+        binary("remove", (c, l, r) -> {
+            Set<BigDecimal> remove = Set.of(r);
+            return Stream.of(l)
+                .filter(d -> !remove.contains(d))
+                .toArray(BigDecimal[]::new);
+        }, "(D) remove (D) -> (D) : 削除");
         binary("filter", (c, l, r) -> {
             if (l.length != r.length)
                 throw new ValueException("Must be same count '%s filter %s'", str(l), str(r));
