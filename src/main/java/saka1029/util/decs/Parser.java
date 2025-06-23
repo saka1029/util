@@ -1,6 +1,7 @@
 package saka1029.util.decs;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import org.jline.reader.ParsedLine;
 import org.jline.reader.SyntaxError;
@@ -42,6 +43,7 @@ public class Parser implements org.jline.reader.Parser {
     Token token, prev;
     int index = 0;
     Scanner scanner = new Scanner();
+    List<String> variables = new ArrayList<>();
 
     public Parser(Context context) {
         this.context = context;
@@ -79,6 +81,7 @@ public class Parser implements org.jline.reader.Parser {
             return c -> decs;
         } else if (eat(TokenType.ID) && context.isVariable(prev.string)) {
             String name = prev.string;
+            variables.add(name);
             return c -> c.variable(name).expression.apply(c);
         } else
             throw error("Unexpected token '%s'", token.string);
@@ -250,7 +253,8 @@ public class Parser implements org.jline.reader.Parser {
         tokens = scanner.scan(input);
         index = 0;
         get();
-        return statement();
+        variables.clear();
+        return new ExpressionWithVariables(statement(), variables);
     }
 
     public BigDecimal[] eval(String input) {
