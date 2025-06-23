@@ -42,20 +42,43 @@ public class Context {
         return r;
     }
 
+    public static interface Undo extends AutoCloseable {
+        void close();
+    }
+
+    static <T> void put(Map<String, T> map, String key, T value) {
+        if (value == null)
+            map.remove(key);
+        else
+            map.put(key, value);
+    }
+
     public void variable(String name, Expression expression, String help) {
-        variables.put(name, new Help<>(expression, help));
-        unarys.remove(name);
-        binarys.remove(name);
+        put(variables, name, new Help<>(expression, help));
+        put(unarys, name, null);
+        put(binarys, name, null);
+    }
+
+    public Undo variableTemp(String name, Expression expression, String help) {
+        Help<Expression> oldVariable = variables.get(name);
+        Help<Unary> oldUnary = unarys.get(name);
+        Help<Binary> oldBinary = binarys.get(name);
+        variable(name, expression, help);
+        return () -> {
+            put(variables, name, oldVariable);
+            put(unarys, name, oldUnary);
+            put(binarys, name, oldBinary);
+        };
     }
 
     public void unary(String name, Unary unary, String help) {
-        unarys.put(name, new Help<>(unary, help));
-        variables.remove(name);
+        put(unarys, name, new Help<>(unary, help));
+        put(variables, name, null);
     }
 
     public void binary(String name, Binary binary, String help) {
-        binarys.put(name, new Help<>(binary, help));
-        variables.remove(name);
+        put(binarys, name, new Help<>(binary, help));
+        put(variables, name, null);
     }
 
 }
