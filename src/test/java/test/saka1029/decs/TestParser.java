@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.Test;
 import saka1029.util.decs.Context;
 import saka1029.util.decs.Decs;
+import saka1029.util.decs.Expression;
+import saka1029.util.decs.ExpressionWithVariables;
 import saka1029.util.decs.Parser;
 
 public class TestParser {
@@ -44,6 +46,9 @@ public class TestParser {
     public void testDefineVariable() {
         Parser parser = new Parser();
         assertTrue(Decs.NO_VALUE == parser.eval(" v = 1 + 2"));
-        assertDecsEquals(Decs.decs("3"), parser.eval("v"));
+        Expression e = parser.parse("v + 3");
+        assertDecsEquals(Decs.decs("6"), e.apply(parser.context));
+        assertTrue(e instanceof ExpressionWithVariables);
+        assertEquals(List.of("v"), ((ExpressionWithVariables)e).variables);
     }
 }
