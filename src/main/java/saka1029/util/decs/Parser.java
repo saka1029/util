@@ -80,16 +80,27 @@ public class Parser implements org.jline.reader.Parser {
         } else if (eat(TokenType.NUM)) {
             BigDecimal[] decs = Decs.decs(prev.string);
             return c -> decs;
-        } else if (eat(TokenType.ID) && context.isVariable(prev.string)) {
-            String name = prev.string;
+        } else if (token.type == TokenType.ID) {
+            String name = token.string;
+            get();  // skip ID
             variables.add(name);
             return c -> c.variable(name).expression.apply(c);
         } else
             throw error("Unexpected token '%s'", token.string);
     }
 
+    /**
+     * unary        = primary | uop unary
+    //  * unary        = primary | [ '@' ] uop unary
+     */
     Expression unary() {
-        return primary();
+        if (token.type == TokenType.ID && context.isUnary(token.string)) {
+            String name = token.string;
+            get();  // skip ID
+            Expression arg = unary();
+            return c -> c.unary(name).expression.apply(c, arg.apply(c));
+        } else
+            return primary();
     }
 
     Expression power() {
@@ -191,8 +202,9 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = or();
         while (true) {
             Expression left = e;
-            if (eat(TokenType.ID) && context.isBinary(prev.string)) {
-                String name = prev.string;
+            if (token.type == TokenType.ID && context.isBinary(token.string)) {
+                String name = token.string;
+                get();  // skip ID
                 Expression right = or();
                 e = c -> c.binary(name).expression.apply(c, left.apply(c), right.apply(c));
             } else

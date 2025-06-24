@@ -51,4 +51,18 @@ public class TestParser {
         assertTrue(e instanceof ExpressionWithVariables);
         assertEquals(List.of("v"), ((ExpressionWithVariables)e).variables);
     }
+
+    @Test
+    public void testDefineUnary() {
+        Parser parser = new Parser();
+        assertTrue(Decs.NO_VALUE == parser.eval("f x = x + 2"));
+        assertDecsEquals(Decs.decs("5"), parser.eval("f 3"));
+    }
+
+    @Test
+    public void testDefineBinary() {
+        Parser parser = new Parser();
+        assertTrue(Decs.NO_VALUE == parser.eval("x hypot y = x*x + y*y"));
+        assertDecsEquals(Decs.decs("25"), parser.eval("3 hypot 4"));
+    }
 }
