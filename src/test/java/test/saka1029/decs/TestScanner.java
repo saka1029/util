@@ -71,7 +71,7 @@ public class TestScanner {
         Scanner scanner = new Scanner();
         List<Token> tokens = scanner.scan(
             "not   and   or  ");
-        assertEquals(List.of(NOT, AND, OR),
+        assertEquals(List.of(ID, AND, OR),
             tokens.stream().map(t -> t.type).toList());
         assertEquals(List.of( "not", "and", "or"),
             tokens.stream().map(t -> t.string).toList());

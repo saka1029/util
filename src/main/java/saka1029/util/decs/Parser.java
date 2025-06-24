@@ -42,7 +42,7 @@ public class Parser implements org.jline.reader.Parser {
 
     public final Context context;
     List<Token> tokens;
-    Token token, prev;
+    Token token;
     int index = 0;
     Scanner scanner = new Scanner();
     List<String> variables = new ArrayList<>();
@@ -59,9 +59,12 @@ public class Parser implements org.jline.reader.Parser {
         return token = index < tokens.size() ? tokens.get(index++) : END;
     }
 
+    boolean is(TokenType expected) {
+        return token.type == expected;
+    }
+
     boolean eat(TokenType expected) {
         if (token.type == expected) {
-            prev = token;
             get();
             return true;
         }
@@ -78,10 +81,11 @@ public class Parser implements org.jline.reader.Parser {
             if (!eat(TokenType.RP))
                 throw error("')' expected");
             return e;
-        } else if (eat(TokenType.NUM)) {
-            BigDecimal[] decs = Decs.decs(prev.string);
+        } else if (is(TokenType.NUM)) {
+            BigDecimal[] decs = Decs.decs(token.string);
+            get();  // skip NUM
             return c -> decs;
-        } else if (token.type == TokenType.ID) {
+        } else if (is(TokenType.ID)) {
             String name = token.string;
             get();  // skip ID
             variables.add(name);
@@ -91,7 +95,7 @@ public class Parser implements org.jline.reader.Parser {
     }
 
     Expression unary() {
-        if (token.type == TokenType.ID && context.isUnary(token.string)) {
+        if (is(TokenType.ID) && context.isUnary(token.string)) {
             String name = token.string;
             get();  // skip ID
             Expression arg = unary();
@@ -199,7 +203,7 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = or();
         while (true) {
             Expression left = e;
-            if (token.type == TokenType.ID && context.isBinary(token.string)) {
+            if (is(TokenType.ID) && context.isBinary(token.string)) {
                 String name = token.string;
                 get();  // skip ID
                 Expression right = or();
