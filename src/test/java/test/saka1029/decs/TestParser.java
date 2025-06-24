@@ -1,6 +1,7 @@
 package test.saka1029.decs;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -57,6 +58,7 @@ public class TestParser {
         Parser parser = new Parser();
         assertTrue(Decs.NO_VALUE == parser.eval("f x = x + 2"));
         assertDecsEquals(Decs.decs("5"), parser.eval("f 3"));
+        assertFalse(parser.context.isVariable("x"));
     }
 
     @Test
@@ -64,5 +66,7 @@ public class TestParser {
         Parser parser = new Parser();
         assertTrue(Decs.NO_VALUE == parser.eval("x hypot y = x*x + y*y"));
         assertDecsEquals(Decs.decs("25"), parser.eval("3 hypot 4"));
+        assertFalse(parser.context.isVariable("x"));
+        assertFalse(parser.context.isVariable("y"));
     }
 }

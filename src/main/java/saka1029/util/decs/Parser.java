@@ -26,14 +26,14 @@ import saka1029.util.decs.Scanner.TokenType;
  * comp         = add { cop add }
  * add          = mult { ( '+' | '-' ) mult }
  * mult         = power { ( '*' | '/' | '%' ) power }
- * power        = unary [ '^' uop ]
- * unary        = primary | [ '@' ] uop unary
+ * power        = unary [ '^' power ]
+ * unary        = uop unary | primary
  * primary      = '(' [ expression ] ')' | id | num
  * 
  * cop          = '==' | '!=' | '>' | '>=' | '<' | '<='
- * name         = id | special
- * uop          = id | special // defined in context
- * bop          = id | special // defined in context
+ * name         = id
+ * uop          = id // defined in context
+ * bop          = id // defined in context
  * </pre>
  */
 public class Parser implements org.jline.reader.Parser {
@@ -89,10 +89,6 @@ public class Parser implements org.jline.reader.Parser {
             throw error("Unexpected token '%s'", token.string);
     }
 
-    /**
-     * unary        = primary | uop unary
-    //  * unary        = primary | [ '@' ] uop unary
-     */
     Expression unary() {
         if (token.type == TokenType.ID && context.isUnary(token.string)) {
             String name = token.string;
