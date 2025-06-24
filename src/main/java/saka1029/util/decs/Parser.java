@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jline.reader.ParsedLine;
 import org.jline.reader.SyntaxError;
+import saka1029.util.decs.Context.Undo;
 import saka1029.util.decs.Scanner.Token;
 import saka1029.util.decs.Scanner.TokenType;
 
@@ -213,39 +214,80 @@ public class Parser implements org.jline.reader.Parser {
         return e;
     }
 
+
     /**
      * variable = 3 + 2
      * input.length = 5
      * index = 1;
      * token = ID:"variable"
-     * @return
      */
+    Expression defineVariable() {
+        String name = token.string;
+        get();   // skip ID (name)
+        get();   // skip '='
+        Expression e = expression();
+        return c -> {
+            c.variable(name, e, "variable " + name);
+            return Decs.NO_VALUE;
+        };
+    }
+
+    Expression defineUnary() {
+        String name = token.string;
+        get();   // skip ID (name)
+        String arg = token.string;
+        get();   // skip ID (argument)
+        get();   // skip '='
+        Expression e = expression();
+        return c -> {
+            Unary unary = (cc, a) -> {
+                try (Undo u = cc.variableTemp(arg, ccc -> a, "temp unary argument " + arg)) {
+                    return e.apply(cc);
+                }
+            };
+            c.unary(name, unary, "unary " + name);
+            return Decs.NO_VALUE;
+        };
+    }
+
+    Expression defineBinary() {
+        String left = token.string;
+        get();   // skip ID (left)
+        String name = token.string;
+        get();   // skip ID (name)
+        String right = token.string;
+        get();   // skip ID (right)
+        get();   // skip '='
+        Expression e = expression();
+        return c -> {
+            Binary binary = (cc, l, r) -> {
+                try (Undo ul = cc.variableTemp(left, ccc -> l, "temp binary left argument " + left);
+                    Undo ur = cc.variableTemp(right, ccc -> r, "temp binary right argument " + right)) {
+                    return e.apply(cc);
+                }
+            };
+            c.binary(name, binary, "binary " + name);
+            return Decs.NO_VALUE;
+        };
+    }
+
     Expression statement() {
         if (tokens.size() >= index + 2
             && token.type == TokenType.ID
-            && tokens.get(index).type == TokenType.ASSIGN) {
-            String name = token.string;
-            get();   // skip ID
-            get();   // skip '='
-            Expression e = expression();
-            return c -> {
-                c.variable(name, e, "variable " + name);
-                return Decs.NO_VALUE;
-            };
-        } else if (tokens.size() >= index + 3
+            && tokens.get(index).type == TokenType.ASSIGN)
+            return defineVariable();
+        else if (tokens.size() >= index + 3
             && token.type == TokenType.ID
             && tokens.get(index).type == TokenType.ID 
-            && tokens.get(index + 1).type == TokenType.ASSIGN) {
-            String name = token.string;
-            get();   // skip ID
-            get();   // skip ID
-            get();   // skip '='
-            Expression e = expression();
-            return c -> {
-                c.variable(name, e, "variable " + name);
-                return Decs.NO_VALUE;
-            };
-        } else
+            && tokens.get(index + 1).type == TokenType.ASSIGN)
+            return defineUnary();
+        else if (tokens.size() >= index + 4
+            && token.type == TokenType.ID
+            && tokens.get(index).type == TokenType.ID 
+            && tokens.get(index + 1).type == TokenType.ID 
+            && tokens.get(index + 2).type == TokenType.ASSIGN)
+            return defineBinary();
+        else
             return expression();
     }
 
