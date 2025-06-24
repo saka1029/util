@@ -10,7 +10,7 @@ public class Scanner {
         LP, RP, COMMA, AT,
         PLUS, MINUS, MULT, DIV, MOD, POW,
         EQ, NE, GT, GE, LT, LE, ASSIGN,
-        NOT, AND, OR,
+        AND, OR,
         HELP, SOLVE, EXIT,
         NUM, ID,
         END,
@@ -24,7 +24,7 @@ public class Scanner {
         Map.entry(">", TokenType.GT), Map.entry(">=", TokenType.GE),
         Map.entry("<", TokenType.LT), Map.entry("<=", TokenType.LE),
         Map.entry("=", TokenType.ASSIGN),
-        Map.entry("not", TokenType.NOT),
+        // Map.entry("not", TokenType.NOT),
         Map.entry("and", TokenType.AND), Map.entry("or", TokenType.OR),
         Map.entry("help", TokenType.HELP), Map.entry("solve", TokenType.SOLVE),
         Map.entry("exit", TokenType.EXIT)

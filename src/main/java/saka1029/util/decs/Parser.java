@@ -14,8 +14,8 @@ import saka1029.util.decs.Scanner.TokenType;
  * syntax:
  * statement    = expression
  *              | id '=' expression
- *              | name id '=' expression
- *              | id name id '=' expression
+ *              | id id '=' expression
+ *              | id id id '=' expression
  *              | 'exit'
  *              | 'help' name
  *              | 'solve' expression
@@ -30,8 +30,9 @@ import saka1029.util.decs.Scanner.TokenType;
  * unary        = uop unary | primary
  * primary      = '(' [ expression ] ')' | id | num
  * 
+ * name         = ',' | 'or' | 'and' | cop
+ *              | '+' | '-' | '*' | '/' | '%' | '^'
  * cop          = '==' | '!=' | '>' | '>=' | '<' | '<='
- * name         = id
  * uop          = id // defined in context
  * bop          = id // defined in context
  * </pre>
