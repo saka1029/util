@@ -59,8 +59,14 @@ public class Parser implements org.jline.reader.Parser {
         return token = index < tokens.size() ? tokens.get(index++) : END;
     }
 
-    boolean is(TokenType expected) {
-        return token.type == expected;
+    boolean is(TokenType... expects) {
+        int length = expects.length;
+        if (length > tokens.size() - index + 1)
+            return false;
+        for (int i = 0, j = index - 1; i < length; ++i, ++j)
+            if (expects[i] != tokens.get(j).type)
+                return false;
+        return true;
     }
 
     boolean eat(TokenType expected) {
@@ -254,7 +260,7 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = expression();
         return c -> {
             Unary unary = (cc, a) -> {
-                try (Undo u = cc.variableTemp(arg, ccc -> a, "temp unary argument " + arg)) {
+                try (Undo u = cc.variableTemp(arg, ccc -> a, "local " + arg)) {
                     return e.apply(cc);
                 }
             };
@@ -274,8 +280,8 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = expression();
         return c -> {
             Binary binary = (cc, l, r) -> {
-                try (Undo ul = cc.variableTemp(left, ccc -> l, "temp binary left argument " + left);
-                    Undo ur = cc.variableTemp(right, ccc -> r, "temp binary right argument " + right)) {
+                try (Undo ul = cc.variableTemp(left, ccc -> l, "local " + left);
+                    Undo ur = cc.variableTemp(right, ccc -> r, "local " + right)) {
                     return e.apply(cc);
                 }
             };
@@ -285,20 +291,11 @@ public class Parser implements org.jline.reader.Parser {
     }
 
     Expression statement() {
-        if (tokens.size() >= index + 2
-            && token.type == TokenType.ID
-            && tokens.get(index).type == TokenType.ASSIGN)
+        if (is(TokenType.ID, TokenType.ASSIGN))
             return defineVariable();
-        else if (tokens.size() >= index + 3
-            && token.type == TokenType.ID
-            && tokens.get(index).type == TokenType.ID 
-            && tokens.get(index + 1).type == TokenType.ASSIGN)
+        else if (is(TokenType.ID, TokenType.ID, TokenType.ASSIGN))
             return defineUnary();
-        else if (tokens.size() >= index + 4
-            && token.type == TokenType.ID
-            && tokens.get(index).type == TokenType.ID 
-            && tokens.get(index + 1).type == TokenType.ID 
-            && tokens.get(index + 2).type == TokenType.ASSIGN)
+        else if (is(TokenType.ID, TokenType.ID, TokenType.ID, TokenType.ASSIGN))
             return defineBinary();
         else
             return expression();
