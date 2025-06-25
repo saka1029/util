@@ -89,49 +89,52 @@ public class Context {
     public int solve(Expression expression, Consumer<String> output) {
         if (!(expression instanceof ExpressionWithVariables exvar))
             throw new DecsException("Cannot solve");
-        Expression ex = exvar.expression;
+        Context context = Context.this;
         List<String> names = exvar.variables.stream()
             .distinct().toList();
         int length = names.size();
         List<BigDecimal[]> values = names.stream()
-            .map(n -> variable(n).expression.apply(this))
+            .map(n -> context.variable(n).expression.apply(context))
             .toList();
         // backup
         List<Help<Expression>> backup = names.stream()
-            .map(n -> variables.get(n))
+            .map(n -> context.variables.get(n))
             .toList();
-        int[] count = {0};
-        new Object() {
+        var dummy = new Object() {
+            int count = 0;
 
             void test() {
-                BigDecimal[] r = ex.apply(Context.this);
-                if (r.length < 1 || !Decs.bool(r[0]))
+                BigDecimal[] result = exvar.expression.apply(context);
+                if (result.length < 1 || !Decs.bool(result[0]))
                     return;
-                ++count[0];
-                String result = names.stream()
-                    .map(n -> n + "=" + Decs.string(variable(n).expression.apply(Context.this)))
+                ++count;
+                String out = names.stream()
+                    .map(n -> n + "=" + Decs.string(variable(n)
+                        .expression.apply(context)))
                     .collect(Collectors.joining(" "));
-                output.accept(result);
+                output.accept(out);
             }
 
             void solve(int index) {
                 if (index >= length)
                     test();
                 else {
+                    String name = names.get(index);
                     BigDecimal[] decs = values.get(index);
                     for (int i = 0, max = decs.length; i < max; ++i) {
-                        String name = names.get(index);
                         BigDecimal[] value = Decs.decs(decs[i]);
-                        variable(name, c -> value, name);
+                        context.variable(name, c -> value, name);
                         solve(index + 1);
                     }
                 }
             }
-        }.solve(0);
+        };
+        dummy.solve(0);
         // restore
         IntStream.range(0, length) 
-            .forEach(i -> variables.put(names.get(i), backup.get(i)));
-        return count[0];
+            .forEach(i -> context.variables
+                .put(names.get(i), backup.get(i)));
+        return dummy.count;
     }
 
 
