@@ -1,9 +1,7 @@
 package saka1029.util.decs;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class Context {
 
