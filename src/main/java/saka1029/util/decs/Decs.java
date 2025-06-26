@@ -101,9 +101,10 @@ public class Decs {
     }
 
     public static String string(BigDecimal[] decs) {
-        return stream(decs)
-            .map(d -> string(d))
-            .collect(Collectors.joining(", ", "(", ")"));
+        return decs.length == 1 ?  string(decs[0])
+            : stream(decs)
+                .map(d -> string(d))
+                .collect(Collectors.joining(", ", "(", ")"));
     }
 
     static boolean bool(BigDecimal d) {
