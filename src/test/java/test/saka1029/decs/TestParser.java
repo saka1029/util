@@ -75,7 +75,7 @@ public class TestParser {
     }
 
     @Test
-    public void testSolve() {
+    public void testSolveToMap() {
         Parser parser = new Parser();
         assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
@@ -90,13 +90,25 @@ public class TestParser {
     }
 
     @Test
-    public void testSolveString() {
+    public void testSolve() {
         Parser parser = new Parser();
         assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
         assertDecsEquals(decs("1 2 3"), parser.eval("x"));
         List<String> list = new ArrayList<>();
-        parser.context.solveString(parser.parse("x + y <= 102"), s -> list.add(s));
+        parser.context.solverOutput = s -> list.add(s);
+        parser.context.solve(parser.parse("x + y <= 102"));
+        assertEquals(List.of("x=1 y=100", "x=2 y=100"), list);
+    }
+
+    @Test
+    public void testParserSolve() {
+        Parser parser = new Parser();
+        assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
+        assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
+        List<String> list = new ArrayList<>();
+        parser.context.solverOutput = s -> list.add(s);
+        assertDecsEquals(decs("2"), parser.eval("solve x + y <= 102"));
         assertEquals(List.of("x=1 y=100", "x=2 y=100"), list);
     }
 

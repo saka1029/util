@@ -230,7 +230,7 @@ public class Parser implements org.jline.reader.Parser {
             } else
                 break;
         }
-        return e;
+        return new ExpressionWithVariables(e, variables);
     }
 
 
@@ -290,6 +290,12 @@ public class Parser implements org.jline.reader.Parser {
         };
     }
 
+    Expression solve() {
+        Expression ev = expression();
+        // return number of solutions.
+        return c -> Decs.decs(Decs.dec(c.solve(ev)));
+    }
+
     Expression statement() {
         if (is(TokenType.ID, TokenType.ASSIGN))
             return defineVariable();
@@ -297,6 +303,8 @@ public class Parser implements org.jline.reader.Parser {
             return defineUnary();
         else if (is(TokenType.ID, TokenType.ID, TokenType.ID, TokenType.ASSIGN))
             return defineBinary();
+        else if (eat(TokenType.SOLVE))
+            return solve();
         else
             return expression();
     }
