@@ -148,6 +148,14 @@ public class TestDecs {
     }
 
     @Test
+    public void testReciprocalUnary() {
+        assertDecsEquals(decs(""), reciprocal(decs("")));
+        assertDecsEquals(decs("0.5"), reciprocal(decs("2")));
+        assertDecsEquals(decs("0.5 0.25"), reciprocal(decs("2 4")));
+        assertDecsEquals(decs("0.5 0.25 0.2"), reciprocal(decs("2 4 5")));
+    }
+
+    @Test
     public void testNotUnary() {
         assertDecsEquals(decs(""), not(decs("")));
         assertDecsEquals(decs("0"), not(decs("3")));
