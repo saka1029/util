@@ -2,10 +2,11 @@ package test.saka1029.decs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import saka1029.util.decs.Context;
 import static saka1029.util.decs.Decs.*;
@@ -71,6 +72,21 @@ public class TestParser {
         assertDecsEquals(decs("25"), parser.eval("3 hypot 4"));
         assertDecsEquals(decs("100"), parser.eval("x"));
         assertDecsEquals(decs("200"), parser.eval("y"));
+    }
+
+    @Test
+    public void testSolveMap() {
+        Parser parser = new Parser();
+        assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
+        assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
+        assertDecsEquals(decs("1 2 3"), parser.eval("x"));
+        int[] n ={0};
+        parser.context.solveMap(parser.parse("x + y <= 102"), m -> {
+            switch (n[0]++) {
+                case 0: assertEquals(Map.of("x", dec("1"), "y", dec("100")), m); break;
+                case 1: assertEquals(Map.of("x", dec("2"), "y", dec("100")), m); break;
+                default: fail();
+            }});
     }
 
     @Test
