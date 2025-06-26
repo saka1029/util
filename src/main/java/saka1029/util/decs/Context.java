@@ -91,14 +91,14 @@ public class Context {
         put(variables, name, null);
     }
 
-    public int solve(Expression expression, Consumer<String> out) {
-        return solveMap(expression, m -> out.accept(
+    public int solveString(Expression expression, Consumer<String> out) {
+        return solve(expression, m -> out.accept(
             m.entrySet().stream()
                 .map(e -> e.getKey() + "=" + Decs.string(e.getValue()))
                 .collect(Collectors.joining(" "))));
     }
 
-    public int solveMap(Expression expression, Consumer<Map<String, BigDecimal>> out) {
+    public int solve(Expression expression, Consumer<Map<String, BigDecimal>> out) {
         if (!(expression instanceof ExpressionWithVariables exvar))
             throw new DecsException("Cannot solve");
         Context context = Context.this;

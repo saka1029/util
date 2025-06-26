@@ -75,13 +75,13 @@ public class TestParser {
     }
 
     @Test
-    public void testSolveMap() {
+    public void testSolve() {
         Parser parser = new Parser();
         assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
         assertDecsEquals(decs("1 2 3"), parser.eval("x"));
         int[] n ={0};
-        parser.context.solveMap(parser.parse("x + y <= 102"), m -> {
+        parser.context.solve(parser.parse("x + y <= 102"), m -> {
             switch (n[0]++) {
                 case 0: assertEquals(Map.of("x", dec("1"), "y", dec("100")), m); break;
                 case 1: assertEquals(Map.of("x", dec("2"), "y", dec("100")), m); break;
@@ -90,13 +90,13 @@ public class TestParser {
     }
 
     @Test
-    public void testSolve() {
+    public void testSolveString() {
         Parser parser = new Parser();
         assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
         assertDecsEquals(decs("1 2 3"), parser.eval("x"));
         List<String> list = new ArrayList<>();
-        parser.context.solve(parser.parse("x + y <= 102"), s -> list.add(s));
+        parser.context.solveString(parser.parse("x + y <= 102"), s -> list.add(s));
         assertEquals(List.of("x=1 y=100", "x=2 y=100"), list);
     }
 
