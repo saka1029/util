@@ -14,6 +14,10 @@ public class Context {
     final Map<String, Help<Unary>> unarys = new HashMap<>();
     final Map<String, Help<Binary>> binarys = new HashMap<>();
 
+    public Context() {
+        init();
+    }
+
     public boolean isVariable(String name) {
         return variables.containsKey(name);
     }
@@ -110,7 +114,7 @@ public class Context {
                 ++count;
                 String out = names.stream()
                     .map(n -> n + "=" + Decs.string(variable(n)
-                        .expression.apply(context)))
+                        .expression.apply(context)[0]))
                     .collect(Collectors.joining(" "));
                 output.accept(out);
             }
@@ -137,5 +141,7 @@ public class Context {
         return dummy.count;
     }
 
-
+    void init() {
+        unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
+    }
 }

@@ -30,4 +30,5 @@ public class TestContext {
         assertEquals(new Help<>(unary, "unary"), context.unary(name));
         assertEquals(new Help<>(binary, "binary"), context.binary(name));
     }
+
 }
