@@ -81,12 +81,13 @@ public class TestParser {
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
         assertDecsEquals(decs("1 2 3"), parser.eval("x"));
         int[] n ={0};
-        parser.context.solve(parser.parse("x + y <= 102"), m -> {
+        assertEquals(2, parser.context.solve(parser.parse("x + y <= 102"), m -> {
             switch (n[0]++) {
                 case 0: assertEquals(Map.of("x", dec("1"), "y", dec("100")), m); break;
                 case 1: assertEquals(Map.of("x", dec("2"), "y", dec("100")), m); break;
                 default: fail();
-            }});
+            }
+        }));
     }
 
     @Test
