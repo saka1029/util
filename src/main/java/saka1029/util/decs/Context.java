@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -90,7 +91,14 @@ public class Context {
         put(variables, name, null);
     }
 
-    public int solve(Expression expression, Consumer<String> output) {
+    public int solve(Expression expression, Consumer<String> out) {
+        return solveMap(expression, m -> out.accept(
+            m.entrySet().stream()
+                .map(e -> e.getKey() + "=" + Decs.string(e.getValue()))
+                .collect(Collectors.joining(" "))));
+    }
+
+    public int solveMap(Expression expression, Consumer<Map<String, BigDecimal>> out) {
         if (!(expression instanceof ExpressionWithVariables exvar))
             throw new DecsException("Cannot solve");
         Context context = Context.this;
@@ -106,17 +114,18 @@ public class Context {
             .toList();
         var dummy = new Object() {
             int count = 0;
+            Map<String, BigDecimal> map = new TreeMap<>();
 
             void test() {
                 BigDecimal[] result = exvar.expression.apply(context);
                 if (result.length < 1 || !Decs.bool(result[0]))
                     return;
                 ++count;
-                String out = names.stream()
-                    .map(n -> n + "=" + Decs.string(variable(n)
-                        .expression.apply(context)[0]))
-                    .collect(Collectors.joining(" "));
-                output.accept(out);
+                map.clear();
+                names.stream()
+                    .forEach(n -> map.put(n,
+                        context.variable(n).expression.apply(context)[0]));
+                out.accept(map);
             }
 
             void solve(int index) {

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import org.junit.Test;
 import saka1029.util.decs.Context;
 import static saka1029.util.decs.Decs.*;
@@ -77,7 +76,7 @@ public class TestParser {
     @Test
     public void testSolve() {
         Parser parser = new Parser();
-        assertDecsEquals(NO_VALUE, parser.eval("x = 1, 2, 3"));
+        assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
         assertDecsEquals(decs("1 2 3"), parser.eval("x"));
         List<String> list = new ArrayList<>();
