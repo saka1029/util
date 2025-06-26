@@ -113,7 +113,7 @@ public class Context {
         List<Help<Expression>> backup = names.stream()
             .map(n -> context.variables.get(n))
             .toList();
-        var dummy = new Object() {
+        var solver = new Object() {
             int count = 0;
             Map<String, BigDecimal> map = new TreeMap<>();
 
@@ -142,12 +142,12 @@ public class Context {
                 }
             }
         };
-        dummy.solve(0);
+        solver.solve(0);
         // restore
         IntStream.range(0, length) 
             .forEach(i -> context.variables
                 .put(names.get(i), backup.get(i)));
-        return dummy.count;
+        return solver.count;
     }
 
     void init() {
