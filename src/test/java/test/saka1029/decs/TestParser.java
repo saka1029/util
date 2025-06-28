@@ -47,7 +47,7 @@ public class TestParser {
         Parser parser = new Parser();
         assertTrue(NO_VALUE == parser.eval(" v = 1 + 2"));
         Expression e = parser.parse("v + 3");
-        assertDecsEquals(decs("6"), e.apply(parser.context));
+        assertDecsEquals(decs("6"), e.eval(parser.context));
         assertTrue(e instanceof ExpressionWithVariables);
         assertEquals(List.of("v"), ((ExpressionWithVariables)e).variables);
     }
