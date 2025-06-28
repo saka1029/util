@@ -3,9 +3,6 @@ package saka1029.util.decs;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.jline.reader.EOFError;
-import org.jline.reader.ParsedLine;
-import org.jline.reader.SyntaxError;
 import saka1029.util.decs.Context.Undo;
 import saka1029.util.decs.Scanner.Token;
 import saka1029.util.decs.Scanner.TokenType;
@@ -38,7 +35,7 @@ import saka1029.util.decs.Scanner.TokenType;
  * bop          = id // defined in context
  * </pre>
  */
-public class Parser implements org.jline.reader.Parser {
+public class Parser {
     static final Token END = new Token(TokenType.END, "EOF");
 
     public final Context context;
@@ -78,18 +75,18 @@ public class Parser implements org.jline.reader.Parser {
         return false;
     }
 
-    EOFError eofError(String message, Object... args) {
-        return new EOFError(0, 0, message.formatted(args));
+    EOFException eofError(String message, Object... args) {
+        return new EOFException(message, args);
     }
 
-    SyntaxError syntaxError(String message, Object... args) {
-        return new SyntaxError(0, 0, message.formatted(args));
+    SyntaxException syntaxError(String message, Object... args) {
+        return new SyntaxException(message, args);
     }
 
     Expression primary() {
-        if (is(TokenType.END))
+        if (token.type == TokenType.END) {
             throw eofError("Unexpected end");
-        if (eat(TokenType.LP)) {
+        } else if (eat(TokenType.LP)) {
             Expression e = expression();
             if (!eat(TokenType.RP))
                 throw eofError("')' expected");
@@ -103,8 +100,9 @@ public class Parser implements org.jline.reader.Parser {
             get();  // skip ID
             variables.add(name);
             return c -> c.variable(name).expression.eval(c);
-        } else
+        } else {
             throw syntaxError("Unexpected token '%s'", token.string);
+        }
     }
 
     Expression unary() {
@@ -326,11 +324,5 @@ public class Parser implements org.jline.reader.Parser {
 
     public BigDecimal[] eval(String input) {
         return parse(input).eval(context);
-    }
-
-    @Override
-    public ParsedLine parse(String line, int cursor, ParseContext context) throws SyntaxError {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'parse'");
     }
 }

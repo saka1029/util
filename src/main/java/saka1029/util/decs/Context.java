@@ -107,7 +107,7 @@ public class Context {
             .distinct().toList();
         int length = names.size();
         List<BigDecimal[]> values = names.stream()
-            .map(n -> context.variable(n).expression.apply(context))
+            .map(n -> context.variable(n).expression.eval(context))
             .toList();
         // backup
         List<Help<Expression>> backup = names.stream()
@@ -118,13 +118,13 @@ public class Context {
             Map<String, BigDecimal> map = new TreeMap<>();
 
             void test() {
-                BigDecimal[] result = exvar.expression.apply(context);
+                BigDecimal[] result = exvar.expression.eval(context);
                 if (result.length < 1 || !Decs.bool(result[0]))
                     return;
                 ++count;
                 map.clear();
                 for (String n : names)
-                    map.put(n, context.variable(n).expression.apply(context)[0]);
+                    map.put(n, context.variable(n).expression.eval(context)[0]);
                 out.accept(map);
             }
 

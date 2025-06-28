@@ -31,6 +31,10 @@ public class Decs {
     // public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
     public static final MathContext MATH_CONTEXT = new MathContext(100);
 
+    static ValueException error(String message, Object... args) {
+        return new ValueException(message, args);
+    }
+
     public static Stream<BigDecimal> stream(BigDecimal[] elements) {
         return Arrays.stream(elements);
     }
@@ -218,7 +222,7 @@ public class Decs {
 
     public static BigDecimal single(BigDecimal[] decs) {
         if (decs.length != 1)
-            throw new DecsException("Single value expected but %s", string(decs));
+            throw error("Single value expected but %s", string(decs));
         return decs[0];
     }
 
@@ -265,8 +269,7 @@ public class Decs {
             return decs(IntStream.range(0, lsize)
                 .mapToObj(i -> op.apply(left[i], right[i])));
         else
-            throw new DecsException(
-                "zip: Invalid size l=%s r=%s", string(left), string(right));
+            throw error("zip: Invalid size l=%s r=%s", string(left), string(right));
     }
 
     public static BigDecimal[] add(BigDecimal[] left, BigDecimal[] right) {
@@ -355,7 +358,7 @@ public class Decs {
 
     public static BigDecimal[] base(BigDecimal[] left, BigDecimal[] right) {
         if (left.length != 1)
-            throw new DecsException("Single value expected but %s", string(left));
+            throw error("Single value expected but %s", string(left));
         Deque<BigDecimal> result = new LinkedList<>();
         BigDecimal r = left[0].abs();
         if (right.length == 1) {
