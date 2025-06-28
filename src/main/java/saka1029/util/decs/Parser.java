@@ -3,6 +3,7 @@ package saka1029.util.decs;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import org.jline.reader.EOFError;
 import org.jline.reader.ParsedLine;
 import org.jline.reader.SyntaxError;
 import saka1029.util.decs.Context.Undo;
@@ -77,15 +78,21 @@ public class Parser implements org.jline.reader.Parser {
         return false;
     }
 
-    DecsException error(String format, Object... args) {
-        return new DecsException(format, args);
+    EOFError eofError(String message, Object... args) {
+        return new EOFError(0, 0, message.formatted(args));
+    }
+
+    SyntaxError syntaxError(String message, Object... args) {
+        return new SyntaxError(0, 0, message.formatted(args));
     }
 
     Expression primary() {
+        if (is(TokenType.END))
+            throw eofError("Unexpected end");
         if (eat(TokenType.LP)) {
             Expression e = expression();
             if (!eat(TokenType.RP))
-                throw error("')' expected");
+                throw eofError("')' expected");
             return e;
         } else if (is(TokenType.NUM)) {
             BigDecimal[] decs = Decs.decs(token.string);
@@ -97,7 +104,7 @@ public class Parser implements org.jline.reader.Parser {
             variables.add(name);
             return c -> c.variable(name).expression.eval(c);
         } else
-            throw error("Unexpected token '%s'", token.string);
+            throw syntaxError("Unexpected token '%s'", token.string);
     }
 
     Expression unary() {
@@ -230,7 +237,7 @@ public class Parser implements org.jline.reader.Parser {
             } else
                 break;
         }
-        return e;
+        return new ExpressionWithVariables(e, variables);
     }
 
 
@@ -290,6 +297,12 @@ public class Parser implements org.jline.reader.Parser {
         };
     }
 
+    Expression solve() {
+        Expression ev = expression();
+        // return number of solutions.
+        return c -> Decs.decs(Decs.dec(c.solve(ev)));
+    }
+
     Expression statement() {
         if (is(TokenType.ID, TokenType.ASSIGN))
             return defineVariable();
@@ -297,6 +310,8 @@ public class Parser implements org.jline.reader.Parser {
             return defineUnary();
         else if (is(TokenType.ID, TokenType.ID, TokenType.ID, TokenType.ASSIGN))
             return defineBinary();
+        else if (eat(TokenType.SOLVE))
+            return solve();
         else
             return expression();
     }
