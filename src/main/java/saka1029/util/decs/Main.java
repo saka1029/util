@@ -1,6 +1,7 @@
 package saka1029.util.decs;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -35,7 +36,11 @@ public class Main {
         @Override
         public ParsedLine parse(String line, int cursor, ParseContext context) throws SyntaxError {
             try {
-                this.result = new AttributedString(Decs.string(parser.eval(line)));
+                BigDecimal[] decs = parser.eval(line);
+                if (decs != Decs.NO_VALUE)
+                    this.result = new AttributedString(Decs.string(decs));
+                else
+                    this.result = null;
             } catch (EOFException e) {
                 throw new EOFError(0, 0, e.getMessage());
             } catch (SyntaxException s) {
@@ -65,7 +70,8 @@ public class Main {
         while (true) {
             try {
                 lineReader.readLine("    ");
-                lineReader.printAbove(parser.result);
+                if (parser.result != null)
+                    lineReader.printAbove(parser.result);
             } catch (EndOfFileException e) {        // catch Ctrl-D
                 break;
             } catch (UserInterruptException e) {    // catch Ctrl-C

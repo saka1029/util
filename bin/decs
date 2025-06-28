@@ -1,0 +1,4 @@
+#!/bin/sh
+T=~/git/util/target
+CP=$T/classes:$T/dependency/*
+java -cp $CP saka1029.util.decs.Main "$@"
