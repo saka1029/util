@@ -19,20 +19,22 @@ import saka1029.util.decs.Scanner.TokenType;
  *              | 'solve' expression
  * expression   = binary { ',' binary }
  * binary       = or { bop or }
- * or           = and { 'or' and }
- * and          = comp { 'and' comp }
- * comp         = add { cop add }
+ * or           = and { '|' and }
+ * and          = comp { '&' comp }
+ * comp         = add [ cop add ]
  * add          = mult { ( '+' | '-' ) mult }
  * mult         = power { ( '*' | '/' | '%' ) power }
  * power        = unary [ '^' power ]
  * unary        = uop unary | primary
  * primary      = '(' [ expression ] ')' | id | num
  * 
- * name         = ',' | 'or' | 'and' | cop
+ * name         = ',' | '|' | '&' | cop
  *              | '+' | '-' | '*' | '/' | '%' | '^'
  * cop          = '==' | '!=' | '>' | '>=' | '<' | '<='
  * uop          = id // defined in context
  * bop          = id // defined in context
+ * id           = ALPHABETIC { ALPHABETIC | DIGIT }
+ *              | SPECIAL { SPECIAL }
  * </pre>
  */
 public class Parser {
