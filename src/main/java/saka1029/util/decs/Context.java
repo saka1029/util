@@ -151,6 +151,7 @@ public class Context {
     }
 
     void init() {
+        unary("!", (c, a) -> Decs.not(a), "! (B) -> (B) : not");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
     }
 }

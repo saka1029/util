@@ -188,9 +188,14 @@ public class Parser {
         Expression e = comp();
         while (true) {
             Expression left = e;
-            if (eat(TokenType.OR)) {
+            if (eat(TokenType.AND)) {
                 Expression right = comp();
-                e = c -> Decs.and(left.eval(c), right.eval(c));
+                // e = c -> Decs.and(left.eval(c), right.eval(c));
+                // conditional AND
+                e = c -> {
+                    BigDecimal[] l = left.eval(c);
+                    return Decs.falses(l) ? l : Decs.and(l, right.eval(c));
+                };
             } else
                 break;
         }
@@ -203,7 +208,12 @@ public class Parser {
             Expression left = e;
             if (eat(TokenType.OR)) {
                 Expression right = add();
-                e = c -> Decs.or(left.eval(c), right.eval(c));
+                // e = c -> Decs.or(left.eval(c), right.eval(c));
+                // conditional OR
+                e = c -> {
+                    BigDecimal[] l = left.eval(c);
+                    return Decs.trues(l) ? l : Decs.or(l, right.eval(c));
+                };
             } else
                 break;
         }

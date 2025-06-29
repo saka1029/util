@@ -338,6 +338,14 @@ public class Decs {
         return compare(left, right, c -> dec(c >= 0));
     }
 
+    public static boolean trues(BigDecimal[] decs) {
+        return Stream.of(decs).allMatch(d -> !d.equals(ZERO));
+    }
+
+    public static boolean falses(BigDecimal[] decs) {
+        return Stream.of(decs).allMatch(d -> d.equals(ZERO));
+    }
+
     public static BigDecimal[] and(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, (a, b) -> dec(bool(a) && bool(b)));
     }
