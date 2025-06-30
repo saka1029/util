@@ -165,6 +165,10 @@ public class Context {
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
         unary("iota0", (c, a) -> Decs.iota0(a), "iota0 I -> (I) : (0..I)");
+        unary("ln", (c, a) -> Decs.ln(a), "ln (D) -> (D) : log E");
+        binary("log", (c, a, b) -> Decs.log(a, b), "(A) log (B) -> (D) : log B A");
+        unary("log10", (c, a) -> Decs.log10(a), "log10 (D) -> (D) : log 10");
+        unary("log2", (c, a) -> Decs.log2(a), "log2 (D) -> (D) : log 2");
         unary("negate", (c, a) -> Decs.negate(a), "negate (D) -> (D) : change sign");
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pow", (c, a) -> Decs.pow(a), "pow (D) -> D : power");

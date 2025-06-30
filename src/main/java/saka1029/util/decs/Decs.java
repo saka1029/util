@@ -246,6 +246,18 @@ public class Decs {
         return map(decs, a -> BigDecimalMath.tan(a, MATH_CONTEXT));
     }
 
+    public static BigDecimal[] ln(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.log(a, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] log10(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.log10(a, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] log2(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.log2(a, MATH_CONTEXT));
+    }
+
     // unary single method
 
     public static BigDecimal single(BigDecimal[] decs) {
@@ -384,6 +396,11 @@ public class Decs {
 
     public static BigDecimal[] or(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, (a, b) -> dec(bool(a) || bool(b)));
+    }
+
+    public static BigDecimal[] log(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> BigDecimalMath.log(a, MATH_CONTEXT)
+            .divide(BigDecimalMath.log(b, MATH_CONTEXT), MATH_CONTEXT));
     }
     
     // binary special method
