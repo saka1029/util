@@ -254,7 +254,7 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = expression();
         return c -> {
             Unary unary = (cc, a) -> {
-                try (Undo u = cc.variableTemp(arg, ccc -> a, "temp unary argument " + arg)) {
+                try (Undo u = cc.variableTemp(arg, ccc -> a, "temp " + arg)) {
                     return e.apply(cc);
                 }
             };
@@ -274,8 +274,8 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = expression();
         return c -> {
             Binary binary = (cc, l, r) -> {
-                try (Undo ul = cc.variableTemp(left, ccc -> l, "temp binary left argument " + left);
-                    Undo ur = cc.variableTemp(right, ccc -> r, "temp binary right argument " + right)) {
+                try (Undo ul = cc.variableTemp(left, ccc -> l, "temp " + left);
+                    Undo ur = cc.variableTemp(right, ccc -> r, "temp " + right)) {
                     return e.apply(cc);
                 }
             };
