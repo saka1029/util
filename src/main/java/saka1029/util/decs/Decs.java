@@ -67,6 +67,10 @@ public class Decs {
         return elements.clone();
     }
 
+    public static BigDecimal[] decs(int... values) {
+        return decs(IntStream.of(values).mapToObj(i -> dec(i)));
+    }
+
     public static BigDecimal[] decs(List<BigDecimal> list) {
         return list.toArray(BigDecimal[]::new);
     }
@@ -266,12 +270,6 @@ public class Decs {
         return decs[0];
     }
 
-    // public static BigDecimal[] single(BigDecimal[] decs,
-    //         Function<BigDecimal, BigDecimal[]> operation) {
-    //         single(decs);
-    //     return operation.apply(decs[0]);
-    // }
-
     public static BigDecimal[] iota(BigDecimal[] decs) {
         return decs(IntStream.rangeClosed(1, single(decs).intValue())
             .mapToObj(i -> dec(i)));
@@ -282,7 +280,30 @@ public class Decs {
             .mapToObj(i -> dec(i)));
     }
 
+    static void sieve(boolean[] primes, int n) {
+        int size = primes.length;
+        for (int i = n + n; i < size; i += n)
+            primes[i] = true;
+    }
+
+    public static BigDecimal[] primes(BigDecimal[] decs) {
+        int size = single(decs).intValue();
+        boolean[] primes = new boolean[size];
+        primes[0] = primes[1] = true;
+        int max = (int)Math.sqrt(size);
+        sieve(primes, 2);
+        for (int i = 3; i <= max; i += 2)
+            sieve(primes, i);
+        return decs(IntStream.range(0, size)
+            .filter(i -> !primes[i])
+            .mapToObj(i -> dec(i)));
+    }
+
     // unary special method
+
+    public static BigDecimal[] length(BigDecimal[] decs) {
+        return decs(decs.length);
+    }
 
     public static BigDecimal[] reverse(BigDecimal[] decs) {
         int length = decs.length;
