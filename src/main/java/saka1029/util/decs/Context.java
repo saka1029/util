@@ -152,6 +152,12 @@ public class Context {
 
     void init() {
         unary("!", (c, a) -> Decs.not(a), "! (B) -> (B) : not");
+        unary("+", (c, a) -> Decs.add(a), "+ (D) -> D : +");
+        unary("-", (c, a) -> Decs.subtract(a), "- (D) -> D : -");
+        unary("*", (c, a) -> Decs.multiply(a), "* (D) -> D : *");
+        unary("/", (c, a) -> Decs.divide(a), "/ (D) -> D : /");
+        unary("abs", (c, a) -> Decs.abs(a), "abs (D) -> (D) : absolute");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
+        unary("negate", (c, a) -> Decs.negate(a), "negate (D) -> (D) : change sign");
     }
 }

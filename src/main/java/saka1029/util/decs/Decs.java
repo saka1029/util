@@ -186,6 +186,10 @@ public class Decs {
         return map(decs, BigDecimal::negate);
     }
 
+    public static BigDecimal[] abs(BigDecimal[] decs) {
+        return map(decs, BigDecimal::abs);
+    }
+
     public static BigDecimal[] reciprocal(BigDecimal[] decs) {
         return map(decs, d -> BigDecimalMath.reciprocal(d, MATH_CONTEXT));
     }
