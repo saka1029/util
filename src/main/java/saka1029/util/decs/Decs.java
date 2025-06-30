@@ -63,6 +63,10 @@ public class Decs {
         return new BigDecimal(i);
     }
 
+    public static BigDecimal[] decs() {
+        return EMPTY;
+    }
+
     public static BigDecimal[] decs(BigDecimal... elements) {
         return elements.clone();
     }
@@ -426,19 +430,9 @@ public class Decs {
     
     // binary special method
 
-    /**
-     * 
-     * @param left 単一の正の数
-     * @param right 単一または複数の正の数
-     * @r
-     * 
-     */
-
     public static BigDecimal[] base(BigDecimal[] left, BigDecimal[] right) {
-        if (left.length != 1)
-            throw error("Single value expected but %s", string(left));
+        BigDecimal r = single(left).abs();
         Deque<BigDecimal> result = new LinkedList<>();
-        BigDecimal r = left[0].abs();
         if (right.length == 1) {
             BigDecimal base = right[0].abs();
             while (r.compareTo(ZERO) > 0) {
@@ -457,6 +451,28 @@ public class Decs {
             if (result.size() == 0 || r.compareTo(ZERO) != 0)
             result.addFirst(r);
         }
+        return decs(result);
+    }
+
+    public static BigDecimal[] decimal(BigDecimal[] left, BigDecimal[] right) {
+        // BigDecimal base = single(right).abs();
+        // return decs(Stream.of(left)
+        //     .reduce(ZERO, (a, b) -> a.multiply(base).add(b)));
+        int lsize = left.length, rsize = right.length;
+        BigDecimal result = BigDecimal.ZERO;
+        if (rsize == 1) {
+            BigDecimal base = right[0].abs();
+            for (int i = 0; i < lsize; ++i)
+                result = result.multiply(base).add(left[i].abs());
+        } else if (lsize == rsize) {
+            for (int i = 0; i < rsize; ++i)
+                result = result.multiply(right[i].abs()).add(left[i].abs());
+        } else if (lsize == rsize + 1) {
+            result = left[0];
+            for (int i = 0; i < rsize; ++i)
+                result = result.multiply(right[i].abs()).add(left[i + 1].abs());
+        } else
+            throw error("Illegal length left=%d rigth=%d", lsize, rsize);
         return decs(result);
     }
 

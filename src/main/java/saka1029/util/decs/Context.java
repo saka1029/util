@@ -159,7 +159,9 @@ public class Context {
         unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or");
         unary("&", (c, a) -> Decs.and(a), "& (B) -> B : and");
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
+        binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
+        binary("decimal", (c, a, b) -> Decs.decimal(a, b), "(A) decimal (B) -> D : (A) in base (B) to decimal");
         unary("degree", (c, a) -> Decs.degree(a), "degree (A) -> (D) : A / π * 180");
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
