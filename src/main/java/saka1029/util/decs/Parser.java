@@ -3,8 +3,6 @@ package saka1029.util.decs;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.jline.reader.ParsedLine;
-import org.jline.reader.SyntaxError;
 import saka1029.util.decs.Context.Undo;
 import saka1029.util.decs.Scanner.Token;
 import saka1029.util.decs.Scanner.TokenType;
@@ -21,23 +19,25 @@ import saka1029.util.decs.Scanner.TokenType;
  *              | 'solve' expression
  * expression   = binary { ',' binary }
  * binary       = or { bop or }
- * or           = and { 'or' and }
- * and          = comp { 'and' comp }
- * comp         = add { cop add }
+ * or           = and { '|' and }
+ * and          = comp { '&' comp }
+ * comp         = add [ cop add ]
  * add          = mult { ( '+' | '-' ) mult }
  * mult         = power { ( '*' | '/' | '%' ) power }
  * power        = unary [ '^' power ]
  * unary        = uop unary | primary
  * primary      = '(' [ expression ] ')' | id | num
  * 
- * name         = ',' | 'or' | 'and' | cop
+ * name         = ',' | '|' | '&' | cop
  *              | '+' | '-' | '*' | '/' | '%' | '^'
  * cop          = '==' | '!=' | '>' | '>=' | '<' | '<='
  * uop          = id // defined in context
  * bop          = id // defined in context
+ * id           = ALPHABETIC { ALPHABETIC | DIGIT }
+ *              | SPECIAL { SPECIAL }
  * </pre>
  */
-public class Parser implements org.jline.reader.Parser {
+public class Parser {
     static final Token END = new Token(TokenType.END, "EOF");
 
     public final Context context;
@@ -59,8 +59,14 @@ public class Parser implements org.jline.reader.Parser {
         return token = index < tokens.size() ? tokens.get(index++) : END;
     }
 
-    boolean is(TokenType expected) {
-        return token.type == expected;
+    boolean is(TokenType... expects) {
+        int length = expects.length;
+        if (length > tokens.size() - index + 1)
+            return false;
+        for (int i = 0, j = index - 1; i < length; ++i, ++j)
+            if (expects[i] != tokens.get(j).type)
+                return false;
+        return true;
     }
 
     boolean eat(TokenType expected) {
@@ -71,15 +77,21 @@ public class Parser implements org.jline.reader.Parser {
         return false;
     }
 
-    DecsException error(String format, Object... args) {
-        return new DecsException(format, args);
+    EOFException eofError(String message, Object... args) {
+        return new EOFException(message, args);
+    }
+
+    SyntaxException syntaxError(String message, Object... args) {
+        return new SyntaxException(message, args);
     }
 
     Expression primary() {
-        if (eat(TokenType.LP)) {
+        if (token.type == TokenType.END) {
+            throw eofError("Unexpected end");
+        } else if (eat(TokenType.LP)) {
             Expression e = expression();
             if (!eat(TokenType.RP))
-                throw error("')' expected");
+                throw eofError("')' expected");
             return e;
         } else if (is(TokenType.NUM)) {
             BigDecimal[] decs = Decs.decs(token.string);
@@ -89,9 +101,10 @@ public class Parser implements org.jline.reader.Parser {
             String name = token.string;
             get();  // skip ID
             variables.add(name);
-            return c -> c.variable(name).expression.apply(c);
-        } else
-            throw error("Unexpected token '%s'", token.string);
+            return c -> c.variable(name).expression.eval(c);
+        } else {
+            throw syntaxError("Unexpected token '%s'", token.string);
+        }
     }
 
     Expression unary() {
@@ -99,7 +112,7 @@ public class Parser implements org.jline.reader.Parser {
             String name = token.string;
             get();  // skip ID
             Expression arg = unary();
-            return c -> c.unary(name).expression.apply(c, arg.apply(c));
+            return c -> c.unary(name).expression.apply(c, arg.eval(c));
         } else
             return primary();
     }
@@ -108,7 +121,7 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = unary();
         if (eat(TokenType.POW)) {
             Expression left = e, right = power();
-            return c -> Decs.pow(left.apply(c), right.apply(c));
+            return c -> Decs.pow(left.eval(c), right.eval(c));
         }
         return e;
     }
@@ -119,13 +132,13 @@ public class Parser implements org.jline.reader.Parser {
             Expression left = e;
             if (eat(TokenType.MULT)) {
                 Expression right = power();
-                e = c -> Decs.multiply(left.apply(c), right.apply(c));
+                e = c -> Decs.multiply(left.eval(c), right.eval(c));
             } else if (eat(TokenType.DIV)) {
                 Expression right = power();
-                e = c -> Decs.divide(left.apply(c), right.apply(c));
+                e = c -> Decs.divide(left.eval(c), right.eval(c));
             } else if (eat(TokenType.MOD)) {
                 Expression right = power();
-                e = c -> Decs.mod(left.apply(c), right.apply(c));
+                e = c -> Decs.mod(left.eval(c), right.eval(c));
             } else 
                 break;
         }
@@ -138,10 +151,10 @@ public class Parser implements org.jline.reader.Parser {
             Expression left = e;
             if (eat(TokenType.PLUS)) {
                 Expression right = mult();
-                e = c -> Decs.add(left.apply(c), right.apply(c));
+                e = c -> Decs.add(left.eval(c), right.eval(c));
             } else if (eat(TokenType.MINUS)) {
                 Expression right = mult();
-                e = c -> Decs.subtract(left.apply(c), right.apply(c));
+                e = c -> Decs.subtract(left.eval(c), right.eval(c));
             }
             else 
                 break;
@@ -153,22 +166,22 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = add();
         if (eat(TokenType.EQ)) {
             Expression right = add();
-            return c -> Decs.eq(e.apply(c), right.apply(c));
+            return c -> Decs.eq(e.eval(c), right.eval(c));
         } else if (eat(TokenType.NE)) {
             Expression right = add();
-            return c -> Decs.ne(e.apply(c), right.apply(c));
+            return c -> Decs.ne(e.eval(c), right.eval(c));
         } else if (eat(TokenType.GT)) {
             Expression right = add();
-            return c -> Decs.gt(e.apply(c), right.apply(c));
+            return c -> Decs.gt(e.eval(c), right.eval(c));
         } else if (eat(TokenType.GE)) {
             Expression right = add();
-            return c -> Decs.ge(e.apply(c), right.apply(c));
+            return c -> Decs.ge(e.eval(c), right.eval(c));
         } else if (eat(TokenType.LT)) {
             Expression right = add();
-            return c -> Decs.lt(e.apply(c), right.apply(c));
+            return c -> Decs.lt(e.eval(c), right.eval(c));
         } else if (eat(TokenType.LE)) {
             Expression right = add();
-            return c -> Decs.le(e.apply(c), right.apply(c));
+            return c -> Decs.le(e.eval(c), right.eval(c));
         }
         return e;
     }
@@ -177,9 +190,14 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = comp();
         while (true) {
             Expression left = e;
-            if (eat(TokenType.OR)) {
+            if (eat(TokenType.AND)) {
                 Expression right = comp();
-                e = c -> Decs.and(left.apply(c), right.apply(c));
+                // e = c -> Decs.and(left.eval(c), right.eval(c));
+                // conditional AND
+                e = c -> {
+                    BigDecimal[] l = left.eval(c);
+                    return Decs.falses(l) ? l : Decs.and(l, right.eval(c));
+                };
             } else
                 break;
         }
@@ -192,7 +210,12 @@ public class Parser implements org.jline.reader.Parser {
             Expression left = e;
             if (eat(TokenType.OR)) {
                 Expression right = add();
-                e = c -> Decs.or(left.apply(c), right.apply(c));
+                // e = c -> Decs.or(left.eval(c), right.eval(c));
+                // conditional OR
+                e = c -> {
+                    BigDecimal[] l = left.eval(c);
+                    return Decs.trues(l) ? l : Decs.or(l, right.eval(c));
+                };
             } else
                 break;
         }
@@ -207,7 +230,7 @@ public class Parser implements org.jline.reader.Parser {
                 String name = token.string;
                 get();  // skip ID
                 Expression right = or();
-                e = c -> c.binary(name).expression.apply(c, left.apply(c), right.apply(c));
+                e = c -> c.binary(name).expression.apply(c, left.eval(c), right.eval(c));
             } else
                 break;
         }
@@ -220,11 +243,11 @@ public class Parser implements org.jline.reader.Parser {
             Expression left = e;
             if (eat(TokenType.COMMA)) {
                 Expression right = binary();
-                e = c -> Decs.concat(left.apply(c), right.apply(c));
+                e = c -> Decs.concat(left.eval(c), right.eval(c));
             } else
                 break;
         }
-        return e;
+        return new ExpressionWithVariables(e, variables);
     }
 
 
@@ -254,8 +277,8 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = expression();
         return c -> {
             Unary unary = (cc, a) -> {
-                try (Undo u = cc.variableTemp(arg, ccc -> a, "temp " + arg)) {
-                    return e.apply(cc);
+                try (Undo u = cc.variableTemp(arg, ccc -> a, "local " + arg)) {
+                    return e.eval(cc);
                 }
             };
             c.unary(name, unary, "unary " + name);
@@ -274,14 +297,20 @@ public class Parser implements org.jline.reader.Parser {
         Expression e = expression();
         return c -> {
             Binary binary = (cc, l, r) -> {
-                try (Undo ul = cc.variableTemp(left, ccc -> l, "temp " + left);
-                    Undo ur = cc.variableTemp(right, ccc -> r, "temp " + right)) {
-                    return e.apply(cc);
+                try (Undo ul = cc.variableTemp(left, ccc -> l, "local " + left);
+                    Undo ur = cc.variableTemp(right, ccc -> r, "local " + right)) {
+                    return e.eval(cc);
                 }
             };
             c.binary(name, binary, "binary " + name);
             return Decs.NO_VALUE;
         };
+    }
+
+    Expression solve() {
+        Expression ev = expression();
+        // return number of solutions.
+        return c -> Decs.decs(Decs.dec(c.solve(ev)));
     }
 
     Expression statement() {
@@ -300,6 +329,8 @@ public class Parser implements org.jline.reader.Parser {
             && tokens.get(index + 1).type == TokenType.ID 
             && tokens.get(index + 2).type == TokenType.ASSIGN)
             return defineBinary();
+        else if (eat(TokenType.SOLVE))
+            return solve();
         else
             return expression();
     }
@@ -313,12 +344,6 @@ public class Parser implements org.jline.reader.Parser {
     }
 
     public BigDecimal[] eval(String input) {
-        return parse(input).apply(context);
-    }
-
-    @Override
-    public ParsedLine parse(String line, int cursor, ParseContext context) throws SyntaxError {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'parse'");
+        return parse(input).eval(context);
     }
 }

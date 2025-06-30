@@ -28,6 +28,13 @@
         },
         {
             "type": "java",
+            "name": "MainTest",
+            "request": "launch",
+            "mainClass": "saka1029.util.decs.MainTest",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
             "name": "Cal",
             "request": "launch",
             "mainClass": "saka1029.util.main.Cal",

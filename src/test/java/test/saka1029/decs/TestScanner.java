@@ -70,10 +70,10 @@ public class TestScanner {
     public void testLog() {
         Scanner scanner = new Scanner();
         List<Token> tokens = scanner.scan(
-            "not   and   or  ");
+            "!   &   |  ");
         assertEquals(List.of(ID, AND, OR),
             tokens.stream().map(t -> t.type).toList());
-        assertEquals(List.of( "not", "and", "or"),
+        assertEquals(List.of( "!", "&", "|"),
             tokens.stream().map(t -> t.string).toList());
     }
 

@@ -1,13 +1,24 @@
 package saka1029.util.decs;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Context {
 
     final Map<String, Help<Expression>> variables = new HashMap<>();
     final Map<String, Help<Unary>> unarys = new HashMap<>();
     final Map<String, Help<Binary>> binarys = new HashMap<>();
+    public Consumer<String> solverOutput = System.out::println;
+
+    public Context() {
+        init();
+    }
 
     public boolean isVariable(String name) {
         return variables.containsKey(name);
@@ -81,4 +92,72 @@ public class Context {
         put(variables, name, null);
     }
 
+    public int solve(Expression expression) {
+        return solve(expression, m -> solverOutput.accept(
+            m.entrySet().stream()
+                .map(e -> e.getKey() + "=" + Decs.string(e.getValue()))
+                .collect(Collectors.joining(" "))));
+    }
+
+    public int solve(Expression expression, Consumer<Map<String, BigDecimal>> out) {
+        if (!(expression instanceof ExpressionWithVariables exvar))
+            throw new DecsException("Cannot solve");
+        Context context = Context.this;
+        List<String> names = exvar.variables.stream()
+            .distinct().toList();
+        int length = names.size();
+        List<BigDecimal[]> values = names.stream()
+            .map(n -> context.variable(n).expression.eval(context))
+            .toList();
+        // backup
+        List<Help<Expression>> backup = names.stream()
+            .map(n -> context.variables.get(n))
+            .toList();
+        var solver = new Object() {
+            int count = 0;
+            Map<String, BigDecimal> map = new TreeMap<>();
+
+            void test() {
+                BigDecimal[] result = exvar.expression.eval(context);
+                if (result.length < 1 || !Decs.bool(result[0]))
+                    return;
+                ++count;
+                map.clear();
+                for (String n : names)
+                    map.put(n, context.variable(n).expression.eval(context)[0]);
+                out.accept(map);
+            }
+
+            void solve(int index) {
+                if (index >= length)
+                    test();
+                else {
+                    String name = names.get(index);
+                    BigDecimal[] decs = values.get(index);
+                    for (int i = 0, max = decs.length; i < max; ++i) {
+                        BigDecimal[] value = Decs.decs(decs[i]);
+                        context.variable(name, c -> value, name);
+                        solve(index + 1);
+                    }
+                }
+            }
+        };
+        solver.solve(0);
+        // restore
+        IntStream.range(0, length) 
+            .forEach(i -> context.variables
+                .put(names.get(i), backup.get(i)));
+        return solver.count;
+    }
+
+    void init() {
+        unary("!", (c, a) -> Decs.not(a), "! (B) -> (B) : not");
+        unary("+", (c, a) -> Decs.add(a), "+ (D) -> D : +");
+        unary("-", (c, a) -> Decs.subtract(a), "- (D) -> D : -");
+        unary("*", (c, a) -> Decs.multiply(a), "* (D) -> D : *");
+        unary("/", (c, a) -> Decs.divide(a), "/ (D) -> D : /");
+        unary("abs", (c, a) -> Decs.abs(a), "abs (D) -> (D) : absolute");
+        unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
+        unary("negate", (c, a) -> Decs.negate(a), "negate (D) -> (D) : change sign");
+    }
 }

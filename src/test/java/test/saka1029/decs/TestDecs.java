@@ -26,8 +26,8 @@ public class TestDecs {
     @Test
     public void testString() {
         assertEquals("0", string(dec(0)).toString());
-        assertEquals("(0)", string(decs("0")));
-        assertEquals("(1E+1)", string(decs("1e1")));
+        assertEquals("0", string(decs("0")));
+        assertEquals("1E+1", string(decs("1e1")));
         assertEquals("10", dec("1e1").toPlainString());
     }
 
@@ -69,7 +69,7 @@ public class TestDecs {
     @Test
     public void testToString() {
         assertEquals("()", string(decs("")));
-        assertEquals("(1)", string(decs("1")));
+        assertEquals("1", string(decs("1")));
         assertEquals("(1, 3)", string(decs("1 3")));
         assertEquals("(1, 3, 5)", string(decs("1 3 5")));
     }
@@ -145,6 +145,14 @@ public class TestDecs {
         assertDecsEquals(decs("-1"), negate(decs("1")));
         assertDecsEquals(decs("-1 -3"), negate(decs("1 3")));
         assertDecsEquals(decs("-1 -3 -5"), negate(decs("1 3 5")));
+    }
+
+    @Test
+    public void testReciprocalUnary() {
+        assertDecsEquals(decs(""), reciprocal(decs("")));
+        assertDecsEquals(decs("0.5"), reciprocal(decs("2")));
+        assertDecsEquals(decs("0.5 0.25"), reciprocal(decs("2 4")));
+        assertDecsEquals(decs("0.5 0.25 0.2"), reciprocal(decs("2 4 5")));
     }
 
     @Test

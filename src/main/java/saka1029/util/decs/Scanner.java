@@ -25,7 +25,7 @@ public class Scanner {
         Map.entry("<", TokenType.LT), Map.entry("<=", TokenType.LE),
         Map.entry("=", TokenType.ASSIGN),
         // Map.entry("not", TokenType.NOT),
-        Map.entry("and", TokenType.AND), Map.entry("or", TokenType.OR),
+        Map.entry("&", TokenType.AND), Map.entry("|", TokenType.OR),
         Map.entry("help", TokenType.HELP), Map.entry("solve", TokenType.SOLVE),
         Map.entry("exit", TokenType.EXIT)
     );
@@ -163,5 +163,4 @@ public class Scanner {
         }
         return list;
     }
-
 }

@@ -14,7 +14,7 @@ public class ExpressionWithVariables implements Expression {
     }
 
     @Override
-    public BigDecimal[] apply(Context context) {
-        return expression.apply(context);
+    public BigDecimal[] eval(Context context) {
+        return expression.eval(context);
     }
 }
