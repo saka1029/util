@@ -115,6 +115,16 @@ public class Decs {
         return !d.equals(ZERO);
     }
 
+    public static BigDecimal[] pi() {
+        return decs(PI);
+    }
+
+    public static BigDecimal E = BigDecimalMath.e(MATH_CONTEXT);
+
+    public static BigDecimal[] e() {
+        return decs(E);
+    }
+
     // unary reduce method
 
     public static BigDecimal[] reduce(BigDecimal[] decs,

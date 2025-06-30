@@ -161,8 +161,10 @@ public class Context {
         unary("abs", (c, a) -> Decs.abs(a), "abs (D) -> (D) : absolute");
         unary("cos", (c, a) -> Decs.cos(a), "cos (D) -> (D) : cos");
         unary("degree", (c, a) -> Decs.degree(a), "degree (D) -> (D) : degree");
+        variable("E", c -> Decs.e(), "E -> D : Euler's number");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
         unary("negate", (c, a) -> Decs.negate(a), "negate (D) -> (D) : change sign");
+        variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pow", (c, a) -> Decs.pow(a), "pow (D) -> D : power");
         unary("radian", (c, a) -> Decs.radian(a), "radian (D) -> (D) : radian");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (D) -> (D) : 1 / D");
