@@ -208,6 +208,20 @@ public class Decs {
         return map(decs, a -> dec(!bool(a)));
     }
 
+    public static BigDecimal factorial(BigDecimal dec) {
+        BigInteger n = dec.toBigIntegerExact();
+        if (n.signum() < 0)
+            n = BigInteger.ZERO;
+        BigInteger r = BigInteger.ONE;
+        for ( ; n.signum() > 0; n = n.subtract(BigInteger.ONE))
+            r = r.multiply(n);
+        return dec(r);
+    }
+
+    public static BigDecimal[] factorial(BigDecimal[] decs) {
+        return map(decs, a -> factorial(a));
+    }
+
     public static BigDecimal PI = BigDecimalMath.pi(MATH_CONTEXT);
     public static BigDecimal DEG180 = dec(180);
     public static BigDecimal PI_DIV_DEG180 = PI.divide(DEG180, MATH_CONTEXT);

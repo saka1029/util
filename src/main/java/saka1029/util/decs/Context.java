@@ -27,7 +27,7 @@ public class Context {
     public Help<Expression> variable(String name) {
         Help<Expression> r = variables.get(name);
         if (r == null)
-            throw new DecsException("variable '%s' undef", name);
+            throw new UndefException("variable '%s' undef", name);
         return r;
     }
 
@@ -38,7 +38,7 @@ public class Context {
     public Help<Unary> unary(String name) {
         Help<Unary> r = unarys.get(name);
         if (r == null)
-            throw new DecsException("unary '%s' undef", name);
+            throw new UndefException("unary '%s' undef", name);
         return r;
     }
 
@@ -49,7 +49,7 @@ public class Context {
     public Help<Binary> binary(String name) {
         Help<Binary> r = binarys.get(name);
         if (r == null)
-            throw new DecsException("binary '%s' undef", name);
+            throw new UndefException("binary '%s' undef", name);
         return r;
     }
 
@@ -162,7 +162,9 @@ public class Context {
         unary("cos", (c, a) -> Decs.cos(a), "cos (D) -> (D) : cos");
         unary("degree", (c, a) -> Decs.degree(a), "degree (D) -> (D) : degree");
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
+        unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
+        unary("iota0", (c, a) -> Decs.iota0(a), "iota0 I -> (I) : (0..I)");
         unary("negate", (c, a) -> Decs.negate(a), "negate (D) -> (D) : change sign");
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pow", (c, a) -> Decs.pow(a), "pow (D) -> D : power");
