@@ -449,7 +449,7 @@ public class Decs {
                 r = dr[0];
             }
             if (result.size() == 0 || r.compareTo(ZERO) != 0)
-            result.addFirst(r);
+                result.addFirst(r);
         }
         return decs(result);
     }
@@ -472,7 +472,7 @@ public class Decs {
             for (int i = 0; i < rsize; ++i)
                 result = result.multiply(right[i].abs()).add(left[i + 1].abs());
         } else
-            throw error("Illegal length left=%d rigth=%d", lsize, rsize);
+            throw error("Illegal length left=%s rigth=%s", string(left), string(right));
         return decs(result);
     }
 

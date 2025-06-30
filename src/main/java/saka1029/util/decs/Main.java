@@ -43,7 +43,7 @@ public class Main {
                     this.result = null;
             } catch (EOFException e) {
                 throw new EOFError(0, 0, e.getMessage());
-            } catch (SyntaxException | UndefException | ArithmeticException e) {
+            } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
                 this.result = color(e.getMessage(), AttributedStyle.RED);
             }
             return null;
