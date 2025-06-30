@@ -256,6 +256,10 @@ public class Decs {
         return result;
     }
 
+    public static BigDecimal[] sort(BigDecimal[] decs) {
+        return decs(Stream.of(decs).sorted());
+    }
+
     // binary zip method
 
     public static BigDecimal[] zip(BigDecimal[] left, BigDecimal[] right,

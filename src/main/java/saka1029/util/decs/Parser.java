@@ -108,7 +108,7 @@ public class Parser {
     }
 
     Expression unary() {
-        if (is(TokenType.ID) && context.isUnary(token.string)) {
+        if (context.isUnary(token.string)) {
             String name = token.string;
             get();  // skip ID
             Expression arg = unary();
@@ -226,7 +226,7 @@ public class Parser {
         Expression e = or();
         while (true) {
             Expression left = e;
-            if (is(TokenType.ID) && context.isBinary(token.string)) {
+            if (context.isBinary(token.string)) {
                 String name = token.string;
                 get();  // skip ID
                 Expression right = or();

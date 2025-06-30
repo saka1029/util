@@ -156,8 +156,19 @@ public class Context {
         unary("-", (c, a) -> Decs.subtract(a), "- (D) -> D : -");
         unary("*", (c, a) -> Decs.multiply(a), "* (D) -> D : *");
         unary("/", (c, a) -> Decs.divide(a), "/ (D) -> D : /");
+        unary("|", (c, a) -> Decs.or(a), "| (D) -> D : or");
+        unary("&", (c, a) -> Decs.and(a), "& (D) -> D : and");
         unary("abs", (c, a) -> Decs.abs(a), "abs (D) -> (D) : absolute");
+        unary("cos", (c, a) -> Decs.cos(a), "cos (D) -> (D) : cos");
+        unary("degree", (c, a) -> Decs.degree(a), "degree (D) -> (D) : degree");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
         unary("negate", (c, a) -> Decs.negate(a), "negate (D) -> (D) : change sign");
+        unary("pow", (c, a) -> Decs.pow(a), "pow (D) -> D : power");
+        unary("radian", (c, a) -> Decs.radian(a), "radian (D) -> (D) : radian");
+        unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (D) -> (D) : 1 / D");
+        unary("reverse", (c, a) -> Decs.reverse(a), "reverse (D) -> (D) : reverse");
+        unary("sin", (c, a) -> Decs.sin(a), "sin (D) -> (D) : sin");
+        unary("sort", (c, a) -> Decs.sort(a), "sort (D) -> (D) : sort");
+        unary("tan", (c, a) -> Decs.tan(a), "tan (D) -> (D) : tan");
     }
 }
