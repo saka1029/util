@@ -431,27 +431,23 @@ public class Decs {
     // binary special method
 
     public static BigDecimal[] base(BigDecimal[] left, BigDecimal[] right) {
-        BigDecimal r = single(left).abs();
-        Deque<BigDecimal> result = new LinkedList<>();
+        BigDecimal m = single(left);
+        if (m.compareTo(ZERO) < 0)
+            throw error("base: must positive but %s", string(left));
+        Deque<BigDecimal> r = new LinkedList<>();
+        BigDecimal[] dr;
         if (right.length == 1) {
-            BigDecimal base = right[0].abs();
-            while (r.compareTo(ZERO) > 0) {
-                BigDecimal[] dr = r.divideAndRemainder(base);
-                result.addFirst(dr[1]);
-                r = dr[0];
-            }
-            if (result.size() == 0)
-                result.addFirst(ZERO);
+            for (BigDecimal base = right[0].abs(); m.signum() > 0; m = dr[0], r.addFirst(dr[1])) 
+                dr = m.divideAndRemainder(base);
+            if (r.size() == 0)
+                r.addFirst(ZERO);
         } else {
-            for (int i = right.length - 1; i >= 0 && r.compareTo(ZERO) > 0; --i) {
-                BigDecimal[] dr = r.divideAndRemainder(right[i].abs());
-                result.addFirst(dr[1]);
-                r = dr[0];
-            }
-            if (result.size() == 0 || r.compareTo(ZERO) != 0)
-                result.addFirst(r);
+            for (int i = right.length - 1; i >= 0 && m.signum() > 0; --i, m = dr[0], r.addFirst(dr[1])) 
+                dr = m.divideAndRemainder(right[i].abs());
+            if (r.size() == 0 || m.signum() != 0)
+                r.addFirst(m);
         }
-        return decs(result);
+        return decs(r);
     }
 
     public static BigDecimal[] decimal(BigDecimal[] left, BigDecimal[] right) {
