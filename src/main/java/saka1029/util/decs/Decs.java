@@ -431,22 +431,24 @@ public class Decs {
     // binary special method
 
     public static BigDecimal[] base(BigDecimal[] left, BigDecimal[] right) {
+        if (Stream.of(right).anyMatch(d -> d.signum() <= 0))
+            throw error("base: must all positive but %s", string(right));
         BigDecimal m = single(left);
-        if (m.compareTo(ZERO) < 0)
-            throw error("base: must positive but %s", string(left));
+        if (m.signum() < 0)
+            throw error("base: must not negative but %s", string(left));
         Deque<BigDecimal> r = new LinkedList<>();
         BigDecimal[] dr;
         if (right.length == 1) {
-            for (BigDecimal base = right[0].abs(); m.signum() > 0; m = dr[0], r.addFirst(dr[1])) 
+            for (BigDecimal base = right[0]; m.signum() > 0; m = dr[0], r.addFirst(dr[1])) 
                 dr = m.divideAndRemainder(base);
-            if (r.size() == 0)
-                r.addFirst(ZERO);
         } else {
             for (int i = right.length - 1; i >= 0 && m.signum() > 0; --i, m = dr[0], r.addFirst(dr[1])) 
-                dr = m.divideAndRemainder(right[i].abs());
-            if (r.size() == 0 || m.signum() != 0)
+                dr = m.divideAndRemainder(right[i]);
+            if (m.signum() != 0)
                 r.addFirst(m);
         }
+        if (r.size() == 0)
+            r.addFirst(ZERO);
         return decs(r);
     }
 
