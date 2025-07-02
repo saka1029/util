@@ -28,19 +28,25 @@ public class Main {
             .toAttributedString();
     }
 
+    static final String NL = System.lineSeparator();
+
     static class ExpressionParser implements org.jline.reader.Parser {
  
         Parser parser = new Parser();
         AttributedString result;
+        StringBuilder out = new StringBuilder();
+        ExpressionParser() {
+            parser.context.solverOutput = s -> out.append(s).append(NL);
+        }
 
         @Override
         public ParsedLine parse(String line, int cursor, ParseContext context) throws SyntaxError {
             try {
+                out.setLength(0);
                 BigDecimal[] decs = parser.eval(line);
                 if (decs != Decs.NO_VALUE)
-                    this.result = new AttributedString(Decs.string(decs));
-                else
-                    this.result = null;
+                    out.append(Decs.string(decs)).append(NL);
+                result = out.length() > 0 ? new AttributedString(out) : null;
             } catch (EOFException e) {
                 throw new EOFError(0, 0, e.getMessage());
             } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
