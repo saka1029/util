@@ -165,7 +165,7 @@ public class Context {
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
         unary("cube", (c, a) -> Decs.cube(a), "cube (A) -> (D) : A³");
         binary("decimal", (c, a, b) -> Decs.decimal(a, b), "(A) decimal (B) -> D : (A) in base (B) to decimal");
-        unary("degree", (c, a) -> Decs.degree(a), "degree (A) -> (D) : A / π * 180");
+        unary("degree", (c, a) -> Decs.degree(a), "degree (A) -> (D) : 180A/π");
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
@@ -177,8 +177,8 @@ public class Context {
         unary("log2", (c, a) -> Decs.log2(a), "log2 (A) -> (D) : log 2 A");
         unary("negate", (c, a) -> Decs.negate(a), "negate (A) -> (D) : -A");
         variable("PI", c -> Decs.pi(), "PI -> D : π");
-        unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes frm 2 to A");
-        unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : A / 180 * π");
+        unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes from 2 to A");
+        unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : πA/180");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
         unary("reverse", (c, a) -> Decs.reverse(a), "reverse (A) -> (D) : reverse");
         unary("sin", (c, a) -> Decs.sin(a), "sin (A) -> (D) : sin A");
