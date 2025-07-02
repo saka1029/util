@@ -184,6 +184,7 @@ public class Context {
         unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : πA/180");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
         unary("reverse", (c, a) -> Decs.reverse(a), "reverse (A) -> (D) : reverse");
+        unary("signum", (c, a) -> Decs.signum(a), "signum (A) -> (D) : sign of A");
         unary("sin", (c, a) -> Decs.sin(a), "sin (A) -> (D) : sin A");
         unary("sort", (c, a) -> Decs.sort(a), "sort (A) -> (D) : sort");
         unary("sqrt", (c, a) -> Decs.sqrt(a), "sqrt (A) -> (D) : √A");

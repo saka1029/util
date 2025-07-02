@@ -24,7 +24,7 @@ public class Scanner {
         Map.entry(">", TokenType.GT), Map.entry(">=", TokenType.GE),
         Map.entry("<", TokenType.LT), Map.entry("<=", TokenType.LE),
         Map.entry("=", TokenType.ASSIGN),
-        // Map.entry("not", TokenType.NOT),
+        Map.entry("@", TokenType.AT),
         Map.entry("&", TokenType.AND), Map.entry("|", TokenType.OR),
         Map.entry("help", TokenType.HELP), Map.entry("solve", TokenType.SOLVE),
         Map.entry("exit", TokenType.EXIT)

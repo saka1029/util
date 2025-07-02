@@ -207,6 +207,10 @@ public class Decs {
         return map(decs, BigDecimal::negate);
     }
 
+    public static BigDecimal[] signum(BigDecimal[] decs) {
+        return map(decs, d -> dec(d.signum()));
+    }
+
     public static BigDecimal[] abs(BigDecimal[] decs) {
         return map(decs, BigDecimal::abs);
     }

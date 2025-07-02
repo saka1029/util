@@ -3,6 +3,7 @@ package saka1029.util.decs;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import saka1029.util.decs.Context.Undo;
 import saka1029.util.decs.Scanner.Token;
 import saka1029.util.decs.Scanner.TokenType;
@@ -25,7 +26,7 @@ import saka1029.util.decs.Scanner.TokenType;
  * add          = mult { ( '+' | '-' ) mult }
  * mult         = power { ( '*' | '/' | '%' ) power }
  * power        = unary [ '^' power ]
- * unary        = uop unary | primary
+ * unary        = [ '@' ] uop unary | primary
  * primary      = '(' [ expression ] ')' | id | num
  * 
  * name         = ',' | '|' | '&' | cop
@@ -107,8 +108,26 @@ public class Parser {
         }
     }
 
+    Unary select(Unary unary) {
+        return (c, a) -> {
+            return Stream.of(a)
+                .filter(d -> {
+                    BigDecimal[] f = unary.apply(c, new BigDecimal[] {d});
+                    return f.length > 0 && f[0].signum() != 0;
+                })
+                .toArray(BigDecimal[]::new);
+        };
+    }
+
     Expression unary() {
-        if (context.isUnary(token.string)) {
+        if (eat(TokenType.AT)) {
+            String name = token.string;
+            if (!context.isUnary(name))
+                throw syntaxError("unary expected after '@' but %s", name);
+            get();  // skip ID
+            Expression arg = unary();
+            return c -> select(c.unary(name).expression).apply(c, arg.eval(c));
+        } else if (context.isUnary(token.string)) {
             String name = token.string;
             get();  // skip ID
             Expression arg = unary();
