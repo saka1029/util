@@ -164,6 +164,8 @@ public class Context {
         binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
         unary("cube", (c, a) -> Decs.cube(a), "cube (A) -> (D) : A³");
+        unary("date", (c, a) -> Decs.date(a), "date (M) -> (I) : epoch day to YYYYMMDD");
+        unary("days", (c, a) -> Decs.days(a), "days (M) -> (I) : YYYYMMDD to epoch day");
         binary("decimal", (c, a, b) -> Decs.decimal(a, b), "(A) decimal (B) -> D : (A) in base (B) to decimal");
         unary("degree", (c, a) -> Decs.degree(a), "degree (A) -> (D) : 180A/π");
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
@@ -186,6 +188,8 @@ public class Context {
         unary("sqrt", (c, a) -> Decs.sqrt(a), "sqrt (A) -> (D) : √A");
         unary("square", (c, a) -> Decs.square(a), "square (A) -> (D) : A²");
         unary("tan", (c, a) -> Decs.tan(a), "tan (A) -> (D) : tan A");
+        variable("TODAY", c -> Decs.today(), "TODAY -> I : today (YYYYMMDD)");
         binary("to", (c, a, b) -> Decs.to(a, b), "N to M -> (I) : (N ... M)");
+        unary("week", (c, a) -> Decs.week(a), "week (M) -> (I) : YYYYMMDD to week (1:Mon, 2:Tue, ... , 7:Sun)");
     }
 }

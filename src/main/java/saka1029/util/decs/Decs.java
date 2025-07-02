@@ -3,6 +3,7 @@ package saka1029.util.decs;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
@@ -277,6 +278,30 @@ public class Decs {
 
     public static BigDecimal[] log2(BigDecimal[] decs) {
         return map(decs, a -> BigDecimalMath.log2(a, MATH_CONTEXT));
+    }
+
+    static LocalDate date(int yyyymmdd) {
+        return LocalDate.of(yyyymmdd / 10000, yyyymmdd / 100 % 100, yyyymmdd % 100);
+    }
+
+    static int date(LocalDate date) {
+        return date.getYear() * 10000 + date.getMonthValue() * 100 + date.getDayOfMonth();
+    }
+
+    public static BigDecimal[] today() {
+        return decs(date(LocalDate.now()));
+    }
+
+    public static BigDecimal[] days(BigDecimal[] decs) {
+        return map(decs, a -> dec(date(a.intValueExact()).toEpochDay()));
+    }
+
+    public static BigDecimal[] date(BigDecimal[] decs) {
+        return map(decs, a -> dec(date(LocalDate.ofEpochDay(a.intValueExact()))));
+    }
+
+    public static BigDecimal[] week(BigDecimal[] decs) {
+        return map(decs, a -> dec(date(a.intValue()).getDayOfWeek().getValue()));
     }
 
     // unary single method
