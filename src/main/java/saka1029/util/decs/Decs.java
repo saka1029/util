@@ -432,10 +432,10 @@ public class Decs {
 
     public static BigDecimal[] base(BigDecimal[] left, BigDecimal[] right) {
         if (Stream.of(right).anyMatch(d -> d.signum() <= 0))
-            throw error("base: must all positive but %s", string(right));
+            throw error("base: right must all positive but %s", string(right));
         BigDecimal m = single(left);
         if (m.signum() < 0)
-            throw error("base: must not negative but %s", string(left));
+            throw error("base: left must not negative but %s", string(left));
         Deque<BigDecimal> r = new LinkedList<>();
         BigDecimal[] dr;
         if (right.length == 1) {
@@ -452,25 +452,36 @@ public class Decs {
         return decs(r);
     }
 
+    /**
+     * case: (L0, L1, ... , Ln) decimal (R0)
+     *    result = 0
+     *    for i=0 to n result = result * R0 + Li
+     * case: (L0, L1, ... , Ln) decimal (R0, R1, ... , Rn)
+     *    result = 0
+     *    for i=0 to n result = result * Ri + Li
+     * case: (L0, L1, ... , Ln, Ln+1) decimal (R0, R1, ... , Rn)
+     *    result = L0
+     *    for i=0 to n result = result * Ri + Li+1
+     */
     public static BigDecimal[] decimal(BigDecimal[] left, BigDecimal[] right) {
-        // BigDecimal base = single(right).abs();
-        // return decs(Stream.of(left)
-        //     .reduce(ZERO, (a, b) -> a.multiply(base).add(b)));
+        if (Stream.of(left).anyMatch(d -> d.signum() < 0))
+            throw error("base: left must not negative but %s", string(left));
+        if (Stream.of(right).anyMatch(d -> d.signum() <= 0))
+            throw error("base: right must all positive but %s", string(right));
         int lsize = left.length, rsize = right.length;
         BigDecimal result = BigDecimal.ZERO;
-        if (rsize == 1) {
-            BigDecimal base = right[0].abs();
+        if (rsize == 1)
             for (int i = 0; i < lsize; ++i)
-                result = result.multiply(base).add(left[i].abs());
-        } else if (lsize == rsize) {
+                result = result.multiply(right[0]).add(left[i]);
+        else if (lsize == rsize)
             for (int i = 0; i < rsize; ++i)
-                result = result.multiply(right[i].abs()).add(left[i].abs());
-        } else if (lsize == rsize + 1) {
+                result = result.multiply(right[i]).add(left[i]);
+        else if (lsize == rsize + 1) {
             result = left[0];
             for (int i = 0; i < rsize; ++i)
-                result = result.multiply(right[i].abs()).add(left[i + 1].abs());
+                result = result.multiply(right[i]).add(left[i + 1]);
         } else
-            throw error("Illegal length left=%s rigth=%s", string(left), string(right));
+            throw error("Illegal length left=%s right=%s", string(left), string(right));
         return decs(result);
     }
 

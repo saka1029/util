@@ -407,4 +407,21 @@ public class TestDecs {
             assertEquals("Single value expected but (1, 2)", e.getMessage());
         }
     }
+
+    @Test
+    public void testDecimal() {
+        assertDecsEquals(decs("65535"), decimal(base(decs("65535"), decs("16")), decs("16")));
+        assertDecsEquals(decs("0"), decimal(base(decs("0"), decs("16")), decs("16")));
+        assertDecsEquals(decs("19571029"), decimal(base(decs("19571029"), decs("100 100")), decs("100 100")));
+        assertDecsEquals(decs("0"), decimal(base(decs("0"), decs("100 100")), decs("100")));
+        assertDecsEquals(decs("101"), decimal(base(decs("101"), decs("100 100")), decs("100 100")));
+        // System.out.println(string(base(decs("9"), decs("1.5"))));
+        assertDecsEquals(decs("9.00000"), decimal(base(decs("9"), decs("1.5")), decs("1.5")));
+        try {
+            decimal(decs("1 2"), decs("3 4 5"));
+            fail();
+        } catch (DecsException e) {
+            assertEquals("Illegal length left=(1, 2) right=(3, 4, 5)", e.getMessage());
+        }
+    }
 }
