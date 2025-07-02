@@ -3,6 +3,7 @@ package saka1029.util.decs;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -441,6 +442,19 @@ public class Decs {
     }
     
     // binary special method
+
+    public static BigDecimal[] to(BigDecimal[] left, BigDecimal[] right) {
+        BigInteger begin = single(left).toBigIntegerExact();
+        BigInteger end = single(right).toBigIntegerExact();
+        List<BigDecimal> r = new ArrayList<>();
+        if (begin.compareTo(end) <= 0)
+            for (BigInteger i = begin; i.compareTo(end) <= 0; i = i.add(BigInteger.ONE))
+                r.add(dec(i));
+        else
+            for (BigInteger i = begin; i.compareTo(end) >= 0; i = i.subtract(BigInteger.ONE))
+                r.add(dec(i));
+        return decs(r);
+    }
 
     public static BigDecimal[] base(BigDecimal[] left, BigDecimal[] right) {
         if (Stream.of(right).anyMatch(d -> d.signum() <= 0))

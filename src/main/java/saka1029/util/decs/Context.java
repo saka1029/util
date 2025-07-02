@@ -186,5 +186,6 @@ public class Context {
         unary("sqrt", (c, a) -> Decs.sqrt(a), "sqrt (A) -> (D) : √A");
         unary("square", (c, a) -> Decs.square(a), "square (A) -> (D) : A²");
         unary("tan", (c, a) -> Decs.tan(a), "tan (A) -> (D) : tan A");
+        binary("to", (c, a, b) -> Decs.to(a, b), "N to M -> (I) : (N ... M)");
     }
 }

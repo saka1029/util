@@ -73,6 +73,7 @@ public class Main {
         lineReader.setVariable(LineReader.SECONDARY_PROMPT_PATTERN, "    >   ");;
 
         // REPL
+        lineReader.printAbove("Ctrl-D to exit.  Ctrl-C to interrupt");
         while (true) {
             try {
                 lineReader.readLine("    ");
@@ -86,3 +87,4 @@ public class Main {
         }
     }
 }
+INTERRUPTED
