@@ -220,6 +220,14 @@ public class Decs {
         return map(decs, a -> BigDecimalMath.sqrt(a, MATH_CONTEXT));
     }
 
+    public static BigDecimal[] square(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.pow(a, 2L, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] cube(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.pow(a, 3L, MATH_CONTEXT));
+    }
+
     public static BigDecimal factorial(BigDecimal dec) {
         BigInteger n = dec.toBigIntegerExact();
         if (n.signum() < 0)

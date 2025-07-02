@@ -163,6 +163,7 @@ public class Context {
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
         binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
+        unary("cube", (c, a) -> Decs.cube(a), "cube (A) -> (D) : A³");
         binary("decimal", (c, a, b) -> Decs.decimal(a, b), "(A) decimal (B) -> D : (A) in base (B) to decimal");
         unary("degree", (c, a) -> Decs.degree(a), "degree (A) -> (D) : A / π * 180");
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
@@ -181,8 +182,9 @@ public class Context {
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
         unary("reverse", (c, a) -> Decs.reverse(a), "reverse (A) -> (D) : reverse");
         unary("sin", (c, a) -> Decs.sin(a), "sin (A) -> (D) : sin A");
-        unary("sort", (c, a) -> Decs.sort(a), "sort (D) -> (D) : sort");
-        unary("sqrt", (c, a) -> Decs.sqrt(a), "sqrt (D) -> (D) : square root");
+        unary("sort", (c, a) -> Decs.sort(a), "sort (A) -> (D) : sort");
+        unary("sqrt", (c, a) -> Decs.sqrt(a), "sqrt (A) -> (D) : √A");
+        unary("square", (c, a) -> Decs.square(a), "square (A) -> (D) : A²");
         unary("tan", (c, a) -> Decs.tan(a), "tan (A) -> (D) : tan A");
     }
 }
