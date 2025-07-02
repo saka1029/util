@@ -216,6 +216,10 @@ public class Decs {
         return map(decs, a -> dec(!bool(a)));
     }
 
+    public static BigDecimal[] sqrt(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.sqrt(a, MATH_CONTEXT));
+    }
+
     public static BigDecimal factorial(BigDecimal dec) {
         BigInteger n = dec.toBigIntegerExact();
         if (n.signum() < 0)

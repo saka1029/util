@@ -156,6 +156,8 @@ public class Context {
         unary("-", (c, a) -> Decs.subtract(a), "- (A) -> D : -");
         unary("*", (c, a) -> Decs.multiply(a), "* (A) -> D : *");
         unary("/", (c, a) -> Decs.divide(a), "/ (A) -> D : /");
+        unary("^", (c, a) -> Decs.pow(a), "^ (A) -> D : power");
+        binary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A ^ B");
         unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or");
         unary("&", (c, a) -> Decs.and(a), "& (B) -> B : and");
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
@@ -174,14 +176,13 @@ public class Context {
         unary("log2", (c, a) -> Decs.log2(a), "log2 (A) -> (D) : log 2 A");
         unary("negate", (c, a) -> Decs.negate(a), "negate (A) -> (D) : -A");
         variable("PI", c -> Decs.pi(), "PI -> D : π");
-        unary("pow", (c, a) -> Decs.pow(a), "pow (A) -> D : power");
-        binary("pow", (c, a, b) -> Decs.pow(a, b), "(A) pow (B) -> (D) : A ^ B");
         unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes frm 2 to A");
         unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : A / 180 * π");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
         unary("reverse", (c, a) -> Decs.reverse(a), "reverse (A) -> (D) : reverse");
         unary("sin", (c, a) -> Decs.sin(a), "sin (A) -> (D) : sin A");
         unary("sort", (c, a) -> Decs.sort(a), "sort (D) -> (D) : sort");
+        unary("sqrt", (c, a) -> Decs.sqrt(a), "sqrt (D) -> (D) : square root");
         unary("tan", (c, a) -> Decs.tan(a), "tan (A) -> (D) : tan A");
     }
 }
