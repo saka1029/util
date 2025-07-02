@@ -30,6 +30,7 @@ public class Decs {
     public static final BigDecimal MINUS_ONE = BigDecimal.valueOf(-1L);
     public static final BigDecimal ZERO = BigDecimal.ZERO;
     public static final BigDecimal ONE = BigDecimal.ONE;
+    public static final BigDecimal TWO = BigDecimal.valueOf(2);
     // public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
     public static final MathContext MATH_CONTEXT = new MathContext(100);
 
@@ -302,6 +303,21 @@ public class Decs {
 
     public static BigDecimal[] week(BigDecimal[] decs) {
         return map(decs, a -> dec(date(a.intValue()).getDayOfWeek().getValue()));
+    }
+
+    static BigDecimal isPrime(BigDecimal dec) {
+        if (dec.compareTo(TWO) < 0)
+            return FALSE;
+        BigInteger i = dec.toBigIntegerExact();
+        BigInteger max = i.sqrt();
+        for (BigInteger d = BigInteger.TWO; d.compareTo(max) <= 0; d = d.add(BigInteger.ONE))
+            if (i.remainder(d).equals(BigInteger.ZERO))
+                return FALSE;
+        return TRUE;
+    }
+
+    public static BigDecimal[] isPrime(BigDecimal[] decs) {
+        return map(decs, d -> isPrime(d));
     }
 
     // unary single method

@@ -172,6 +172,7 @@ public class Context {
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
         unary("iota0", (c, a) -> Decs.iota0(a), "iota0 I -> (I) : (0..I)");
+        unary("isprime", (c, a) -> Decs.isPrime(a), "isprime (I) -> (B) : is prime (T:1, F:0)");
         unary("length", (c, a) -> Decs.length(a), "length (D) -> (D) : lenfth of (D)");
         unary("ln", (c, a) -> Decs.ln(a), "ln (D) -> (D) : log E");
         binary("log", (c, a, b) -> Decs.log(a, b), "(A) log (B) -> (D) : log B A");
@@ -189,7 +190,7 @@ public class Context {
         unary("square", (c, a) -> Decs.square(a), "square (A) -> (D) : A²");
         unary("tan", (c, a) -> Decs.tan(a), "tan (A) -> (D) : tan A");
         variable("TODAY", c -> Decs.today(), "TODAY -> I : today (YYYYMMDD)");
-        binary("to", (c, a, b) -> Decs.to(a, b), "N to M -> (I) : (N ... M)");
+        binary("to", (c, a, b) -> Decs.to(a, b), "M to N -> (I) : (M ... N)");
         unary("week", (c, a) -> Decs.week(a), "week (M) -> (I) : YYYYMMDD to week (1:Mon, 2:Tue, ... , 7:Sun)");
     }
 }
