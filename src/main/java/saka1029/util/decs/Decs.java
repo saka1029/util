@@ -292,7 +292,7 @@ public class Decs {
     }
 
     public static BigDecimal[] iota0(BigDecimal[] decs) {
-        return decs(IntStream.range(0, single(decs).intValue())
+        return decs(IntStream.rangeClosed(0, single(decs).intValue())
             .mapToObj(i -> dec(i)));
     }
 
