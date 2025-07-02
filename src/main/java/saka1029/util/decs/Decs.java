@@ -211,6 +211,14 @@ public class Decs {
         return map(decs, d -> dec(d.signum()));
     }
 
+    public static BigDecimal[] isEven(BigDecimal[] decs) {
+        return map(decs, d -> dec(d.toBigIntegerExact().mod(BigInteger.TWO).signum() == 0));
+    }
+
+    public static BigDecimal[] isOdd(BigDecimal[] decs) {
+        return map(decs, d -> dec(d.toBigIntegerExact().mod(BigInteger.TWO).signum() != 0));
+    }
+
     public static BigDecimal[] abs(BigDecimal[] decs) {
         return map(decs, BigDecimal::abs);
     }

@@ -172,6 +172,8 @@ public class Context {
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
         unary("iota0", (c, a) -> Decs.iota0(a), "iota0 I -> (I) : (0..I)");
+        unary("iseven", (c, a) -> Decs.isEven(a), "iseven (I) -> (B) : is even (T:1, F:0)");
+        unary("isodd", (c, a) -> Decs.isOdd(a), "isodd (I) -> (B) : is odd (T:1, F:0)");
         unary("isprime", (c, a) -> Decs.isPrime(a), "isprime (I) -> (B) : is prime (T:1, F:0)");
         unary("length", (c, a) -> Decs.length(a), "length (D) -> (D) : lenfth of (D)");
         unary("ln", (c, a) -> Decs.ln(a), "ln (D) -> (D) : log E");
