@@ -2,49 +2,49 @@ package saka1029.util.decs;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import saka1029.util.decs.Context.Undo;
 import saka1029.util.decs.Scanner.Token;
 import saka1029.util.decs.Scanner.TokenType;
 
-/**
- * <pre>
- * syntax:
- * statement    = expression
- *              | id '=' expression
- *              | id id '=' expression
- *              | id id id '=' expression
- *              | 'exit'
- *              | 'help' name
- *              | 'solve' expression
- * expression   = binary { ',' binary }
- * binary       = or { bop or }
- * or           = and { '|' and }
- * and          = comp { '&' comp }
- * comp         = add [ cop add ]
- * add          = mult { ( '+' | '-' ) mult }
- * mult         = power { ( '*' | '/' | '%' ) power }
- * power        = unary [ '^' power ]
- * unary        = [ '@' ] uop unary | primary
- * primary      = '(' [ expression ] ')' | id | num
- * 
- * name         = ',' | '|' | '&' | cop
- *              | '+' | '-' | '*' | '/' | '%' | '^'
- * cop          = '==' | '!=' | '>' | '>=' | '<' | '<='
- * uop          = id // defined in context
- * bop          = id // defined in context
- * id           = ALPHABETIC { ALPHABETIC | DIGIT }
- *              | SPECIAL { SPECIAL }
- * </pre>
- */
 public class Parser {
+    static final String SYNTAX = """
+        statement    = expression
+                    | id '=' expression
+                    | id id '=' expression
+                    | id id id '=' expression
+                    | 'exit'
+                    | 'help' name
+                    | 'solve' expression
+        expression   = binary { ',' binary }
+        binary       = or { bop or }
+        or           = and { '|' and }
+        and          = comp { '&' comp }
+        comp         = add [ cop add ]
+        add          = mult { ( '+' | '-' ) mult }
+        mult         = power { ( '*' | '/' | '%' ) power }
+        power        = unary [ '^' power ]
+        unary        = [ '@' ] uop unary | primary
+        primary      = '(' [ expression ] ')' | id | num
+
+        name         = ',' | '|' | '&' | cop
+                    | '+' | '-' | '*' | '/' | '%' | '^'
+        cop          = '==' | '!=' | '>' | '>=' | '<' | '<='
+        uop          = id // defined in context
+        bop          = id // defined in context
+        id           = ALPHABETIC { ALPHABETIC | DIGIT }
+                    | SPECIAL { SPECIAL }
+        """;
     static final Token END = new Token(TokenType.END, "EOF");
 
     public final Context context;
     List<Token> tokens;
     Token token;
     int index = 0;
+    String input;
     Scanner scanner = new Scanner();
     List<String> variables = new ArrayList<>();
 
@@ -270,19 +270,13 @@ public class Parser {
     }
 
 
-    /**
-     * variable = 3 + 2
-     * input.length = 5
-     * index = 1;
-     * token = ID:"variable"
-     */
     Expression defineVariable() {
         String name = token.string;
         get();   // skip ID (name)
         get();   // skip '='
         Expression e = expression();
         return c -> {
-            c.variable(name, e, "variable " + name);
+            c.variable(name, e, input);
             return Decs.NO_VALUE;
         };
     }
@@ -296,11 +290,11 @@ public class Parser {
         Expression e = expression();
         return c -> {
             Unary unary = (cc, a) -> {
-                try (Undo u = cc.variableTemp(arg, ccc -> a, "local " + arg)) {
+                try (Undo u = cc.variableTemp(arg, ccc -> a, arg)) {
                     return e.eval(cc);
                 }
             };
-            c.unary(name, unary, "unary " + name);
+            c.unary(name, unary, input);
             return Decs.NO_VALUE;
         };
     }
@@ -321,7 +315,7 @@ public class Parser {
                     return e.eval(cc);
                 }
             };
-            c.binary(name, binary, "binary " + name);
+            c.binary(name, binary, input);
             return Decs.NO_VALUE;
         };
     }
@@ -332,7 +326,65 @@ public class Parser {
         return c -> Decs.decs(Decs.dec(c.solve(ev)));
     }
 
+    void helpMain() {
+        context.output.accept("help syntax");
+        context.output.accept("help variable");
+        context.output.accept("help unary");
+        context.output.accept("help binary");
+        context.output.accept("help NAME");
+    }
+
+    void helpSyntax() {
+        SYNTAX.lines()
+            .forEach(context.output::accept);
+    }
+
+    void helpVariable() {
+        context.variables.entrySet().stream()
+            .sorted(Comparator.comparing(Map.Entry::getKey))
+            .map(e -> e.getValue().string)
+            .forEach(context.output::accept);
+    }
+
+    void helpUnary() {
+        context.unarys.entrySet().stream()
+            .sorted(Comparator.comparing(Map.Entry::getKey))
+            .map(e -> e.getValue().string)
+            .forEach(context.output::accept);
+    }
+
+    void helpBinary() {
+        context.binarys.entrySet().stream()
+            .sorted(Comparator.comparing(Map.Entry::getKey))
+            .map(e -> e.getValue().string)
+            .forEach(context.output::accept);
+    }
+
+    void helpName(String name) {
+        boolean found = false;
+        if (context.isVariable(name) && (found = true))
+            context.output.accept(context.variable(name).string);
+        if (context.isUnary(name) && (found = true))
+            context.output.accept(context.unary(name).string);
+        if (context.isBinary(name) && (found = true))
+            context.output.accept(context.binary(name).string);
+        if (!found)
+            context.output.accept("'%s' not found".formatted(name));
+    }
+
     Expression help() {
+        if (token == END)
+            helpMain();
+        else if (token.string.equals("syntax"))
+            helpSyntax();
+        else if (token.string.equals("variable"))
+            helpVariable();
+        else if (token.string.equals("unary"))
+            helpUnary();
+        else if (token.string.equals("binary"))
+            helpBinary();
+        else
+            helpName(token.string);
         return c -> Decs.NO_VALUE;
     }
 
@@ -352,6 +404,7 @@ public class Parser {
     }
 
     public Expression parse(String input) {
+        this.input = input;
         tokens = scanner.scan(input);
         index = 0;
         get();
