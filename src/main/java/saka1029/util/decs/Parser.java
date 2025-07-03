@@ -404,7 +404,7 @@ public class Parser {
     }
 
     public Expression parse(String input) {
-        this.input = input;
+        this.input = input.trim();
         tokens = scanner.scan(input);
         index = 0;
         get();
