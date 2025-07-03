@@ -14,7 +14,7 @@ public class Context {
     final Map<String, Help<Expression>> variables = new HashMap<>();
     final Map<String, Help<Unary>> unarys = new HashMap<>();
     final Map<String, Help<Binary>> binarys = new HashMap<>();
-    public Consumer<String> solverOutput = System.out::println;
+    public Consumer<String> output = System.out::println;
 
     public Context() {
         init();
@@ -93,7 +93,7 @@ public class Context {
     }
 
     public int solve(Expression expression) {
-        return solve(expression, m -> solverOutput.accept(
+        return solve(expression, m -> output.accept(
             m.entrySet().stream()
                 .map(e -> e.getKey() + "=" + Decs.string(e.getValue()))
                 .collect(Collectors.joining(" "))));
