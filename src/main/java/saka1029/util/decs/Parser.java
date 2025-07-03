@@ -332,24 +332,21 @@ public class Parser {
         return c -> Decs.decs(Decs.dec(c.solve(ev)));
     }
 
+    Expression help() {
+        return c -> Decs.NO_VALUE;
+    }
+
     Expression statement() {
-        if (tokens.size() >= index + 2
-            && token.type == TokenType.ID
-            && tokens.get(index).type == TokenType.ASSIGN)
+        if (is(TokenType.ID, TokenType.ASSIGN))
             return defineVariable();
-        else if (tokens.size() >= index + 3
-            && token.type == TokenType.ID
-            && tokens.get(index).type == TokenType.ID 
-            && tokens.get(index + 1).type == TokenType.ASSIGN)
+        else if (is(TokenType.ID, TokenType.ID, TokenType.ASSIGN))
             return defineUnary();
-        else if (tokens.size() >= index + 4
-            && token.type == TokenType.ID
-            && tokens.get(index).type == TokenType.ID 
-            && tokens.get(index + 1).type == TokenType.ID 
-            && tokens.get(index + 2).type == TokenType.ASSIGN)
+        else if (is(TokenType.ID, TokenType.ID, TokenType.ID, TokenType.ASSIGN))
             return defineBinary();
         else if (eat(TokenType.SOLVE))
             return solve();
+        else if (eat(TokenType.HELP))
+            return help();
         else
             return expression();
     }
