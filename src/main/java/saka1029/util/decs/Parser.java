@@ -360,6 +360,10 @@ public class Parser {
             .forEach(context.output::accept);
     }
 
+    void helpSolve() {
+        context.output.accept("solve EXPRESSION");
+    }
+
     void helpName(String name) {
         boolean found = false;
         if (context.isVariable(name) && (found = true))
@@ -383,6 +387,8 @@ public class Parser {
             helpUnary();
         else if (token.string.equals("binary"))
             helpBinary();
+        else if (token.string.equals("solve"))
+            helpSolve();
         else
             helpName(token.string);
         return c -> Decs.NO_VALUE;

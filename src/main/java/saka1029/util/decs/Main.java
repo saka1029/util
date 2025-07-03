@@ -75,23 +75,27 @@ public class Main {
  
         Parser parser = new Parser();
         AttributedString result;
-        StringBuilder out = new StringBuilder();
+        AttributedString out;
         ExpressionParser() {
-            parser.context.output = s -> out.append(s).append(NL);
+            parser.context.output = s -> out = AttributedString.join(
+                AttributedString.EMPTY, out,
+                color(s, AttributedStyle.GREEN), AttributedString.NEWLINE);
         }
 
         @Override
         public ParsedLine parse(String line, int cursor, ParseContext context) {
             try {
-                out.setLength(0);
+                out = AttributedString.EMPTY;
                 BigDecimal[] decs = parser.eval(line);
                 if (decs != Decs.NO_VALUE)
-                    out.append(Decs.string(decs)).append(NL);
-                result = out.length() > 0 ? new AttributedString(out) : null;
+                    out = AttributedString.join(
+                        AttributedString.EMPTY, out,
+                        new AttributedString(Decs.string(decs)), AttributedString.NEWLINE);
+                result = out == AttributedString.EMPTY ? null : out;
             } catch (EOFException e) {
                 throw new EOFError(0, 0, e.getMessage());
             } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
-                this.result = color(e.getMessage(), AttributedStyle.RED);
+                result = color(e.getMessage(), AttributedStyle.RED);
             }
             // String token = parser.tokens.get(parser.tokens.size() - 1).string;
             // String token = parser.tokens.get(0).string;
