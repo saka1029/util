@@ -218,7 +218,7 @@ public class TestDecs {
 
     @Test
     public void testIota0Unary() {
-        assertDecsEquals(decs("0 1 2"), iota0(decs("3")));
+        assertDecsEquals(decs("0 1 2 3"), iota0(decs("3")));
         assertDecsEquals(decs(""), iota0(decs("-3")));
     }
 
@@ -389,6 +389,43 @@ public class TestDecs {
         assertDecsEquals(decs("1 1"), ge(decs("1 2"), decs("1 1")));
         assertDecsEquals(decs("0 1"), ge(decs("1 1"), decs("2 1")));
         assertDecsEquals(decs("1 1"), ge(decs("2 1"), decs("1 1")));
+    }
+
+    @Test
+    public void testTrues() {
+        assertTrue(trues(decs("1 1 1")));
+        assertFalse(trues(decs("0 1 1")));
+        assertFalse(trues(decs("1 0 1")));
+        assertFalse(trues(decs("1 1 0")));
+        assertFalse(trues(decs("0 0 0")));
+        assertTrue(trues(decs("1")));
+        assertFalse(trues(decs("0")));
+    }
+
+    @Test
+    public void testFalses() {
+        assertFalse(falses(decs("1 1 1")));
+        assertFalse(falses(decs("0 1 1")));
+        assertFalse(falses(decs("1 0 1")));
+        assertFalse(falses(decs("1 1 0")));
+        assertTrue(falses(decs("0 0 0")));
+        assertFalse(falses(decs("1")));
+        assertTrue(falses(decs("0")));
+    }
+
+    @Test
+    public void testAnd() {
+        assertDecsEquals(decs("1 0 0 0"), and(decs("1 1 0 0"), decs("1 0 1 0")));
+    }
+
+    @Test
+    public void testOr() {
+        assertDecsEquals(decs("1 1 1 0"), or(decs("1 1 0 0"), decs("1 0 1 0")));
+    }
+
+    @Test
+    public void testLog() {
+        assertDecsEquals(decs("1 2 1 1E+1"), log(decs("10 16 2 1024"), decs("10 4 2 2")));
     }
 
     @Test
