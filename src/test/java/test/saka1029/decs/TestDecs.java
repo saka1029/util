@@ -75,6 +75,16 @@ public class TestDecs {
     }
 
     @Test
+    public void testPI() {
+        assertDecsEquals(decs("3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117068"), pi());
+    }
+
+    @Test
+    public void testE() {
+        assertDecsEquals(decs("2.718281828459045235360287471352662497757247093699959574966967627724076630353547594571382178525166427"), e());
+    }
+
+    @Test
     public void testAddUnary() {
         assertDecsEquals(decs("0"), add(decs("")));
         assertDecsEquals(decs("1"), add(decs("1")));
@@ -145,6 +155,27 @@ public class TestDecs {
         assertDecsEquals(decs("-1"), negate(decs("1")));
         assertDecsEquals(decs("-1 -3"), negate(decs("1 3")));
         assertDecsEquals(decs("-1 -3 -5"), negate(decs("1 3 5")));
+    }
+
+    @Test
+    public void testSignum() {
+        assertDecsEquals(decs(""), signum(decs("")));
+        assertDecsEquals(decs("1"), signum(decs("1")));
+        assertDecsEquals(decs("-1 0 1"), signum(decs("-3 0 3")));
+    }
+
+    @Test
+    public void testIsEven() {
+        assertDecsEquals(decs(""), isEven(decs("")));
+        assertDecsEquals(decs("0"), isEven(decs("1")));
+        assertDecsEquals(decs("0 1 0"), isEven(decs("-3 0 3")));
+    }
+
+    @Test
+    public void testIsOdd() {
+        assertDecsEquals(decs(""), isOdd(decs("")));
+        assertDecsEquals(decs("1"), isOdd(decs("1")));
+        assertDecsEquals(decs("1 0 1"), isOdd(decs("-3 0 3")));
     }
 
     @Test
