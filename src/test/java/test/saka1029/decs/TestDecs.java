@@ -492,4 +492,9 @@ public class TestDecs {
             assertEquals("Illegal length left=(1, 2) right=(3, 4, 5)", e.getMessage());
         }
     }
+
+    @Test
+    public void testRemove() {
+        assertDecsEquals(decs("1 3 5"), remove(decs("1 2 3 4 5 6"), decs("2 4 6")));
+    }
 }

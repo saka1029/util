@@ -185,6 +185,7 @@ public class Context {
         unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes from 2 to A");
         unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : πA/180");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
+        binary("remove", (c, a, b) -> Decs.remove(a, b), "(A) remove (B) -> (D) : remove (B) from (A)");
         unary("reverse", (c, a) -> Decs.reverse(a), "reverse (A) -> (D) : reverse");
         unary("signum", (c, a) -> Decs.signum(a), "signum (A) -> (D) : sign of A");
         unary("sin", (c, a) -> Decs.sin(a), "sin (A) -> (D) : sin A");

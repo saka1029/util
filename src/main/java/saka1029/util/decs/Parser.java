@@ -415,7 +415,10 @@ public class Parser {
         index = 0;
         get();
         variables.clear();
-        return new ExpressionWithVariables(statement(), variables);
+        Expression result = statement();
+        if (token != END)
+            throw syntaxError("extra token '%s'", token.string);
+        return new ExpressionWithVariables(result, variables);
     }
 
     public BigDecimal[] eval(String input) {

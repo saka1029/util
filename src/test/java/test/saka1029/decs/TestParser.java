@@ -13,6 +13,7 @@ import static saka1029.util.decs.Decs.*;
 import saka1029.util.decs.Expression;
 import saka1029.util.decs.ExpressionWithVariables;
 import saka1029.util.decs.Parser;
+import saka1029.util.decs.SyntaxException;
 
 public class TestParser {
 
@@ -119,5 +120,15 @@ public class TestParser {
         assertDecsEquals(decs("1 2 3"), parser.eval("iota 3"));
         assertDecsEquals(decs("2 3 4"), parser.eval("1 + iota 3"));
         assertDecsEquals(decs("2 3 4"), parser.eval("iota 3 + 1"));
+    }
+
+    @Test
+    public void testExtratoken() {
+        Parser parser = new Parser();
+        try {
+            assertDecsEquals(decs("3"), parser.eval("3 unknown 3"));
+        } catch (SyntaxException e) {
+            assertEquals("extra token 'unknown'", e.getMessage());
+        }
     }
 }

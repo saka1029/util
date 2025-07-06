@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -569,5 +570,10 @@ public class Decs {
         System.arraycopy(left, 0, result, 0, left.length);
         System.arraycopy(right, 0, result, left.length, right.length);
         return result;
+    }
+
+    public static BigDecimal[] remove(BigDecimal[] left, BigDecimal[] right) {
+        Set<BigDecimal> set = Set.of(right);
+        return decs(Stream.of(left).filter(d -> !set.contains(d)));
     }
 }
