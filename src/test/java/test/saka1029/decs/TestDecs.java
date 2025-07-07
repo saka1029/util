@@ -254,6 +254,16 @@ public class TestDecs {
     }
 
     @Test
+    public void testPascal() {
+        assertDecsEquals(decs("1"), pascal(decs("0")));
+        assertDecsEquals(decs("1 1"), pascal(decs("1")));
+        assertDecsEquals(decs("1 2 1"), pascal(decs("2")));
+        assertDecsEquals(decs("1 3 3 1"), pascal(decs("3")));
+        assertDecsEquals(decs("1 4 6 4 1"), pascal(decs("4")));
+        assertDecsEquals(decs("1 5 10 10 5 1"), pascal(decs("5")));
+    }
+
+    @Test
     public void testZip() {
         BinaryOperator<BigDecimal> op = (a, b) -> a.add(b);
         assertDecsEquals(decs(), zip(decs(""), decs(""), op));

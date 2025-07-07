@@ -3,6 +3,7 @@ package saka1029.util.decs;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -407,6 +408,26 @@ public class Decs {
             .mapToObj(i -> dec(i)));
     }
 
+    /**
+     *        k
+     * nCk = Π (n + 1 - i) / i
+     *       i=1
+     */
+    public static BigDecimal[] pascal(BigDecimal[] decs) {
+        int n = single(decs).intValueExact();
+        if (n < 0)
+            throw error("must > 0 but '%s'", string(decs));
+        List<BigDecimal> result = new ArrayList<>();
+        result.add(dec(1));
+        BigInteger num = BigInteger.ONE, den = BigInteger.ONE;
+        for (int i = 1; i <= n; ++i) {
+            num = num.multiply(BigInteger.valueOf(n + 1 - i));
+            den = den.multiply(BigInteger.valueOf(i));
+            result.add(dec(num.divide(den)));
+        }
+        return decs(result);
+    }
+
     // unary special method
 
     public static BigDecimal[] length(BigDecimal[] decs) {
@@ -470,6 +491,10 @@ public class Decs {
             BigDecimalMath.isLongValue(b)
                 ? BigDecimalMath.pow(a, b.longValue(), MATH_CONTEXT)
                 : BigDecimalMath.pow(a, b, MATH_CONTEXT).stripTrailingZeros());
+    }
+
+    public static BigDecimal[] round(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> a.setScale(b.intValueExact(), RoundingMode.HALF_UP));
     }
 
     public static BigDecimal sign(int sign) {

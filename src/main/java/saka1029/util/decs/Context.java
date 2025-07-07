@@ -184,11 +184,13 @@ public class Context {
         unary("log2", (c, a) -> Decs.log2(a), "log2 (A) -> (D) : log 2 A");
         unary("negate", (c, a) -> Decs.negate(a), "negate (A) -> (D) : -A");
         variable("PI", c -> Decs.pi(), "PI -> D : π");
+        unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
         unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes from 2 to A");
         unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : πA/180");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
         binary("remove", (c, a, b) -> Decs.remove(a, b), "(A) remove (B) -> (D) : remove (B) from (A)");
         unary("reverse", (c, a) -> Decs.reverse(a), "reverse (A) -> (D) : reverse");
+        binary("round", (c, a, b) -> Decs.round(a, b), "(A) round (N) -> (D) : truncate A to N decimal places");
         unary("signum", (c, a) -> Decs.signum(a), "signum (A) -> (D) : sign of A");
         unary("sin", (c, a) -> Decs.sin(a), "sin (A) -> (D) : sin A");
         unary("sort", (c, a) -> Decs.sort(a), "sort (A) -> (D) : sort");
