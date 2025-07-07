@@ -418,6 +418,13 @@ public class Decs {
      *        k
      * nCk = Π (n + 1 - i) / i
      *       i=1
+     * 
+     * or
+     * 
+     * nC0 = 1
+     * nCk = nCk-1 * (n + 1 - k) / k
+     * 
+     * https://ja.wikipedia.org/wiki/二項係数
      */
     public static BigDecimal[] pascal(BigDecimal[] decs) {
         int n = single(decs).intValueExact();
