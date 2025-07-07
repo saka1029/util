@@ -165,22 +165,22 @@ public class Context {
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
         unary("cube", (c, a) -> Decs.cube(a), "cube (A) -> (D) : A³");
         unary("date", (c, a) -> Decs.date(a), "date (M) -> (I) : epoch day to YYYYMMDD");
-        unary("days", (c, a) -> Decs.days(a), "days (M) -> (I) : YYYYMMDD to epoch day");
+        unary("days", (c, a) -> Decs.days(a), "days (N) -> (I) : YYYYMMDD to epoch day");
         binary("decimal", (c, a, b) -> Decs.decimal(a, b), "(A) decimal (B) -> D : (A) in base (B) to decimal");
         unary("degree", (c, a) -> Decs.degree(a), "degree (A) -> (D) : 180A/π");
         unary("divisor", (c, a) -> Decs.divisor(a), "divisor N -> (I) : divisors of N");
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
         unary("factor", (c, a) -> Decs.factor(a), "factor N -> (I) : factor of N");
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
-        unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
-        unary("iota0", (c, a) -> Decs.iota0(a), "iota0 I -> (I) : (0..I)");
-        unary("iotan", (c, a) -> Decs.iotan(a), "iotan I -> (I) : (-I..I)");
-        unary("iseven", (c, a) -> Decs.isEven(a), "iseven (I) -> (B) : is even (T:1, F:0)");
-        unary("isodd", (c, a) -> Decs.isOdd(a), "isodd (I) -> (B) : is odd (T:1, F:0)");
-        unary("isprime", (c, a) -> Decs.isPrime(a), "isprime (I) -> (B) : is prime (T:1, F:0)");
+        unary("iota", (c, a) -> Decs.iota(a), "iota N -> (I) : (1..N)");
+        unary("iota0", (c, a) -> Decs.iota0(a), "iota0 N -> (I) : (0..N)");
+        unary("iotan", (c, a) -> Decs.iotan(a), "iotan N -> (I) : (-N..N)");
+        unary("iseven", (c, a) -> Decs.isEven(a), "iseven (N) -> (B) : is even (T:1, F:0)");
+        unary("isodd", (c, a) -> Decs.isOdd(a), "isodd (N) -> (B) : is odd (T:1, F:0)");
+        unary("isprime", (c, a) -> Decs.isPrime(a), "isprime (N) -> (B) : is prime (T:1, F:0)");
         unary("length", (c, a) -> Decs.length(a), "length (D) -> (D) : lenfth of (D)");
-        unary("ln", (c, a) -> Decs.ln(a), "ln (D) -> (D) : log E");
-        binary("log", (c, a, b) -> Decs.log(a, b), "(A) log (B) -> (D) : log B A");
+        unary("ln", (c, a) -> Decs.ln(a), "ln (A) -> (D) : log E A");
+        binary("log", (c, a, b) -> Decs.log(a, b), "(A) log (C) -> (D) : log C A");
         unary("log10", (c, a) -> Decs.log10(a), "log10 (A) -> (D) : log 10 A");
         unary("log2", (c, a) -> Decs.log2(a), "log2 (A) -> (D) : log 2 A");
         unary("negate", (c, a) -> Decs.negate(a), "negate (A) -> (D) : -A");
@@ -199,7 +199,7 @@ public class Context {
         unary("square", (c, a) -> Decs.square(a), "square (A) -> (D) : A²");
         unary("tan", (c, a) -> Decs.tan(a), "tan (A) -> (D) : tan A");
         variable("TODAY", c -> Decs.today(), "TODAY -> I : today (YYYYMMDD)");
-        binary("to", (c, a, b) -> Decs.to(a, b), "M to N -> (I) : (M ... N)");
-        unary("week", (c, a) -> Decs.week(a), "week (M) -> (I) : YYYYMMDD to week (1:Mon, 2:Tue, ... , 7:Sun)");
+        binary("to", (c, a, b) -> Decs.to(a, b), "M to N -> (I) : (M..N)");
+        unary("week", (c, a) -> Decs.week(a), "week (N) -> (I) : YYYYMMDD to week (1:Mon, 2:Tue, ... , 7:Sun)");
     }
 }
