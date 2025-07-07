@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -331,6 +332,42 @@ public class Decs {
 
     public static BigDecimal[] isPrime(BigDecimal[] decs) {
         return map(decs, d -> isPrime(d));
+    }
+
+    public static BigDecimal[] factor(BigDecimal[] decs) {
+        BigInteger i = single(decs).toBigIntegerExact().abs();
+        if (i.equals(BigInteger.ZERO))
+            throw new ValueException("Cannot factor zero");
+        List<BigDecimal> result = new ArrayList<>();
+        BigInteger max = i.sqrt();
+        for (BigInteger f = BigInteger.TWO; f.compareTo(max) <= 0; f = f.add(BigInteger.ONE)) {
+            while (true) {
+                BigInteger[] r = i.divideAndRemainder(f);
+                if (!r[1].equals(BigInteger.ZERO))
+                    break;
+                i = r[0];
+                result.add(new BigDecimal(f));
+            }
+        }
+        if (!i.equals(BigInteger.ONE))
+            result.add(dec(i));
+        return decs(result);
+    }
+
+    public static BigDecimal[] divisor(BigDecimal[] decs) {
+        BigInteger i = single(decs).toBigIntegerExact().abs();
+        Set<BigInteger> set = new HashSet<>();
+        if (i.equals(BigInteger.ZERO))
+            set.add(BigInteger.ZERO);
+        else 
+            for (BigInteger j = i.sqrt(); j.compareTo(BigInteger.ZERO) > 0; j = j.subtract(BigInteger.ONE)) {
+                BigInteger[] x = i.divideAndRemainder(j);
+                if (x[1].equals(BigInteger.ZERO)) {
+                    set.add(j);
+                    set.add(x[0]);
+                }
+            }
+        return decs(set.stream().sorted().map(j -> dec(j)));
     }
 
     // unary single method

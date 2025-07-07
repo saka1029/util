@@ -168,7 +168,9 @@ public class Context {
         unary("days", (c, a) -> Decs.days(a), "days (M) -> (I) : YYYYMMDD to epoch day");
         binary("decimal", (c, a, b) -> Decs.decimal(a, b), "(A) decimal (B) -> D : (A) in base (B) to decimal");
         unary("degree", (c, a) -> Decs.degree(a), "degree (A) -> (D) : 180A/π");
+        unary("divisor", (c, a) -> Decs.divisor(a), "divisor N -> (I) : divisors of N");
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
+        unary("factor", (c, a) -> Decs.factor(a), "factor N -> (I) : factor of N");
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
         unary("iota", (c, a) -> Decs.iota(a), "iota I -> (I) : (1..I)");
         unary("iota0", (c, a) -> Decs.iota0(a), "iota0 I -> (I) : (0..I)");
