@@ -375,7 +375,7 @@ public class Decs {
 
     public static BigDecimal single(BigDecimal[] decs) {
         if (decs.length != 1)
-            throw error("Single value expected but %s", string(decs));
+            throw error("Single value expected but '%s'", string(decs));
         return decs[0];
     }
 
@@ -386,6 +386,12 @@ public class Decs {
 
     public static BigDecimal[] iota0(BigDecimal[] decs) {
         return decs(IntStream.rangeClosed(0, single(decs).intValue())
+            .mapToObj(i -> dec(i)));
+    }
+
+    public static BigDecimal[] iotan(BigDecimal[] decs) {
+        int n = single(decs).intValue();
+        return decs(IntStream.rangeClosed(-n, n)
             .mapToObj(i -> dec(i)));
     }
 
@@ -416,7 +422,7 @@ public class Decs {
     public static BigDecimal[] pascal(BigDecimal[] decs) {
         int n = single(decs).intValueExact();
         if (n < 0)
-            throw error("must > 0 but '%s'", string(decs));
+            throw error("must >= 0 but '%s'", string(decs));
         List<BigDecimal> result = new ArrayList<>();
         result.add(dec(1));
         BigInteger num = BigInteger.ONE, den = BigInteger.ONE;
@@ -463,7 +469,7 @@ public class Decs {
             return decs(IntStream.range(0, lsize)
                 .mapToObj(i -> op.apply(left[i], right[i])));
         else
-            throw error("zip: Invalid size l=%s r=%s", string(left), string(right));
+            throw error("zip: invalid length l='%s' r='%s'", string(left), string(right));
     }
 
     public static BigDecimal[] add(BigDecimal[] left, BigDecimal[] right) {
