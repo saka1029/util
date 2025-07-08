@@ -3,10 +3,12 @@ package saka1029.util.decs;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -333,11 +335,47 @@ public class Decs {
         return map(decs, d -> isPrime(d));
     }
 
+    public static BigDecimal[] factor(BigDecimal[] decs) {
+        BigInteger i = single(decs).toBigIntegerExact().abs();
+        if (i.equals(BigInteger.ZERO))
+            throw new ValueException("Cannot factor zero");
+        List<BigDecimal> result = new ArrayList<>();
+        BigInteger max = i.sqrt();
+        for (BigInteger f = BigInteger.TWO; f.compareTo(max) <= 0; f = f.add(BigInteger.ONE)) {
+            while (true) {
+                BigInteger[] r = i.divideAndRemainder(f);
+                if (!r[1].equals(BigInteger.ZERO))
+                    break;
+                i = r[0];
+                result.add(new BigDecimal(f));
+            }
+        }
+        if (!i.equals(BigInteger.ONE))
+            result.add(dec(i));
+        return decs(result);
+    }
+
+    public static BigDecimal[] divisor(BigDecimal[] decs) {
+        BigInteger i = single(decs).toBigIntegerExact().abs();
+        Set<BigInteger> set = new HashSet<>();
+        if (i.equals(BigInteger.ZERO))
+            set.add(BigInteger.ZERO);
+        else 
+            for (BigInteger j = i.sqrt(); j.compareTo(BigInteger.ZERO) > 0; j = j.subtract(BigInteger.ONE)) {
+                BigInteger[] x = i.divideAndRemainder(j);
+                if (x[1].equals(BigInteger.ZERO)) {
+                    set.add(j);
+                    set.add(x[0]);
+                }
+            }
+        return decs(set.stream().sorted().map(j -> dec(j)));
+    }
+
     // unary single method
 
     public static BigDecimal single(BigDecimal[] decs) {
         if (decs.length != 1)
-            throw error("Single value expected but %s", string(decs));
+            throw error("Single value expected but '%s'", string(decs));
         return decs[0];
     }
 
@@ -348,6 +386,12 @@ public class Decs {
 
     public static BigDecimal[] iota0(BigDecimal[] decs) {
         return decs(IntStream.rangeClosed(0, single(decs).intValue())
+            .mapToObj(i -> dec(i)));
+    }
+
+    public static BigDecimal[] iotan(BigDecimal[] decs) {
+        int n = single(decs).intValue();
+        return decs(IntStream.rangeClosed(-n, n)
             .mapToObj(i -> dec(i)));
     }
 
@@ -368,6 +412,33 @@ public class Decs {
         return decs(IntStream.range(0, size)
             .filter(i -> !primes[i])
             .mapToObj(i -> dec(i)));
+    }
+
+    /**
+     *        k
+     * nCk = Π (n + 1 - i) / i
+     *       i=1
+     * 
+     * or
+     * 
+     * nC0 = 1
+     * nCk = nCk-1 * (n + 1 - k) / k
+     * 
+     * https://ja.wikipedia.org/wiki/二項係数
+     */
+    public static BigDecimal[] pascal(BigDecimal[] decs) {
+        int n = single(decs).intValueExact();
+        if (n < 0)
+            throw error("must >= 0 but '%s'", string(decs));
+        List<BigDecimal> result = new ArrayList<>();
+        result.add(dec(1));
+        BigInteger num = BigInteger.ONE, den = BigInteger.ONE;
+        for (int i = 1; i <= n; ++i) {
+            num = num.multiply(BigInteger.valueOf(n + 1 - i));
+            den = den.multiply(BigInteger.valueOf(i));
+            result.add(dec(num.divide(den)));
+        }
+        return decs(result);
     }
 
     // unary special method
@@ -405,7 +476,7 @@ public class Decs {
             return decs(IntStream.range(0, lsize)
                 .mapToObj(i -> op.apply(left[i], right[i])));
         else
-            throw error("zip: Invalid size l=%s r=%s", string(left), string(right));
+            throw error("zip: invalid length l='%s' r='%s'", string(left), string(right));
     }
 
     public static BigDecimal[] add(BigDecimal[] left, BigDecimal[] right) {
@@ -433,6 +504,10 @@ public class Decs {
             BigDecimalMath.isLongValue(b)
                 ? BigDecimalMath.pow(a, b.longValue(), MATH_CONTEXT)
                 : BigDecimalMath.pow(a, b, MATH_CONTEXT).stripTrailingZeros());
+    }
+
+    public static BigDecimal[] round(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> a.setScale(b.intValueExact(), RoundingMode.HALF_UP));
     }
 
     public static BigDecimal sign(int sign) {

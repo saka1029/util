@@ -31,7 +31,7 @@ public class Main {
 
     static class ExpressionParser implements org.jline.reader.Parser {
  
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         AttributedString result;
         AttributedString out;
         ExpressionParser() {

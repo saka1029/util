@@ -243,7 +243,7 @@ public class TestDecs {
             iota(decs("1 2"));
             fail();
         } catch (DecsException e) {
-            assertEquals("Single value expected but (1, 2)", e.getMessage());
+            assertEquals("Single value expected but '(1, 2)'", e.getMessage());
         }
     }
 
@@ -251,6 +251,16 @@ public class TestDecs {
     public void testIota0Unary() {
         assertDecsEquals(decs("0 1 2 3"), iota0(decs("3")));
         assertDecsEquals(decs(""), iota0(decs("-3")));
+    }
+
+    @Test
+    public void testPascal() {
+        assertDecsEquals(decs("1"), pascal(decs("0")));
+        assertDecsEquals(decs("1 1"), pascal(decs("1")));
+        assertDecsEquals(decs("1 2 1"), pascal(decs("2")));
+        assertDecsEquals(decs("1 3 3 1"), pascal(decs("3")));
+        assertDecsEquals(decs("1 4 6 4 1"), pascal(decs("4")));
+        assertDecsEquals(decs("1 5 10 10 5 1"), pascal(decs("5")));
     }
 
     @Test
@@ -269,7 +279,7 @@ public class TestDecs {
             zip(decs("10 20 30"), decs("1 2"), op);
             fail();
         } catch (DecsException e) {
-            assertEquals("zip: Invalid size l=(10, 20, 30) r=(1, 2)", e.getMessage());
+            assertEquals("zip: invalid length l='(10, 20, 30)' r='(1, 2)'", e.getMessage());
         }
     }
 
@@ -472,7 +482,7 @@ public class TestDecs {
             base(decs("1 2"), decs("3"));
             fail();
         } catch (DecsException e) {
-            assertEquals("Single value expected but (1, 2)", e.getMessage());
+            assertEquals("Single value expected but '(1, 2)'", e.getMessage());
         }
     }
 
