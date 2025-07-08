@@ -71,7 +71,7 @@ public class TestScanner {
         Scanner scanner = new Scanner();
         List<Token> tokens = scanner.scan(
             "!   &   |  ");
-        assertEquals(List.of(ID, AND, OR),
+        assertEquals(List.of(NOT, AND, OR),
             tokens.stream().map(t -> t.type).toList());
         assertEquals(List.of( "!", "&", "|"),
             tokens.stream().map(t -> t.string).toList());

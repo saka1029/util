@@ -135,6 +135,11 @@ public class Parser {
             get();  // skip ID
             Expression arg = unary();
             return c -> select(c.unary(name).expression).apply(c, arg.eval(c));
+        } else if (context.isBuiltinUnary(token.string)) {
+            Unary unary = context.builtinUnary(token.string).expression;
+            get();  // skip ID
+            Expression arg = unary();
+            return c -> unary.apply(c, arg.eval(c));
         } else if (context.isUnary(token.string)) {
             String name = token.string;
             get();  // skip ID

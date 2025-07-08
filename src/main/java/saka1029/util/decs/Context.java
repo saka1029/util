@@ -37,6 +37,10 @@ public class Context {
         return unarys.containsKey(name);
     }
 
+    public boolean isBuiltinUnary(String name) {
+        return builtinUnarys.containsKey(name);
+    }
+
     public Help<Unary> unary(String name) {
         Help<Unary> r = unarys.get(name);
         if (r == null)
@@ -55,8 +59,8 @@ public class Context {
         return r;
     }
 
-    public Help<Binary> builtinUnary(String name) {
-        Help<Binary> r = builtinBinarys.get(name);
+    public Help<Unary> builtinUnary(String name) {
+        Help<Unary> r = builtinUnarys.get(name);
         if (r == null)
             throw new UndefException("binary '%s' undef", name);
         return r;
@@ -177,7 +181,7 @@ public class Context {
     }
 
     private void init() {
-        unary("!", (c, a) -> Decs.not(a), "! (B) -> (B) : not");
+        builtinUnary("!", (c, a) -> Decs.not(a), "! (C) -> (B) : not B");
         unary("+", (c, a) -> Decs.add(a), "+ (A) -> D : +");
         builtinBinary("+", (c, a, b) -> Decs.add(a, b), "(A) + (B) -> (D) : A + B");
         unary("-", (c, a) -> Decs.subtract(a), "- (A) -> D : -");
@@ -191,6 +195,12 @@ public class Context {
         builtinBinary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A ^ B");
         unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or");
         builtinBinary("|", (c, a, b) -> Decs.or(a, b), "(A) | (B) -> (D) : logical or A B");
+        builtinBinary("==", (c, a, b) -> Decs.eq(a, b), "(A) == (B) -> (D) : A equal B");
+        builtinBinary("!=", (c, a, b) -> Decs.ne(a, b), "(A) != (B) -> (D) : A not equal B");
+        builtinBinary("<", (c, a, b) -> Decs.lt(a, b), "(A) < (B) -> (D) : A less than B");
+        builtinBinary("<=", (c, a, b) -> Decs.le(a, b), "(A) <= (B) -> (D) : A less than or equal B");
+        builtinBinary(">", (c, a, b) -> Decs.gt(a, b), "(A) > (B) -> (D) : A greater than B");
+        builtinBinary(">=", (c, a, b) -> Decs.ge(a, b), "(A) >= (B) -> (D) : A greater than or equal B");
         unary("&", (c, a) -> Decs.and(a), "& (B) -> B : and");
         builtinBinary("&", (c, a, b) -> Decs.and(a, b), "(A) & (B) -> (D) : logical and A B");
         builtinBinary(",", (c, a, b) -> Decs.concat(a, b), "(A) , (B) -> (D) : concat (A) and (B)");
