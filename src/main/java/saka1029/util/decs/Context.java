@@ -37,10 +37,6 @@ public class Context {
         return unarys.containsKey(name);
     }
 
-    public boolean isBuiltinUnary(String name) {
-        return builtinUnarys.containsKey(name);
-    }
-
     public Help<Unary> unary(String name) {
         Help<Unary> r = unarys.get(name);
         if (r == null)
@@ -59,11 +55,19 @@ public class Context {
         return r;
     }
 
+    public boolean isBuiltinUnary(String name) {
+        return builtinUnarys.containsKey(name);
+    }
+
     public Help<Unary> builtinUnary(String name) {
         Help<Unary> r = builtinUnarys.get(name);
         if (r == null)
             throw new UndefException("binary '%s' undef", name);
         return r;
+    }
+
+    public boolean isBuiltinBinary(String name) {
+        return builtinBinarys.containsKey(name);
     }
 
     public Help<Binary> builtinBinary(String name) {

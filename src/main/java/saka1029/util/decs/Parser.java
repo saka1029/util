@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import saka1029.util.decs.Context.Undo;
 import saka1029.util.decs.Scanner.Token;
@@ -357,14 +358,18 @@ public class Parser {
     }
 
     void helpUnary() {
-        context.unarys.entrySet().stream()
+        Stream.of(context.builtinUnarys, context.unarys)
+            .map(map -> map.entrySet().stream())
+            .flatMap(Function.identity())
             .sorted(Comparator.comparing(Map.Entry::getKey))
             .map(e -> e.getValue().string)
             .forEach(context.output::accept);
     }
 
     void helpBinary() {
-        context.binarys.entrySet().stream()
+        Stream.of(context.builtinBinarys, context.binarys)
+            .map(map -> map.entrySet().stream())
+            .flatMap(Function.identity())
             .sorted(Comparator.comparing(Map.Entry::getKey))
             .map(e -> e.getValue().string)
             .forEach(context.output::accept);
@@ -376,6 +381,10 @@ public class Parser {
 
     void helpName(String name) {
         boolean found = false;
+        if (context.isBuiltinUnary(name) && (found = true))
+            context.output.accept(context.builtinUnary(name).string);
+        if (context.isBuiltinBinary(name) && (found = true))
+            context.output.accept(context.builtinBinary(name).string);
         if (context.isVariable(name) && (found = true))
             context.output.accept(context.variable(name).string);
         if (context.isUnary(name) && (found = true))
