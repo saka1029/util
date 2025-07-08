@@ -10,7 +10,7 @@ public class Scanner {
         LP, RP, COMMA, AT,
         PLUS, MINUS, MULT, DIV, MOD, POW,
         EQ, NE, GT, GE, LT, LE, ASSIGN,
-        AND, OR,
+        AND, OR, NOT,
         HELP, SOLVE, EXIT,
         NUM, ID,
         END,
@@ -158,7 +158,7 @@ public class Scanner {
             case '%' -> get(TokenType.MOD);
             case '^' -> get(TokenType.POW);
             case '=' -> get() == '=' ? get(TokenType.EQ) : TokenType.ASSIGN;
-            case '!' -> get() == '=' ? get(TokenType.NE) : TokenType.ID;
+            case '!' -> get() == '=' ? get(TokenType.NE) : TokenType.NOT;
             case '<' -> get() == '=' ? get(TokenType.LE) : TokenType.LT;
             case '>' -> get() == '=' ? get(TokenType.GE) : TokenType.GT;
             case '@' -> get(TokenType.AT);
