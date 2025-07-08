@@ -14,6 +14,8 @@ public class Context {
     final Map<String, Help<Expression>> variables = new HashMap<>();
     final Map<String, Help<Unary>> unarys = new HashMap<>();
     final Map<String, Help<Binary>> binarys = new HashMap<>();
+    final Map<String, Help<Unary>> builtinUnarys = new HashMap<>();
+    final Map<String, Help<Binary>> builtinBinarys = new HashMap<>();
     public Consumer<String> output = System.out::println;
 
     public Context() {
@@ -48,6 +50,20 @@ public class Context {
 
     public Help<Binary> binary(String name) {
         Help<Binary> r = binarys.get(name);
+        if (r == null)
+            throw new UndefException("binary '%s' undef", name);
+        return r;
+    }
+
+    public Help<Binary> builtinUnary(String name) {
+        Help<Binary> r = builtinBinarys.get(name);
+        if (r == null)
+            throw new UndefException("binary '%s' undef", name);
+        return r;
+    }
+
+    public Help<Binary> builtinBinary(String name) {
+        Help<Binary> r = builtinBinarys.get(name);
         if (r == null)
             throw new UndefException("binary '%s' undef", name);
         return r;
@@ -89,6 +105,16 @@ public class Context {
 
     public void binary(String name, Binary binary, String help) {
         put(binarys, name, new Help<>(binary, help));
+        put(variables, name, null);
+    }
+
+    public void builtinUnary(String name, Unary unary, String help) {
+        put(builtinUnarys, name, new Help<>(unary, help));
+        put(variables, name, null);
+    }
+
+    public void builtinBinary(String name, Binary binary, String help) {
+        put(builtinBinarys, name, new Help<>(binary, help));
         put(variables, name, null);
     }
 
@@ -153,13 +179,21 @@ public class Context {
     private void init() {
         unary("!", (c, a) -> Decs.not(a), "! (B) -> (B) : not");
         unary("+", (c, a) -> Decs.add(a), "+ (A) -> D : +");
+        builtinBinary("+", (c, a, b) -> Decs.add(a, b), "(A) + (B) -> (D) : A + B");
         unary("-", (c, a) -> Decs.subtract(a), "- (A) -> D : -");
+        builtinBinary("-", (c, a, b) -> Decs.subtract(a, b), "(A) - (B) -> (D) : A - B");
         unary("*", (c, a) -> Decs.multiply(a), "* (A) -> D : *");
+        builtinBinary("*", (c, a, b) -> Decs.multiply(a, b), "(A) * (B) -> (D) : A * B");
         unary("/", (c, a) -> Decs.divide(a), "/ (A) -> D : /");
+        builtinBinary("/", (c, a, b) -> Decs.divide(a, b), "(A) / (B) -> (D) : A / B");
+        builtinBinary("%", (c, a, b) -> Decs.mod(a, b), "(A) % (B) -> (D) : modulo A by B");
         unary("^", (c, a) -> Decs.pow(a), "^ (A) -> D : power");
-        binary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A ^ B");
+        builtinBinary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A ^ B");
         unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or");
+        builtinBinary("|", (c, a, b) -> Decs.or(a, b), "(A) | (B) -> (D) : logical or A B");
         unary("&", (c, a) -> Decs.and(a), "& (B) -> B : and");
+        builtinBinary("&", (c, a, b) -> Decs.and(a, b), "(A) & (B) -> (D) : logical and A B");
+        builtinBinary(",", (c, a, b) -> Decs.concat(a, b), "(A) , (B) -> (D) : concat (A) and (B)");
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
         binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");

@@ -63,6 +63,10 @@ public class Parser {
         return token = index < tokens.size() ? tokens.get(index++) : END;
     }
 
+    Token prev() {
+        return tokens.get(index - 1);
+    }
+
     boolean is(TokenType... expects) {
         int length = expects.length;
         if (length > tokens.size() - index + 1)
@@ -80,6 +84,7 @@ public class Parser {
         }
         return false;
     }
+
 
     EOFException eofError(String message, Object... args) {
         return new EOFException(message, args);
@@ -141,84 +146,77 @@ public class Parser {
 
     Expression power() {
         Expression e = unary();
-        if (eat(TokenType.POW)) {
+        if (token.type == TokenType.POW) {
+            Binary pow = context.builtinBinary(token.string).expression;
+            get();
             Expression left = e, right = power();
-            return c -> Decs.pow(left.eval(c), right.eval(c));
+            return c -> pow.apply(c, left.eval(c), right.eval(c));
         }
         return e;
     }
 
     Expression mult() {
         Expression e = power();
-        while (true) {
+        L: while (true) {
             Expression left = e;
-            if (eat(TokenType.MULT)) {
-                Expression right = power();
-                e = c -> Decs.multiply(left.eval(c), right.eval(c));
-            } else if (eat(TokenType.DIV)) {
-                Expression right = power();
-                e = c -> Decs.divide(left.eval(c), right.eval(c));
-            } else if (eat(TokenType.MOD)) {
-                Expression right = power();
-                e = c -> Decs.mod(left.eval(c), right.eval(c));
-            } else 
-                break;
+            switch (token.type) {
+                case MULT: case DIV: case MOD:
+                    Binary mult = context.builtinBinary(token.string).expression;
+                    get();
+                    Expression right = power();
+                    e = c -> mult.apply(c, left.eval(c), right.eval(c));
+                default:
+                    break L;
+            }
         }
         return e;
     }
 
     Expression add() {
         Expression e = mult();
-        while (true) {
+        L: while (true) {
             Expression left = e;
-            if (eat(TokenType.PLUS)) {
-                Expression right = mult();
-                e = c -> Decs.add(left.eval(c), right.eval(c));
-            } else if (eat(TokenType.MINUS)) {
-                Expression right = mult();
-                e = c -> Decs.subtract(left.eval(c), right.eval(c));
+            switch (token.type) {
+                case PLUS: case MINUS:
+                    Binary add = context.builtinBinary(token.string).expression;
+                    get();
+                    Expression right = mult();
+                    e = c -> add.apply(c, left.eval(c), right.eval(c));
+                default:
+                    break L;
             }
-            else 
-                break;
         }
         return e;
     }
 
     Expression comp() {
         Expression e = add();
-        if (eat(TokenType.EQ)) {
-            Expression right = add();
-            return c -> Decs.eq(e.eval(c), right.eval(c));
-        } else if (eat(TokenType.NE)) {
-            Expression right = add();
-            return c -> Decs.ne(e.eval(c), right.eval(c));
-        } else if (eat(TokenType.GT)) {
-            Expression right = add();
-            return c -> Decs.gt(e.eval(c), right.eval(c));
-        } else if (eat(TokenType.GE)) {
-            Expression right = add();
-            return c -> Decs.ge(e.eval(c), right.eval(c));
-        } else if (eat(TokenType.LT)) {
-            Expression right = add();
-            return c -> Decs.lt(e.eval(c), right.eval(c));
-        } else if (eat(TokenType.LE)) {
-            Expression right = add();
-            return c -> Decs.le(e.eval(c), right.eval(c));
+        switch (token.type) {
+            case EQ: case NE:
+            case LT: case LE:
+            case GT: case GE:
+                Binary comp = context.builtinBinary(token.string).expression;
+                get();
+                Expression right = add();
+                return c -> comp.apply(c, e.eval(c), right.eval(c));
+            default:
+                return e;
         }
-        return e;
     }
 
     Expression and() {
         Expression e = comp();
         while (true) {
             Expression left = e;
-            if (eat(TokenType.AND)) {
+            if (token.type == TokenType.AND) {
+                Binary and = context.builtinBinary(token.string).expression;
+                get();
                 Expression right = comp();
                 // e = c -> Decs.and(left.eval(c), right.eval(c));
                 // conditional AND
                 e = c -> {
                     BigDecimal[] l = left.eval(c);
-                    return Decs.falses(l) ? l : Decs.and(l, right.eval(c));
+                    return Decs.falses(l) ? l : and.apply(c, l, right.eval(c));
                 };
             } else
                 break;
@@ -230,13 +228,15 @@ public class Parser {
         Expression e = and();
         while (true) {
             Expression left = e;
-            if (eat(TokenType.OR)) {
+            if (token.type == TokenType.OR) {
+                Binary or = context.builtinBinary(token.string).expression;
+                get();
                 Expression right = add();
                 // e = c -> Decs.or(left.eval(c), right.eval(c));
                 // conditional OR
                 e = c -> {
                     BigDecimal[] l = left.eval(c);
-                    return Decs.trues(l) ? l : Decs.or(l, right.eval(c));
+                    return Decs.trues(l) ? l : or.apply(c, l, right.eval(c));
                 };
             } else
                 break;
@@ -263,9 +263,11 @@ public class Parser {
         Expression e = binary();
         while (true) {
             Expression left = e;
-            if (eat(TokenType.COMMA)) {
+            if (token.type == TokenType.COMMA) {
+                Binary concat = context.builtinBinary(token.string).expression;
+                get();
                 Expression right = binary();
-                e = c -> Decs.concat(left.eval(c), right.eval(c));
+                e = c -> concat.apply(c, left.eval(c), right.eval(c));
             } else
                 break;
         }
