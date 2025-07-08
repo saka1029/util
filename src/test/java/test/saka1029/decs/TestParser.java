@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
-import saka1029.util.decs.Context;
 import static saka1029.util.decs.Decs.*;
 import saka1029.util.decs.Expression;
 import saka1029.util.decs.ExpressionWithVariables;
@@ -23,8 +22,8 @@ public class TestParser {
 
     @Test
     public void testParser() {
-        Context context = new Context();
-        Parser parser = new Parser(context);
+        // Context context = new Context();
+        Parser parser = new Parser();
         assertDecsEquals(decs("3"), parser.eval(" 1 + 2 "));
         assertDecsEquals(decs("10"), parser.eval(" 2 * (2 + 3) "));
         assertDecsEquals(decs("512"), parser.eval(" 2 ^ 3 ^ 2 "));

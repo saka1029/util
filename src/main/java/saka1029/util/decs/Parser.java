@@ -48,12 +48,8 @@ public class Parser {
     Scanner scanner = new Scanner();
     List<String> variables = new ArrayList<>();
 
-    public Parser(Context context) {
-        this.context = context;
-    }
-
     public Parser() {
-        this(new Context());
+        this.context = new Context();
     }
 
     Token get() {
@@ -379,18 +375,18 @@ public class Parser {
     Expression help() {
         if (token == END)
             helpMain();
-        else if (token.string.equals("syntax"))
-            helpSyntax();
-        else if (token.string.equals("variable"))
-            helpVariable();
-        else if (token.string.equals("unary"))
-            helpUnary();
-        else if (token.string.equals("binary"))
-            helpBinary();
-        else if (token.string.equals("solve"))
-            helpSolve();
-        else
-            helpName(token.string);
+        else {
+            String operand = token.string;
+            get(); // skip operand
+            switch (operand) {
+                case "syntax" : helpSyntax(); break;
+                case "variable" : helpVariable(); break;
+                case "unary" : helpUnary(); break;
+                case "binary" : helpBinary(); break;
+                case "solve" : helpSolve(); break;
+                default: helpName(operand); break;
+            }
+        }
         return c -> Decs.NO_VALUE;
     }
 

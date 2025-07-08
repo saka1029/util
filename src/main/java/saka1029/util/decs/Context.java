@@ -177,8 +177,9 @@ public class Context {
         unary("iotan", (c, a) -> Decs.iotan(a), "iotan N -> (I) : (-N..N)");
         unary("iseven", (c, a) -> Decs.isEven(a), "iseven (N) -> (B) : is even (T:1, F:0)");
         unary("isodd", (c, a) -> Decs.isOdd(a), "isodd (N) -> (B) : is odd (T:1, F:0)");
-        unary("isperfect", (c, a) -> Decs.eq(Decs.add(Decs.remove(Decs.divisor(a), a)), a),
-            "isperfect (N) -> (B) : N is perfect number (T:1, F:0)");
+        // parser.eval("isperfect n = + (divisor n remove n) == n");
+        // unary("isperfect", (c, a) -> Decs.eq(Decs.add(Decs.remove(Decs.divisor(a), a)), a),
+        //     "isperfect (N) -> (B) : N is perfect number (T:1, F:0)");
         unary("isprime", (c, a) -> Decs.isPrime(a), "isprime (N) -> (B) : is prime (T:1, F:0)");
         unary("length", (c, a) -> Decs.length(a), "length (D) -> (D) : lenfth of (D)");
         unary("ln", (c, a) -> Decs.ln(a), "ln (A) -> (D) : log E A");
@@ -189,7 +190,7 @@ public class Context {
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
         unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes from 2 to A");
-        unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : πA/180");
+        unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : A / 180 * π");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
         binary("remove", (c, a, b) -> Decs.remove(a, b), "(A) remove (B) -> (D) : remove (B) from (A)");
         unary("reverse", (c, a) -> Decs.reverse(a), "reverse (A) -> (D) : reverse");
