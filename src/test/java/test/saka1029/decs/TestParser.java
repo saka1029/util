@@ -22,23 +22,21 @@ public class TestParser {
 
     @Test
     public void testParser() {
-        // Context context = new Context();
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         assertDecsEquals(decs("3"), parser.eval(" 1 + 2 "));
         assertDecsEquals(decs("10"), parser.eval(" 2 * (2 + 3) "));
         assertDecsEquals(decs("512"), parser.eval(" 2 ^ 3 ^ 2 "));
-
     }
 
     @Test
     public void testConcat() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         assertDecsEquals(decs("1 2 3"), parser.eval(" 1, 2, 3"));
     }
 
     @Test
     public void testBinary() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         BigDecimal[] two = decs("2");
         parser.context.binary("xx", (c, a, b) -> add(a, multiply(b, two)), "a xx b = a + 2 * b");
         assertDecsEquals(decs("7 10 13"), parser.eval(" (1, 2, 3) xx (2, 3, 4) xx 1"));
@@ -46,7 +44,7 @@ public class TestParser {
 
     @Test
     public void testDefineVariable() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         assertTrue(NO_VALUE == parser.eval(" v = 1 + 2"));
         Expression e = parser.parse("v + 3");
         assertDecsEquals(decs("6"), e.eval(parser.context));
@@ -56,7 +54,7 @@ public class TestParser {
 
     @Test
     public void testDefineUnary() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         parser.eval("x = 100");
         assertTrue(NO_VALUE == parser.eval("f x = x + 2"));
         assertDecsEquals(decs("5"), parser.eval("f 3"));
@@ -65,7 +63,7 @@ public class TestParser {
 
     @Test
     public void testDefineBinary() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         parser.eval("x = 100");
         parser.eval("y = 200");
         assertTrue(NO_VALUE == parser.eval("x hypot y = x*x + y*y"));
@@ -76,7 +74,7 @@ public class TestParser {
 
     @Test
     public void testSolveToMap() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
         assertDecsEquals(decs("1 2 3"), parser.eval("x"));
@@ -92,7 +90,7 @@ public class TestParser {
 
     @Test
     public void testSolve() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
         assertDecsEquals(decs("1 2 3"), parser.eval("x"));
@@ -104,7 +102,7 @@ public class TestParser {
 
     @Test
     public void testParserSolve() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         assertDecsEquals(NO_VALUE, parser.eval("x = iota 3"));
         assertDecsEquals(NO_VALUE, parser.eval("y = 100, 200"));
         List<String> list = new ArrayList<>();
@@ -115,7 +113,7 @@ public class TestParser {
 
     @Test
     public void testIota() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         assertDecsEquals(decs("1 2 3"), parser.eval("iota 3"));
         assertDecsEquals(decs("2 3 4"), parser.eval("1 + iota 3"));
         assertDecsEquals(decs("2 3 4"), parser.eval("iota 3 + 1"));
@@ -123,7 +121,7 @@ public class TestParser {
 
     @Test
     public void testExtratoken() {
-        Parser parser = new Parser();
+        Parser parser = Parser.create();
         try {
             assertDecsEquals(decs("3"), parser.eval("3 unknown 3"));
         } catch (SyntaxException e) {

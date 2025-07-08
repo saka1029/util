@@ -150,7 +150,7 @@ public class Context {
         return solver.count;
     }
 
-    void init() {
+    private void init() {
         unary("!", (c, a) -> Decs.not(a), "! (B) -> (B) : not");
         unary("+", (c, a) -> Decs.add(a), "+ (A) -> D : +");
         unary("-", (c, a) -> Decs.subtract(a), "- (A) -> D : -");
@@ -204,5 +204,9 @@ public class Context {
         variable("TODAY", c -> Decs.today(), "TODAY -> I : today (YYYYMMDD)");
         binary("to", (c, a, b) -> Decs.to(a, b), "M to N -> (I) : (M..N)");
         unary("week", (c, a) -> Decs.week(a), "week (N) -> (I) : YYYYMMDD to week (1:Mon, 2:Tue, ... , 7:Sun)");
+    }
+
+    void init(Parser parser) {
+        parser.eval("isperfect n = + (divisor n remove n) == n");
     }
 }

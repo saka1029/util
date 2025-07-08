@@ -48,8 +48,15 @@ public class Parser {
     Scanner scanner = new Scanner();
     List<String> variables = new ArrayList<>();
 
-    public Parser() {
-        this.context = new Context();
+    private Parser(Context context) {
+        this.context = context;
+    }
+
+    public static Parser create() {
+        Context context = new Context();
+        Parser parser = new Parser(context);
+        context.init(parser);
+        return parser;
     }
 
     Token get() {
