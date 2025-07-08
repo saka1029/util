@@ -177,6 +177,8 @@ public class Context {
         unary("iotan", (c, a) -> Decs.iotan(a), "iotan N -> (I) : (-N..N)");
         unary("iseven", (c, a) -> Decs.isEven(a), "iseven (N) -> (B) : is even (T:1, F:0)");
         unary("isodd", (c, a) -> Decs.isOdd(a), "isodd (N) -> (B) : is odd (T:1, F:0)");
+        unary("isperfect", (c, a) -> Decs.eq(Decs.add(Decs.remove(Decs.divisor(a), a)), a),
+            "isperfect (N) -> (B) : N is perfect number (T:1, F:0)");
         unary("isprime", (c, a) -> Decs.isPrime(a), "isprime (N) -> (B) : is prime (T:1, F:0)");
         unary("length", (c, a) -> Decs.length(a), "length (D) -> (D) : lenfth of (D)");
         unary("ln", (c, a) -> Decs.ln(a), "ln (A) -> (D) : log E A");
