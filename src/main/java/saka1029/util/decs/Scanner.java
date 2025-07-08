@@ -17,15 +17,15 @@ public class Scanner {
     }
 
     static final Map<String, TokenType> RESERVED = Map.ofEntries(
-        Map.entry("+", TokenType.PLUS), Map.entry("-", TokenType.MINUS),
-        Map.entry("*", TokenType.MULT), Map.entry("/", TokenType.DIV),
-        Map.entry("%", TokenType.MOD), Map.entry("^", TokenType.POW),
-        Map.entry("==", TokenType.EQ), Map.entry("!=", TokenType.NE),
-        Map.entry(">", TokenType.GT), Map.entry(">=", TokenType.GE),
-        Map.entry("<", TokenType.LT), Map.entry("<=", TokenType.LE),
-        Map.entry("=", TokenType.ASSIGN),
-        Map.entry("@", TokenType.AT),
-        Map.entry("&", TokenType.AND), Map.entry("|", TokenType.OR),
+        // Map.entry("+", TokenType.PLUS), Map.entry("-", TokenType.MINUS),
+        // Map.entry("*", TokenType.MULT), Map.entry("/", TokenType.DIV),
+        // Map.entry("%", TokenType.MOD), Map.entry("^", TokenType.POW),
+        // Map.entry("==", TokenType.EQ), Map.entry("!=", TokenType.NE),
+        // Map.entry(">", TokenType.GT), Map.entry(">=", TokenType.GE),
+        // Map.entry("<", TokenType.LT), Map.entry("<=", TokenType.LE),
+        // Map.entry("=", TokenType.ASSIGN),
+        // Map.entry("@", TokenType.AT),
+        // Map.entry("&", TokenType.AND), Map.entry("|", TokenType.OR),
         Map.entry("help", TokenType.HELP), Map.entry("solve", TokenType.SOLVE),
         Map.entry("exit", TokenType.EXIT)
     );
@@ -64,6 +64,15 @@ public class Scanner {
         get();
         return type;
     }
+
+    // boolean eat(int expected) {
+    //     get();
+    //     if (ch == expected) {
+    //         get();
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     static TokenType error(String format, Object... args) {
         throw new DecsException(format, args);
@@ -142,6 +151,19 @@ public class Scanner {
             case '(' -> get(TokenType.LP);
             case ')' -> get(TokenType.RP);
             case ',' -> get(TokenType.COMMA);
+            case '+' -> get(TokenType.PLUS);
+            case '-' -> get(TokenType.MINUS);
+            case '*' -> get(TokenType.MULT);
+            case '/' -> get(TokenType.DIV);
+            case '%' -> get(TokenType.MOD);
+            case '^' -> get(TokenType.POW);
+            case '=' -> get() == '=' ? get(TokenType.EQ) : TokenType.ASSIGN;
+            case '!' -> get() == '=' ? get(TokenType.NE) : TokenType.ID;
+            case '<' -> get() == '=' ? get(TokenType.LE) : TokenType.LT;
+            case '>' -> get() == '=' ? get(TokenType.GE) : TokenType.GT;
+            case '@' -> get(TokenType.AT);
+            case '&' -> get(TokenType.AND);
+            case '|' -> get(TokenType.OR);
             default -> isDigit(ch) ? number()
                 : isAlpha(ch) ? alpha()
                 : isSpecial(ch) ? special()

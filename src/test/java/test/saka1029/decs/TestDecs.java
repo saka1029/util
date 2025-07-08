@@ -243,7 +243,7 @@ public class TestDecs {
             iota(decs("1 2"));
             fail();
         } catch (DecsException e) {
-            assertEquals("Single value expected but (1, 2)", e.getMessage());
+            assertEquals("Single value expected but '(1, 2)'", e.getMessage());
         }
     }
 
@@ -279,7 +279,7 @@ public class TestDecs {
             zip(decs("10 20 30"), decs("1 2"), op);
             fail();
         } catch (DecsException e) {
-            assertEquals("zip: Invalid size l=(10, 20, 30) r=(1, 2)", e.getMessage());
+            assertEquals("zip: invalid length l='(10, 20, 30)' r='(1, 2)'", e.getMessage());
         }
     }
 
@@ -482,7 +482,7 @@ public class TestDecs {
             base(decs("1 2"), decs("3"));
             fail();
         } catch (DecsException e) {
-            assertEquals("Single value expected but (1, 2)", e.getMessage());
+            assertEquals("Single value expected but '(1, 2)'", e.getMessage());
         }
     }
 
