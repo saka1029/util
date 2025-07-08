@@ -417,7 +417,7 @@ public class Parser {
         variables.clear();
         Expression result = statement();
         if (token != END)
-            throw syntaxError("extra token '%s'", token.string);
+            throw syntaxError("unknown token '%s'", token.string);
         return new ExpressionWithVariables(result, variables);
     }
 

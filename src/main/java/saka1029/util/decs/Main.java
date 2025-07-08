@@ -29,48 +29,6 @@ public class Main {
 
     static final String NL = System.lineSeparator();
 
-    // static class ParsedLineImpl implements ParsedLine {
-
-    //     final List<String> words;
-    //     final String line;
-
-    //     ParsedLineImpl(String line, List<String> words) {
-    //         this.line = line;
-    //         this.words = words;
-    //     }
-
-    //     @Override
-    //     public String word() {
-    //         return words.get(0);
-    //     }
-
-    //     @Override
-    //     public int wordCursor() {
-    //         return 0;
-    //     }
-
-    //     @Override
-    //     public int wordIndex() {
-    //         return 0;
-    //     }
-
-    //     @Override
-    //     public List<String> words() {
-    //         return words;
-    //     }
-
-    //     @Override
-    //     public String line() {
-    //         throw new UnsupportedOperationException("Unimplemented method 'line'");
-    //     }
-
-    //     @Override
-    //     public int cursor() {
-    //         return 0;
-    //     }
-
-    // }
-
     static class ExpressionParser implements org.jline.reader.Parser {
  
         Parser parser = new Parser();
@@ -97,17 +55,13 @@ public class Main {
             } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
                 result = color(e.getMessage(), AttributedStyle.RED);
             }
-            // String token = parser.tokens.get(parser.tokens.size() - 1).string;
-            // String token = parser.tokens.get(0).string;
-            // return new ArgumentCompleter.ArgumentLine(token, 0);
-            // return new ParsedLineImpl(line, parser.tokens.stream().map(t -> t.string).toList());
             return null;
         }
     }
 
     static final AttributedString INTERRUPTED = color("Interrupted!", AttributedStyle.RED);
 
-    public static void main(String[] args) throws IOException {
+    public static void jline(String[] args) throws IOException {
         // JLine terminal の準備
         Terminal terminal = TerminalBuilder.builder()
             .system(true)
@@ -142,5 +96,9 @@ public class Main {
                 lineReader.printAbove(INTERRUPTED);
             }
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+        jline(args);
     }
 }
