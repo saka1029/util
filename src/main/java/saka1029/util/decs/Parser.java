@@ -171,6 +171,7 @@ public class Parser {
                     get();
                     Expression right = power();
                     e = c -> mult.apply(c, left.eval(c), right.eval(c));
+                    break;
                 default:
                     break L;
             }
@@ -188,6 +189,7 @@ public class Parser {
                     get();
                     Expression right = mult();
                     e = c -> add.apply(c, left.eval(c), right.eval(c));
+                    break;
                 default:
                     break L;
             }
@@ -436,7 +438,7 @@ public class Parser {
         variables.clear();
         Expression result = statement();
         if (token != END)
-            throw syntaxError("unknown token '%s'", token.string);
+            throw syntaxError("extra token '%s'", token.string);
         return new ExpressionWithVariables(result, variables);
     }
 
