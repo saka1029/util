@@ -37,9 +37,23 @@ public class TestParser {
     @Test
     public void testBinary() {
         Parser parser = Parser.create();
+        assertDecsEquals(decs("0 1"), parser.eval("1+2-3,2*3/2%2"));
+        assertDecsEquals(decs("1 1"), parser.eval("1&2|0,1&!0|1"));
+        assertDecsEquals(decs("512 64"), parser.eval("2^3^2,(2^3)^2"));
         BigDecimal[] two = decs("2");
         parser.context.binary("xx", (c, a, b) -> add(a, multiply(b, two)), "a xx b = a + 2 * b");
         assertDecsEquals(decs("7 10 13"), parser.eval(" (1, 2, 3) xx (2, 3, 4) xx 1"));
+    }
+
+    @Test
+    public void testComp() {
+        Parser parser = Parser.create();
+        assertDecsEquals(decs("1 0 0"), parser.eval("(1,2,3)==(1,1,4)"));
+        assertDecsEquals(decs("0 1 1"), parser.eval("(1,2,3)!=(1,1,4)"));
+        assertDecsEquals(decs("0 0 1"), parser.eval("(1,2,3)<(1,1,4)"));
+        assertDecsEquals(decs("1 0 1"), parser.eval("(1,2,3)<=(1,1,4)"));
+        assertDecsEquals(decs("0 1 0"), parser.eval("(1,2,3)>(1,1,4)"));
+        assertDecsEquals(decs("1 1 0"), parser.eval("(1,2,3)>=(1,1,4)"));
     }
 
     @Test
