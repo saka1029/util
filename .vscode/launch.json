@@ -28,6 +28,14 @@
         },
         {
             "type": "java",
+            "name": "decs -f decs.txt",
+            "request": "launch",
+            "mainClass": "saka1029.util.decs.Main",
+            "args": "-f decs.txt",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
             "name": "MainTest",
             "request": "launch",
             "mainClass": "saka1029.util.decs.MainTest",

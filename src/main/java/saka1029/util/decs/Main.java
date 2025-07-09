@@ -1,7 +1,11 @@
 package saka1029.util.decs;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -61,7 +65,7 @@ public class Main {
 
     static final AttributedString INTERRUPTED = color("Interrupted!", AttributedStyle.RED);
 
-    public static void jline(String[] args) throws IOException {
+    public static void jline() throws IOException {
         // JLine terminal の準備
         Terminal terminal = TerminalBuilder.builder()
             .system(true)
@@ -98,7 +102,50 @@ public class Main {
         }
     }
 
+    static final String PROMPT = "    ";
+    public static void file(BufferedReader reader, PrintWriter writer) throws IOException {
+        Parser parser = Parser.create();
+        StringBuilder out = new StringBuilder();
+        parser.context.output = s -> out.append(s).append(NL);
+        StringBuilder line = new StringBuilder();
+        while (true) {
+            String input = reader.readLine();
+            if (input == null)
+                break;
+            line.append(input).append(NL);
+            try {
+                String lineString = line.toString();
+                Expression e = parser.parse(lineString);
+                lineString.lines()
+                    .forEach(s -> out.append(PROMPT).append(s).append(NL));
+                out.append(Decs.string(e.eval(parser.context)));
+                writer.println(out);
+                writer.flush();
+                line.setLength(0);
+                out.setLength(0);
+            } catch (EOFException e) {
+                continue;
+            } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
+                writer.println(e.getMessage());
+            }
+        }
+
+    }
+
+    public static void file(String file) throws IOException {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(file))) {
+            PrintWriter writer = new PrintWriter(System.out); 
+            file(reader, writer);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        jline(args);
+        int len = args.length;
+        if (len == 0)
+            jline();
+        else if (len == 2 && args[0].equals("-f"))
+            file(args[1]);
+        else
+            throw new IllegalArgumentException("usage: decs [-f FILE]");
     }
 }
