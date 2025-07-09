@@ -336,83 +336,101 @@ public class Parser {
     Expression solve() {
         Expression ev = expression();
         // return number of solutions.
-        return c -> Decs.decs(Decs.dec(c.solve(ev)));
+        return c -> Decs.decs(c.solve(ev));
     }
 
-    void helpMain() {
-        context.output.accept("help syntax");
-        context.output.accept("help variable");
-        context.output.accept("help unary");
-        context.output.accept("help binary");
-        context.output.accept("help NAME");
+    Expression helpMain() {
+        return c -> {
+            c.output.accept("help syntax");
+            c.output.accept("help variable");
+            c.output.accept("help unary");
+            c.output.accept("help binary");
+            c.output.accept("help NAME");
+            return Decs.NO_VALUE;
+        };
     }
 
-    void helpSyntax() {
-        SYNTAX.lines()
-            .forEach(context.output::accept);
+    Expression helpSyntax() {
+        return c -> {
+            SYNTAX.lines()
+                .forEach(c.output::accept);
+            return Decs.NO_VALUE;
+        };
     }
 
-    void helpVariable() {
-        context.variables.entrySet().stream()
-            .sorted(Comparator.comparing(Map.Entry::getKey))
-            .map(e -> e.getValue().string)
-            .forEach(context.output::accept);
+    Expression helpVariable() {
+        return c -> {
+            c.variables.entrySet().stream()
+                .sorted(Comparator.comparing(Map.Entry::getKey))
+                .map(e -> e.getValue().string)
+                .forEach(c.output::accept);
+            return Decs.NO_VALUE;
+        };
     }
 
-    void helpUnary() {
-        Stream.of(context.builtinUnarys, context.unarys)
-            .map(map -> map.entrySet().stream())
-            .flatMap(Function.identity())
-            .sorted(Comparator.comparing(Map.Entry::getKey))
-            .map(e -> e.getValue().string)
-            .forEach(context.output::accept);
+    Expression helpUnary() {
+        return c -> {
+            Stream.of(c.builtinUnarys, c.unarys)
+                .map(map -> map.entrySet().stream())
+                .flatMap(Function.identity())
+                .sorted(Comparator.comparing(Map.Entry::getKey))
+                .map(e -> e.getValue().string)
+                .forEach(c.output::accept);
+            return Decs.NO_VALUE;
+        };
     }
 
-    void helpBinary() {
-        Stream.of(context.builtinBinarys, context.binarys)
-            .map(map -> map.entrySet().stream())
-            .flatMap(Function.identity())
-            .sorted(Comparator.comparing(Map.Entry::getKey))
-            .map(e -> e.getValue().string)
-            .forEach(context.output::accept);
+    Expression helpBinary() {
+        return c -> {
+            Stream.of(c.builtinBinarys, c.binarys)
+                .map(map -> map.entrySet().stream())
+                .flatMap(Function.identity())
+                .sorted(Comparator.comparing(Map.Entry::getKey))
+                .map(e -> e.getValue().string)
+                .forEach(c.output::accept);
+            return Decs.NO_VALUE;
+        };
     }
 
-    void helpSolve() {
-        context.output.accept("solve EXPRESSION");
+    Expression helpSolve() {
+        return c -> {
+            c.output.accept("solve EXPRESSION");
+            return Decs.NO_VALUE;
+        };
     }
 
-    void helpName(String name) {
-        boolean found = false;
-        if (context.isBuiltinUnary(name) && (found = true))
-            context.output.accept(context.builtinUnary(name).string);
-        if (context.isBuiltinBinary(name) && (found = true))
-            context.output.accept(context.builtinBinary(name).string);
-        if (context.isVariable(name) && (found = true))
-            context.output.accept(context.variable(name).string);
-        if (context.isUnary(name) && (found = true))
-            context.output.accept(context.unary(name).string);
-        if (context.isBinary(name) && (found = true))
-            context.output.accept(context.binary(name).string);
-        if (!found)
-            context.output.accept("'%s' not found".formatted(name));
+    Expression helpName(String name) {
+        return c -> {
+            boolean found = false;
+            if (c.isBuiltinUnary(name) && (found = true))
+                c.output.accept(c.builtinUnary(name).string);
+            if (c.isBuiltinBinary(name) && (found = true))
+                c.output.accept(c.builtinBinary(name).string);
+            if (c.isVariable(name) && (found = true))
+                c.output.accept(c.variable(name).string);
+            if (c.isUnary(name) && (found = true))
+                c.output.accept(c.unary(name).string);
+            if (c.isBinary(name) && (found = true))
+                c.output.accept(c.binary(name).string);
+            if (!found)
+                c.output.accept("'%s' not found".formatted(name));
+            return Decs.NO_VALUE;
+        };
     }
 
     Expression help() {
         if (token == END)
-            helpMain();
-        else {
-            String operand = token.string;
-            get(); // skip operand
-            switch (operand) {
-                case "syntax" : helpSyntax(); break;
-                case "variable" : helpVariable(); break;
-                case "unary" : helpUnary(); break;
-                case "binary" : helpBinary(); break;
-                case "solve" : helpSolve(); break;
-                default: helpName(operand); break;
-            }
-        }
-        return c -> Decs.NO_VALUE;
+            return helpMain();
+        String operand = token.string;
+        get(); // skip operand
+        return switch (operand) {
+            case "syntax" -> helpSyntax();
+            case "variable" -> helpVariable();
+            case "unary" -> helpUnary();
+            case "binary" -> helpBinary();
+            case "solve" -> helpSolve();
+            default-> helpName(operand);
+        };
     }
 
     Expression statement() {
