@@ -11,6 +11,7 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.ParsedLine;
+import org.jline.reader.SyntaxError;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -46,7 +47,7 @@ public class Main {
                 expression = parser.parse(line);
             } catch (EOFException e) {
                 throw new EOFError(0, 0, e.getMessage());
-            } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
+            } catch (SyntaxException e) {
                 expression = c -> {
                     c.output.accept(e.getMessage());
                     return Decs.NO_VALUE;
@@ -83,6 +84,8 @@ public class Main {
                     lineReader.printAbove(Decs.string(result));
             } catch (EndOfFileException e) {        // catch Ctrl-D
                 break;
+            } catch (SyntaxError | UndefException | ValueException | ArithmeticException e) {
+                lineReader.printAbove(color(e.getLocalizedMessage(), AttributedStyle.RED));
             } catch (UserInterruptException e) {    // catch Ctrl-C
                 lineReader.printAbove(INTERRUPTED);
             }
