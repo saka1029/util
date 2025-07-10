@@ -32,32 +32,25 @@ public class Main {
     }
 
     static final String NL = System.lineSeparator();
+    static final String PROMPT = "    ";
+    static final String SECONDARY_PROMPT = "    ";
 
     static class ExpressionParser implements org.jline.reader.Parser {
  
         Parser parser = Parser.create();
-        AttributedString result;
-        AttributedString out;
-        ExpressionParser() {
-            parser.context.output = s -> out = AttributedString.join(
-                AttributedString.EMPTY, out,
-                color(s, AttributedStyle.GREEN), AttributedString.NEWLINE);
-        }
+        Expression expression;
 
         @Override
         public ParsedLine parse(String line, int cursor, ParseContext context) {
             try {
-                out = AttributedString.EMPTY;
-                BigDecimal[] decs = parser.eval(line);
-                if (decs != Decs.NO_VALUE)
-                    out = AttributedString.join(
-                        AttributedString.EMPTY, out,
-                        new AttributedString(Decs.string(decs)), AttributedString.NEWLINE);
-                result = out == AttributedString.EMPTY ? null : out;
+                expression = parser.parse(line);
             } catch (EOFException e) {
                 throw new EOFError(0, 0, e.getMessage());
             } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
-                result = color(e.getMessage(), AttributedStyle.RED);
+                expression = c -> {
+                    c.output.accept(e.getMessage());
+                    return Decs.NO_VALUE;
+                };
             }
             return null;
         }
@@ -76,24 +69,18 @@ public class Main {
         LineReader lineReader = LineReaderBuilder.builder()
             .terminal(terminal)
             .parser(parser)
-            // .completer((reader, cursor, candidates) -> {
-            //     Buffer buffer = reader.getBuffer();
-            //     // String buffer = commandLine.line().substring(0, commandLine.cursor());
-            //     // System.out.println("buffer=" + buffer.toString());
-            //     Stream.of("factorial", "iota", "iota0", "iseven", "isodd")
-            //         .filter(s -> s.startsWith(buffer.toString()))
-            //         .forEach(s -> candidates.add(new Candidate(s, s, null, null, null, null, true)));
-            // })
             .build();
-        lineReader.setVariable(LineReader.SECONDARY_PROMPT_PATTERN, "    >   ");;
+        lineReader.setVariable(LineReader.SECONDARY_PROMPT_PATTERN, SECONDARY_PROMPT);
+        parser.parser.context.output = s -> lineReader.printAbove(color(s, AttributedStyle.GREEN));
 
         // REPL
         lineReader.printAbove("Ctrl-D to exit.  Ctrl-C to interrupt");
         while (true) {
             try {
-                lineReader.readLine("    ");
-                if (parser.result != null)
-                    lineReader.printAbove(parser.result);
+                lineReader.readLine(PROMPT);
+                BigDecimal[] result = parser.expression.eval(parser.parser.context);
+                if (result != Decs.NO_VALUE)
+                    lineReader.printAbove(Decs.string(result));
             } catch (EndOfFileException e) {        // catch Ctrl-D
                 break;
             } catch (UserInterruptException e) {    // catch Ctrl-C
@@ -102,7 +89,6 @@ public class Main {
         }
     }
 
-    static final String PROMPT = "    ";
     public static void file(BufferedReader reader, PrintWriter writer) throws IOException {
         Parser parser = Parser.create();
         StringBuilder out = new StringBuilder();
