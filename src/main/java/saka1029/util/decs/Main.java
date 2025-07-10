@@ -49,9 +49,13 @@ public class Main {
                 throw new EOFError(0, 0, e.getMessage());
             } catch (SyntaxException e) {
                 expression = c -> {
-                    c.output.accept(e.getMessage());
-                    return Decs.NO_VALUE;
+                    throw new SyntaxError(0, 0, e.getMessage());
                 };
+                // throw new SyntaxError(0, 0, e.getMessage());
+                // expression = c -> {
+                    // c.output.accept(e.getMessage());
+                    // return Decs.NO_VALUE;
+                // };
             }
             return null;
         }
