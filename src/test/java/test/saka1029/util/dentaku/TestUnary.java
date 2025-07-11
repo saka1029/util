@@ -1,4 +1,4 @@
-package test.saka1029.dentaku;
+package test.saka1029.util.dentaku;
 
 import org.junit.Test;
 import saka1029.util.dentaku.Context;

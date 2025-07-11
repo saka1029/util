@@ -1,4 +1,4 @@
-package test.saka1029.dentaku;
+package test.saka1029.util.dentaku;
 
 import java.util.List;
 import org.junit.Test;

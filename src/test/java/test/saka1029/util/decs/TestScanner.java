@@ -1,4 +1,4 @@
-package test.saka1029.decs;
+package test.saka1029.util.decs;
 
 import org.junit.Test;
 import saka1029.util.decs.DecsException;

@@ -1,4 +1,4 @@
-package test.saka1029.decs;
+package test.saka1029.util.decs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

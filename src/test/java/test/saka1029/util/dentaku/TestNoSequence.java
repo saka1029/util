@@ -1,4 +1,4 @@
-package test.saka1029.dentaku;
+package test.saka1029.util.dentaku;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
