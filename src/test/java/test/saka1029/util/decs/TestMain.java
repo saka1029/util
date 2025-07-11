@@ -2,6 +2,7 @@ package test.saka1029.util.decs;
 
 import static org.junit.Assert.assertEquals;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +18,7 @@ public class TestMain {
 
     static String[] COMMAND_LINE = {
         "java",
-        "-cp", "target/classes:target/dependency/*",
+        "-cp", "target/classes" + File.pathSeparator + "target/dependency/*",
         "saka1029.util.decs.Main", "-f", TEST_FILE
     };
 
