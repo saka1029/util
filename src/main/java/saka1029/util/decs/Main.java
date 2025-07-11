@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -98,8 +99,7 @@ public class Main {
 
     public static void file(BufferedReader reader, PrintWriter writer) throws IOException {
         Parser parser = Parser.create();
-        StringBuilder out = new StringBuilder();
-        parser.context.output = s -> out.append(s).append(NL);
+        parser.context.output = s -> writer.println(s);
         StringBuilder line = new StringBuilder();
         while (true) {
             String input = reader.readLine();
@@ -109,20 +109,21 @@ public class Main {
             try {
                 String lineString = line.toString();
                 Expression e = parser.parse(lineString);
-                lineString.lines()
-                    .forEach(s -> out.append(PROMPT).append(s).append(NL));
-                out.append(Decs.string(e.eval(parser.context)));
-                writer.println(out);
-                writer.flush();
+                String indented = lineString.lines()
+                    .map(s -> PROMPT + s)
+                    .collect(Collectors.joining(NL));
+                writer.println(indented);
                 line.setLength(0);
-                out.setLength(0);
+                BigDecimal[] result = e.eval(parser.context);
+                if (result != Decs.NO_VALUE)
+                    writer.println(Decs.string(result));
             } catch (EOFException e) {
                 continue;
             } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
                 writer.println(e.getMessage());
             }
+            writer.flush();
         }
-
     }
 
     public static void file(String file) throws IOException {
@@ -139,6 +140,6 @@ public class Main {
         else if (len == 2 && args[0].equals("-f"))
             file(args[1]);
         else
-            throw new IllegalArgumentException("usage: decs [-f FILE]");
+            throw new IllegalArgumentException("usage: java saka1029.util.decs.Main [-f FILE]");
     }
 }
