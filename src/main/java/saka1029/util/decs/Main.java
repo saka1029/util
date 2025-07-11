@@ -97,28 +97,35 @@ public class Main {
         }
     }
 
+    static String addPrompt(String s) {
+        return s.lines()
+            .map(x -> PROMPT + x)
+            .collect(Collectors.joining(NL));
+    }
+
     public static void file(BufferedReader reader, PrintWriter writer) throws IOException {
         Parser parser = Parser.create();
         parser.context.output = s -> writer.println(s);
-        StringBuilder line = new StringBuilder();
+        StringBuilder input = new StringBuilder();
         while (true) {
-            String input = reader.readLine();
-            if (input == null)
+            String line = reader.readLine();
+            if (line == null)
                 break;
-            line.append(input).append(NL);
+            input.append(line).append(NL);
+            Expression expression = null;
             try {
-                String lineString = line.toString();
-                String indented = lineString.lines()
-                    .map(s -> PROMPT + s)
-                    .collect(Collectors.joining(NL));
-                writer.println(indented);
-                Expression e = parser.parse(lineString);
-                line.setLength(0);
-                BigDecimal[] result = e.eval(parser.context);
+                expression = parser.parse(input.toString());
+            } catch (EOFException e) {
+                continue;   // read and add next line to input
+            } catch (SyntaxException e) {
+                expression = c -> {throw e;};
+            }
+            try {
+                writer.println(addPrompt(input.toString()));
+                input.setLength(0);
+                BigDecimal[] result = expression.eval(parser.context);
                 if (result != Decs.NO_VALUE)
                     writer.println(Decs.string(result));
-            } catch (EOFException e) {
-                continue;
             } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
                 writer.println(e.getMessage());
             }

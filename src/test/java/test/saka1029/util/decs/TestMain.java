@@ -46,8 +46,13 @@ public class TestMain {
         assertEquals("""
                 1 + 2 + 3
             6    
+                3 +
+                4 + 5
+            12
             """, file("""
             1 + 2 + 3        
+            3 +
+            4 + 5
             """));
     }
 
