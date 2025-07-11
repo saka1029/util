@@ -37,8 +37,9 @@ public class TestMain {
             while ((line = reader.readLine()) != null)
                 sb.append(line).append(NL);
             process.waitFor();
-            Files.delete(Paths.get(TEST_FILE));
             return sb.toString();
+        } finally {
+            Files.delete(Paths.get(TEST_FILE));
         }
     }
 
