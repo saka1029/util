@@ -1,5 +1,6 @@
 package test.saka1029.util.decs;
 
+import static org.junit.Assert.assertEquals;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,7 @@ public class TestMain {
     static final String NL = "\n";
     static final Charset CHARSET = StandardCharsets.UTF_8;
 
-    static String run(String input) throws IOException {
+    static String file(String input) throws IOException, InterruptedException {
         Files.write(Paths.get(TEST_FILE), input.getBytes(CHARSET));
         ProcessBuilder builder = new ProcessBuilder(COMMAND_LINE);
         Process process = builder.start();
@@ -34,21 +35,33 @@ public class TestMain {
             StringBuilder sb = new StringBuilder();
             while ((line = reader.readLine()) != null)
                 sb.append(line).append(NL);
-            try {
-                process.waitFor();
-            } catch (InterruptedException e) {
-            }
+            process.waitFor();
             Files.delete(Paths.get(TEST_FILE));
             return sb.toString();
         }
     }
 
     @Test
-    public void testFile() throws IOException {
-        String input = """
-            1 + 2 + 3
-            """;
-        String output = run(input);
-        System.out.println(output);
+    public void testFile() throws IOException, InterruptedException {
+        assertEquals("""
+                1 + 2 + 3
+            6    
+            """, file("""
+            1 + 2 + 3        
+            """));
+    }
+
+    @Test
+    public void testHelp() throws IOException, InterruptedException {
+        assertEquals("""
+                help
+            help syntax
+            help variable
+            help unary
+            help binary
+            help NAME
+            """, file("""
+            help
+            """));
     }
 }
