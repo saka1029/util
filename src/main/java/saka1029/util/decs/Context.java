@@ -29,7 +29,7 @@ public class Context {
     public Help<Expression> variable(String name) {
         Help<Expression> r = variables.get(name);
         if (r == null)
-            throw new UndefException("variable '%s' undef", name);
+            throw new UndefException("variable '%s' undefined", name);
         return r;
     }
 
@@ -40,7 +40,7 @@ public class Context {
     public Help<Unary> unary(String name) {
         Help<Unary> r = unarys.get(name);
         if (r == null)
-            throw new UndefException("unary '%s' undef", name);
+            throw new UndefException("unary '%s' undefined", name);
         return r;
     }
 
@@ -51,7 +51,7 @@ public class Context {
     public Help<Binary> binary(String name) {
         Help<Binary> r = binarys.get(name);
         if (r == null)
-            throw new UndefException("binary '%s' undef", name);
+            throw new UndefException("binary '%s' undefined", name);
         return r;
     }
 
@@ -62,7 +62,7 @@ public class Context {
     public Help<Unary> builtinUnary(String name) {
         Help<Unary> r = builtinUnarys.get(name);
         if (r == null)
-            throw new UndefException("binary '%s' undef", name);
+            throw new UndefException("binary '%s' undefined", name);
         return r;
     }
 
@@ -73,7 +73,7 @@ public class Context {
     public Help<Binary> builtinBinary(String name) {
         Help<Binary> r = builtinBinarys.get(name);
         if (r == null)
-            throw new UndefException("binary '%s' undef", name);
+            throw new UndefException("binary '%s' undefined", name);
         return r;
     }
 

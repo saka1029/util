@@ -75,8 +75,11 @@ public class TestMain {
         assertEquals("""
                 )
             unexpected token ')'
+                unknown
+            variable 'unknown' undefined
             """, file("""
             )
+            unknown
             """));
     }
 }
