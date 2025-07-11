@@ -97,7 +97,7 @@ public class Parser {
 
     Expression primary() {
         if (token.type == TokenType.END) {
-            throw eofError("Unexpected end");
+            throw eofError("unexpected end");
         } else if (eat(TokenType.LP)) {
             Expression e = expression();
             if (!eat(TokenType.RP))
@@ -113,7 +113,7 @@ public class Parser {
             variables.add(name);
             return c -> c.variable(name).expression.eval(c);
         } else {
-            throw syntaxError("Unexpected token '%s'", token.string);
+            throw syntaxError("unexpected token '%s'", token.string);
         }
     }
 

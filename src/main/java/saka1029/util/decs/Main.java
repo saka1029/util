@@ -108,11 +108,11 @@ public class Main {
             line.append(input).append(NL);
             try {
                 String lineString = line.toString();
-                Expression e = parser.parse(lineString);
                 String indented = lineString.lines()
                     .map(s -> PROMPT + s)
                     .collect(Collectors.joining(NL));
                 writer.println(indented);
+                Expression e = parser.parse(lineString);
                 line.setLength(0);
                 BigDecimal[] result = e.eval(parser.context);
                 if (result != Decs.NO_VALUE)

@@ -64,4 +64,14 @@ public class TestMain {
             help
             """));
     }
+
+    @Test
+    public void testSyntaxError() throws IOException, InterruptedException {
+        assertEquals("""
+                )
+            unexpected token ')'
+            """, file("""
+            )
+            """));
+    }
 }
