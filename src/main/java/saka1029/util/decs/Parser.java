@@ -14,30 +14,28 @@ import saka1029.util.decs.Scanner.TokenType;
 public class Parser {
     static final String SYNTAX = """
         statement    = expression
-                    | id '=' expression
-                    | id id '=' expression
-                    | id id id '=' expression
+                    | ID '=' expression
+                    | ID ID '=' expression
+                    | ID ID ID '=' expression
                     | 'exit'
                     | 'help' name
                     | 'solve' expression
         expression   = binary { ',' binary }
-        binary       = or { bop or }
+        binary       = or { BOP or }
         or           = and { '|' and }
         and          = comp { '&' comp }
-        comp         = add [ cop add ]
+        comp         = add [ COP add ]
         add          = mult { ( '+' | '-' ) mult }
         mult         = power { ( '*' | '/' | '%' ) power }
         power        = unary [ '^' power ]
-        unary        = [ '@' ] uop unary | primary
-        primary      = '(' [ expression ] ')' | id | num
+        unary        = [ '@' ] UOP unary | primary
+        primary      = '(' [ expression ] ')' | ID | NUMBER
 
-        name         = ',' | '|' | '&' | cop
-                    | '+' | '-' | '*' | '/' | '%' | '^'
-        cop          = '==' | '!=' | '>' | '>=' | '<' | '<='
-        uop          = id // defined in context
-        bop          = id // defined in context
-        id           = ALPHABETIC { ALPHABETIC | DIGIT }
-                    | SPECIAL { SPECIAL }
+        COP          = '==' | '!=' | '>' | '>=' | '<' | '<='
+        UOP          = id // defined in context
+        BOP          = id // defined in context
+        ID           = ALPHABETIC { ALPHABETIC | DIGIT }
+                     | SPECIAL { SPECIAL }
         """;
     static final Token END = new Token(TokenType.END, "EOF");
 
