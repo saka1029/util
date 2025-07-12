@@ -130,7 +130,7 @@ public class Parser {
         if (eat(TokenType.AT)) {
             String name = token.string;
             if (!context.isUnary(name))
-                throw syntaxError("unary expected after '@' but %s", name);
+                throw syntaxError("unary expected after '@' but '%s'", name);
             get();  // skip ID
             Expression arg = unary();
             return c -> select(c.unary(name).expression).apply(c, arg.eval(c));
