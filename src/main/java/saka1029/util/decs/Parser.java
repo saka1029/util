@@ -117,15 +117,13 @@ public class Parser {
         }
     }
 
+    static boolean isTrue(BigDecimal[] decs) {
+        return decs.length > 0 && decs[0].signum() != 0;
+    }
+
     Unary select(Unary unary) {
-        return (c, a) -> {
-            return Stream.of(a)
-                .filter(d -> {
-                    BigDecimal[] f = unary.apply(c, new BigDecimal[] {d});
-                    return f.length > 0 && f[0].signum() != 0;
-                })
-                .toArray(BigDecimal[]::new);
-        };
+        return (c, a) -> Decs.decs(Stream.of(a)
+            .filter(d -> isTrue(unary.apply(c, Decs.decs(d)))));
     }
 
     Expression unary() {
