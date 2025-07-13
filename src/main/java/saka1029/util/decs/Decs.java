@@ -558,11 +558,11 @@ public class Decs {
     }
 
     public static BigDecimal[] and(BigDecimal[] left, BigDecimal[] right) {
-        return zip(left, right, (a, b) -> dec(bool(a) && bool(b)));
+        return zip(left, right, (a, b) -> bool(a) ? b : a);
     }
 
     public static BigDecimal[] or(BigDecimal[] left, BigDecimal[] right) {
-        return zip(left, right, (a, b) -> dec(bool(a) || bool(b)));
+        return zip(left, right, (a, b) -> bool(a) ? a : b);
     }
 
     public static BigDecimal[] log(BigDecimal[] left, BigDecimal[] right) {
