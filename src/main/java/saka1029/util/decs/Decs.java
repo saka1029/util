@@ -141,6 +141,10 @@ public class Decs {
 
     // unary reduce method
 
+    public static BigDecimal[] reduce(BigDecimal[] decs, BinaryOperator<BigDecimal> op) {
+        return decs(stream(decs).reduce(op).get());
+    }
+
     public static BigDecimal[] reduce(BigDecimal[] decs,
             BigDecimal unit, BinaryOperator<BigDecimal> op) {
         return decs(stream(decs).reduce(unit, op));
@@ -590,12 +594,20 @@ public class Decs {
         return zip(left, right, Decs::gcd);
     }
 
+    public static BigDecimal[] gcd(BigDecimal[] decs) {
+        return reduce(decs, Decs::gcd);
+    }
+
     static BigDecimal lcm(BigDecimal a, BigDecimal b) {
         return a.multiply(b).divide(gcd(a, b), MATH_CONTEXT);
     }
 
     public static BigDecimal[] lcm(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, Decs::lcm);
+    }
+
+    public static BigDecimal[] lcm(BigDecimal[] decs) {
+        return reduce(decs, Decs::lcm);
     }
     
     // binary special method
