@@ -142,6 +142,8 @@ public class Decs {
     // unary reduce method
 
     public static BigDecimal[] reduce(BigDecimal[] decs, BinaryOperator<BigDecimal> op) {
+        if (decs.length < 1)
+            throw error("Empty argument '%s'", string(decs));
         return decs(stream(decs).reduce(op).get());
     }
 
