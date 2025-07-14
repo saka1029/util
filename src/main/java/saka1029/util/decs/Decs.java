@@ -591,7 +591,7 @@ public class Decs {
     }
 
     static BigDecimal lcm(BigDecimal a, BigDecimal b) {
-        return a.multiply(b).divide(gcd(a, b));
+        return a.multiply(b).divide(gcd(a, b), MATH_CONTEXT);
     }
 
     public static BigDecimal[] lcm(BigDecimal[] left, BigDecimal[] right) {
