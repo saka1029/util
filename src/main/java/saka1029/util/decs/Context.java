@@ -224,6 +224,7 @@ public class Context {
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
         unary("factor", (c, a) -> Decs.factor(a), "factor N -> (I) : factor of N");
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
+        binary("gcd", (c, a, b) -> Decs.gcd(a, b), "(M) gcd (N) -> (I) : GCD");
         unary("iota", (c, a) -> Decs.iota(a), "iota N -> (I) : (1..N)");
         unary("iota0", (c, a) -> Decs.iota0(a), "iota0 N -> (I) : (0..N)");
         unary("iotan", (c, a) -> Decs.iotan(a), "iotan N -> (I) : (-N..N)");
@@ -233,6 +234,7 @@ public class Context {
         // unary("isperfect", (c, a) -> Decs.eq(Decs.add(Decs.remove(Decs.divisor(a), a)), a),
         //     "isperfect (N) -> (B) : N is perfect number (T:1, F:0)");
         unary("isprime", (c, a) -> Decs.isPrime(a), "isprime (N) -> (B) : is prime (T:1, F:0)");
+        binary("lcm", (c, a, b) -> Decs.lcm(a, b), "(M) lcm (N) -> (I) : LCM");
         unary("length", (c, a) -> Decs.length(a), "length (D) -> (D) : lenfth of (D)");
         unary("ln", (c, a) -> Decs.ln(a), "ln (A) -> (D) : log E A");
         binary("log", (c, a, b) -> Decs.log(a, b), "(A) log (C) -> (D) : log C A");

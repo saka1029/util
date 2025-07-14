@@ -569,6 +569,34 @@ public class Decs {
         return zip(left, right, (a, b) -> BigDecimalMath.log(a, MATH_CONTEXT)
             .divide(BigDecimalMath.log(b, MATH_CONTEXT), MATH_CONTEXT));
     }
+
+    static BigDecimal gcd(BigDecimal a, BigDecimal b) {
+        BigInteger x = a.toBigIntegerExact().abs();
+        BigInteger y = b.toBigIntegerExact().abs();
+        if (x.compareTo(y) < 0) {
+            var t = x;
+            x = y;
+            y = t;
+        }
+        while (y.compareTo(BigInteger.ZERO) != 0) {
+            BigInteger t = y;
+            y = x.remainder(y);
+            x = t;
+        }
+        return new BigDecimal(x);
+    }
+
+    public static BigDecimal[] gcd(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, Decs::gcd);
+    }
+
+    static BigDecimal lcm(BigDecimal a, BigDecimal b) {
+        return a.multiply(b).divide(gcd(a, b));
+    }
+
+    public static BigDecimal[] lcm(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, Decs::lcm);
+    }
     
     // binary special method
 
