@@ -152,9 +152,13 @@ public class Context {
             Map<String, BigDecimal> map = new TreeMap<>();
 
             void test() {
-                BigDecimal[] result = exvar.expression.eval(context);
-                if (result.length < 1 || !Decs.bool(result[0]))
+                try {
+                    BigDecimal[] result = exvar.expression.eval(context);
+                    if (result.length < 1 || !Decs.bool(result[0]))
+                        return;
+                } catch (ValueException | ArithmeticException e) {
                     return;
+                }
                 ++count;
                 map.clear();
                 for (String n : names)
