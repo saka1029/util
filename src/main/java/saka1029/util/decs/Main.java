@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
@@ -37,6 +38,15 @@ public class Main {
     static final String PROMPT = "    ";
     static final String SECONDARY_PROMPT = "    ";
 
+    static final ParsedLine DUMMY = new ParsedLine() {
+        @Override public String word() { return ""; }
+        @Override public int wordCursor() { return 0; }
+        @Override public int wordIndex() { return 0; }
+        @Override public List<String> words() { return List.of(); }
+        @Override public String line() { return ""; }
+        @Override public int cursor() { return 0; }
+    };
+
     static class ExpressionParser implements org.jline.reader.Parser {
  
         Parser parser = Parser.create();
@@ -52,13 +62,8 @@ public class Main {
                 expression = c -> {
                     throw new SyntaxError(0, 0, e.getMessage());
                 };
-                // throw new SyntaxError(0, 0, e.getMessage());
-                // expression = c -> {
-                    // c.output.accept(e.getMessage());
-                    // return Decs.NO_VALUE;
-                // };
             }
-            return null;
+            return DUMMY;
         }
     }
 
