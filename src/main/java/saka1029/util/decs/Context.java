@@ -147,45 +147,47 @@ public class Context {
         List<Help<Expression>> backup = names.stream()
             .map(n -> context.variables.get(n))
             .toList();
-        var solver = new Object() {
-            int count = 0;
-            Map<String, BigDecimal> map = new TreeMap<>();
+        int[] count = {0};
+        try {
+            new Object() {
+                Map<String, BigDecimal> map = new TreeMap<>();
 
-            void test() {
-                try {
-                    BigDecimal[] result = exvar.expression.eval(context);
-                    if (result.length < 1 || !Decs.bool(result[0]))
+                void test() {
+                    try {
+                        BigDecimal[] result = exvar.expression.eval(context);
+                        if (result.length < 1 || !Decs.bool(result[0]))
+                            return;
+                    } catch (ValueException | ArithmeticException e) {
                         return;
-                } catch (ValueException | ArithmeticException e) {
-                    return;
+                    }
+                    ++count[0];
+                    map.clear();
+                    for (String n : names)
+                        map.put(n, context.variable(n).expression.eval(context)[0]);
+                    out.accept(map);
                 }
-                ++count;
-                map.clear();
-                for (String n : names)
-                    map.put(n, context.variable(n).expression.eval(context)[0]);
-                out.accept(map);
-            }
 
-            void solve(int index) {
-                if (index >= length)
-                    test();
-                else {
-                    String name = names.get(index);
-                    BigDecimal[] decs = values.get(index);
-                    for (int i = 0, max = decs.length; i < max; ++i) {
-                        BigDecimal[] value = Decs.decs(decs[i]);
-                        context.variable(name, c -> value, name);
-                        solve(index + 1);
+                void solve(int index) {
+                    if (index >= length)
+                        test();
+                    else {
+                        String name = names.get(index);
+                        BigDecimal[] decs = values.get(index);
+                        for (int i = 0, max = decs.length; i < max; ++i) {
+                            BigDecimal[] value = Decs.decs(decs[i]);
+                            context.variable(name, c -> value, name);
+                            solve(index + 1);
+                        }
                     }
                 }
-            }
-        };
-        solver.solve(0);
-        // restore
-        IntStream.range(0, length) 
-            .forEach(i -> context.variables
-                .put(names.get(i), backup.get(i)));
-        return solver.count;
+            }.solve(0);
+        } finally {
+            // restore
+            IntStream.range(0, length) 
+                .forEach(i -> context.variables
+                    .put(names.get(i), backup.get(i)));
+        }
+        return count[0];
     }
 
     private void init() {
@@ -215,6 +217,7 @@ public class Context {
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
         binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
+        unary("count", (c, a) -> Decs.length(a), "count (D) -> (D) : number of elements in (D)");
         unary("cube", (c, a) -> Decs.cube(a), "cube (A) -> (D) : A³");
         unary("date", (c, a) -> Decs.date(a), "date (M) -> (I) : epoch day to YYYYMMDD");
         unary("days", (c, a) -> Decs.days(a), "days (N) -> (I) : YYYYMMDD to epoch day");
@@ -237,7 +240,6 @@ public class Context {
         unary("isprime", (c, a) -> Decs.isPrime(a), "isprime (N) -> (B) : is prime (T:1, F:0)");
         unary("lcm", (c, a) -> Decs.lcm(a), "lcm (N) -> (I) : LCM");
         binary("lcm", (c, a, b) -> Decs.lcm(a, b), "(M) lcm (N) -> (I) : LCM");
-        unary("length", (c, a) -> Decs.length(a), "length (D) -> (D) : lenfth of (D)");
         unary("ln", (c, a) -> Decs.ln(a), "ln (A) -> (D) : log E A");
         binary("log", (c, a, b) -> Decs.log(a, b), "(A) log (C) -> (D) : log C A");
         unary("log10", (c, a) -> Decs.log10(a), "log10 (A) -> (D) : log 10 A");
