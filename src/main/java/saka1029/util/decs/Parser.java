@@ -21,8 +21,11 @@ public class Parser {
                     | 'help' name
                     | 'solve' expression
         expression   = binary { ',' binary }
-        binary       = or { BOP or }
-        or           = and { '|' and }
+        binary       = cor { BOP cor }
+        cor          = cand { '||' cand }
+        cand         = or { '&&' or }
+        or           = xor { '|' xor }
+        xor          = and { '^' and }
         and          = comp { '&' comp }
         comp         = add [ COP add ]
         add          = mult { ( '+' | '-' ) mult }
@@ -208,11 +211,11 @@ public class Parser {
         }
     }
 
-    Expression and() {
+    Expression cand() {
         Expression e = comp();
         while (true) {
             Expression left = e;
-            if (token.type == TokenType.AND) {
+            if (token.type == TokenType.CAND) {
                 Binary and = context.builtinBinary(token.string).expression;
                 get();
                 Expression right = comp();
@@ -228,14 +231,14 @@ public class Parser {
         return e;
     }
 
-    Expression or() {
-        Expression e = and();
+    Expression cor() {
+        Expression e = cand();
         while (true) {
             Expression left = e;
             if (token.type == TokenType.OR) {
                 Binary or = context.builtinBinary(token.string).expression;
                 get();
-                Expression right = add();
+                Expression right = cand();
                 // e = c -> Decs.or(left.eval(c), right.eval(c));
                 // conditional OR
                 e = c -> {
@@ -249,13 +252,13 @@ public class Parser {
     }
 
     Expression binary() {
-        Expression e = or();
+        Expression e = cor();
         while (true) {
             Expression left = e;
             if (context.isBinary(token.string)) {
                 String name = token.string;
                 get();  // skip ID
-                Expression right = or();
+                Expression right = cor();
                 e = c -> c.binary(name).expression.apply(c, left.eval(c), right.eval(c));
             } else
                 break;
