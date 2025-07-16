@@ -202,6 +202,8 @@ public class Context {
         builtinBinary("/", (c, a, b) -> Decs.divide(a, b), "(A) / (B) -> (D) : A / B");
         builtinBinary("%", (c, a, b) -> Decs.mod(a, b), "(A) % (B) -> (D) : modulo A by B");
         unary("^", (c, a) -> Decs.pow(a), "^ (A) -> D : power");
+        unary("^^", (c, a) -> Decs.xor(a), "^^ (M) -> (I) : xor");
+        builtinBinary("^^", (c, a, b) -> Decs.xor(a, b), "(M) ^ (N) -> (I) : xor");
         builtinBinary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A ^ B");
         unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or");
         builtinBinary("||", (c, a, b) -> Decs.or(a, b), "(A) || (B) -> (D) : conditional or A B");
@@ -211,8 +213,9 @@ public class Context {
         builtinBinary("<=", (c, a, b) -> Decs.le(a, b), "(A) <= (B) -> (D) : A less than or equal B");
         builtinBinary(">", (c, a, b) -> Decs.gt(a, b), "(A) > (B) -> (D) : A greater than B");
         builtinBinary(">=", (c, a, b) -> Decs.ge(a, b), "(A) >= (B) -> (D) : A greater than or equal B");
-        unary("&", (c, a) -> Decs.and(a), "& (B) -> B : and");
-        builtinBinary("&&", (c, a, b) -> Decs.and(a, b), "(A) && (B) -> (D) : conditional and A B");
+        unary("&", (c, a) -> Decs.and(a), "& (M) -> I : bit and");
+        builtinBinary("&", (c, a, b) -> Decs.and(a, b), "(M) & (N) -> (I) : bit and");
+        builtinBinary("&&", (c, a, b) -> Decs.cand(a, b), "(A) && (B) -> (D) : conditional and A B");
         builtinBinary(",", (c, a, b) -> Decs.concat(a, b), "(A) , (B) -> (D) : concat (A) and (B)");
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
         binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");

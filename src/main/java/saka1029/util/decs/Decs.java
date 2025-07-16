@@ -198,11 +198,47 @@ public class Decs {
         return reduce(reverse(decs), ONE, (a, b) -> pow(b, a));
     }
 
+    public static BigDecimal and(BigDecimal left, BigDecimal right) {
+        return dec(left.toBigIntegerExact().and(left.toBigIntegerExact()));
+    }
+
     public static BigDecimal[] and(BigDecimal[] decs) {
-        return reduce(decs, ONE, (a, b) -> dec(bool(a) && bool(b)));
+        return reduce(decs, Decs::and);
+    }
+
+    public static BigDecimal[] and(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, Decs::and);
+    }
+
+    public static BigDecimal or(BigDecimal left, BigDecimal right) {
+        return dec(left.toBigIntegerExact().or(left.toBigIntegerExact()));
     }
 
     public static BigDecimal[] or(BigDecimal[] decs) {
+        return reduce(decs, Decs::or);
+    }
+
+    public static BigDecimal[] or(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, Decs::or);
+    }
+
+    public static BigDecimal xor(BigDecimal left, BigDecimal right) {
+        return dec(left.toBigIntegerExact().xor(left.toBigIntegerExact()));
+    }
+
+    public static BigDecimal[] xor(BigDecimal[] decs) {
+        return reduce(decs, Decs::xor);
+    }
+
+    public static BigDecimal[] xor(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, Decs::xor);
+    }
+
+    public static BigDecimal[] cand(BigDecimal[] decs) {
+        return reduce(decs, ONE, (a, b) -> dec(bool(a) && bool(b)));
+    }
+
+    public static BigDecimal[] cor(BigDecimal[] decs) {
         return reduce(decs, ZERO, (a, b) -> dec(bool(a) || bool(b)));
     }
 
@@ -563,11 +599,11 @@ public class Decs {
         return Stream.of(decs).allMatch(d -> d.equals(ZERO));
     }
 
-    public static BigDecimal[] and(BigDecimal[] left, BigDecimal[] right) {
+    public static BigDecimal[] cand(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, (a, b) -> bool(a) ? b : a);
     }
 
-    public static BigDecimal[] or(BigDecimal[] left, BigDecimal[] right) {
+    public static BigDecimal[] cor(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, (a, b) -> bool(a) ? a : b);
     }
 
