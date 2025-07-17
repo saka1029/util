@@ -233,6 +233,7 @@ public class Context {
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
         unary("gcd", (c, a) -> Decs.gcd(a), "gcd (N) -> (I) : GCD");
         binary("gcd", (c, a, b) -> Decs.gcd(a, b), "(M) gcd (N) -> (I) : GCD");
+        unary("int", (c, a) -> Decs.integer(a), "int (N) -> (I) : integer part (round towards zero)");
         unary("iota", (c, a) -> Decs.iota(a), "iota N -> (I) : (1..N)");
         unary("iota0", (c, a) -> Decs.iota0(a), "iota0 N -> (I) : (0..N)");
         unary("iotan", (c, a) -> Decs.iotan(a), "iotan N -> (I) : (-N..N)");

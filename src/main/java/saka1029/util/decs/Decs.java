@@ -263,6 +263,10 @@ public class Decs {
         return map(decs, BigDecimal::negate);
     }
 
+    public static BigDecimal[] integer(BigDecimal[] decs) {
+        return map(decs, d -> d.setScale(0, RoundingMode.DOWN));
+    }
+
     public static BigDecimal[] signum(BigDecimal[] decs) {
         return map(decs, d -> dec(d.signum()));
     }

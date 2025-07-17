@@ -1,6 +1,8 @@
 package test.saka1029.util.decs;
 
 import static org.junit.Assert.assertArrayEquals;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.BitSet;
 import java.util.stream.IntStream;
 import org.junit.Test;
@@ -56,4 +58,9 @@ public class TestPrime {
         assertArrayEquals(PRIME1000, array);
     }
 
+    @Test
+    public void testSetScale() {
+        BigDecimal d = new BigDecimal("-12.64");
+        System.out.println(d.setScale(0, RoundingMode.DOWN));
+    }
 }
