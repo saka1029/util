@@ -128,25 +128,25 @@ public class TestDecs {
     }
 
     @Test
-    public void testAndUnary() {
+    public void testCandUnary() {
         assertEquals(0, decs("").length);
-        assertDecsEquals(decs("1"), and(decs("")));
-        assertDecsEquals(decs("1"), and(decs("2")));
-        assertDecsEquals(decs("1"), and(decs("2 2")));
-        assertDecsEquals(decs("0"), and(decs("2 0")));
-        assertDecsEquals(decs("0"), and(decs("0 2")));
-        assertDecsEquals(decs("0"), and(decs("0 0")));
+        assertDecsEquals(decs("1"), cand(decs("")));
+        assertDecsEquals(decs("1"), cand(decs("2")));
+        assertDecsEquals(decs("1"), cand(decs("2 2")));
+        assertDecsEquals(decs("0"), cand(decs("2 0")));
+        assertDecsEquals(decs("0"), cand(decs("0 2")));
+        assertDecsEquals(decs("0"), cand(decs("0 0")));
     }
 
     @Test
-    public void testOrUnary() {
+    public void testCorUnary() {
         assertEquals(0, decs("").length);
-        assertDecsEquals(decs("0"), or(decs("")));
-        assertDecsEquals(decs("1"), or(decs("2")));
-        assertDecsEquals(decs("1"), or(decs("2 2")));
-        assertDecsEquals(decs("1"), or(decs("2 0")));
-        assertDecsEquals(decs("1"), or(decs("0 2")));
-        assertDecsEquals(decs("0"), or(decs("0 0")));
+        assertDecsEquals(decs("0"), cor(decs("")));
+        assertDecsEquals(decs("1"), cor(decs("2")));
+        assertDecsEquals(decs("1"), cor(decs("2 2")));
+        assertDecsEquals(decs("1"), cor(decs("2 0")));
+        assertDecsEquals(decs("1"), cor(decs("0 2")));
+        assertDecsEquals(decs("0"), cor(decs("0 0")));
     }
 
     @Test
@@ -457,11 +457,13 @@ public class TestDecs {
     @Test
     public void testAnd() {
         assertDecsEquals(decs("1 0 0 0"), and(decs("1 1 0 0"), decs("1 0 1 0")));
+        assertDecsEquals(decs("6"), and(decs("6"), decs("15")));
     }
 
     @Test
     public void testOr() {
         assertDecsEquals(decs("1 1 1 0"), or(decs("1 1 0 0"), decs("1 0 1 0")));
+        assertDecsEquals(decs("15"), or(decs("6"), decs("9")));
     }
 
     @Test

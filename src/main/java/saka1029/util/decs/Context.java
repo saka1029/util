@@ -206,7 +206,8 @@ public class Context {
         builtinBinary("^^", (c, a, b) -> Decs.xor(a, b), "(M) ^ (N) -> (I) : xor");
         builtinBinary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A ^ B");
         unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or");
-        builtinBinary("||", (c, a, b) -> Decs.or(a, b), "(A) || (B) -> (D) : conditional or A B");
+        builtinBinary("|", (c, a, b) -> Decs.or(a, b), "(A) | (B) -> (D) : bit or A B");
+        builtinBinary("||", (c, a, b) -> Decs.cor(a, b), "(A) || (B) -> (D) : conditional or A B");
         builtinBinary("==", (c, a, b) -> Decs.eq(a, b), "(A) == (B) -> (D) : A equal B");
         builtinBinary("!=", (c, a, b) -> Decs.ne(a, b), "(A) != (B) -> (D) : A not equal B");
         builtinBinary("<", (c, a, b) -> Decs.lt(a, b), "(A) < (B) -> (D) : A less than B");

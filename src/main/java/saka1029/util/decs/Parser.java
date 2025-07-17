@@ -202,23 +202,68 @@ public class Parser {
             case EQ: case NE:
             case LT: case LE:
             case GT: case GE:
-                Binary comp = context.builtinBinary(token.string).expression;
+                Binary op = context.builtinBinary(token.string).expression;
                 get();
                 Expression right = add();
-                return c -> comp.apply(c, e.eval(c), right.eval(c));
+                return c -> op.apply(c, e.eval(c), right.eval(c));
             default:
                 return e;
         }
     }
 
-    Expression cand() {
+    Expression and() {
         Expression e = comp();
+        while (true) {
+            Expression left = e;
+            if (token.type == TokenType.AND) {
+                Binary op = context.builtinBinary(token.string).expression;
+                get();
+                Expression right = comp();
+                e = c -> op.apply(c, left.eval(c), right.eval(c));
+            } else
+                break;
+        }
+        return e;
+    }
+
+    Expression xor() {
+        Expression e = and();
+        while (true) {
+            Expression left = e;
+            if (token.type == TokenType.XOR) {
+                Binary op = context.builtinBinary(token.string).expression;
+                get();
+                Expression right = and();
+                e = c -> op.apply(c, left.eval(c), right.eval(c));
+            } else
+                break;
+        }
+        return e;
+    }
+
+    Expression or() {
+        Expression e = xor();
+        while (true) {
+            Expression left = e;
+            if (token.type == TokenType.OR) {
+                Binary op = context.builtinBinary(token.string).expression;
+                get();
+                Expression right = xor();
+                e = c -> op.apply(c, left.eval(c), right.eval(c));
+            } else
+                break;
+        }
+        return e;
+    }
+
+    Expression cand() {
+        Expression e = or();
         while (true) {
             Expression left = e;
             if (token.type == TokenType.CAND) {
                 Binary and = context.builtinBinary(token.string).expression;
                 get();
-                Expression right = comp();
+                Expression right = or();
                 // e = c -> Decs.and(left.eval(c), right.eval(c));
                 // conditional AND
                 e = c -> {

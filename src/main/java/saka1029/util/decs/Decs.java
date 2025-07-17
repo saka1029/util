@@ -199,11 +199,11 @@ public class Decs {
     }
 
     public static BigDecimal and(BigDecimal left, BigDecimal right) {
-        return dec(left.toBigIntegerExact().and(left.toBigIntegerExact()));
+        return dec(left.toBigIntegerExact().and(right.toBigIntegerExact()));
     }
 
     public static BigDecimal[] and(BigDecimal[] decs) {
-        return reduce(decs, Decs::and);
+        return reduce(decs, TRUE, Decs::and);
     }
 
     public static BigDecimal[] and(BigDecimal[] left, BigDecimal[] right) {
@@ -211,11 +211,11 @@ public class Decs {
     }
 
     public static BigDecimal or(BigDecimal left, BigDecimal right) {
-        return dec(left.toBigIntegerExact().or(left.toBigIntegerExact()));
+        return dec(left.toBigIntegerExact().or(right.toBigIntegerExact()));
     }
 
     public static BigDecimal[] or(BigDecimal[] decs) {
-        return reduce(decs, Decs::or);
+        return reduce(decs, FALSE, Decs::or);
     }
 
     public static BigDecimal[] or(BigDecimal[] left, BigDecimal[] right) {
