@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -57,7 +59,12 @@ public class Decs {
         return BigDecimal.valueOf(i);
     }
 
+    static final Pattern BASED_INTEGER = Pattern.compile("(\\d+)[bB](\\w+)");
+
     public static BigDecimal dec(String s) {
+        Matcher m = BASED_INTEGER.matcher(s);
+        if (m.matches())
+            return dec(new BigInteger(m.group(2), Integer.parseInt(m.group(1))));
         return new BigDecimal(s);
     }
 

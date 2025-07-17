@@ -497,6 +497,7 @@ public class TestDecs {
         assertDecsEquals(decs("101"), decimal(base(decs("101"), decs("100 100")), decs("100 100")));
         // System.out.println(string(base(decs("9"), decs("1.5"))));
         assertDecsEquals(decs("9.00000"), decimal(base(decs("9"), decs("1.5")), decs("1.5")));
+        assertDecsEquals(decs("65535 15"), decs("16Bffff 2B1111"));
         try {
             decimal(decs("1 2"), decs("3 4 5"));
             fail();
