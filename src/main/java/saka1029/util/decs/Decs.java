@@ -64,7 +64,11 @@ public class Decs {
     public static BigDecimal dec(String s) {
         Matcher m = BASED_INTEGER.matcher(s);
         if (m.matches())
-            return dec(new BigInteger(m.group(2), Integer.parseInt(m.group(1))));
+            try {
+                return dec(new BigInteger(m.group(2), Integer.parseInt(m.group(1))));
+            } catch (NumberFormatException e) {
+                throw error("%s '%s'", e.getMessage(), s);
+            }
         return new BigDecimal(s);
     }
 
