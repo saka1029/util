@@ -266,6 +266,7 @@ public class Context {
         unary("tan", (c, a) -> Decs.tan(a), "tan (A) -> (D) : tan A");
         variable("TODAY", c -> Decs.today(), "TODAY -> I : today (YYYYMMDD)");
         binary("to", (c, a, b) -> Decs.to(a, b), "M to N -> (I) : (M..N)");
+        unary("uniq", (c, a) -> Decs.uniq(a), "uniq (A) -> (D) : uniq");
         unary("week", (c, a) -> Decs.week(a), "week (N) -> (I) : YYYYMMDD to week (1:Mon, 2:Tue, ... , 7:Sun)");
     }
 

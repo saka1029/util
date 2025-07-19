@@ -516,6 +516,10 @@ public class Decs {
         return decs(Stream.of(decs).sorted());
     }
 
+    public static BigDecimal[] uniq(BigDecimal[] decs) {
+        return decs(Stream.of(decs).distinct());
+    }
+
     // binary zip method
 
     public static BigDecimal[] zip(BigDecimal[] left, BigDecimal[] right,
