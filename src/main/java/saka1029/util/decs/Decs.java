@@ -141,13 +141,11 @@ public class Decs {
     }
 
     public static BigDecimal[] pi() {
-        return decs(PI);
+        return decs(BigDecimalMath.pi(MATH_CONTEXT));
     }
 
-    public static BigDecimal E = BigDecimalMath.e(MATH_CONTEXT);
-
     public static BigDecimal[] e() {
-        return decs(E);
+        return decs(BigDecimalMath.e(MATH_CONTEXT));
     }
 
     // unary reduce method

@@ -337,7 +337,6 @@ public class Parser {
             return c -> {
                 BigDecimal[] p = e.eval(c);
                 Decs.MATH_CONTEXT = new MathContext(p[0].intValueExact());
-                c.variable(name, e, input);
                 return Decs.NO_VALUE;
             };
         else
