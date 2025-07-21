@@ -1,6 +1,7 @@
 package saka1029.util.decs;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -252,6 +253,7 @@ public class Context {
         unary("negate", (c, a) -> Decs.negate(a), "negate (A) -> (D) : -A");
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
+        variable("PRECISION", c -> Decs.decs(Decs.MATH_CONTEXT.getPrecision()), "PRECISION N : set precision");
         unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes from 2 to A");
         unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : A / 180 * π");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");

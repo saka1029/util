@@ -36,8 +36,8 @@ public class Decs {
     public static final BigDecimal ZERO = BigDecimal.ZERO;
     public static final BigDecimal ONE = BigDecimal.ONE;
     public static final BigDecimal TWO = BigDecimal.valueOf(2);
-    // public static final MathContext MATH_CONTEXT = MathContext.DECIMAL128;
-    public static final MathContext MATH_CONTEXT = new MathContext(100);
+    public static final int PRECISION = 100;
+    public static MathContext MATH_CONTEXT = new MathContext(PRECISION);
 
     static ValueException error(String message, Object... args) {
         return new ValueException(message, args);
