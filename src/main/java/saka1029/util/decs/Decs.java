@@ -518,6 +518,14 @@ public class Decs {
         return decs(Stream.of(decs).distinct());
     }
 
+    public static BigDecimal[] different(BigDecimal[] decs) {
+        Set<BigDecimal> map = new HashSet<>();
+        for (BigDecimal d : decs)
+            if (!map.add(d))
+                return decs(FALSE);
+        return decs(TRUE);
+    }
+
     // binary zip method
 
     public static BigDecimal[] zip(BigDecimal[] left, BigDecimal[] right,
