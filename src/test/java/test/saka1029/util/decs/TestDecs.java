@@ -254,6 +254,18 @@ public class TestDecs {
     }
 
     @Test
+    public void testFactor() {
+        assertDecsEquals(decs("5 5"), factor(decs("25")));
+        assertDecsEquals(decs("13"), factor(decs("13")));
+        assertDecsEquals(decs("2 2 3"), factor(decs("12")));
+        int pow = 100;
+        BigDecimal five = dec("5");
+        BigDecimal[] expected = new BigDecimal[pow];
+        Arrays.fill(expected, five);
+        assertDecsEquals(expected, factor(pow(decs("5"), decs("" + pow))));
+    }
+
+    @Test
     public void testPascal() {
         assertDecsEquals(decs("1"), pascal(decs("0")));
         assertDecsEquals(decs("1 1"), pascal(decs("1")));

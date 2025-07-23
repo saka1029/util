@@ -391,22 +391,27 @@ public class Decs {
     }
 
     public static BigDecimal[] factor(BigDecimal[] decs) {
-        BigInteger i = single(decs).toBigIntegerExact().abs();
-        if (i.equals(BigInteger.ZERO))
+        BigInteger num = single(decs).toBigIntegerExact().abs();
+        if (num.equals(BigInteger.ZERO))
             throw new ValueException("Cannot factor zero");
         List<BigDecimal> result = new ArrayList<>();
-        BigInteger max = i.sqrt();
-        for (BigInteger f = BigInteger.TWO; f.compareTo(max) <= 0; f = f.add(BigInteger.ONE)) {
+        BigInteger max = num.sqrt();
+        for (BigInteger den = BigInteger.TWO; den.compareTo(max) <= 0; den = den.add(BigInteger.ONE)) {
+            boolean divided = false;
             while (true) {
-                BigInteger[] r = i.divideAndRemainder(f);
+                BigInteger[] r = num.divideAndRemainder(den);
+                // System.out.printf("%s/%s = %s...%s%n", num, den, r[0], r[1]);
                 if (!r[1].equals(BigInteger.ZERO))
                     break;
-                i = r[0];
-                result.add(new BigDecimal(f));
+                divided = true;
+                num = r[0];
+                result.add(new BigDecimal(den));
             }
+            if (divided)
+                max = num.sqrt();
         }
-        if (!i.equals(BigInteger.ONE))
-            result.add(dec(i));
+        if (!num.equals(BigInteger.ONE))
+            result.add(dec(num));
         return decs(result);
     }
 
