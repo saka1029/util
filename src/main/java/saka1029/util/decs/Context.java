@@ -234,6 +234,7 @@ public class Context {
         unary("factorial", (c, a) -> Decs.factorial(a), "factorial (D) -> (D) : factorial");
         unary("gcd", (c, a) -> Decs.gcd(a), "gcd (N) -> (I) : GCD");
         binary("gcd", (c, a, b) -> Decs.gcd(a, b), "(M) gcd (N) -> (I) : GCD");
+        binary("get", (c, a, b) -> Decs.get(a, b), "(M) get (I) -> (D) : get at (I) from (M)");
         unary("int", (c, a) -> Decs.integer(a), "int (N) -> (I) : integer part (round towards zero)");
         unary("iota", (c, a) -> Decs.iota(a), "iota N -> (I) : (1..N)");
         unary("iota0", (c, a) -> Decs.iota0(a), "iota0 N -> (I) : (0..N)");
@@ -265,6 +266,7 @@ public class Context {
         unary("sort", (c, a) -> Decs.sort(a), "sort (A) -> (D) : sort");
         unary("sqrt", (c, a) -> Decs.sqrt(a), "sqrt (A) -> (D) : √A");
         unary("square", (c, a) -> Decs.square(a), "square (A) -> (D) : A²");
+        binary("take", (c, a, b) -> Decs.take(a, b), "(A) take M -> (D) : take first M, take last -M when M < 0");
         unary("tan", (c, a) -> Decs.tan(a), "tan (A) -> (D) : tan A");
         variable("TODAY", c -> Decs.today(), "TODAY -> I : today (YYYYMMDD)");
         binary("to", (c, a, b) -> Decs.to(a, b), "M to N -> (I) : (M..N)");

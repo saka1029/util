@@ -759,4 +759,16 @@ public class Decs {
         Set<BigDecimal> set = Set.of(right);
         return decs(Stream.of(left).filter(d -> !set.contains(d)));
     }
+
+    public static BigDecimal[] get(BigDecimal[] left, BigDecimal[] right) {
+        return decs(Stream.of(right)
+            .map(i -> left[i.intValueExact() - 1]));
+    }
+
+    public static BigDecimal[] take(BigDecimal[] left, BigDecimal[] right) {
+        int length = left.length, sub = single(right).intValueExact();
+        return sub >= 0
+            ? Arrays.copyOfRange(left, 0, sub)
+            : Arrays.copyOfRange(left, length + sub, length);
+    }
 }
