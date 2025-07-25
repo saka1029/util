@@ -762,13 +762,18 @@ public class Decs {
 
     public static BigDecimal[] get(BigDecimal[] left, BigDecimal[] right) {
         return decs(Stream.of(right)
-            .map(i -> left[i.intValueExact() - 1]));
+            .map(i -> {
+                int index = i.intValueExact() - 1;
+                if (index < 0 || index >= left.length)
+                    throw error("Cannot get %s for '%s'", i, string(left));
+                return left[index];
+            }));
     }
 
     public static BigDecimal[] take(BigDecimal[] left, BigDecimal[] right) {
         int length = left.length, sub = single(right).intValueExact();
         return sub >= 0
-            ? Arrays.copyOfRange(left, 0, sub)
-            : Arrays.copyOfRange(left, length + sub, length);
+            ? Arrays.copyOfRange(left, 0, Math.min(sub, length))
+            : Arrays.copyOfRange(left, Math.max(length + sub, 0), length);
     }
 }
