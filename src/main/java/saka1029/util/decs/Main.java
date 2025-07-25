@@ -50,18 +50,14 @@ public class Main {
     static class ExpressionParser implements org.jline.reader.Parser {
  
         Parser parser = Parser.create();
-        Expression expression;
+        BigDecimal[] result;
 
         @Override
         public ParsedLine parse(String line, int cursor, ParseContext context) {
             try {
-                expression = parser.parse(line);
+                result = parser.eval(line);
             } catch (EOFException e) {
                 throw new EOFError(0, 0, e.getMessage());
-            } catch (SyntaxException e) {
-                expression = c -> {
-                    throw new SyntaxError(0, 0, e.getMessage());
-                };
             }
             return DUMMY;
         }
@@ -89,15 +85,17 @@ public class Main {
         while (true) {
             try {
                 lineReader.readLine(PROMPT);
-                BigDecimal[] result = parser.expression.eval(parser.parser.context);
+                BigDecimal[] result = parser.result;
                 if (result != Decs.NO_VALUE)
                     lineReader.printAbove(Decs.string(result));
             } catch (EndOfFileException e) {        // catch Ctrl-D
                 break;
-            } catch (SyntaxError | UndefException | ValueException | ArithmeticException e) {
-                lineReader.printAbove(color(e.getLocalizedMessage(), AttributedStyle.RED));
             } catch (UserInterruptException e) {    // catch Ctrl-C
                 lineReader.printAbove(INTERRUPTED);
+            } catch (SyntaxException e) {
+                lineReader.printAbove(color(e.getLocalizedMessage(), AttributedStyle.RED));
+            } catch (UndefException | ValueException | ArithmeticException e) {
+                lineReader.printAbove(color(e.getLocalizedMessage(), AttributedStyle.RED));
             }
         }
     }
