@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -588,37 +589,51 @@ public class Decs {
             : ONE;
     }
 
-    public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right) {
-        return zip(left, right, (a, b) -> sign(a.compareTo(b)));
-    }
+    // public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right) {
+    //     return zip(left, right, (a, b) -> sign(a.compareTo(b)));
+    // }
 
-    public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right,
-            Function<Integer, BigDecimal> conv) {
-        return zip(left, right, (a, b) -> conv.apply(a.compareTo(b)));
+    // public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right,
+    //         Function<Integer, BigDecimal> conv) {
+    //     return zip(left, right, (a, b) -> conv.apply(a.compareTo(b)));
+    // }
+
+    public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right, IntPredicate pred) {
+        int lsize = left.length, rsize = right.length;
+        if (lsize == 0 && rsize == 0)
+            return decs(TRUE);
+        else if (lsize == 1)
+            return decs(dec(Stream.of(right).allMatch(r -> pred.test(left[0].compareTo(r)))));
+        else if (rsize == 1)
+            return decs(dec(Stream.of(left).allMatch(l -> pred.test(l.compareTo(right[0])))));
+        else if (lsize == rsize)
+            return decs(dec(IntStream.range(0, lsize).allMatch(i -> pred.test(left[i].compareTo(right[i])))));
+        else
+            throw error("Cannot compare '%s' and '%s'", string(left), string(right));
     }
 
     public static BigDecimal[] eq(BigDecimal[] left, BigDecimal[] right) {
-        return compare(left, right, c -> dec(c == 0));
+        return compare(left, right, c -> c == 0);
     }
 
     public static BigDecimal[] ne(BigDecimal[] left, BigDecimal[] right) {
-        return compare(left, right, c -> dec(c != 0));
+        return compare(left, right, c -> c != 0);
     }
 
     public static BigDecimal[] lt(BigDecimal[] left, BigDecimal[] right) {
-        return compare(left, right, c -> dec(c < 0));
+        return compare(left, right, c -> c < 0);
     }
 
     public static BigDecimal[] le(BigDecimal[] left, BigDecimal[] right) {
-        return compare(left, right, c -> dec(c <= 0));
+        return compare(left, right, c -> c <= 0);
     }
 
     public static BigDecimal[] gt(BigDecimal[] left, BigDecimal[] right) {
-        return compare(left, right, c -> dec(c > 0));
+        return compare(left, right, c -> c > 0);
     }
 
     public static BigDecimal[] ge(BigDecimal[] left, BigDecimal[] right) {
-        return compare(left, right, c -> dec(c >= 0));
+        return compare(left, right, c -> c >= 0);
     }
 
     public static boolean trues(BigDecimal[] decs) {
