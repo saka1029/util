@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
@@ -589,14 +588,9 @@ public class Decs {
             : ONE;
     }
 
-    // public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right) {
-    //     return zip(left, right, (a, b) -> sign(a.compareTo(b)));
-    // }
-
-    // public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right,
-    //         Function<Integer, BigDecimal> conv) {
-    //     return zip(left, right, (a, b) -> conv.apply(a.compareTo(b)));
-    // }
+    public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> sign(a.compareTo(b)));
+    }
 
     public static BigDecimal[] compare(BigDecimal[] left, BigDecimal[] right, IntPredicate pred) {
         int lsize = left.length, rsize = right.length;

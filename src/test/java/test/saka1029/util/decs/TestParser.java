@@ -48,12 +48,18 @@ public class TestParser {
     @Test
     public void testComp() {
         Parser parser = Parser.create();
-        assertDecsEquals(decs("1 0 0"), parser.eval("(1,2,3)==(1,1,4)"));
-        assertDecsEquals(decs("0 1 1"), parser.eval("(1,2,3)!=(1,1,4)"));
-        assertDecsEquals(decs("0 0 1"), parser.eval("(1,2,3)<(1,1,4)"));
-        assertDecsEquals(decs("1 0 1"), parser.eval("(1,2,3)<=(1,1,4)"));
-        assertDecsEquals(decs("0 1 0"), parser.eval("(1,2,3)>(1,1,4)"));
-        assertDecsEquals(decs("1 1 0"), parser.eval("(1,2,3)>=(1,1,4)"));
+        assertDecsEquals(decs("0"), parser.eval("(1,2,3)==(1,1,4)"));
+        assertDecsEquals(decs("1"), parser.eval("(1,2,3)==(1,2,3)"));
+        assertDecsEquals(decs("0"), parser.eval("(1,2,3)!=(1,1,4)"));
+        assertDecsEquals(decs("1"), parser.eval("(0,2,3)!=(1,1,4)"));
+        assertDecsEquals(decs("0"), parser.eval("(1,2,3)<(1,1,4)"));
+        assertDecsEquals(decs("1"), parser.eval("(0,2,3)<(1,3,4)"));
+        assertDecsEquals(decs("0"), parser.eval("(1,2,3)<=(1,1,4)"));
+        assertDecsEquals(decs("1"), parser.eval("(1,2,3)<=(1,3,4)"));
+        assertDecsEquals(decs("0"), parser.eval("(1,2,3)>(1,1,4)"));
+        assertDecsEquals(decs("1"), parser.eval("(2,2,5)>(1,1,4)"));
+        assertDecsEquals(decs("0"), parser.eval("(1,2,3)>=(1,1,4)"));
+        assertDecsEquals(decs("1"), parser.eval("(2,1,5)>=(1,1,4)"));
     }
 
     @Test

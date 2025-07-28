@@ -389,9 +389,9 @@ public class TestDecs {
         assertDecsEquals(decs("1"), eq(decs("1"), decs("1")));
         assertDecsEquals(decs("0"), eq(decs("1"), decs("2")));
         assertDecsEquals(decs("0"), eq(decs("2"), decs("1")));
-        assertDecsEquals(decs("1 0"), eq(decs("1 2"), decs("1 1")));
-        assertDecsEquals(decs("0 1"), eq(decs("1 1"), decs("2 1")));
-        assertDecsEquals(decs("0 1"), eq(decs("2 1"), decs("1 1")));
+        assertDecsEquals(decs("0"), eq(decs("1 2"), decs("1 1")));
+        assertDecsEquals(decs("1"), eq(decs("2 1"), decs("2 1")));
+        assertDecsEquals(decs("0"), eq(decs("2 1"), decs("1 1")));
     }
 
     @Test
@@ -399,9 +399,9 @@ public class TestDecs {
         assertDecsEquals(decs("0"), ne(decs("1"), decs("1")));
         assertDecsEquals(decs("1"), ne(decs("1"), decs("2")));
         assertDecsEquals(decs("1"), ne(decs("2"), decs("1")));
-        assertDecsEquals(decs("0 1"), ne(decs("1 2"), decs("1 1")));
-        assertDecsEquals(decs("1 0"), ne(decs("1 1"), decs("2 1")));
-        assertDecsEquals(decs("1 0"), ne(decs("2 1"), decs("1 1")));
+        assertDecsEquals(decs("0"), ne(decs("1 2"), decs("1 1")));
+        assertDecsEquals(decs("1"), ne(decs("1 2"), decs("2 1")));
+        assertDecsEquals(decs("0"), ne(decs("2 1"), decs("1 1")));
     }
 
     @Test
@@ -409,9 +409,9 @@ public class TestDecs {
         assertDecsEquals(decs("0"), lt(decs("1"), decs("1")));
         assertDecsEquals(decs("1"), lt(decs("1"), decs("2")));
         assertDecsEquals(decs("0"), lt(decs("2"), decs("1")));
-        assertDecsEquals(decs("0 0"), lt(decs("1 2"), decs("1 1")));
-        assertDecsEquals(decs("1 0"), lt(decs("1 1"), decs("2 1")));
-        assertDecsEquals(decs("0 0"), lt(decs("2 1"), decs("1 1")));
+        assertDecsEquals(decs("0"), lt(decs("1 2"), decs("1 1")));
+        assertDecsEquals(decs("1"), lt(decs("1 1"), decs("2 3")));
+        assertDecsEquals(decs("0"), lt(decs("2 1"), decs("1 1")));
     }
 
     @Test
@@ -419,9 +419,9 @@ public class TestDecs {
         assertDecsEquals(decs("1"), le(decs("1"), decs("1")));
         assertDecsEquals(decs("1"), le(decs("1"), decs("2")));
         assertDecsEquals(decs("0"), le(decs("2"), decs("1")));
-        assertDecsEquals(decs("1 0"), le(decs("1 2"), decs("1 1")));
-        assertDecsEquals(decs("1 1"), le(decs("1 1"), decs("2 1")));
-        assertDecsEquals(decs("0 1"), le(decs("2 1"), decs("1 1")));
+        assertDecsEquals(decs("0"), le(decs("1 2"), decs("1 1")));
+        assertDecsEquals(decs("1"), le(decs("1 1"), decs("2 1")));
+        assertDecsEquals(decs("0"), le(decs("2 1"), decs("1 1")));
     }
 
     @Test
@@ -429,9 +429,9 @@ public class TestDecs {
         assertDecsEquals(decs("0"), gt(decs("1"), decs("1")));
         assertDecsEquals(decs("0"), gt(decs("1"), decs("2")));
         assertDecsEquals(decs("1"), gt(decs("2"), decs("1")));
-        assertDecsEquals(decs("0 1"), gt(decs("1 2"), decs("1 1")));
-        assertDecsEquals(decs("0 0"), gt(decs("1 1"), decs("2 1")));
-        assertDecsEquals(decs("1 0"), gt(decs("2 1"), decs("1 1")));
+        assertDecsEquals(decs("0"), gt(decs("1 2"), decs("1 1")));
+        assertDecsEquals(decs("1"), gt(decs("3 2"), decs("2 1")));
+        assertDecsEquals(decs("0"), gt(decs("2 1"), decs("1 1")));
     }
 
     @Test
@@ -439,9 +439,9 @@ public class TestDecs {
         assertDecsEquals(decs("1"), ge(decs("1"), decs("1")));
         assertDecsEquals(decs("0"), ge(decs("1"), decs("2")));
         assertDecsEquals(decs("1"), ge(decs("2"), decs("1")));
-        assertDecsEquals(decs("1 1"), ge(decs("1 2"), decs("1 1")));
-        assertDecsEquals(decs("0 1"), ge(decs("1 1"), decs("2 1")));
-        assertDecsEquals(decs("1 1"), ge(decs("2 1"), decs("1 1")));
+        assertDecsEquals(decs("1"), ge(decs("1 2"), decs("1 1")));
+        assertDecsEquals(decs("0"), ge(decs("1 1"), decs("2 1")));
+        assertDecsEquals(decs("1"), ge(decs("2 1"), decs("1 1")));
     }
 
     @Test
