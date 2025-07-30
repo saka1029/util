@@ -281,7 +281,7 @@ public class Parser {
         Expression e = cand();
         while (true) {
             Expression left = e;
-            if (token.type == TokenType.OR) {
+            if (token.type == TokenType.COR) {
                 Binary or = context.builtinBinary(token.string).expression;
                 get();
                 Expression right = cand();
