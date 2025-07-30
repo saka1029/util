@@ -220,6 +220,7 @@ public class Context {
         builtinBinary(",", (c, a, b) -> Decs.concat(a, b), "(A) , (B) -> (D) : concat (A) and (B)");
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
         binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");
+        binary("C", (c, a, b) -> Decs.combination(a, b), "(M) C (N) -> (I) : combination of M from n");
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
         unary("count", (c, a) -> Decs.length(a), "count (D) -> (D) : number of elements in (D)");
         unary("cube", (c, a) -> Decs.cube(a), "cube (A) -> (D) : A³");
@@ -252,6 +253,7 @@ public class Context {
         unary("log10", (c, a) -> Decs.log10(a), "log10 (A) -> (D) : log 10 A");
         unary("log2", (c, a) -> Decs.log2(a), "log2 (A) -> (D) : log 2 A");
         unary("negate", (c, a) -> Decs.negate(a), "negate (A) -> (D) : -A");
+        binary("P", (c, a, b) -> Decs.permutation(a, b), "(M) P (N) -> (I) : permutation of M from n");
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
         variable("PRECISION", c -> Decs.decs(Decs.MATH_CONTEXT.getPrecision()), "PRECISION N : set precision");

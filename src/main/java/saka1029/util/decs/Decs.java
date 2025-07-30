@@ -571,6 +571,38 @@ public class Decs {
         return zip(left, right, (a, b) -> a.remainder(b, MATH_CONTEXT));
     }
 
+    static BigDecimal permutation(BigDecimal n, BigDecimal r) {
+        BigInteger x = n.toBigIntegerExact();
+        BigInteger y = r.toBigIntegerExact();
+        if (x.compareTo(BigInteger.ZERO) < 0)
+            throw new ValueException("n must not be negative but %s", x);
+        if (y.compareTo(BigInteger.ZERO) < 0)
+            throw new ValueException("r must not be negative but %s", y);
+        if (x.compareTo(y) < 0)
+            throw new ValueException("n must be grater than or equals to r but n=%s r=%s", n, r);
+        BigInteger result = BigInteger.ONE;
+        for (BigInteger i = x.subtract(y).add(BigInteger.ONE); i.compareTo(x) <= 0; i = i.add(BigInteger.ONE)) 
+            result = result.multiply(i);
+        return new BigDecimal(result);
+    }
+
+    public static BigDecimal[] permutation(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, Decs::permutation);
+    }
+
+    static BigDecimal combination(BigDecimal n, BigDecimal r) {
+        r = r.min(n.subtract(r));
+        BigDecimal den = permutation(n, r);
+        BigDecimal num = ONE;
+        for (BigDecimal i = r; i.compareTo(ONE) > 0; i = i.subtract(ONE))
+            num = num.multiply(i);
+        return den.divide(num);
+    }
+
+    public static BigDecimal[] combination(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, Decs::combination);
+    }
+
     public static BigDecimal[] pow(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, (a, b) ->
             BigDecimalMath.isLongValue(b)
