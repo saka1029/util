@@ -202,6 +202,7 @@ public class Parser {
             case EQ: case NE:
             case LT: case LE:
             case GT: case GE:
+            case NEARLY_EQ: case NEARLY_NE:
                 Binary op = context.builtinBinary(token.string).expression;
                 get();
                 Expression right = add();

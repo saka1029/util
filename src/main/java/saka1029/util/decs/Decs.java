@@ -38,9 +38,15 @@ public class Decs {
     public static final BigDecimal TWO = BigDecimal.valueOf(2);
     public static final int PRECISION = 100;
     public static MathContext MATH_CONTEXT = new MathContext(PRECISION);
+    public static BigDecimal EPSILON = new BigDecimal("5e-6");
 
     public static BigDecimal[] precision(BigDecimal[] decs) {
         MATH_CONTEXT = new MathContext(single(decs).intValueExact());
+        return NO_VALUE;
+    }
+
+    public static BigDecimal[] epsilon(BigDecimal[] decs) {
+        EPSILON = single(decs);
         return NO_VALUE;
     }
 
@@ -665,6 +671,28 @@ public class Decs {
 
     public static BigDecimal[] ge(BigDecimal[] left, BigDecimal[] right) {
         return compare(left, right, c -> c >= 0);
+    }
+
+    static boolean nearlyEq(BigDecimal left, BigDecimal right) {
+        return left.subtract(right).abs().compareTo(EPSILON) <= 0;
+    }
+
+    public static BigDecimal[] nearlyEq(BigDecimal[] left, BigDecimal[] right) {
+        int lsize = left.length, rsize = right.length;
+        if (lsize == 0 && rsize == 0)
+            return decs(TRUE);
+        else if (lsize == 1)
+            return decs(dec(Stream.of(right).allMatch(r -> nearlyEq(left[0], r))));
+        else if (rsize == 1)
+            return decs(dec(Stream.of(left).allMatch(l -> nearlyEq(l, right[0]))));
+        else if (lsize == rsize)
+            return decs(dec(IntStream.range(0, lsize).allMatch(i -> nearlyEq(left[i], right[i]))));
+        else
+            throw error("Cannot compare '%s' and '%s'", string(left), string(right));
+    }
+
+    public static BigDecimal[] nearlyNe(BigDecimal[] left, BigDecimal[] right) {
+        return decs(dec(single(nearlyEq(left, right)).equals(ZERO)));
     }
 
     public static boolean trues(BigDecimal[] decs) {

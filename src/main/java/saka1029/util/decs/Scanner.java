@@ -9,7 +9,9 @@ public class Scanner {
     public enum TokenType {
         LP, RP, COMMA, AT,
         PLUS, MINUS, MULT, DIV, MOD, POW,
-        EQ, NE, GT, GE, LT, LE, ASSIGN,
+        EQ, NE, GT, GE, LT, LE,
+        NEARLY_EQ, NEARLY_NE,
+        ASSIGN,
         AND, XOR, OR, NOT, BITNOT,
         CAND, COR,
         HELP, SOLVE, EXIT,
@@ -157,10 +159,10 @@ public class Scanner {
             case '*' -> get(TokenType.MULT);
             case '/' -> get(TokenType.DIV);
             case '%' -> get(TokenType.MOD);
-            case '~' -> get(TokenType.BITNOT);
+            case '~' -> get() == '~' ? get(TokenType.NEARLY_EQ) : TokenType.BITNOT;
             case '^' -> get() == '^' ? get(TokenType.XOR) : TokenType.POW;
             case '=' -> get() == '=' ? get(TokenType.EQ) : TokenType.ASSIGN;
-            case '!' -> get() == '=' ? get(TokenType.NE) : TokenType.NOT;
+            case '!' -> get() == '=' ? get(TokenType.NE) : ch == '~' ? get(TokenType.NEARLY_NE) : TokenType.NOT;
             case '<' -> get() == '=' ? get(TokenType.LE) : TokenType.LT;
             case '>' -> get() == '=' ? get(TokenType.GE) : TokenType.GT;
             case '@' -> get(TokenType.AT);
