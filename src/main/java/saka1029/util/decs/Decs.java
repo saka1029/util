@@ -39,8 +39,9 @@ public class Decs {
     public static final int PRECISION = 100;
     public static MathContext MATH_CONTEXT = new MathContext(PRECISION);
 
-    public static void precision(BigDecimal[] decs) {
-        MATH_CONTEXT = new MathContext(single(decs).intValueExact())
+    public static BigDecimal[] precision(BigDecimal[] decs) {
+        MATH_CONTEXT = new MathContext(single(decs).intValueExact());
+        return NO_VALUE;
     }
 
     static ValueException error(String message, Object... args) {

@@ -1,7 +1,6 @@
 package saka1029.util.decs;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -333,13 +332,13 @@ public class Parser {
         get();   // skip ID (name)
         get();   // skip '='
         Expression e = expression();
-        if (name.equals("PRECISION"))
+        if (context.isSetter(name)) {
+            Unary setter = context.setter(name);
             return c -> {
-                BigDecimal[] p = e.eval(c);
-                Decs.MATH_CONTEXT = new MathContext(p[0].intValueExact());
+                setter.apply(c, e.eval(c));
                 return Decs.NO_VALUE;
             };
-        else
+        } else
             return c -> {
                 c.variable(name, e, input);
                 return Decs.NO_VALUE;

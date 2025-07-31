@@ -270,7 +270,7 @@ public class Context {
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
         variable("PRECISION", c -> Decs.decs(Decs.MATH_CONTEXT.getPrecision()), "PRECISION N : set precision");
-        setter("PRECISION", (c, a) -> Decs.MATH_CONTEXT = new MathContext(a.intValue()));
+        setter("PRECISION", (c, a) -> Decs.precision(a));
         unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes from 2 to A");
         unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : A / 180 * π");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
