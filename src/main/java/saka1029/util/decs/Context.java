@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 public class Context {
 
     final Map<String, Help<Expression>> variables = new HashMap<>();
+    final Map<String, Unary> setters = new HashMap<>();
     final Map<String, Help<Unary>> unarys = new HashMap<>();
     final Map<String, Help<Binary>> binarys = new HashMap<>();
     final Map<String, Help<Unary>> builtinUnarys = new HashMap<>();
@@ -31,6 +32,24 @@ public class Context {
         if (r == null)
             throw new UndefException("variable '%s' undefined", name);
         return r;
+    }
+
+    public void variable(String name, Expression expression, String help) {
+        put(variables, name, new Help<>(expression, help));
+        put(unarys, name, null);
+        put(binarys, name, null);
+    }
+
+    public boolean isSetter(String name) {
+        return setters.containsKey(name);
+    }
+
+    public Unary setter(String name) {
+        return setters.get(name);
+    }
+
+    public void setter(String name, Unary unary) {
+        put(setters, name, unary);
     }
 
     public boolean isUnary(String name) {
@@ -86,12 +105,6 @@ public class Context {
             map.remove(key);
         else
             map.put(key, value);
-    }
-
-    public void variable(String name, Expression expression, String help) {
-        put(variables, name, new Help<>(expression, help));
-        put(unarys, name, null);
-        put(binarys, name, null);
     }
 
     public Undo variableTemp(String name, Expression expression, String help) {
@@ -257,6 +270,7 @@ public class Context {
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
         variable("PRECISION", c -> Decs.decs(Decs.MATH_CONTEXT.getPrecision()), "PRECISION N : set precision");
+        setter("PRECISION", (c, a) -> Decs.MATH_CONTEXT = new MathContext(a.intValue()));
         unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes from 2 to A");
         unary("radian", (c, a) -> Decs.radian(a), "radian (A) -> (D) : A / 180 * π");
         unary("reciprocal", (c, a) -> Decs.reciprocal(a), "reciprocal (A) -> (D) : 1 / A");
