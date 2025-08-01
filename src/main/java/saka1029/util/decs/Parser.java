@@ -266,8 +266,6 @@ public class Parser {
                 Binary and = context.builtinBinary(token.string).expression;
                 get();
                 Expression right = comp();
-                // e = c -> Decs.and(left.eval(c), right.eval(c));
-                // conditional AND
                 e = c -> {
                     BigDecimal[] l = left.eval(c);
                     return Decs.falses(l) ? l : and.apply(c, l, right.eval(c));
@@ -286,8 +284,6 @@ public class Parser {
                 Binary or = context.builtinBinary(token.string).expression;
                 get();
                 Expression right = cand();
-                // e = c -> Decs.or(left.eval(c), right.eval(c));
-                // conditional OR
                 e = c -> {
                     BigDecimal[] l = left.eval(c);
                     return Decs.trues(l) ? l : or.apply(c, l, right.eval(c));

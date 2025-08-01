@@ -295,6 +295,6 @@ public class Context {
     }
 
     void init(Parser parser) {
-        // parser.eval("isperfect n = + (divisor n remove n) == n");
+        parser.eval("isperfect n = + (divisor n remove n) == n");
     }
 }
