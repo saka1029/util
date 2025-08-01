@@ -90,7 +90,9 @@ public class Main {
             try {
                 lineReader.readLine(PROMPT);
                 BigDecimal[] result = parser.expression.eval(parser.parser.context);
-                if (result != Decs.NO_VALUE)
+                if (result == Decs.EXIT)
+                    break;
+                else if (result != Decs.NO_VALUE)
                     lineReader.printAbove(Decs.string(result));
             } catch (EndOfFileException e) {        // catch Ctrl-D
                 break;
@@ -129,7 +131,9 @@ public class Main {
                 writer.println(addPrompt(input.toString()));
                 input.setLength(0);
                 BigDecimal[] result = expression.eval(parser.context);
-                if (result != Decs.NO_VALUE)
+                if (result == Decs.EXIT)
+                    break;
+                else if (result != Decs.NO_VALUE)
                     writer.println(Decs.string(result));
             } catch (SyntaxException | UndefException | ValueException | ArithmeticException e) {
                 writer.println(e.getMessage());

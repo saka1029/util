@@ -20,21 +20,19 @@ public class Parser {
                     | 'exit'
                     | 'help' name
                     | 'solve' expression
-        expression   = binary { ',' binary }
-        binary       = cor { BOP cor }
+        expression   = cor { ',' cor }
         cor          = cand { '||' cand }
-        cand         = or { '&&' or }
-        or           = xor { '|' xor }
-        xor          = and { '^' and }
-        and          = comp { '&' comp }
-        comp         = add [ COP add ]
+        cand         = comp { '&&' comp }
+        comp         = binary [ COP binary ]
+        binary       = or { BOP or }
+        or           = and { ( '|' | '^^' ) and }
+        and          = add { '&' add }
         add          = mult { ( '+' | '-' ) mult }
         mult         = power { ( '*' | '/' | '%' ) power }
         power        = unary [ '^' power ]
         unary        = [ '@' ] UOP unary | primary
         primary      = '(' [ expression ] ')' | ID | NUMBER
-
-        COP          = '==' | '!=' | '>' | '>=' | '<' | '<='
+        COP          = '==' | '!=' | '>' | '>=' | '<' | '<=' | '~~' | '!~'
         UOP          = id // defined in context
         BOP          = id // defined in context
         ID           = ALPHABETIC { ALPHABETIC | DIGIT }
@@ -196,45 +194,14 @@ public class Parser {
         return e;
     }
 
-    Expression comp() {
-        Expression e = add();
-        switch (token.type) {
-            case EQ: case NE:
-            case LT: case LE:
-            case GT: case GE:
-            case NEARLY_EQ: case NEARLY_NE:
-                Binary op = context.builtinBinary(token.string).expression;
-                get();
-                Expression right = add();
-                return c -> op.apply(c, e.eval(c), right.eval(c));
-            default:
-                return e;
-        }
-    }
-
     Expression and() {
-        Expression e = comp();
+        Expression e = add();
         while (true) {
             Expression left = e;
             if (token.type == TokenType.AND) {
                 Binary op = context.builtinBinary(token.string).expression;
                 get();
-                Expression right = comp();
-                e = c -> op.apply(c, left.eval(c), right.eval(c));
-            } else
-                break;
-        }
-        return e;
-    }
-
-    Expression xor() {
-        Expression e = and();
-        while (true) {
-            Expression left = e;
-            if (token.type == TokenType.XOR) {
-                Binary op = context.builtinBinary(token.string).expression;
-                get();
-                Expression right = and();
+                Expression right = add();
                 e = c -> op.apply(c, left.eval(c), right.eval(c));
             } else
                 break;
@@ -243,28 +210,62 @@ public class Parser {
     }
 
     Expression or() {
-        Expression e = xor();
+        Expression e = and();
+        L: while (true) {
+            Expression left = e;
+            switch (token.type) {
+                case OR: case XOR:
+                    Binary op = context.builtinBinary(token.string).expression;
+                    get();
+                    Expression right = and();
+                    e = c -> op.apply(c, left.eval(c), right.eval(c));
+                    break;
+                default:
+                    break L;
+            }
+        }
+        return e;
+    }
+
+    Expression binary() {
+        Expression e = or();
         while (true) {
             Expression left = e;
-            if (token.type == TokenType.OR) {
-                Binary op = context.builtinBinary(token.string).expression;
-                get();
-                Expression right = xor();
-                e = c -> op.apply(c, left.eval(c), right.eval(c));
+            if (context.isBinary(token.string)) {
+                String name = token.string;
+                get();  // skip ID
+                Expression right = or();
+                e = c -> c.binary(name).expression.apply(c, left.eval(c), right.eval(c));
             } else
                 break;
         }
         return e;
     }
 
+    Expression comp() {
+        Expression e = binary();
+        switch (token.type) {
+            case EQ: case NE:
+            case LT: case LE:
+            case GT: case GE:
+            case NEARLY_EQ: case NEARLY_NE:
+                Binary op = context.builtinBinary(token.string).expression;
+                get();
+                Expression right = binary();
+                return c -> op.apply(c, e.eval(c), right.eval(c));
+            default:
+                return e;
+        }
+    }
+
     Expression cand() {
-        Expression e = or();
+        Expression e = comp();
         while (true) {
             Expression left = e;
             if (token.type == TokenType.CAND) {
                 Binary and = context.builtinBinary(token.string).expression;
                 get();
-                Expression right = or();
+                Expression right = comp();
                 // e = c -> Decs.and(left.eval(c), right.eval(c));
                 // conditional AND
                 e = c -> {
@@ -297,29 +298,14 @@ public class Parser {
         return e;
     }
 
-    Expression binary() {
-        Expression e = cor();
-        while (true) {
-            Expression left = e;
-            if (context.isBinary(token.string)) {
-                String name = token.string;
-                get();  // skip ID
-                Expression right = cor();
-                e = c -> c.binary(name).expression.apply(c, left.eval(c), right.eval(c));
-            } else
-                break;
-        }
-        return e;
-    }
-
     Expression expression() {
-        Expression e = binary();
+        Expression e = cor();
         while (true) {
             Expression left = e;
             if (token.type == TokenType.COMMA) {
                 Binary concat = context.builtinBinary(token.string).expression;
                 get();
-                Expression right = binary();
+                Expression right = cor();
                 e = c -> concat.apply(c, left.eval(c), right.eval(c));
             } else
                 break;
@@ -496,6 +482,8 @@ public class Parser {
             return solve();
         else if (eat(TokenType.HELP))
             return help();
+        else if (eat(TokenType.EXIT))
+            return c -> Decs.EXIT;
         else
             return expression();
     }
