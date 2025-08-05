@@ -579,6 +579,10 @@ public class Decs {
         return zip(left, right, (a, b) -> a.divide(b, MATH_CONTEXT));
     }
 
+    public static BigDecimal[] divideInt(BigDecimal[] left, BigDecimal[] right) {
+        return zip(left, right, (a, b) -> dec(a.toBigIntegerExact().divide(b.toBigIntegerExact())));
+    }
+
     public static BigDecimal[] mod(BigDecimal[] left, BigDecimal[] right) {
         return zip(left, right, (a, b) -> a.remainder(b, MATH_CONTEXT));
     }

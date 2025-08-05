@@ -244,6 +244,7 @@ public class Context {
         binary("decimal", (c, a, b) -> Decs.decimal(a, b), "(A) decimal (B) -> D : (A) in base (B) to decimal");
         unary("degree", (c, a) -> Decs.degree(a), "degree (A) -> (D) : 180A/π");
         unary("different", (c, a) -> Decs.different(a), "different (D) -> (B) : all different elements");
+        binary("div", (c, a, b) -> Decs.divideInt(a, b), "(M) div (N) -> (I) : divide as int");
         unary("divisor", (c, a) -> Decs.divisor(a), "divisor N -> (I) : divisors of N");
         variable("E", c -> Decs.e(), "E -> D : Euler's number");
         variable("EPSILON", c -> Decs.decs(Decs.EPSILON), "EPSILON -> D : epsilon");
