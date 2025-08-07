@@ -108,6 +108,8 @@ public class Main {
         }
     }
 
+    static Set<String> COMMANDS = Set.of("help", "syntax", "variable", "unary", "binary", "solve");
+
     public static void jline() throws IOException {
         // JLine terminal の準備
         Terminal terminal = TerminalBuilder.builder()
@@ -123,8 +125,7 @@ public class Main {
             .completer((reader, commandLine, candidates) -> {
                 // String buffer = commandLine.line().substring(0, commandLine.cursor());
                 String buffer = commandLine.words().get(commandLine.wordIndex());
-                Stream.of(
-                    Set.of("help", "syntax", "variable", "unary", "binary", "solve"),
+                Stream.of(COMMANDS,
                     parser.context.variables.keySet(),
                     parser.context.unarys.keySet(),
                     parser.context.binarys.keySet(),
