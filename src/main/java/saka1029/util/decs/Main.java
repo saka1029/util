@@ -7,7 +7,10 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.jline.reader.Candidate;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -15,6 +18,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.ParsedLine;
 import org.jline.reader.SyntaxError;
 import org.jline.reader.UserInterruptException;
+import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedString;
@@ -69,7 +73,7 @@ public class Main {
 
     static final AttributedString INTERRUPTED = color("Interrupted!", AttributedStyle.RED);
 
-    public static void jline() throws IOException {
+    public static void jlineOld() throws IOException {
         // JLine terminal の準備
         Terminal terminal = TerminalBuilder.builder()
             .system(true)
@@ -97,6 +101,56 @@ public class Main {
             } catch (EndOfFileException e) {        // catch Ctrl-D
                 break;
             } catch (SyntaxError | UndefException | ValueException | ArithmeticException e) {
+                lineReader.printAbove(color(e.getLocalizedMessage(), AttributedStyle.RED));
+            } catch (UserInterruptException e) {    // catch Ctrl-C
+                lineReader.printAbove(INTERRUPTED);
+            }
+        }
+    }
+
+    public static void jline() throws IOException {
+        // JLine terminal の準備
+        Terminal terminal = TerminalBuilder.builder()
+            .system(true)
+            .build();
+
+        // Parser の準備
+        Parser parser = Parser.create();
+        org.jline.reader.Parser jlineParser = new DefaultParser();
+        LineReader lineReader = LineReaderBuilder.builder()
+            .terminal(terminal)
+            .parser(jlineParser)
+            .completer((reader, commandLine, candidates) -> {
+                // String buffer = commandLine.line().substring(0, commandLine.cursor());
+                String buffer = commandLine.words().get(commandLine.wordIndex());
+                Stream.of(
+                    Set.of("help", "syntax", "variable", "unary", "binary", "solve"),
+                    parser.context.variables.keySet(),
+                    parser.context.unarys.keySet(),
+                    parser.context.binarys.keySet(),
+                    parser.context.builtinUnarys.keySet(),
+                    parser.context.builtinBinarys.keySet())
+                    .flatMap(s -> s.stream())
+                    .filter(word -> word.startsWith(buffer))
+                    .forEach(word -> candidates.add(new Candidate(word, word, null, null, null, null, true)));
+            })
+            .build();
+        lineReader.setVariable(LineReader.SECONDARY_PROMPT_PATTERN, SECONDARY_PROMPT);
+        parser.context.output = s -> lineReader.printAbove(color(s, AttributedStyle.GREEN));
+
+        // REPL
+        lineReader.printAbove("Ctrl-D to exit.  Ctrl-C to interrupt");
+        while (true) {
+            try {
+                String line = lineReader.readLine(PROMPT);
+                BigDecimal[] result = parser.eval(line);
+                if (result == Decs.EXIT)
+                    break;
+                else if (result != Decs.NO_VALUE)
+                    lineReader.printAbove(Decs.string(result));
+            } catch (EndOfFileException e) {        // catch Ctrl-D
+                break;
+            } catch (SyntaxException | EOFException | UndefException | ValueException | ArithmeticException e) {
                 lineReader.printAbove(color(e.getLocalizedMessage(), AttributedStyle.RED));
             } catch (UserInterruptException e) {    // catch Ctrl-C
                 lineReader.printAbove(INTERRUPTED);
