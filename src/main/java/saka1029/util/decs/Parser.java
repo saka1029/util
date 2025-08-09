@@ -497,6 +497,6 @@ public class Parser {
     }
 
     public BigDecimal[] eval(String input) {
-        return parse(input).eval(context);
+        return context.lastResult = parse(input).eval(context);
     }
 }

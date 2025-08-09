@@ -18,6 +18,7 @@ public class Context {
     final Map<String, Help<Unary>> builtinUnarys = new HashMap<>();
     final Map<String, Help<Binary>> builtinBinarys = new HashMap<>();
     public Consumer<String> output = System.out::println;
+    BigDecimal[] lastResult = Decs.NO_VALUE;
 
     public Context() {
         init();
@@ -233,6 +234,7 @@ public class Context {
         builtinBinary("&", (c, a, b) -> Decs.and(a, b), "(M) & (N) -> (I) : bit and");
         builtinBinary("&&", (c, a, b) -> Decs.cand(a, b), "(A) && (B) -> (D) : conditional and A B");
         builtinBinary(",", (c, a, b) -> Decs.concat(a, b), "(A) , (B) -> (D) : concat (A) and (B)");
+        variable("$", c -> c.lastResult, "$ -> (D) : last result");
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
         binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");
         binary("C", (c, a, b) -> Decs.combination(a, b), "(M) C (N) -> (I) : combination of M from n");
