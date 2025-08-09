@@ -159,6 +159,7 @@ public class Scanner {
             case '*' -> get(TokenType.MULT);
             case '/' -> get(TokenType.DIV);
             case '%' -> get(TokenType.MOD);
+            case '$' -> get(TokenType.ID);
             case '~' -> get() == '~' ? get(TokenType.NEARLY_EQ) : TokenType.BITNOT;
             case '^' -> get() == '^' ? get(TokenType.XOR) : TokenType.POW;
             case '=' -> get() == '=' ? get(TokenType.EQ) : TokenType.ASSIGN;
