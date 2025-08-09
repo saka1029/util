@@ -496,7 +496,11 @@ public class Parser {
         return new ExpressionWithVariables(result, variables);
     }
 
+    public BigDecimal[] eval(Expression e) {
+        return context.lastResult = e.eval(context);
+    }
+
     public BigDecimal[] eval(String input) {
-        return context.lastResult = parse(input).eval(context);
+        return eval(parse(input));
     }
 }

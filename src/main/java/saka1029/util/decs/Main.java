@@ -185,8 +185,7 @@ public class Main {
             try {
                 writer.println(addPrompt(input.toString()));
                 input.setLength(0);
-                BigDecimal[] result = expression.eval(parser.context);
-                parser.context.lastResult = result;
+                BigDecimal[] result = parser.eval(expression);
                 if (result == Decs.EXIT)
                     break;
                 else if (result != Decs.NO_VALUE)
