@@ -373,11 +373,6 @@ public class Parser {
         return c -> Decs.decs(c.solve(ev));
     }
 
-    Expression min() {
-        Expression ev = expression();
-        return c -> c.min(ev);
-    }
-
     Expression helpMain() {
         return c -> {
             c.output.accept("help syntax");
@@ -473,21 +468,25 @@ public class Parser {
     }
 
     Expression statement() {
-        if (is(TokenType.ID, TokenType.ASSIGN))
+        if (is(TokenType.ID, TokenType.ASSIGN)) {
             return defineVariable();
-        else if (is(TokenType.ID, TokenType.ID, TokenType.ASSIGN))
+        } else if (is(TokenType.ID, TokenType.ID, TokenType.ASSIGN)) {
             return defineUnary();
-        else if (is(TokenType.ID, TokenType.ID, TokenType.ID, TokenType.ASSIGN))
+        } else if (is(TokenType.ID, TokenType.ID, TokenType.ID, TokenType.ASSIGN)) {
             return defineBinary();
-        else if (eat(TokenType.SOLVE))
+        } else if (eat(TokenType.SOLVE)) {
             return solve();
-        else if (eat(TokenType.MIN))
-            return min();
-        else if (eat(TokenType.HELP))
+        } else if (eat(TokenType.MIN)) {
+            Expression e = expression();
+            return c -> c.min(e);
+        } else if (eat(TokenType.MAX)) {
+            Expression e = expression();
+            return c -> c.max(e);
+        } else if (eat(TokenType.HELP)) {
             return help();
-        else if (eat(TokenType.EXIT))
+        } else if (eat(TokenType.EXIT)) {
             return c -> Decs.EXIT;
-        else
+        } else
             return expression();
     }
 
