@@ -204,6 +204,75 @@ public class Context {
         return count[0];
     }
 
+    public BigDecimal[] min(Expression expression) {
+        return min(expression, m -> output.accept(
+            m.entrySet().stream()
+                .map(e -> e.getKey() + "=" + Decs.string(e.getValue()))
+                .collect(Collectors.joining(" "))));
+    }
+
+    public BigDecimal[] min(Expression expression, Consumer<Map<String, BigDecimal>> out) {
+        if (!(expression instanceof ExpressionWithVariables exvar))
+            throw new DecsException("Cannot min");
+        Context context = Context.this;
+        List<String> names = exvar.variables.stream()
+            .distinct().toList();
+        int length = names.size();
+        List<BigDecimal[]> values = names.stream()
+            .map(n -> context.variable(n).expression.eval(context))
+            .toList();
+        // backup
+        List<Help<Expression>> backup = names.stream()
+            .map(n -> context.variables.get(n))
+            .toList();
+        // int[] count = {0};
+        try {
+            return new Object() {
+                BigDecimal[] min = Decs.NO_VALUE;
+                Map<String, BigDecimal> map = new TreeMap<>();
+                void test() {
+                    BigDecimal[] result;
+                    try {
+                        result = exvar.expression.eval(context);
+                        if (min != Decs.NO_VALUE && Decs.trues(Decs.ge(result, min)))
+                            return;
+                    } catch (ValueException | ArithmeticException e) {
+                        return;
+                    }
+                    min = result;
+                    map.clear();
+                    for (String n : names)
+                        map.put(n, context.variable(n).expression.eval(context)[0]);
+                }
+
+                void solve(int index) {
+                    if (index >= length)
+                        test();
+                    else {
+                        String name = names.get(index);
+                        BigDecimal[] decs = values.get(index);
+                        for (int i = 0, max = decs.length; i < max; ++i) {
+                            BigDecimal[] value = Decs.decs(decs[i]);
+                            context.variable(name, c -> value, name);
+                            solve(index + 1);
+                        }
+                    }
+                }
+
+                BigDecimal[] solve() {
+                    solve(0);
+                    out.accept(map);
+                    return min;
+                }
+            }.solve();
+        } finally {
+            // restore
+            IntStream.range(0, length) 
+                .forEach(i -> context.variables
+                    .put(names.get(i), backup.get(i)));
+        }
+    }
+
     private void init() {
         builtinUnary("!", (c, a) -> Decs.not(a), "! (C) -> (B) : not B");
         unary("+", (c, a) -> Decs.add(a), "+ (A) -> D : +");

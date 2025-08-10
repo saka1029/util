@@ -373,6 +373,11 @@ public class Parser {
         return c -> Decs.decs(c.solve(ev));
     }
 
+    Expression min() {
+        Expression ev = expression();
+        return c -> c.min(ev);
+    }
+
     Expression helpMain() {
         return c -> {
             c.output.accept("help syntax");
@@ -476,6 +481,8 @@ public class Parser {
             return defineBinary();
         else if (eat(TokenType.SOLVE))
             return solve();
+        else if (eat(TokenType.MIN))
+            return min();
         else if (eat(TokenType.HELP))
             return help();
         else if (eat(TokenType.EXIT))

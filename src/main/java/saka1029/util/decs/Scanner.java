@@ -14,13 +14,14 @@ public class Scanner {
         ASSIGN,
         AND, XOR, OR, NOT, BITNOT,
         CAND, COR,
-        HELP, SOLVE, EXIT,
+        HELP, SOLVE, MIN, MAX, EXIT,
         NUM, ID,
         END,
     }
 
     static final Map<String, TokenType> RESERVED = Map.ofEntries(
         Map.entry("help", TokenType.HELP), Map.entry("solve", TokenType.SOLVE),
+        Map.entry("min", TokenType.MIN), Map.entry("max", TokenType.MAX),
         Map.entry("exit", TokenType.EXIT)
     );
 
