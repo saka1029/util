@@ -1,4 +1,4 @@
-package saka1029.util.formula;
+package saka1029.util.polynomial;
 
 /**
  * EBNF:
