@@ -397,6 +397,7 @@ public class Context {
         unary("iota0", (c, a) -> Decs.iota0(a), "iota0 N -> (I) : (0..N)");
         unary("iotan", (c, a) -> Decs.iotan(a), "iotan N -> (I) : (-N..N)");
         unary("iseven", (c, a) -> Decs.isEven(a), "iseven (N) -> (B) : is even (T:1, F:0)");
+        unary("isint", (c, a) -> Decs.isInt(a), "isint (N) -> (B) : is integer (T:1, F:0)");
         unary("isodd", (c, a) -> Decs.isOdd(a), "isodd (N) -> (B) : is odd (T:1, F:0)");
         // parser.eval("isperfect n = + (divisor n remove n) == n");
         // unary("isperfect", (c, a) -> Decs.eq(Decs.add(Decs.remove(Decs.divisor(a), a)), a),

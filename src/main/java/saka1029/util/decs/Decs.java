@@ -289,6 +289,10 @@ public class Decs {
         return map(decs, d -> dec(d.toBigIntegerExact().mod(BigInteger.TWO).signum() != 0));
     }
 
+    public static BigDecimal[] isInt(BigDecimal[] decs) {
+        return map(decs, d -> dec(d.stripTrailingZeros().scale() == 0));
+    }
+
     public static BigDecimal[] abs(BigDecimal[] decs) {
         return map(decs, BigDecimal::abs);
     }
