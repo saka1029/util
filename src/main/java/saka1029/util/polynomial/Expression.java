@@ -8,5 +8,5 @@ package saka1029.util.polynomial;
  * power      = primary [ '^' power ]
  * primary    = '(' expr ')' | id | num
  */
-public interface Expression {
+public interface Expression extends Primary {
 }

@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Factor implements Expression {
-    final int k;
-    final List<VariablePow> variables;
+    final int coeficient;
+    final List<Exponent> elements;
 
-    Factor(int k, VariablePow... variables) {
-        this.k = k;
-        this.variables = Stream.of(variables).toList();
+    Factor(int coeficient, Exponent... elements) {
+        this.coeficient = coeficient;
+        this.elements = Stream.of(elements).toList();
     }
 
 }
