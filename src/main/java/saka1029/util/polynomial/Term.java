@@ -9,4 +9,19 @@ public class Term implements Expression {
     Term(Factor... factors) {
         this.factors = Stream.of(factors).toList();
     }
+
+    public static Term of(Factor... factors) {
+        return new Term(factors);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Term t
+            && t.factors.equals(factors);
+    }
+
+    @Override
+    public int hashCode() {
+        return factors.hashCode();
+    }
 }

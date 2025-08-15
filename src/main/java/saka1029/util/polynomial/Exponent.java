@@ -1,12 +1,19 @@
 package saka1029.util.polynomial;
 
+import java.util.Objects;
+
 public class Exponent {
+    public static final Exponent CONSTANT = Exponent.of(Variable.of("_"), 0);
     final Primary primary;
     final int pow;
 
     Exponent(Primary primary, int pow) {
         this.primary = primary;
         this.pow = pow;
+    }
+
+    public static Exponent of(Primary primary, int pow) {
+        return new Exponent(primary, pow);
     }
 
     @Override
@@ -18,6 +25,6 @@ public class Exponent {
 
     @Override
     public int hashCode() {
-        return primary.hashCode() << 4 | pow;
+        return Objects.hash(primary, pow);
     }
 }
