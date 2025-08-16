@@ -1,9 +1,10 @@
 package saka1029.util.polynomial;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Factor implements Expression {
     final int coeficient;
@@ -11,7 +12,10 @@ public class Factor implements Expression {
 
     Factor(int coeficient, Exponent... elements) {
         this.coeficient = coeficient;
-        this.elements = Stream.of(elements).toList();
+        Map<Primary, Exponent> map = new HashMap<>();
+        for (Exponent e : elements)
+            map.compute(e.primary, (k, v) -> v == null ? e : Exponent.of(e.primary, v.pow + e.pow));
+        this.elements = map.values().stream().toList();
     }
 
     public static Factor of(int coeficient, Exponent... elements) {

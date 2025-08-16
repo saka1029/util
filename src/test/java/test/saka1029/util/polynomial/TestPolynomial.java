@@ -36,4 +36,10 @@ public class TestPolynomial {
         assertEquals("x^2-2*x*y+y^2", e.toString());
     }
 
+    @Test
+    public void testFactorToString() {
+        Expression e = term(factor(3, exp("x", 2), exp("x"), exp("x", 3)));
+        assertEquals("3*x^6", e.toString());
+    }
+
 }
