@@ -11,4 +11,8 @@ public class Variable implements Primary {
         return new Variable(name);
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }

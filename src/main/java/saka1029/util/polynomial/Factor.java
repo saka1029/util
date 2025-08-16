@@ -2,6 +2,7 @@ package saka1029.util.polynomial;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Factor implements Expression {
@@ -27,6 +28,13 @@ public class Factor implements Expression {
     @Override
     public int hashCode() {
         return Objects.hash(coeficient, elements);
+    }
+
+    @Override
+    public String toString() {
+        return coeficient + elements.stream()
+            .map(e -> e.toString())
+            .collect(Collectors.joining());
     }
 
 }

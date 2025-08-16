@@ -27,4 +27,12 @@ public class Exponent {
     public int hashCode() {
         return Objects.hash(primary, pow);
     }
+
+    @Override
+    public String toString() {
+        String p = primary.toString();
+        if (primary instanceof Expression)
+            p = "(" + p + ")";
+        return p + "^" + pow;
+    }
 }
