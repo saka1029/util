@@ -18,6 +18,10 @@ public class Factor implements Expression {
         return new Factor(coeficient, elements);
     }
 
+    public static Factor of(Exponent... elements) {
+        return of(1, elements);
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Factor f
@@ -32,9 +36,12 @@ public class Factor implements Expression {
 
     @Override
     public String toString() {
-        return coeficient + elements.stream()
+        String s = elements.stream()
             .map(e -> e.toString())
-            .collect(Collectors.joining());
+            .collect(Collectors.joining("*"));
+        if (coeficient != 1)
+            s = coeficient + "*" + s;
+        return s;
     }
 
 }

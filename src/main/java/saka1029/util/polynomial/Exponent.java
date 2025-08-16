@@ -16,6 +16,10 @@ public class Exponent {
         return new Exponent(primary, pow);
     }
 
+    public static Exponent of(Primary primary) {
+        return of(primary, 1);
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Exponent v
@@ -33,6 +37,8 @@ public class Exponent {
         String p = primary.toString();
         if (primary instanceof Expression)
             p = "(" + p + ")";
-        return p + "^" + pow;
+        if (pow != 1)
+            p += "^" + pow;
+        return p;
     }
 }

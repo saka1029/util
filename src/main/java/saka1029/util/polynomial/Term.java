@@ -28,8 +28,11 @@ public class Term implements Expression {
 
     @Override
     public String toString() {
-        return factors.stream()
+        String s = factors.stream()
             .map(f -> (f.coeficient >= 0 ? "+" : "") + f)
             .collect(Collectors.joining());
+        if (s.startsWith("+"))
+            s = s.substring(1);
+        return s;
     }
 }
