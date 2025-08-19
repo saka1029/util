@@ -1,14 +1,19 @@
 package saka1029.util.polynomial;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Term implements Expression {
-    final List<Factor> factors;
+    final Set<Factor> factors;
 
     Term(Factor... factors) {
-        this.factors = Stream.of(factors).toList();
+        Map<Set<Exponent>, Integer> map = new HashMap<>();
+        for (Factor f : factors)
+            map.compute(f.elements, (k, v) -> v == null ? f.coeficient : v + f.coeficient);
+        this.factors = Stream.of(factors).collect(Collectors.toSet());
     }
 
     public static Term of(Factor... factors) {

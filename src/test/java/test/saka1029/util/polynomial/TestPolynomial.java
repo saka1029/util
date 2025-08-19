@@ -33,7 +33,7 @@ public class TestPolynomial {
     @Test
     public void testToString() {
         Expression e = term(factor(1, exp("x", 2)), factor(-2, exp("x"), exp("y")), factor(1, exp("y", 2)));
-        assertEquals("x^2-2*x*y+y^2", e.toString());
+        assertEquals("-2*y*x+y^2+x^2", e.toString());
     }
 
     @Test

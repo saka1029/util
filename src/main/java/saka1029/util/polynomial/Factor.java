@@ -1,21 +1,21 @@
 package saka1029.util.polynomial;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Factor implements Expression {
     final int coeficient;
-    final List<Exponent> elements;
+    final Set<Exponent> elements;
 
     Factor(int coeficient, Exponent... elements) {
         this.coeficient = coeficient;
         Map<Primary, Exponent> map = new HashMap<>();
         for (Exponent e : elements)
             map.compute(e.primary, (k, v) -> v == null ? e : Exponent.of(e.primary, v.pow + e.pow));
-        this.elements = map.values().stream().toList();
+        this.elements = map.values().stream().collect(Collectors.toSet());
     }
 
     public static Factor of(int coeficient, Exponent... elements) {
