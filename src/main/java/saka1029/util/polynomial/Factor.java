@@ -8,39 +8,39 @@ import java.util.stream.Collectors;
 
 public class Factor implements Expression {
     final int coeficient;
-    final Set<Exponent> elements;
+    final Set<Exponent> exponents;
 
-    Factor(int coeficient, Exponent... elements) {
+    Factor(int coeficient, Exponent... exponents) {
         this.coeficient = coeficient;
         Map<Primary, Exponent> map = new HashMap<>();
-        for (Exponent e : elements)
+        for (Exponent e : exponents)
             map.compute(e.primary, (k, v) -> v == null ? e : Exponent.of(e.primary, v.pow + e.pow));
-        this.elements = map.values().stream().collect(Collectors.toSet());
+        this.exponents = map.values().stream().collect(Collectors.toSet());
     }
 
-    public static Factor of(int coeficient, Exponent... elements) {
-        return new Factor(coeficient, elements);
+    public static Factor of(int coeficient, Exponent... exponents) {
+        return new Factor(coeficient, exponents);
     }
 
-    public static Factor of(Exponent... elements) {
-        return of(1, elements);
+    public static Factor of(Exponent... exponents) {
+        return of(1, exponents);
     }
 
     @Override
     public boolean equals(Object obj) {
         return obj instanceof Factor f
             && f.coeficient == coeficient
-            && f.elements.equals(elements);
+            && f.exponents.equals(exponents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coeficient, elements);
+        return Objects.hash(coeficient, exponents);
     }
 
     @Override
     public String toString() {
-        String s = elements.stream()
+        String s = exponents.stream()
             .map(e -> e.toString())
             .collect(Collectors.joining("*"));
         if (coeficient != 1)

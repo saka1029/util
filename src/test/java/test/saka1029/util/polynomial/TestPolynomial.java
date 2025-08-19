@@ -30,6 +30,15 @@ public class TestPolynomial {
         return Exponent.of(Variable.of(name), pow);
     }
 
+    Exponent exp(Expression e, int pow) {
+        return Exponent.of(e, pow);
+    }
+
+    Exponent exp(Expression e) {
+        return exp(e, 1);
+    }
+
+
     @Test
     public void testToString() {
         Expression e = term(factor(1, exp("x", 2)), factor(-2, exp("x"), exp("y")), factor(1, exp("y", 2)));
@@ -40,6 +49,22 @@ public class TestPolynomial {
     public void testFactorToString() {
         Expression e = term(factor(3, exp("x", 2), exp("x"), exp("x", 3)));
         assertEquals("3*x^6", e.toString());
+    }
+
+    @Test
+    public void testTermToString() {
+        Term a = term(factor(exp(term(factor(exp("x")), factor(exp("y"))))));
+        Term b = term(factor(exp(term(factor(exp("x")), factor(exp("y"))))));
+        Term c = term(factor(exp(term(factor(exp("y")), factor(exp("x"))))));
+        assertEquals(a, b);
+        assertEquals(a, c);
+    }
+
+    @Test
+    public void testTermToString2() {
+        Expression e = term(factor(3, exp(term(factor(exp("x")), factor(exp("y"))))),
+                            factor(2, exp(term(factor(exp("y")), factor(exp("x"))))));
+        assertEquals("5*(y+x)", e.toString());
     }
 
 }

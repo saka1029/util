@@ -12,7 +12,7 @@ public class Term implements Expression {
     Term(Factor... factors) {
         Map<Set<Exponent>, Integer> map = new HashMap<>();
         for (Factor f : factors)
-            map.compute(f.elements, (k, v) -> v == null ? f.coeficient : v + f.coeficient);
+            map.compute(f.exponents, (k, v) -> v == null ? f.coeficient : v + f.coeficient);
         this.factors = Stream.of(factors).collect(Collectors.toSet());
     }
 

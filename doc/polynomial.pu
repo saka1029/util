@@ -1,0 +1,24 @@
+@startuml polynomial
+interface Expression
+interface Primary
+class Exponent {
+    int pow
+}
+class Variable {
+    String name
+}
+class Term {
+}
+class Factor {
+    int coefficient
+}
+
+Primary <|.. Exponent
+Primary <|-- Expression
+Primary <|.. Variable
+Expression <|.. Term
+Expression <|.. Factor
+
+Term --> "*" Factor : factors
+Factor --> "*" Exponent : exponents
+@enduml
