@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Term implements Expression {
     final Set<Factor> factors;
@@ -13,7 +12,9 @@ public class Term implements Expression {
         Map<Set<Exponent>, Integer> map = new HashMap<>();
         for (Factor f : factors)
             map.compute(f.exponents, (k, v) -> v == null ? f.coeficient : v + f.coeficient);
-        this.factors = Stream.of(factors).collect(Collectors.toSet());
+        this.factors = map.entrySet().stream()
+            .map(e -> Factor.of(e.getValue(), e.getKey()))
+            .collect(Collectors.toSet());
     }
 
     public static Term of(Factor... factors) {

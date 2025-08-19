@@ -22,6 +22,10 @@ public class Factor implements Expression {
         return new Factor(coeficient, exponents);
     }
 
+    static Factor of(int coeficient, Set<Exponent> exponents) {
+        return new Factor(coeficient, exponents.stream().toArray(Exponent[]::new));
+    }
+
     public static Factor of(Exponent... exponents) {
         return of(1, exponents);
     }
