@@ -10,6 +10,11 @@ public class Factor implements Expression {
     final int coeficient;
     final Set<Exponent> exponents;
 
+    Factor(int coeficient, Set<Exponent> exponents) {
+        this.coeficient = coeficient;
+        this.exponents = exponents;
+    }
+
     Factor(int coeficient, Exponent... exponents) {
         this.coeficient = coeficient;
         Map<Primary, Exponent> map = new HashMap<>();
@@ -23,7 +28,7 @@ public class Factor implements Expression {
     }
 
     static Factor of(int coeficient, Set<Exponent> exponents) {
-        return new Factor(coeficient, exponents.stream().toArray(Exponent[]::new));
+        return new Factor(coeficient, exponents);
     }
 
     public static Factor of(Exponent... exponents) {
