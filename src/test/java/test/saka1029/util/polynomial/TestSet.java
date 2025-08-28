@@ -2,15 +2,65 @@ package test.saka1029.util.polynomial;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import java.util.List;
+import java.util.Iterator;
+import java.util.NavigableSet;
 import java.util.Objects;
-import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Test;
 
 public class TestSet {
 
-    interface Expression {
+    /**
+     * Comparing order
+     * 1. Int
+     * 2. Var
+     * 3. Seq (op順, elementsの辞書的順序)
+     */
+    interface Expression extends Comparable<Expression> {
+        @Override
+        default int compareTo(Expression right) {
+            return compare(this, right);
+        }
+    }
+
+    static int compare(Seq left, Seq right) {
+        int c = Integer.compare(left.op.ordinal(), right.op.ordinal());
+        if (c != 0)
+            return c;
+        Iterator<Expression> li = left.elements.iterator(),
+            ri = right.elements.iterator();
+        while (li.hasNext() && ri.hasNext()) {
+            c = li.next().compareTo(ri.next());
+            if (c != 0)
+                return c;
+        }
+        return li.hasNext() ? 1
+            : ri.hasNext() ? -1
+            : 0;
+    }
+
+    static int compare(Expression left, Expression right) {
+        if (left instanceof Int li)
+            if (right instanceof Int ri)
+                return Integer.compare(li.value, ri.value);
+            else
+                return -1;
+        else if (left instanceof Var lv)
+            if (right instanceof Int)
+                return 1;
+            else if (right instanceof Var rv)
+                return lv.name.compareTo(rv.name);
+            else
+                return -1;
+        else if (left instanceof Seq ls)
+            if (right instanceof Seq rs)
+                return compare(ls, rs);
+            else
+                return 1;
+        else
+            throw new RuntimeException("compare");
     }
 
     static class Int implements Expression {
@@ -72,11 +122,11 @@ public class TestSet {
 
     static class Seq implements Expression {
         final Op op;
-        final List<Expression> elements;
+        final NavigableSet<Expression> elements;
 
         Seq(Op op, Expression... elements) {
             this.op = op;
-            this.elements = List.of(elements);
+            this.elements = Stream.of(elements).collect(Collectors.toCollection(TreeSet::new));
         }
         
         @Override
