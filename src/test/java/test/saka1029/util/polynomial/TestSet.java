@@ -2,6 +2,7 @@ package test.saka1029.util.polynomial;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -71,11 +72,11 @@ public class TestSet {
 
     static class Seq implements Expression {
         final Op op;
-        final Set<Expression> elements;
+        final List<Expression> elements;
 
         Seq(Op op, Expression... elements) {
             this.op = op;
-            this.elements = Set.of(elements);
+            this.elements = List.of(elements);
         }
         
         @Override
