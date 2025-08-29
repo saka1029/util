@@ -868,4 +868,32 @@ public class Decs {
             ? Arrays.copyOfRange(left, 0, Math.min(sub, length))
             : Arrays.copyOfRange(left, Math.max(length + sub, 0), length);
     }
+
+    public static BigDecimal[] polyAdd(BigDecimal[] left, BigDecimal[] right) {
+        int ll = left.length, rl = right.length;
+        if (ll < rl)
+            return polyAdd(right, left);
+        BigDecimal[] result = left.clone();
+        for (int i = 0, j = ll - rl; i < rl; ++i, ++j)
+            result[j] = result[j].add(right[i], MATH_CONTEXT);
+        return result;
+    }
+
+    public static BigDecimal[] polyMult(BigDecimal[] left, BigDecimal[] right) {
+        int ll = left.length, rl = right.length;
+        BigDecimal[] result = new BigDecimal[ll + rl -1];
+        Arrays.fill(result, ZERO);
+        for (int i = 0; i < ll; ++i)
+            for (int j = 0, l = i; j < rl; ++j, ++l)
+                result[l] = result[l].add(left[i].multiply(right[j], MATH_CONTEXT), MATH_CONTEXT);
+        return result;
+    }
+
+    public static BigDecimal[] polyPow(BigDecimal[] left, BigDecimal[] right) {
+        int pow = single(right).intValueExact();
+        BigDecimal[] result = new BigDecimal[] {ONE};
+        for (int i = 0; i < pow; ++i)
+            result = polyMult(result, left);
+        return result;
+    }
 }

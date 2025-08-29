@@ -522,4 +522,28 @@ public class TestDecs {
     public void testRemove() {
         assertDecsEquals(decs("1 3 5"), remove(decs("1 2 3 4 5 6"), decs("2 4 6")));
     }
+
+    @Test
+    public void testPolyAdd() {
+        assertDecsEquals(decs("2 8 2"), polyAdd(decs("2 3 4"), decs("5 -2")));
+        assertDecsEquals(decs("2 8 2"), polyAdd(decs("5 -2"), decs("2 3 4")));
+        assertDecsEquals(decs("5 5 5 5"), polyAdd(decs("1 2 3 4"), decs("4 3 2 1")));
+    }
+
+    @Test
+    public void testPolyMult() {
+        assertDecsEquals(decs("15 17 -4"), polyMult(decs("3 4"), decs("5 -1")));
+        assertDecsEquals(decs("1 3 3 1"), polyMult(polyMult(decs("1 1"), decs("1 1")), decs("1 1")));
+        assertDecsEquals(decs("1 3 3 1"), polyMult(decs("1 1"), polyMult(decs("1 1"), decs("1 1"))));
+        assertDecsEquals(decs("1 4 6 4 1"), polyMult(decs("1 1"), polyMult(decs("1 1"), polyMult(decs("1 1"), decs("1 1")))));
+    }
+
+    @Test
+    public void testPolyPow() {
+        assertDecsEquals(decs("1"), polyPow(decs("1 1"), decs("0")));
+        assertDecsEquals(decs("1 1"), polyPow(decs("1 1"), decs("1")));
+        assertDecsEquals(decs("1 2 1"), polyPow(decs("1 1"), decs("2")));
+        assertDecsEquals(decs("1 3 3 1"), polyPow(decs("1 1"), decs("3")));
+        assertDecsEquals(decs("1 4 6 4 1"), polyPow(decs("1 1"), decs("4")));
+    }
 }
