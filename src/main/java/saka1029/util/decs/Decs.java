@@ -906,16 +906,16 @@ public class Decs {
 
     public static BigDecimal[][] polyDivide(BigDecimal[] left, BigDecimal[] right) {
         int ll = left.length, rl = right.length;
+        if (ll < rl)
+            return new BigDecimal[][] {decs(0), left};
         int max = ll - rl + 1;
         BigDecimal[] amari = left.clone();
         BigDecimal[] syo = new BigDecimal[max];
         for (int i = 0; i < max; ++i) {
             BigDecimal d = amari[i].divide(right[0], MATH_CONTEXT);
             syo[i] = d;
-            for (int j = 0; j < rl; ++j) {
-                System.out.printf("i = %d j = %d i + j = %d%n", i, j, i + j);
+            for (int j = 0; j < rl; ++j)
                 amari[i + j] = amari[i + j].subtract(right[j].multiply(d, MATH_CONTEXT), MATH_CONTEXT);
-            }
         }
         return new BigDecimal[][] {syo, removeLeadingZeros(amari)};
     }

@@ -559,8 +559,14 @@ public class TestDecs {
         BigDecimal[][] result = polyDivide(decs("1 3 3 1"), decs("1 1"));
         assertDecsEquals(decs("1 2 1"), result[0]);
         assertDecsEquals(decs("0"), result[1]);
-        BigDecimal[][] result2 = polyDivide(decs("1 -4 1 6"), decs("1 -2"));
-        assertDecsEquals(decs("1 -2 -3"), result2[0]);
-        assertDecsEquals(decs("0"), result2[1]);
+        BigDecimal[][] result1 = polyDivide(decs("1 3 3 1"), decs("1 3 3 1"));
+        assertDecsEquals(decs("1"), result1[0]);
+        assertDecsEquals(decs("0"), result1[1]);
+        BigDecimal[][] result2 = polyDivide(decs("1 3 3 1"), decs("1 3 3 1 -2"));
+        assertDecsEquals(decs("0"), result2[0]);
+        assertDecsEquals(decs("1 3 3 1"), result2[1]);
+        BigDecimal[][] result3 = polyDivide(decs("1 -4 1 6"), decs("1 -2"));
+        assertDecsEquals(decs("1 -2 -3"), result3[0]);
+        assertDecsEquals(decs("0"), result3[1]);
     }
 }
