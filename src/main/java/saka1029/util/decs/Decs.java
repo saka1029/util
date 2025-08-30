@@ -899,10 +899,8 @@ public class Decs {
 
     public static BigDecimal[] removeLeadingZeros(BigDecimal[] decs) {
         int len = decs.length, p = 0;
-        while (p < len && decs[p].equals(ZERO))
+        while (p < len - 1 && decs[p].equals(ZERO))
             ++p;
-        if (p >= len)
-            --p;
         return Arrays.copyOfRange(decs, p, len);
     }
 
