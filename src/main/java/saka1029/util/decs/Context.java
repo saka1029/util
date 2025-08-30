@@ -414,9 +414,9 @@ public class Context {
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
         binary("polyadd", (c, a, b) -> Decs.polyAdd(a, b), "(A) polyadd (B) -> (D) : add (A) and (B) as polynomial");
-        binary("polymult", (c, a, b) -> Decs.polyMult(a, b), "(A) polymult (B) -> (D) : multiply (A) and (B) as polynomial");
         binary("polydiv", (c, a, b) -> Decs.polyDiv(a, b), "(A) polydiv (B) -> (D) : divide (A) by (B) as polynomial");
         binary("polymod", (c, a, b) -> Decs.polyMod(a, b), "(A) polymod (B) -> (D) : mod (A) by (B) as polynomial");
+        binary("polymult", (c, a, b) -> Decs.polyMult(a, b), "(A) polymult (B) -> (D) : multiply (A) and (B) as polynomial");
         binary("polypow", (c, a, b) -> Decs.polyPow(a, b), "(A) polypow (B) -> (D) : power (A) by (B) as polynomial");
         variable("PRECISION", c -> Decs.decs(Decs.MATH_CONTEXT.getPrecision()), "PRECISION N : set precision");
         setter("PRECISION", (c, a) -> Decs.precision(a));

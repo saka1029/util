@@ -568,5 +568,8 @@ public class TestDecs {
         BigDecimal[][] result3 = polyDivide(decs("1 -4 1 6"), decs("1 -2"));
         assertDecsEquals(decs("1 -2 -3"), result3[0]);
         assertDecsEquals(decs("0"), result3[1]);
+        BigDecimal[][] result4 = polyDivide(decs("1 0 0"), decs("2 -1"));
+        assertDecsEquals(decs("0.5 0.25"), result4[0]);
+        assertDecsEquals(decs("0.25"), result4[1]);
     }
 }
