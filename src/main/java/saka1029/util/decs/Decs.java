@@ -904,6 +904,13 @@ public class Decs {
         return Arrays.copyOfRange(decs, p, len);
     }
 
+    /**
+     * 係数は最高次のものから降順に指定します。
+     * ex) x^3 - 2 -> (1, 0, 0, -2)
+     * @param left 割られる1変数多項式の係数を指定します。
+     * @param right 割る1変数多項式の係数を指定します。
+     * @return 商と余りを返します。(new BigDecimal[][] {商, 余り})
+     */
     public static BigDecimal[][] polyDivide(BigDecimal[] left, BigDecimal[] right) {
         int ll = left.length, rl = right.length;
         if (ll < rl)
