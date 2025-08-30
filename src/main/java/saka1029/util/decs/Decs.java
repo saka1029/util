@@ -896,4 +896,29 @@ public class Decs {
             result = polyMult(result, left);
         return result;
     }
+
+    public static BigDecimal[] removeLeadingZeros(BigDecimal[] decs) {
+        int len = decs.length, p = 0;
+        while (p < len && decs[p].equals(ZERO))
+            ++p;
+        if (p >= len)
+            --p;
+        return Arrays.copyOfRange(decs, p, len);
+    }
+
+    public static BigDecimal[][] polyDivide(BigDecimal[] left, BigDecimal[] right) {
+        int ll = left.length, rl = right.length;
+        int max = ll - rl + 1;
+        BigDecimal[] amari = left.clone();
+        BigDecimal[] syo = new BigDecimal[max];
+        for (int i = 0; i < max; ++i) {
+            BigDecimal d = amari[i].divide(right[0], MATH_CONTEXT);
+            syo[i] = d;
+            for (int j = 0; j < rl; ++j) {
+                System.out.printf("i = %d j = %d i + j = %d%n", i, j, i + j);
+                amari[i + j] = amari[i + j].subtract(right[j].multiply(d, MATH_CONTEXT), MATH_CONTEXT);
+            }
+        }
+        return new BigDecimal[][] {syo, removeLeadingZeros(amari)};
+    }
 }

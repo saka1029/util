@@ -546,4 +546,21 @@ public class TestDecs {
         assertDecsEquals(decs("1 3 3 1"), polyPow(decs("1 1"), decs("3")));
         assertDecsEquals(decs("1 4 6 4 1"), polyPow(decs("1 1"), decs("4")));
     }
+
+    @Test
+    public void testRemoveLeadingZeros() {
+        assertDecsEquals(decs("1 2"), removeLeadingZeros(decs("1 2")));
+        assertDecsEquals(decs("1 2"), removeLeadingZeros(decs("0 0 1 2")));
+        assertDecsEquals(decs("0"), removeLeadingZeros(decs("0 0 0")));
+    }
+
+    @Test
+    public void testPolyDivide() {
+        BigDecimal[][] result = polyDivide(decs("1 3 3 1"), decs("1 1"));
+        assertDecsEquals(decs("1 2 1"), result[0]);
+        assertDecsEquals(decs("0"), result[1]);
+        BigDecimal[][] result2 = polyDivide(decs("1 -4 1 6"), decs("1 -2"));
+        assertDecsEquals(decs("1 -2 -3"), result2[0]);
+        assertDecsEquals(decs("0"), result2[1]);
+    }
 }
