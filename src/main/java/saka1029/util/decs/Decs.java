@@ -919,4 +919,12 @@ public class Decs {
         }
         return new BigDecimal[][] {syo, removeLeadingZeros(amari)};
     }
+
+    public static BigDecimal[] polyDiv(BigDecimal[] left, BigDecimal[] right) {
+        return polyDivide(left, right)[0];
+    }
+
+    public static BigDecimal[] polyMod(BigDecimal[] left, BigDecimal[] right) {
+        return polyDivide(left, right)[1];
+    }
 }
