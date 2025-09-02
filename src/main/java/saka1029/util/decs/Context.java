@@ -414,7 +414,11 @@ public class Context {
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
         binary("polyadd", (c, a, b) -> Decs.polyAdd(a, b), "(A) polyadd (B) -> (D) : add (A) and (B) as polynomial");
-        binary("polydiv", (c, a, b) -> Decs.polyDiv(a, b), "(A) polydiv (B) -> (D) : divide (A) by (B) as polynomial");
+        binary("polydiv", (c, a, b) -> {
+            BigDecimal[][] dr = Decs.polyDivide(a, b);
+            c.output.accept("remainder = " + Decs.string(dr[1])); // 剰余を中間表示する。
+            return dr[0];
+        }, "(A) polydiv (B) -> (D) : divide (A) by (B) as polynomial");
         binary("polymod", (c, a, b) -> Decs.polyMod(a, b), "(A) polymod (B) -> (D) : mod (A) by (B) as polynomial");
         binary("polymult", (c, a, b) -> Decs.polyMult(a, b), "(A) polymult (B) -> (D) : multiply (A) and (B) as polynomial");
         binary("polypow", (c, a, b) -> Decs.polyPow(a, b), "(A) polypow (B) -> (D) : power (A) by (B) as polynomial");
