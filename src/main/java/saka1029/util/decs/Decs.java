@@ -869,6 +869,22 @@ public class Decs {
             : Arrays.copyOfRange(left, Math.max(length + sub, 0), length);
     }
 
+    static BigDecimal poly(BigDecimal[] coef, BigDecimal value) {
+        int ll = coef.length;
+        BigDecimal result = ZERO;
+        for (int i = 0; i < ll; ++i)
+            result = result.multiply(value, MATH_CONTEXT).add(coef[i], MATH_CONTEXT);
+        return result;
+    }
+
+    public static BigDecimal[] poly(BigDecimal[] left, BigDecimal[] right) {
+        int rl = right.length;
+        BigDecimal[] result = new BigDecimal[rl];
+        for (int i = 0; i < rl; ++i)
+            result[i] = poly(left, right[i]);
+        return result;
+    }
+    
     public static BigDecimal[] polyAdd(BigDecimal[] left, BigDecimal[] right) {
         int ll = left.length, rl = right.length;
         if (ll < rl)

@@ -413,6 +413,7 @@ public class Context {
         binary("P", (c, a, b) -> Decs.permutation(a, b), "(M) P (N) -> (I) : permutation of M from n");
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
+        binary("poly", (c, a, b) -> Decs.poly(a, b), "(A) poly (B) -> (D) : polynomial values");
         binary("polyadd", (c, a, b) -> Decs.polyAdd(a, b), "(A) polyadd (B) -> (D) : add (A) and (B) as polynomial");
         binary("polydiv", (c, a, b) -> {
             BigDecimal[][] dr = Decs.polyDivide(a, b);
@@ -445,6 +446,6 @@ public class Context {
 
     void init(Parser parser) {
         parser.eval("isperfect n = + (divisor n remove n) == n");
-        parser.eval("c poly x = + (c * x ^ (reverse iota0 (count c - 1)))");
+        // parser.eval("c poly x = + (c * x ^ (reverse iota0 (count c - 1)))");
     }
 }
