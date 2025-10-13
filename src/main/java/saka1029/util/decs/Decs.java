@@ -364,6 +364,18 @@ public class Decs {
         return map(decs, a -> BigDecimalMath.tan(a, MATH_CONTEXT));
     }
 
+    public static BigDecimal[] asin(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.asin(a, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] acos(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.acos(a, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] atan(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.atan(a, MATH_CONTEXT));
+    }
+
     public static BigDecimal[] ln(BigDecimal[] decs) {
         return map(decs, a -> BigDecimalMath.log(a, MATH_CONTEXT));
     }

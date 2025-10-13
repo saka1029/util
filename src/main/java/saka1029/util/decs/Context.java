@@ -372,6 +372,9 @@ public class Context {
         builtinBinary(",", (c, a, b) -> Decs.concat(a, b), "(A) , (B) -> (D) : concat (A) and (B)");
         variable("$", c -> c.lastResult, "$ -> (D) : last result");
         unary("abs", (c, a) -> Decs.abs(a), "abs (A) -> (D) : |A|");
+        unary("acos", (c, a) -> Decs.acos(a), "acos (A) -> (D) : arc cos A");
+        unary("asin", (c, a) -> Decs.asin(a), "asin (A) -> (D) : arc sin A");
+        unary("atan", (c, a) -> Decs.atan(a), "atan (A) -> (D) : arc tan A");
         binary("base", (c, a, b) -> Decs.base(a, b), "A base (B) -> (D) : A to base B");
         binary("C", (c, a, b) -> Decs.combination(a, b), "(M) C (N) -> (I) : combination of M from n");
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
