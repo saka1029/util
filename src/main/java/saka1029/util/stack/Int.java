@@ -6,7 +6,7 @@ public class Int extends Value {
     public static final Int ZERO = new Int(0);
     public static final Int ONE = new Int(1);
 
-    private Int(int value) {
+    Int(int value) {
         this.value = value;
     }
 

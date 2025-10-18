@@ -11,8 +11,8 @@ public class TestContext {
     public void testContextStart () {
         Context context = new Context();
         List<Executable> instructions = List.of(
-            Int.of(1),
-            Int.of(2),
+            Instruction.of(1),
+            Instruction.of(2),
             Instruction.ADD
         );
         context.run(instructions);
