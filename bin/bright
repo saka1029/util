@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ConnectedDisp=$(xrandr | grep " connected" | cut -f 1 -d " ")
+xrandr --output ${ConnectedDisp} --brightness "$@"
