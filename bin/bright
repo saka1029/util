@@ -1,4 +1,8 @@
 #!/bin/bash
 
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 NUMBER"
+    exit 1
+fi
 ConnectedDisp=$(xrandr | grep " connected" | cut -f 1 -d " ")
 xrandr --output ${ConnectedDisp} --brightness "$@"
