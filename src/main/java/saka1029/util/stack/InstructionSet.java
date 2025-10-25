@@ -32,5 +32,7 @@ public class InstructionSet {
     public static final Instruction MULT = c -> c.push(value(i(c.pop()) * i(c.pop())));
     public static final Instruction DIV = c -> c.push(value(i(c.pop()) / i(c.pop())));
     public static final Instruction MOD = c -> c.push(value(i(c.pop()) % i(c.pop())));
+    public static final Instruction EQ = c -> c.push(value(c.pop().equals(c.pop())));
+    public static final Instruction NE = c -> c.push(value(!c.pop().equals(c.pop())));
 
 }

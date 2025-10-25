@@ -15,6 +15,16 @@ public class Bool implements ValueInstruction {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return this == obj;
+    }
+
+    @Override
+    public int hashCode() {
+        return Boolean.hashCode(value);
+    }
+
+    @Override
     public String toString() {
         return Boolean.toString(value);
     }
