@@ -30,8 +30,8 @@ public class InstructionSet {
     public static final Instruction ADD = c -> c.push(value(i(c.pop()) + i(c.pop())));
     public static final Instruction SUB = c -> c.push(value(-i(c.pop()) + i(c.pop())));
     public static final Instruction MULT = c -> c.push(value(i(c.pop()) * i(c.pop())));
-    public static final Instruction DIV = c -> c.push(value(i(c.pop()) / i(c.pop())));
-    public static final Instruction MOD = c -> c.push(value(i(c.pop()) % i(c.pop())));
+    public static final Instruction DIV = c -> { Value r = c.pop(); c.push(value(i(c.pop()) / i(r))); };
+    public static final Instruction MOD = c -> { Value r = c.pop(); c.push(value(i(c.pop()) % i(r))); };
     public static final Instruction EQ = c -> c.push(value(c.pop().equals(c.pop())));
     public static final Instruction NE = c -> c.push(value(!c.pop().equals(c.pop())));
 
