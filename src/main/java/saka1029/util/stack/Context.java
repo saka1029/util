@@ -5,7 +5,8 @@ import java.util.LinkedList;
 public class Context {
 
     LinkedList<Value> stack = new LinkedList<>();
-    LinkedList<Instruction> instructions = new LinkedList<>();
+    public int pc = 0;
+    LinkedList<Instruction> codes = new LinkedList<>();
 
     public int stackSize() {
         return stack.size();
@@ -19,13 +20,28 @@ public class Context {
         return stack.removeLast();
     }
 
-    public void run(Instruction... instructions) {
+    public void addCode(Instruction... instructions) {
         for (Instruction inst : instructions)
-            this.instructions.addLast(inst);
+            this.codes.addLast(inst);
+    }
+
+    public void setCode(int index, Instruction instruction) {
+        this.codes.set(index, instruction);
+    }
+
+    public boolean step() {
+        if (pc >= codes.size())
+            return false;
+        Instruction fetch = codes.get(pc++);
+        if (fetch == InstructionSet.HALT)
+            return false;
+        fetch.execute(this);
+        return true;
     }
 
     public void start() {
-        for (Instruction inst : instructions)
-            inst.execute(this);
+        pc = 0;
+        while (step())
+            ;
     }   
 }
