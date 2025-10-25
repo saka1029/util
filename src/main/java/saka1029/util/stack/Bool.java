@@ -1,6 +1,6 @@
 package saka1029.util.stack;
 
-public class Bool extends Value {
+public class Bool implements ValueInstruction {
 
     public final boolean value;
     public static final Bool TRUE = new Bool(true);

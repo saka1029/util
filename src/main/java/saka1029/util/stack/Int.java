@@ -1,6 +1,6 @@
 package saka1029.util.stack;
 
-public class Int extends Value {
+public class Int implements ValueInstruction {
 
     public final int value;
     public static final Int ZERO = new Int(0);

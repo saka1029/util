@@ -1,36 +1,31 @@
 package saka1029.util.stack;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Context {
 
-    LinkedList<Executable> stack = new LinkedList<>();
-    LinkedList<Iterator<Executable>> instructions = new LinkedList<>();
+    LinkedList<Value> stack = new LinkedList<>();
+    LinkedList<Instruction> instructions = new LinkedList<>();
 
     public int stackSize() {
         return stack.size();
     }
 
-    public void push(Executable executable) {
-        stack.addLast(executable);
+    public void push(Value value) {
+        stack.addLast(value);
     }
 
-    public Executable pop() {
+    public Value pop() {
         return stack.removeLast();
     }
 
-    public void run(Iterable<Executable> instructions) {
-        this.instructions.addLast(instructions.iterator());
+    public void run(Instruction... instructions) {
+        for (Instruction inst : instructions)
+            this.instructions.addLast(inst);
     }
 
     public void start() {
-        while (!instructions.isEmpty()) {
-            Iterator<Executable> it = instructions.getLast();
-            if (it.hasNext())
-                it.next().execute(this);
-            else
-                instructions.removeLast();
-        }
+        for (Instruction inst : instructions)
+            inst.execute(this);
     }   
 }
