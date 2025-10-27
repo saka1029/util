@@ -45,8 +45,8 @@ public class Context {
         addCode(InstructionSet.NOP);       
         addCode(orElse);
         int next = codes.size();
-        setCode(afterCond, InstructionSet.branchFalse(afterThen + 1));
-        setCode(afterThen, InstructionSet.branch(next));
+        setCode(afterCond, InstructionSet.branchFalse(afterThen + 1 - (afterCond + 1)));
+        setCode(afterThen, InstructionSet.branch(next - (afterThen + 1)));
     }
 
     public boolean step() {

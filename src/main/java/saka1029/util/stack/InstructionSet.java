@@ -4,11 +4,11 @@ public class InstructionSet {
 
     public static Instruction load(int value) { return Int.of(value); }
     public static Instruction load(boolean value) { return Bool.of(value); }
-    public static Instruction branch(int pc) { return c -> c.pc = pc; }
+    public static Instruction branch(int pc) { return c -> c.pc += pc; }
     public static Instruction branchFalse(int pc) {
         return c -> {
             if (!b(c.pop()))
-                c.pc = pc;
+                c.pc += pc;
         };
     }
     public static <T extends Value> T cast(Value value, Class<T> clazz) {
