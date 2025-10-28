@@ -7,7 +7,7 @@ public class Context {
 
     LinkedList<Value> stack = new LinkedList<>();
     public int pc = 0;
-    LinkedList<Instruction> codes = new LinkedList<>();
+    public LinkedList<Instruction> codes = new LinkedList<>();
 
     public int stackSize() {
         return stack.size();

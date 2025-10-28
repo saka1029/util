@@ -65,6 +65,7 @@ public class TestContext {
         Context context = new Context();
         context.addIf(List.of(load(false)), List.of(load(1)), List.of(load(2)));
         context.addCode(HALT);
+        System.out.println(context.codes);
         context.start();
         if (context.stackSize() != 1)
             throw new RuntimeException("Stack size is not 1: " + context.stackSize());
