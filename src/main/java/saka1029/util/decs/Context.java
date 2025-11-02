@@ -353,8 +353,8 @@ public class Context {
         builtinBinary("%", (c, a, b) -> Decs.mod(a, b), "(A) % (B) -> (D) : modulo A by B");
         unary("^", (c, a) -> Decs.pow(a), "^ (A) -> D : power");
         unary("^^", (c, a) -> Decs.xor(a), "^^ (M) -> (I) : xor");
-        builtinBinary("^^", (c, a, b) -> Decs.xor(a, b), "(M) ^ (N) -> (I) : xor");
-        builtinBinary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A ^ B");
+        builtinBinary("^^", (c, a, b) -> Decs.xor(a, b), "(M) ^^ (N) -> (I) : M xor N");
+        builtinBinary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A power of B");
         unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or");
         builtinBinary("|", (c, a, b) -> Decs.or(a, b), "(A) | (B) -> (D) : bit or A B");
         builtinBinary("||", (c, a, b) -> Decs.cor(a, b), "(A) || (B) -> (D) : conditional or A B");
