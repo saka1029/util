@@ -1,0 +1,11 @@
+#!/bin/sh
+
+message="$1"
+if [ -z "$message" ]; then
+    message=".."
+fi
+echo message: $message
+git add .
+git commit -m $message
+git push
+    
