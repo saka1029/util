@@ -328,7 +328,7 @@ public class Decs {
     }
 
     public static BigDecimal[] cuberoot(BigDecimal[] decs) {
-        return map(decs, a -> BigDecimalMath.pow(a, a.divide(THREE, MATH_CONTEXT), MATH_CONTEXT));
+        return map(decs, a -> BigDecimalMath.pow(a, ONE.divide(THREE, MATH_CONTEXT), MATH_CONTEXT));
     }
 
     public static BigDecimal factorial(BigDecimal dec) {
