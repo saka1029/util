@@ -37,6 +37,7 @@ public class Decs {
     public static final BigDecimal ZERO = BigDecimal.ZERO;
     public static final BigDecimal ONE = BigDecimal.ONE;
     public static final BigDecimal TWO = BigDecimal.valueOf(2);
+    public static final BigDecimal THREE = BigDecimal.valueOf(3);
     public static final int PRECISION = 30;
     public static MathContext MATH_CONTEXT = new MathContext(PRECISION);
     public static BigDecimal EPSILON = new BigDecimal("5e-6");
@@ -324,6 +325,10 @@ public class Decs {
 
     public static BigDecimal[] cube(BigDecimal[] decs) {
         return map(decs, a -> BigDecimalMath.pow(a, 3L, MATH_CONTEXT));
+    }
+
+    public static BigDecimal[] cuberoot(BigDecimal[] decs) {
+        return map(decs, a -> BigDecimalMath.pow(a, a.divide(THREE, MATH_CONTEXT), MATH_CONTEXT));
     }
 
     public static BigDecimal factorial(BigDecimal dec) {

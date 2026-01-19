@@ -380,6 +380,7 @@ public class Context {
         unary("cos", (c, a) -> Decs.cos(a), "cos (A) -> (D) : cos A");
         unary("count", (c, a) -> Decs.length(a), "count (D) -> (D) : number of elements in (D)");
         unary("cube", (c, a) -> Decs.cube(a), "cube (A) -> (D) : A³");
+        unary("cuberoot", (c, a) -> Decs.cuberoot(a), "cuberoot (A) -> (D) : ³√A");
         unary("date", (c, a) -> Decs.date(a), "date (M) -> (I) : epoch day to YYYYMMDD");
         unary("days", (c, a) -> Decs.days(a), "days (N) -> (I) : YYYYMMDD to epoch day");
         binary("decimal", (c, a, b) -> Decs.decimal(a, b), "(A) decimal (B) -> D : (A) in base (B) to decimal");
