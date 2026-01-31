@@ -79,7 +79,7 @@ public class Csp {
                         Constraint constraint = new Constraint();
                         constraint.predicate = f[1];
                         problem.constraints.add(constraint);
-                        for (String e : f[1].split("(?i)[^a-z0-9]+")) {
+                        for (String e : f[1].split("(?i)[^a-z0-9_\\p{IsHan}\\p{IsHiragana}\\p{IsKatakana}]+")) {
                             Variable variable = problem.variables.get(e);
                             if (variable != null) {
                                 constraint.variables.add(variable);
