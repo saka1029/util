@@ -48,7 +48,20 @@ public class Parser {
     }
 
     static int variable(int ch) {
-        return false;
+        if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z')
+            return ch;
+        else if (ch >= 'ａ' && ch <= 'ｚ' || ch >= 'Ａ' && ch <= 'Ｚ')
+            return ch;
+        else if (ch >= '0' && ch <= '9')
+            return ch - '0';
+        else if (ch >= '０' && ch <= '９')
+            return ch - '０';
+        else if (ch >= 'ｧ' && ch <= 'ﾝ')
+            return ch;
+        else if (ch > 255)  // 全角ひらがな、全角カタカナ、漢字など（大雑把な判定）
+            return ch;
+        else
+            return -1;
     }
 
     String primary() {
