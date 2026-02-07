@@ -47,12 +47,30 @@ public class Parser {
         return false;
     }
 
+    static int variable(int ch) {
+        return false;
+    }
+
+    String primary() {
+        if (eat('(')) {
+            String e = expression();
+            if (!eat(')'))
+                throw new RuntimeException("')' expected");
+            return "(%s)".formatted(e);
+        } else
+            return null;
+    }
+
     String compExpr() {
-        return null;
+        StringBuilder sb = new StringBuilder(primary());
+        return sb.toString();
     }
 
     String andExpr() {
-        return compExpr();
+        StringBuilder sb = new StringBuilder(compExpr());
+        while (eat('&'))
+            sb.append(" && ").append(compExpr());
+        return sb.toString();
     }
 
     String orExpr() {
