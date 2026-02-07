@@ -20,7 +20,7 @@ public class Parser {
 
     final int[] input;
     int index;
-    int ch;
+    int cp;
     final Map<Integer, Boolean> vars = new HashMap<>();
     
     Parser(String input) {
@@ -30,36 +30,36 @@ public class Parser {
     }
 
     int get() {
-        return ch = index >= input.length ? -1 : input[index++];
+        return cp = index >= input.length ? -1 : input[index++];
     }
 
     void spaces() {
-        while (Character.isWhitespace(ch))
+        while (Character.isWhitespace(cp))
             get();
     }
 
     boolean eat(int expected) {
         spaces();
-        if (ch == expected) {
+        if (cp == expected) {
             get();
             return true;
         }
         return false;
     }
 
-    static int variable(int ch) {
-        if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z')
-            return ch;
-        else if (ch >= 'ａ' && ch <= 'ｚ' || ch >= 'Ａ' && ch <= 'Ｚ')
-            return ch;
-        else if (ch >= '0' && ch <= '9')
-            return ch - '0';
-        else if (ch >= '０' && ch <= '９')
-            return ch - '０';
-        else if (ch >= 'ｧ' && ch <= 'ﾝ')
-            return ch;
-        else if (ch > 255)  // 全角ひらがな、全角カタカナ、漢字など（大雑把な判定）
-            return ch;
+    static int variable(int cp) {
+        if (cp >= 'a' && cp <= 'z' || cp >= 'A' && cp <= 'Z')
+            return cp;
+        else if (cp >= 'ａ' && cp <= 'ｚ' || cp >= 'Ａ' && cp <= 'Ｚ')
+            return cp;
+        else if (cp >= '0' && cp <= '9')
+            return cp - '0';
+        else if (cp >= '０' && cp <= '９')
+            return cp - '０';
+        else if (cp >= 'ｧ' && cp <= 'ﾝ')
+            return cp;
+        else if (cp > 255)  // 全角ひらがな、全角カタカナ、漢字など（大雑把な判定）
+            return cp;
         else
             return -1;
     }
