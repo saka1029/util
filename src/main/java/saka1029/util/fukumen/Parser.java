@@ -38,6 +38,15 @@ public class Parser {
             get();
     }
 
+    boolean eat(int expected) {
+        spaces();
+        if (ch == expected) {
+            get();
+            return true;
+        }
+        return false;
+    }
+
     String compExpr() {
         return null;
     }
@@ -47,7 +56,10 @@ public class Parser {
     }
 
     String orExpr() {
-        return andExpr();
+        StringBuilder sb = new StringBuilder(andExpr());
+        while (eat('|'))
+            sb.append(" || ").append(andExpr());
+        return sb.toString();
     }
 
     String expression() {
