@@ -2,6 +2,7 @@ package saka1029.util.csp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import saka1029.util.language.JavaCompilerInMemory;
+import saka1029.util.language.JavaCompilerInMemory.CompileError;
 
 public class Problem {
 
@@ -103,7 +107,7 @@ public class Problem {
             Set<Constraint> remainConstraints = new HashSet<>(constraints);
             List<Variable> generatedVariables = new ArrayList<>();
             for (Variable v : variables.values()) {
-                w.printf("        for (int %1$s = %2$d; %1$s <= %3$d; ++%1$s)%n", v.name, v.min, v.max);
+                w.printf("        for (int %1$s = %2$s; %1$s <= %3$s; ++%1$s)%n", v.name, v.min, v.max);
                 generatedVariables.add(v);
                 List<Constraint> generatedConstraints = remainConstraints.stream()
                     .filter(c -> generatedVariables.containsAll(c.variables)).toList();
@@ -167,5 +171,17 @@ public class Problem {
         for (String line : anyCodes)
             sb.append("    ").append(line).append(NL);
         return sb.toString();
+    }
+
+    static final List<String> OPTIONS = List.of("-g:none");
+
+    public void solve() throws
+            IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException, SecurityException,
+            ClassNotFoundException, CompileError {
+        String generatedSource = generate();
+        System.out.println(generatedSource);
+        JavaCompilerInMemory.compile(className, generatedSource, OPTIONS)
+            .getMethod("main", String[].class).invoke(null, new Object[] {new String[0]});
     }
 }
