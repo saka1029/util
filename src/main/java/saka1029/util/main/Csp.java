@@ -57,7 +57,6 @@ public class Csp {
         }
         return problem;
     }
-    
 
     public static void main(String[] args) throws IOException,
             IllegalAccessException, InvocationTargetException,
