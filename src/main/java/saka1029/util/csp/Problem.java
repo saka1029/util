@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -89,6 +90,8 @@ public class Problem {
                     w.printf("%s%n", s);
                     outImport = true;
                 }
+            if (className == null)
+                className = "A%d".formatted(new Random().nextInt(1000000));
             if (outImport)
                 w.println();
             w.printf("public class %s {%n", className);
