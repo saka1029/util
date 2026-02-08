@@ -179,7 +179,8 @@ public class FukumenParser {
                     .collect(Collectors.joining(", ", "(", ")")));
         Problem problem = new Problem();
         for (Entry<Integer, Boolean> e : parser.variables.entrySet())
-            problem.variable(e.getValue() ? 1 : 0, 9, Character.toString(e.getKey()));
+            if (variable(e.getKey()) > 9)   // 数字指定の場合を除いて変数登録する。
+                problem.variable(e.getValue() ? 1 : 0, 9, Character.toString(e.getKey()));
         problem.constraint(constraint);
         problem.allDifferent(parser.variables.keySet().stream()
             .map(cp -> Character.toString(cp))
