@@ -9,7 +9,7 @@ import saka1029.util.csp.Problem;
 public class TestProblem {
 
     static int number(int... ds) {
-        return IntStream.of(ds).reduce(o, (a, b) -> 10 * a +b);
+        return IntStream.of(ds).reduce(0, (a, b) -> 10 * a +b);
     }
     @Test
     public void testProblem() {
@@ -27,7 +27,7 @@ public class TestProblem {
         problem.allDifferent("S", "E", "N", "D", "M", "O", "R", "Y");
         problem.anyCode("import java.util.stream.*;");
         problem.anyCode("static int number(int... ds) {");
-        problem.anyCode("return IntStream.of(ds).reduce(o, (a, b) -> 10 * a +b);");
+        problem.anyCode("return IntStream.of(ds).reduce(0, (a, b) -> 10 * a +b);");
         problem.anyCode("}");
         System.out.println(problem);
     }
