@@ -40,7 +40,7 @@ public class Problem {
     }
 
     String className;
-    final Map<String, Variable> variables = new HashMap<>();
+    final Map<String, Variable> variables = new TreeMap<>();
     final List<Constraint> constraints = new ArrayList<>();
     final List<String> anyCodes = new ArrayList<>();
 
