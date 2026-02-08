@@ -1,4 +1,4 @@
-package test.saka1029.util.fukumen;
+package test.saka1029.util.csp;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
