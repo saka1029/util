@@ -16,14 +16,14 @@ import java.util.Map;
  * </pre>
  * SEND+MORE=MONEY -> number(S, E, N, D) + number(M, O, R, E) == number(M, O, N, E, Y)
  */
-public class FukumenParser {
+public class Fukumen {
 
     final int[] input;
     int index;
     int cp;
     final Map<Integer, Boolean> vars = new HashMap<>();
     
-    FukumenParser(String input) {
+    Fukumen(String input) {
         this.input = input.codePoints().toArray();
         this.index = 0;
         get();
@@ -170,7 +170,7 @@ public class FukumenParser {
     public record Result(Map<Integer, Boolean> vars, String constraint) {}
 
     public static Result parse(String input) {
-        FukumenParser parser = new FukumenParser(input);
+        Fukumen parser = new Fukumen(input);
         String constraint = parser.parse();
         return new Result(parser.vars, constraint);
     }
