@@ -39,6 +39,7 @@ public class Problem {
     String className;
     final Map<String, Variable> variables = new HashMap<>();
     final List<Constraint> constraints = new ArrayList<>();
+    final List<String> anyCodes = new ArrayList<>();
 
     public void className(String className) {
         this.className = className;
@@ -73,6 +74,10 @@ public class Problem {
                 constraint("%s != %s".formatted(names[i], names[j]));
     }
 
+    public void anyCode(String line) {
+        anyCodes.add(line);
+    }
+
     static final String NL = System.lineSeparator();
 
     @Override
@@ -92,6 +97,9 @@ public class Problem {
                 .append(" : ")
                 .append(c.variables.stream().map(v -> v.name).collect(Collectors.joining(" "))).append(NL);
         }
+        sb.append("  any codes:").append(NL);
+        for (String line : anyCodes)
+            sb.append("    ").append(line).append(NL);
         return sb.toString();
     }
 }
