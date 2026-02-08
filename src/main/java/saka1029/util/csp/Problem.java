@@ -1,5 +1,7 @@
 package saka1029.util.csp;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +11,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Problem {
 
@@ -77,6 +80,67 @@ public class Problem {
         anyCodes.add(line);
     }
 
+    public String generate() {
+        StringWriter sw = new StringWriter();
+        try (PrintWriter w = new PrintWriter(sw)) {
+            boolean outImport = false;
+            for (String s : anyCodes)
+                if (s.trim().startsWith("import ")) {
+                    w.printf("%s%n", s);
+                    outImport = true;
+                }
+            if (outImport)
+                w.println();
+            w.printf("public class %s {%n", className);
+            w.println();
+            w.printf("    static int solve() {%n");
+            w.printf("        int count = 0;%n");
+            w.printf("        System.out.println(%s);%n",
+                variables.keySet().stream().collect(Collectors.joining(",", "\"", "\"")));
+            Set<Constraint> remainConstraints = new HashSet<>(constraints);
+            List<Variable> generatedVariables = new ArrayList<>();
+            for (Variable v : variables.values()) {
+                w.printf("        for (int %1$s = %2$d; %1$s <= %3$d; ++%1$s)%n", v.name, v.min, v.max);
+                generatedVariables.add(v);
+                List<Constraint> generatedConstraints = remainConstraints.stream()
+                    .filter(c -> generatedVariables.containsAll(c.variables)).toList();
+                if (!generatedConstraints.isEmpty()) {
+                    w.printf("        if (%s)%n",
+                        generatedConstraints.stream().map(c -> c.predicate).collect(Collectors.joining(" && ")));
+                    remainConstraints.removeAll(generatedConstraints);
+                }
+            }
+            if (!remainConstraints.isEmpty())
+                throw new RuntimeException("constraints does not generated: "
+                    + remainConstraints.stream().map(c -> c.predicate).collect(Collectors.joining(", ")));
+//            w.printf("        callback.accept(new int[] {%s});%n",
+            w.printf("        {%n");
+            w.printf("            ++count;%n");
+            w.printf("            System.out.printf(\"%s%%n\", %s);%n",
+                IntStream.range(0, variables.size()).mapToObj(i -> "%d").collect(Collectors.joining(",")),
+                variables.keySet().stream().collect(Collectors.joining(", ")));
+            w.printf("        }%n");
+            w.printf("        return count;%n");
+            w.printf("    }%n");
+            w.println();
+            boolean outAnyCode = false;
+            for (String s : anyCodes)
+                if (!s.trim().startsWith("import ")) {
+                    w.printf("%s%n", s);
+                    outAnyCode = true;
+                }
+            if (outAnyCode)
+                w.println();
+            w.printf("    public static void main(String[] args) {%n");
+            w.printf("        long start = System.currentTimeMillis();%n");
+            w.printf("        int count = solve();%n");
+            w.printf("        System.err.printf(\"solutions: \" + count + \", elapse: %%d msec.%%n\", System.currentTimeMillis() - start);%n");
+            w.printf("    }%n");
+            w.printf("}%n");
+        }
+        return sw.toString();
+    }
+    
     static final String NL = System.lineSeparator();
 
     @Override
