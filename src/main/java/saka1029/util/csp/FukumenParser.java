@@ -2,6 +2,8 @@ package saka1029.util.csp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -16,14 +18,14 @@ import java.util.Map;
  * </pre>
  * SEND+MORE=MONEY -> number(S, E, N, D) + number(M, O, R, E) == number(M, O, N, E, Y)
  */
-public class Fukumen {
+public class FukumenParser {
 
     final int[] input;
     int index;
     int cp;
-    final Map<Integer, Boolean> vars = new HashMap<>();
+    final Map<Integer, Boolean> variables = new HashMap<>();
     
-    Fukumen(String input) {
+    FukumenParser(String input) {
         this.input = input.codePoints().toArray();
         this.index = 0;
         get();
@@ -83,10 +85,10 @@ public class Fukumen {
                 sb.append(cp);
             else {
                 sb.appendCodePoint(cp);
-                Boolean b = vars.get(cp);
+                Boolean b = variables.get(cp);
                 if (b == null)
                     b = false;
-                vars.put(cp, first | b);
+                variables.put(cp, first | b);
             }
             get();
             v = variable(cp);
@@ -167,12 +169,25 @@ public class Fukumen {
         return expression();
     }
     
-    public record Result(Map<Integer, Boolean> vars, String constraint) {}
-
-    public static Result parse(String input) {
-        Fukumen parser = new Fukumen(input);
+    public static Problem parse(String input) {
+        FukumenParser parser = new FukumenParser(input);
         String constraint = parser.parse();
-        return new Result(parser.vars, constraint);
+        if (parser.variables.size() > 10)
+            throw new RuntimeException("Too many variables "
+                + parser.variables.keySet().stream()
+                    .map(cp -> Character.toString(cp))
+                    .collect(Collectors.joining(", ", "(", ")")));
+        Problem problem = new Problem();
+        for (Entry<Integer, Boolean> e : parser.variables.entrySet())
+            problem.variable(e.getValue() ? 1 : 0, 9, Character.toString(e.getKey()));
+        problem.constraint(constraint);
+        problem.allDifferent(parser.variables.keySet().stream()
+            .map(cp -> Character.toString(cp))
+            .toArray(String[]::new));
+        problem.anyCode("static int number(int... digits) {");
+        problem.anyCode("    return java.util.stream.IntStream.of(digits).reduce(0, (a, b) -> 10 * a + b);");
+        problem.anyCode("}");
+        return problem;
     }
 
 }
