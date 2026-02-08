@@ -175,12 +175,13 @@ public class Problem {
 
     static final List<String> OPTIONS = List.of("-g:none");
 
-    public void solve() throws
+    public void solve(boolean displaySource) throws
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException, SecurityException,
             ClassNotFoundException, CompileError {
         String generatedSource = generate();
-        System.out.println(generatedSource);
+        if (displaySource)
+            System.out.println(generatedSource);
         JavaCompilerInMemory.compile(className, generatedSource, OPTIONS)
             .getMethod("main", String[].class).invoke(null, new Object[] {new String[0]});
     }

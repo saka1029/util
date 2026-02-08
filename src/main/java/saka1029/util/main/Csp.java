@@ -58,14 +58,35 @@ public class Csp {
         return problem;
     }
 
+    static void usage() {
+        throw new IllegalArgumentException("""
+            usage:
+            java saka1029.uti.main.Csp [-s] ファイル名
+            -s     生成されたJavaのソースコードを表示します。
+            """);
+    }
+
     public static void main(String[] args) throws IOException,
             IllegalAccessException, InvocationTargetException,
             NoSuchMethodException, SecurityException,
             ClassNotFoundException, CompileError {
-        if (args.length != 1)
-            throw new RuntimeException("usage: java saka1029.util.main.Csp CSP_FILE");
-        Problem problem = parse(Paths.get(args[0]));
-        problem.solve();
+        boolean displaySource = false;
+        Problem problem = null;
+        for (int i = 0; i < args.length; ++i) {
+            switch (args[i]) {
+                case "-s":
+                    displaySource = true;
+                    break;
+                default:
+                    if (problem != null)
+                        usage();
+                    problem = parse(Paths.get(args[i]));
+                    break;
+            }
+        }
+        if (problem == null)
+            usage();
+        problem.solve(displaySource);
     }
 
 }

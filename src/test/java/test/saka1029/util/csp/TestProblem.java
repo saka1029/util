@@ -68,6 +68,6 @@ public class TestProblem {
         problem.anyCode("static int number(int... ds) {");
         problem.anyCode("return IntStream.of(ds).reduce(0, (a, b) -> 10 * a + b);");
         problem.anyCode("}");
-        problem.solve();
+        problem.solve(true);
     }
 }
