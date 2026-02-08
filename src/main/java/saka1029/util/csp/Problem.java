@@ -45,12 +45,11 @@ public class Problem {
         this.className = className;
     }
 
-    public Variable variable(String name, int min, int max) {
+    public void variable(int min, int max, String... names) {
         if (constraints.size() > 0)
             throw new RuntimeException("define all variables before define constraint");
-        Variable variable = new Variable(name, min, max);
-        this.variables.put(name, variable);
-        return variable;
+        for (String name : names)
+            this.variables.put(name, new Variable(name, min, max));
     }
 
     public void constraint(String predicate) {

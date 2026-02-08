@@ -15,14 +15,8 @@ public class TestProblem {
     public void testProblem() {
         Problem problem = new Problem();
         problem.className("SendMoreMoney");
-        problem.variable("S", 1, 9);
-        problem.variable("E", 0, 9);
-        problem.variable("N", 0, 9);
-        problem.variable("D", 0, 9);
-        problem.variable("M", 1, 9);
-        problem.variable("O", 0, 9);
-        problem.variable("R", 0, 9);
-        problem.variable("Y", 0, 9);
+        problem.variable(1, 9, "S", "M");
+        problem.variable(0, 9, "E", "N", "D", "O", "R", "Y");
         problem.constraint("number(S, E, N, D) + number(M, O, R, Y) == number(M, O, N, E, Y)");
         problem.allDifferent("S", "E", "N", "D", "M", "O", "R", "Y");
         problem.anyCode("import java.util.stream.*;");
