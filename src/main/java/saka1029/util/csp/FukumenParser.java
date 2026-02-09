@@ -81,8 +81,8 @@ public class FukumenParser {
         do {
             if (!first)
                 sb.append(",");
-            if (cp <= 9)
-                sb.append(cp);
+            if (v <= 9)
+                sb.append(v);
             else {
                 sb.appendCodePoint(cp);
                 Boolean b = variables.get(cp);
