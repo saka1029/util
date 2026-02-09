@@ -12,3 +12,4 @@ fukumen -e "大宮*宮=大井町 & 大宮*大=横浜 & 大井町+横浜０=浜�
 fukumen -e "TWO * TWO = THREE"
 fukumen -e "third+third+third+seven=eight"
 fukumen -e "FORTY+TEN+TEN=SIXTY"
+fukumen -e "GIVE+ME+RICE=DEMO"
