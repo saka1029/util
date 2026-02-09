@@ -75,15 +75,15 @@ public class FukumenParser {
         }
         int v = variable(cp);
         if (v < 0)
-            throw new RuntimeException("DIGIT expected");
+            throw new RuntimeException("digit or variable expected");
         StringBuilder sb = new StringBuilder("number(");
         boolean first = true;
         do {
             if (!first)
                 sb.append(",");
-            if (v <= 9)
+            if (v <= 9)     // 直接数字指定なら値を追加。
                 sb.append(v);
-            else {
+            else {          // 変数名なら変数名を追加してvariablesにも追加する。
                 sb.appendCodePoint(cp);
                 Boolean b = variables.get(cp);
                 if (b == null)
