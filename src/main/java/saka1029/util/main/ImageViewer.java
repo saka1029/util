@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
@@ -143,12 +142,12 @@ public class ImageViewer extends JFrame {
         getContentPane().add(panel);
 
         popup = new JPopupMenu();
-        popup.add(menuItem("全画面", e -> fullScreen()));
-        popup.add(menuItem("左回転", e -> rotateLeft()));
-        popup.add(menuItem("右回転", e -> rotateRight()));
-        popup.add(menuItem("先頭へ", e -> firstImage()));
-        popup.add(menuItem("末尾へ", e -> lastImage()));
-        popup.add(menuItem("終了", e -> exit()));
+        popup.add(menuItem("全画面(f)", e -> fullScreen()));
+        popup.add(menuItem("左回転(l)", e -> rotateLeft()));
+        popup.add(menuItem("右回転(r)", e -> rotateRight()));
+        popup.add(menuItem("先頭へ(0)", e -> firstImage()));
+        popup.add(menuItem("末尾へ(9)", e -> lastImage()));
+        popup.add(menuItem("終了(q)", e -> exit()));
 
         addMouseListener(new MouseListener() {
             @Override
