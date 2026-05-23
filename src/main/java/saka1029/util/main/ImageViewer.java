@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
@@ -126,8 +127,10 @@ public class ImageViewer extends JFrame {
     }
 
     ImageViewer(File file) {
+        file = file.getAbsoluteFile();
         dir = file.getParentFile();
         files = dir.listFiles(filter);
+        // System.out.println(Arrays.toString(files));
         for (index = 0; index < files.length; ++index)
             if (files[index].equals(file))
                 break;
