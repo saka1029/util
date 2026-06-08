@@ -1,4 +1,5 @@
 #!/bin/sh
+OPT=--enable-native-access=ALL-UNNAMED
 T=~/git/util/target
 CP=$T/classes:$T/dependency/*
-java -cp $CP saka1029.util.decs.Main "$@"
+java $OPT -cp $CP saka1029.util.decs.Main "$@"
