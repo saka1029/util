@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FukuroMojiDrawer",
+            "request": "launch",
+            "mainClass": "test.saka1029.util.calendar.FukuroMojiDrawer",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
+            "name": "FukuroMojiDrawer",
+            "request": "launch",
+            "mainClass": "saka1029.util.calendar.FukuroMojiDrawer",
+            "projectName": "util"
+        },
+        {
+            "type": "java",
             "name": "Csp",
             "request": "launch",
             "mainClass": "saka1029.util.main.Csp",
