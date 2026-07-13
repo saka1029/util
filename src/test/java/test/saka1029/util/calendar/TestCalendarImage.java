@@ -9,8 +9,6 @@ import saka1029.util.calendar.CalendarImage;
 
 public class TestCalendarImage {
 
-    static String 祝日CSV = "https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv";
-
     @Test
     public void testCalendarImage() throws IOException {
         CalendarImage ci = new CalendarImage();
