@@ -20,8 +20,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.chrono.JapaneseChronology;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.imageio.IIOException;
@@ -67,6 +70,10 @@ public class CalendarImage {
     static final Color DAY_COLOR = Color.BLACK;
     static final Color NDAY_COLOR = Color.LIGHT_GRAY;
     static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年 M月");
+    static final DateTimeFormatter formatterJPN = DateTimeFormatter.ofPattern("GGGGy年", Locale.JAPAN)
+        .withChronology(JapaneseChronology.INSTANCE)
+        .withResolverStyle(ResolverStyle.SMART);
+
     static final String[] WEEK_NAME = {"日", "月", "火", "水", "木", "金", "土"};
     static final Stroke DEFAULT_STROKE = new BasicStroke(2);
 
@@ -126,7 +133,8 @@ public class CalendarImage {
             g.fillRect(0, 0, WIDTH, HEIGHT);
             // タイトル（年月）
             g.setColor(TITLE_COLOR);
-            drawText(g, titleFont, TITLE_COLOR, true, false, leftMargin, topMargin, boxWidth, titleHeight, firstDay.format(formatter));
+            drawText(g, titleFont, TITLE_COLOR, true, false, leftMargin, topMargin, boxWidth, titleHeight,
+                firstDay.format(formatter) + " (" + firstDay.format(formatterJPN) + ")");
             // ヘッダ（曜日名）
             g.setFont(headerFont);
             for (float x = boxLeft, i = 0; i < WEEK_NAME.length; x += cellWidth, ++i)
