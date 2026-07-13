@@ -12,6 +12,6 @@ public class TestCalendarImage {
     @Test
     public void testCalendarImage() throws IOException {
         CalendarImage ci = new CalendarImage();
-        ci.draw(LocalDate.of(2026, 7, 1), 3, "debug/calendar%04d-%02d.png");
+        ci.draw(LocalDate.of(2026, 1, 1), 12, "debug/calendar%04d-%02d.png");
     }
 }

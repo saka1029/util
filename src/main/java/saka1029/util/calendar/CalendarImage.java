@@ -66,29 +66,24 @@ public class CalendarImage {
     static final Color HEADER_COLOR = Color.BLACK;
     static final Color DAY_COLOR = Color.BLACK;
     static final Color NDAY_COLOR = Color.LIGHT_GRAY;
-    static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年 MM月");
-    static final String[] WEEK_NAME = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+    static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年 M月");
+    static final String[] WEEK_NAME = {"日", "月", "火", "水", "木", "金", "土"};
     static final Stroke DEFAULT_STROKE = new BasicStroke(2);
 
-    void drawCenter(Graphics2D g, Font font, Color color, boolean solid, int left, int top, int width, int height, String string) {
+    void drawText(Graphics2D g, Font font, Color color, boolean solid, boolean center, int left, int top, int width, int height, String string) {
         Rectangle2D r = font.getStringBounds(string, g.getFontRenderContext());
-        float l = (float)(left + (width - r.getWidth()) / 2);
+        float l = center ? (float)(left + (width - r.getWidth()) / 2) : left;
         float t = (float)(top + (height - r.getY()) / 2);
         g.setFont(font);
-        if (solid) {
-            g.setColor(color);
-            g.drawString(string, l, t);
-        } else {
-            g.setColor(color);
+        g.setColor(color);
+        if (!solid) {
             g.setStroke(new BasicStroke(8)); // 縁取りの太さを調整
             g.draw(font.createGlyphVector(g.getFontRenderContext(), string).getOutline(l, t));
             g.setStroke(DEFAULT_STROKE);
             // 文字本体
             g.setColor(Color.WHITE);
-            g.drawString(string, l, t);
         }
-        g.setColor(LINE_COLOR);
-        g.drawRect(left, top, width, height);
+        g.drawString(string, l, t);
     }
 
     public void draw(LocalDate from, int nMonth, String outFilePattern) throws IOException {
@@ -100,19 +95,21 @@ public class CalendarImage {
         }
     }
 
-    public void draw(LocalDate month, String outFile) throws IOException {
+    void draw(LocalDate month, String outFile) throws IOException {
         int topMargin = (int) (HEIGHT * 1.0 / 12);
         int bottomMargin = (int) (HEIGHT * 1.0 / 12);
         int leftMargin = (int) (WIDTH * 1.0 / 12);
         int rightMargin = (int) (WIDTH * 1.0 / 12);
         int titleHeight = (int) (HEIGHT * 1.0 / 10);
         int headerHeight = (int) (HEIGHT * 1.0 / 25);
-        int titlePoint = (int) (HEIGHT * 3.0 / 50);
-        int headerPoint = (int) (HEIGHT * 3.0 / 200);
-        int dayPoint = (int) (HEIGHT * 3.0 / 60);
+        int titlePoint = (int) (HEIGHT * 1.0 / 15);
+        int headerPoint = (int) (HEIGHT * 1.0 / 50);
+        int dayPoint = (int) (HEIGHT * 1.0 / 30);
+        int holidayPoint = (int) (HEIGHT * 1.0 / 80);
         Font titleFont = new Font(FONT_NAME, Font.PLAIN, titlePoint);
         Font headerFont = new Font(FONT_NAME, Font.PLAIN, headerPoint);
         Font dayFont = new Font(FONT_NAME, Font.BOLD, dayPoint);
+        Font holidayFont = new Font(FONT_NAME, Font.PLAIN, holidayPoint);
         LocalDate firstDay = LocalDate.of(month.getYear(), month.getMonth(), 1);
         int boxLeft = leftMargin;
         int boxTop = topMargin + titleHeight + headerHeight;
@@ -129,38 +126,33 @@ public class CalendarImage {
             g.fillRect(0, 0, WIDTH, HEIGHT);
             // タイトル（年月）
             g.setColor(TITLE_COLOR);
-            drawCenter(g, titleFont, TITLE_COLOR, true, leftMargin, topMargin, boxWidth, titleHeight, firstDay.format(formatter));
+            drawText(g, titleFont, TITLE_COLOR, true, false, leftMargin, topMargin, boxWidth, titleHeight, firstDay.format(formatter));
             // ヘッダ（曜日名）
             g.setFont(headerFont);
             for (float x = boxLeft, i = 0; i < WEEK_NAME.length; x += cellWidth, ++i)
-                drawCenter(g, headerFont, HEADER_COLOR, true, (int)x, topMargin + titleHeight, (int)cellWidth, headerHeight, WEEK_NAME[(int)i]);
-                // g.drawString(WEEK_NAME[(int)i], x, boxTop);
-            // LocalDate day = firstDay.minusDays(firstDay.getDayOfWeek().getValue() % 7);
-            // for (float y = boxTop, j = 0; j < 6; y += cellHeight, ++j) {
-            //     for (float x = boxLeft, i = 0; i < 7; x += cellWidth, ++i, day = day.plusDays(1)) {
-            //         String dayString = "" + day.getDayOfMonth();
-            //         Color color = day.getMonthValue() == firstDay.getMonthValue() ? DAY_COLOR : NDAY_COLOR;
-            //         DayOfWeek week = day.getDayOfWeek();
-            //         boolean solid = color.equals(NDAY_COLOR) || week != DayOfWeek.SUNDAY;
-            //         drawCenter(g, dayFont, color, solid, (int)x, (int)y, (int)cellWidth, (int)cellHeight, dayString);
-            //     }
-            // }
-            // 水平線
+                drawText(g, headerFont, HEADER_COLOR, true, true, (int)x, topMargin + titleHeight, (int)cellWidth, headerHeight, WEEK_NAME[(int)i]);
+            // 日付
             LocalDate day = firstDay.minusDays(firstDay.getDayOfWeek().getValue() % 7);
             for (float y = boxTop, j = 0; j < 6; y += cellHeight, ++j) {
                 for (float x = boxLeft, i = 0; i < 7; x += cellWidth, ++i, day = day.plusDays(1)) {
+                    // 日付の枠の描画
+                    g.setStroke(DEFAULT_STROKE);
+                    g.setColor(LINE_COLOR);
+                    g.drawRect((int)x, (int)y, (int)cellWidth, (int)cellHeight);
+                    // 日付の描画
                     String dayString = "" + day.getDayOfMonth();
-                    Color color = day.getMonthValue() == firstDay.getMonthValue() ? DAY_COLOR : NDAY_COLOR;
+                    boolean inMonth = day.getMonthValue() == firstDay.getMonthValue();
+                    Color color = inMonth ? DAY_COLOR : NDAY_COLOR;
                     DayOfWeek week = day.getDayOfWeek();
-                    boolean solid = color.equals(NDAY_COLOR) || week != DayOfWeek.SUNDAY; // && week != DayOfWeek.SATURDAY;
-                    drawCenter(g, dayFont, color, solid, (int)x, (int)y, (int)cellWidth, (int)cellHeight, dayString);
+                    boolean solid = !inMonth || week != DayOfWeek.SUNDAY;
+                    String holidayName = holidays.get(day);
+                    if (inMonth && holidayName != null) {
+                        drawText(g, dayFont, color, false, true, (int)x, (int)y, (int)(cellWidth / 3), (int)(cellHeight / 3), dayString);
+                        drawText(g, holidayFont, color, true, false, (int)(x + cellWidth / 3), (int)y, (int)(cellWidth), (int)(cellHeight / 3), holidayName);
+                    } else
+                        drawText(g, dayFont, color, solid, true, (int)x, (int)y, (int)(cellWidth / 3), (int)(cellHeight / 3), dayString);
                 }
             }
-            // for (float y = boxTop, i = 0; i <= 6; y += cellHeight, ++i)
-            //     g.drawLine(boxLeft, (int) y, boxLeft + boxWidth, (int) y);
-            // // 垂直線
-            // for (float x = boxLeft, i = 0; i <= 7; x += cellWidth, ++i)
-            //     g.drawLine((int) x, boxTop, (int) x, boxTop + boxHeight);
         }
     }
 }
