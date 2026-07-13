@@ -4,61 +4,22 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.io.BufferedReader;
-import java.io.Closeable;
 import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.imageio.IIOException;
-
-public class CalendarImage {
+public class CalendarImage2 {
 
     public static final String 祝日_CSV_URL = "https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv";
-    static Map<LocalDate, String> holidays = null;
-    static void getHolidays() throws IOException {
-        if (holidays != null)
-            return;
-        holidays = new HashMap<>();
-        URL url;
-        try {
-            url = new URI(祝日_CSV_URL).toURL();
-        } catch (URISyntaxException e) {
-            throw new IOException(e);
-        }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d");
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        connection.connect();
-        try (Closeable c = () -> connection.disconnect();
-            InputStream is = connection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, "SJIS"))) {
-            String line = br.readLine();    // skip header
-            if (line == null)
-                throw new IIOException("祝日CSVが空です");
-            while ((line = br.readLine()) != null) {
-                String[] fields = line.split(",");
-                holidays.put(LocalDate.parse(fields[0], formatter), fields[1]);        
-            }
-        }
-    }
-
     // A4横サイズ = 297mm * 210mm
     int DPI = 300;
-    int WIDTH =  (int) (11.7 * DPI);
+    int WIDTH = (int) (11.7 * DPI);
     int HEIGHT = (int) (8.3 * DPI);
     static final String FONT_NAME = "SansSerif";
     static final Color TITLE_COLOR = Color.BLACK;
@@ -66,7 +27,7 @@ public class CalendarImage {
     static final Color HEADER_COLOR = Color.BLACK;
     static final Color DAY_COLOR = Color.BLACK;
     static final Color NDAY_COLOR = Color.LIGHT_GRAY;
-    static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年 MM月");
+    static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年 M月");
     static final String[] WEEK_NAME = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
     static final Stroke DEFAULT_STROKE = new BasicStroke(2);
 
@@ -89,15 +50,6 @@ public class CalendarImage {
         }
         g.setColor(LINE_COLOR);
         g.drawRect(left, top, width, height);
-    }
-
-    public void draw(LocalDate from, int nMonth, String outFilePattern) throws IOException {
-        getHolidays();
-        for (int i = 0; i < nMonth; ++i) {
-            LocalDate month = from.plusMonths(i);
-            String outFile = outFilePattern.formatted(month.getYear(), month.getMonthValue());
-            draw(month, outFile);
-        }
     }
 
     public void draw(LocalDate month, String outFile) throws IOException {
@@ -135,16 +87,6 @@ public class CalendarImage {
             for (float x = boxLeft, i = 0; i < WEEK_NAME.length; x += cellWidth, ++i)
                 drawCenter(g, headerFont, HEADER_COLOR, true, (int)x, topMargin + titleHeight, (int)cellWidth, headerHeight, WEEK_NAME[(int)i]);
                 // g.drawString(WEEK_NAME[(int)i], x, boxTop);
-            // LocalDate day = firstDay.minusDays(firstDay.getDayOfWeek().getValue() % 7);
-            // for (float y = boxTop, j = 0; j < 6; y += cellHeight, ++j) {
-            //     for (float x = boxLeft, i = 0; i < 7; x += cellWidth, ++i, day = day.plusDays(1)) {
-            //         String dayString = "" + day.getDayOfMonth();
-            //         Color color = day.getMonthValue() == firstDay.getMonthValue() ? DAY_COLOR : NDAY_COLOR;
-            //         DayOfWeek week = day.getDayOfWeek();
-            //         boolean solid = color.equals(NDAY_COLOR) || week != DayOfWeek.SUNDAY;
-            //         drawCenter(g, dayFont, color, solid, (int)x, (int)y, (int)cellWidth, (int)cellHeight, dayString);
-            //     }
-            // }
             // 水平線
             LocalDate day = firstDay.minusDays(firstDay.getDayOfWeek().getValue() % 7);
             for (float y = boxTop, j = 0; j < 6; y += cellHeight, ++j) {
