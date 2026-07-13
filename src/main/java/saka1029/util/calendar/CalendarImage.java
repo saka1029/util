@@ -3,26 +3,74 @@ package saka1029.util.calendar;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.imageio.IIOException;
 
 public class CalendarImage {
 
     public static final String 祝日_CSV_URL = "https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv";
+    static Map<LocalDate, String> holidays = null;
+    static void getHolidays() throws IOException {
+        if (holidays != null)
+            return;
+        holidays = new HashMap<>();
+        URL url;
+        try {
+            url = new URI(祝日_CSV_URL).toURL();
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d");
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        connection.connect();
+        try (Closeable c = () -> connection.disconnect();
+            InputStream is = connection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, "SJIS"))) {
+            String line = br.readLine();    // skip header
+            if (line == null)
+                throw new IIOException("祝日CSVが空です");
+            while ((line = br.readLine()) != null) {
+                String[] fields = line.split(",");
+                holidays.put(LocalDate.parse(fields[0], formatter), fields[1]);        
+            }
+        }
+    }
+
     // A4横サイズ = 297mm * 210mm
     int DPI = 300;
-    int WIDTH = (int) (11.7 * DPI);
+    int WIDTH =  (int) (11.7 * DPI);
     int HEIGHT = (int) (8.3 * DPI);
     static final String FONT_NAME = "SansSerif";
     static final Color TITLE_COLOR = Color.BLACK;
     static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年 MM月");
     static final String[] WEEK_NAME = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
 
-    public void draw(LocalDate month, String outFile) throws IOException {
+    public void draw(LocalDate from, int nMohth, String outFilePattern) throws IOException {
+        getHolidays();
+        for (int i = 0; i < nMohth; ++i) {
+            LocalDate month = from.plusMonths(i);
+            String outFile = outFilePattern.formatted(month.getYear(), month.getMonthValue());
+            draw(month, outFile);
+        }
+    }
+
+    void draw(LocalDate month, String outFile) throws IOException {
         int topMargin = (int) (HEIGHT * 1.0 / 12);
         int bottomMargin = (int) (HEIGHT * 1.0 / 12);
         int leftMargin = (int) (WIDTH * 1.0 / 12);
