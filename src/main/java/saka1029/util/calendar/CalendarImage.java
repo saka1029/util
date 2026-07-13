@@ -154,7 +154,7 @@ public class CalendarImage {
                     DayOfWeek week = day.getDayOfWeek();
                     boolean solid = !inMonth || week != DayOfWeek.SUNDAY;
                     String holidayName = holidays.get(day);
-                    if (inMonth && holidayName != null) {
+                    if (holidayName != null) {
                         drawText(g, dayFont, color, false, true, (int)x, (int)y, (int)(cellWidth / 3), (int)(cellHeight / 3), dayString);
                         drawText(g, holidayFont, color, true, false, (int)(x + cellWidth / 3), (int)y, (int)(cellWidth), (int)(cellHeight / 3), holidayName);
                     } else
