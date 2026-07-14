@@ -112,7 +112,7 @@ public class CalendarImage {
         int titlePoint = (int) (HEIGHT * 1.0 / 15);
         int headerPoint = (int) (HEIGHT * 1.0 / 50);
         int dayPoint = (int) (HEIGHT * 1.0 / 30);
-        int holidayPoint = (int) (HEIGHT * 1.0 / 80);
+        int holidayPoint = (int) (HEIGHT * 1.0 / 60);
         Font titleFont = new Font(FONT_NAME, Font.PLAIN, titlePoint);
         Font headerFont = new Font(FONT_NAME, Font.PLAIN, headerPoint);
         Font dayFont = new Font(FONT_NAME, Font.BOLD, dayPoint);
