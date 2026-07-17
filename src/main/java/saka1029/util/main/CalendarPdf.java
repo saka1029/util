@@ -1,9 +1,11 @@
 package saka1029.util.main;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
@@ -27,12 +29,16 @@ public class CalendarPdf {
     static final int IMAGE_WIDTH =  (int) (11.7 * DPI);
     static final int IMAGE_HEIGHT = (int) (8.3 * DPI);
     static final String FONT_NAME = "SansSerif";
-    static final Float HEADER_HEIGHT_RATE = 0.1F;
+    static final float HEADER_HEIGHT_RATE = 0.1F;
+    static final float IMAGE_STROKE_WIDTH = 5.0F;
 
     static void image(Graphics2D g, LocalDate day) {
+        // 全体を白くする
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
         g.setColor(Color.BLACK);
+        g.setStroke(new BasicStroke(IMAGE_STROKE_WIDTH));
+        g.drawRect(0, 0, (int)(IMAGE_WIDTH - IMAGE_STROKE_WIDTH), (int)(IMAGE_HEIGHT - IMAGE_STROKE_WIDTH));
         Font font = new Font(FONT_NAME, Font.BOLD, (int)(IMAGE_HEIGHT * HEADER_HEIGHT_RATE));
         g.setFont(font);
         g.drawString(day.toString(), 0, (int)(IMAGE_HEIGHT * HEADER_HEIGHT_RATE));
@@ -45,8 +51,9 @@ public class CalendarPdf {
         AreaBreak NEXT_PAGE = new AreaBreak(pageSize);
         try (Document document = new Document(pdf, pageSize)) {
             Rectangle rect = pdf.getDefaultPageSize();
-            float margin = rect.getHeight() * MARGIN_RATE;
-            document.setMargins(margin, margin, margin, margin);
+            float marginHeight = rect.getHeight() * MARGIN_RATE;
+            float marginWidth = rect.getWidth() * MARGIN_RATE;
+            document.setMargins(marginHeight, marginWidth, marginHeight, marginWidth);
             LocalDate day = yearMonth;
             for (int i = 0; i < nMonth; ++i, day = day.plusDays(1)) {
                 // 改ページする。これがないと横長のイメージが連続したとき１ページにまとめられる。
@@ -58,8 +65,8 @@ public class CalendarPdf {
                     image(g, day);
                     // iText用イメージ作成
                     Image imagePdf = new Image(ImageDataFactory.create(image, null));
-                    float wScale = (rect.getWidth() - 2 * margin) / imagePdf.getImageWidth();
-                    float hScale = (rect.getHeight() - 2 * margin) / imagePdf.getImageHeight();
+                    float wScale = (rect.getWidth() - 2 * marginWidth) / imagePdf.getImageWidth();
+                    float hScale = (rect.getHeight() - 2 * marginHeight) / imagePdf.getImageHeight();
                     // 拡大率の小さい方でスケールする。
                     float scale = Math.min(wScale, hScale);
                     imagePdf.setWidth(imagePdf.getImageWidth() * scale);
