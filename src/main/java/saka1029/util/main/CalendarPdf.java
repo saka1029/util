@@ -22,8 +22,7 @@ import com.itextpdf.layout.element.Image;
 
 public class CalendarPdf {
 
-    static final String USAGE = "java saka1029.util.main.CalendarPdf [-n N] YYYY-MM";
-    static final float MARGIN_RATE = 0.1F;
+    static final float PDF_MARGIN_RATE = 0.08F;
     // A4横サイズ = 297mm * 210mm
     static final int DPI = 300;
     static final int IMAGE_WIDTH =  (int) (11.7 * DPI);
@@ -51,8 +50,8 @@ public class CalendarPdf {
         AreaBreak NEXT_PAGE = new AreaBreak(pageSize);
         try (Document document = new Document(pdf, pageSize)) {
             Rectangle rect = pdf.getDefaultPageSize();
-            float marginHeight = rect.getHeight() * MARGIN_RATE;
-            float marginWidth = rect.getWidth() * MARGIN_RATE;
+            float marginHeight = rect.getHeight() * PDF_MARGIN_RATE;
+            float marginWidth = rect.getWidth() * PDF_MARGIN_RATE;
             document.setMargins(marginHeight, marginWidth, marginHeight, marginWidth);
             LocalDate day = yearMonth;
             for (int i = 0; i < nMonth; ++i, day = day.plusDays(1)) {
@@ -78,6 +77,8 @@ public class CalendarPdf {
         }
     }
 
+    static final String USAGE = "java saka1029.util.main.CalendarPdf [-n N] YYYYMM";
+
     public static void main(String[] args) throws IOException {
         /*
         int nMonth = 1;
@@ -93,9 +94,10 @@ public class CalendarPdf {
             default:
                 break L;
             }
-        if (i >= max)
+        if (i >= max || args[i].length() != 6)
             throw new IllegalArgumentException(USAGE);
-        LocalDate yearMonth = LocalDate.parse(args[i] + "-1");
+        LocalDate yearMonth = LocalDate.parse(
+            args[i].substring(0, 4) + "-" + args[i].substring(4, 2) + "-1");
         printPdf(yearMonth, nMonth);
         */
         printPdf(LocalDate.of(2026, 7, 1), 2);
