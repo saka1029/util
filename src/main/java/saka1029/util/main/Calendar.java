@@ -142,7 +142,8 @@ public class Calendar {
     }
 
     static void A4横(LocalDate yearMonth, int nMonth) throws IOException {
-        File outFile = new File("calendar-%04d-%02d.pdf".formatted(yearMonth.getYear(), yearMonth.getMonthValue()));
+        File outFile = new File("calendar-%04d-%02d%s.pdf"
+            .formatted(yearMonth.getYear(), yearMonth.getMonthValue(), nMonth > 1 ? "(" + nMonth + ")" : ""));
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFile));
         PageSize pageSize = PageSize.A4.rotate(); // A4横
         AreaBreak NEXT_PAGE = new AreaBreak(pageSize);
