@@ -29,18 +29,31 @@ public class CalendarPdf {
     static final int IMAGE_HEIGHT = (int) (8.3 * DPI);
     static final String FONT_NAME = "SansSerif";
     static final float HEADER_HEIGHT_RATE = 0.1F;
-    static final float IMAGE_STROKE_WIDTH = 5.0F;
+    static final float TITLE_HEIGHT_RATE = 0.02F;
+    static final float FOHT_HEIGHT_RATE = 0.8F;
+    static final int IMAGE_STROKE_WIDTH = 5;
 
     static void image(Graphics2D g, LocalDate day) {
         // 全体を白くする
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+        // 罫線の描画
+        int headerHeight = (int)(IMAGE_HEIGHT * HEADER_HEIGHT_RATE);
+        int titleHeight = (int)(IMAGE_HEIGHT * TITLE_HEIGHT_RATE);
+        float cellWidth = (IMAGE_WIDTH - IMAGE_STROKE_WIDTH) / 7F;
+        float cellHeight = (IMAGE_HEIGHT - headerHeight - titleHeight - IMAGE_STROKE_WIDTH) / 6F;
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(IMAGE_STROKE_WIDTH));
-        g.drawRect(0, 0, (int)(IMAGE_WIDTH - IMAGE_STROKE_WIDTH), (int)(IMAGE_HEIGHT - IMAGE_STROKE_WIDTH));
+        for (int c = 0, y = headerHeight + titleHeight; c <= 6; ++c, y = (int)(y + cellHeight)) {
+            g.drawLine(0, y, IMAGE_WIDTH - IMAGE_STROKE_WIDTH, y);
+           for (int r = 0, x = (int)(IMAGE_STROKE_WIDTH / 2); r <= 7; ++r, x = (int)(x + cellWidth)) {
+                g.drawLine(x, titleHeight + headerHeight, x, IMAGE_HEIGHT - IMAGE_STROKE_WIDTH);
+            }
+        }
+        // タイトル
         Font font = new Font(FONT_NAME, Font.BOLD, (int)(IMAGE_HEIGHT * HEADER_HEIGHT_RATE));
         g.setFont(font);
-        g.drawString(day.toString(), 0, (int)(IMAGE_HEIGHT * HEADER_HEIGHT_RATE));
+        g.drawString(day.toString(), 0, (int)(IMAGE_HEIGHT * HEADER_HEIGHT_RATE * FOHT_HEIGHT_RATE));
     }
 
     static void printPdf(LocalDate yearMonth, int nMonth) throws IOException {
