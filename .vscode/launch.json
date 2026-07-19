@@ -6,11 +6,11 @@
     "configurations": [
         {
             "type": "java",
-            "name": "CalendarPdf",
+            "name": "Calendar",
             "request": "launch",
-            "mainClass": "saka1029.util.main.CalendarPdf",
+            "mainClass": "saka1029.util.main.Calendar",
             "projectName": "util",
-            "args": "-n 2 202607"
+            "args": "-n 12 202601"
         },
         {
             "type": "java",
