@@ -9,7 +9,8 @@
             "name": "CalendarPdf",
             "request": "launch",
             "mainClass": "saka1029.util.main.CalendarPdf",
-            "projectName": "util"
+            "projectName": "util",
+            "args": "-n 2 202607"
         },
         {
             "type": "java",
