@@ -149,8 +149,6 @@ public class Calendar {
         AreaBreak NEXT_PAGE = new AreaBreak(pageSize);
         try (Document document = new Document(pdf, pageSize)) {
             Rectangle rect = pdf.getDefaultPageSize();
-            // float marginHeight = rect.getHeight() * PDF_MARGIN_RATE;
-            // float marginWidth = rect.getWidth() * PDF_MARGIN_RATE;
             document.setMargins(0, 0, 0, 0);
             LocalDate day = yearMonth;
             for (int i = 0; i < nMonth; ++i, day = day.plusMonths(1)) {
