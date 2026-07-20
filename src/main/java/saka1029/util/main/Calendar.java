@@ -35,11 +35,10 @@ import com.itextpdf.layout.element.Image;
 
 public class Calendar {
 
-    // static final float PDF_MARGIN_RATE = 0.08F;
-    // A4横サイズ = 297mm * 210mm
+    // A4横サイズ = 297mm * 210mm (11.69インチ * 8.27インチ)
     static final int DPI = 300;
-    static final int WIDTH =  (int) (11.7 * DPI);
-    static final int HEIGHT = (int) (8.3 * DPI);
+    static final int WIDTH =  (int) (11.69 * DPI);
+    static final int HEIGHT = (int) (8.27 * DPI);
     static final String FONT_NAME = "SansSerif";
     static final float MARGIN_RATE = 0.08F;
     static final float TITLE_HEIGHT_RATE = 0.06F;
@@ -90,19 +89,19 @@ public class Calendar {
         g.drawString(text, textLeft, textTop);
     }
 
-    static void image(Graphics2D g, int x, int y, int w, int h, LocalDate yearMonth) {
+    static void image(Graphics2D g, LocalDate yearMonth) {
         // 全体を白く塗りつぶす
         g.setColor(Color.WHITE);
-        g.fillRect(x, y, w, h);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
         // 罫線の描画
-        int headerHeight = (int)(h * HEADER_HEIGHT_RATE);
-        int titleHeight = (int)(h * TITLE_HEIGHT_RATE);
-        int marginW =  (int)(w * MARGIN_RATE);
-        int marginH =  (int)(h * MARGIN_RATE);
-        int left = x + marginW;
-        int top = y + marginH;
-        int width = w - marginW * 2;
-        int height = h - marginH * 2;
+        int headerHeight = (int)(HEIGHT * HEADER_HEIGHT_RATE);
+        int titleHeight = (int)(HEIGHT * TITLE_HEIGHT_RATE);
+        int marginW =  (int)(WIDTH * MARGIN_RATE);
+        int marginH =  (int)(HEIGHT * MARGIN_RATE);
+        int left = marginW;
+        int top = marginH;
+        int width = WIDTH - marginW * 2;
+        int height = HEIGHT - marginH * 2;
         float cellWidth = width / 7F;
         float cellHeight = (height - headerHeight - titleHeight) / 6F;
         // 日付枠
@@ -161,7 +160,7 @@ public class Calendar {
                 try (Closeable c = () -> g.dispose()) {
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     // java.awt.Image作成
-                    image(g, 0, 0, WIDTH, HEIGHT, day);
+                    image(g, day);
                     // iText用イメージ作成
                     Image imagePdf = new Image(ImageDataFactory.create(image, null));
                     float wScale = rect.getWidth() / imagePdf.getImageWidth();
