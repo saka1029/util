@@ -90,51 +90,53 @@ public class Calendar {
         g.drawString(text, textLeft, textTop);
     }
 
-    static void image(Graphics2D g, LocalDate yearMonth) {
-        // 全体を白くする
+    static void image(Graphics2D g, int x, int y, int w, int h, LocalDate yearMonth) {
+        // 全体を白く塗りつぶす
         g.setColor(Color.WHITE);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        g.fillRect(x, y, w, h);
         // 罫線の描画
-        int headerHeight = (int)(HEIGHT * HEADER_HEIGHT_RATE);
-        int titleHeight = (int)(HEIGHT * TITLE_HEIGHT_RATE);
-        int left = (int)(WIDTH * MARGIN_RATE);
-        int top = (int)(HEIGHT * MARGIN_RATE);
-        int width = WIDTH - left * 2;
-        int height = HEIGHT - top * 2;
+        int headerHeight = (int)(h * HEADER_HEIGHT_RATE);
+        int titleHeight = (int)(h * TITLE_HEIGHT_RATE);
+        int marginW =  (int)(w * MARGIN_RATE);
+        int marginH =  (int)(h * MARGIN_RATE);
+        int left = x + marginW;
+        int top = y + marginH;
+        int width = w - marginW * 2;
+        int height = h - marginH * 2;
         float cellWidth = width / 7F;
         float cellHeight = (height - headerHeight - titleHeight) / 6F;
         // 日付枠
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(STROKE_WIDTH));
         for (int r = 0; r <= 6; ++r) {
-            int y = (int)(top + titleHeight + headerHeight + cellHeight * r);
-            g.drawLine(left, y, left + width, y);
+            int yy = (int)(top + titleHeight + headerHeight + cellHeight * r);
+            g.drawLine(left, yy, left + width, yy);
            for (int c = 0; c <= 7; ++c) {
-                int x = (int)(left + cellWidth * c);
-                g.drawLine(x, top + titleHeight + headerHeight, x, top + height);
+                int xx = (int)(left + cellWidth * c);
+                g.drawLine(xx, top + titleHeight + headerHeight, xx, top + height);
             }
         }
         // タイトル
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年 M月");
         text(g, Color.BLACK, false, false, left, top, width, titleHeight, yearMonth.format(formatter));
         // ヘッダー
-        for (int c = 0, x = left; c < 7; ++c, x = (int)(x + cellWidth))
-            text(g, Color.BLACK, false, true, x, top + titleHeight, (int)cellWidth, headerHeight, HEADERS[c]);
+        for (int c = 0, xx = left; c < 7; ++c, xx = (int)(xx + cellWidth))
+            text(g, Color.BLACK, false, true, xx, top + titleHeight, (int)cellWidth, headerHeight, HEADERS[c]);
         // 日付
         int dayWidth = (int)(cellWidth * 0.4f);
         int dayHeight = (int)(cellHeight * 0.4f);
         LocalDate day = yearMonth.minusDays(yearMonth.getDayOfWeek().getValue() % 7);
         for (int r = 0; r < 6; ++r) {
-            int y = (int)(top + titleHeight + headerHeight + cellHeight * r);
+            int yy = (int)(top + titleHeight + headerHeight + cellHeight * r);
            for (int c = 0; c < 7; ++c, day = day.plusDays(1)) {
-                int x = (int)(left + cellWidth * c);
+                int xx = (int)(left + cellWidth * c);
                 String holiday = holidays.get(day);
                 Color color = day.getMonth() == yearMonth.getMonth() ? Color.BLACK : Color.LIGHT_GRAY;
                 boolean outline = day.getDayOfWeek() == DayOfWeek.SUNDAY || holiday != null;
-                text(g, color, outline, true, x, y, dayWidth, dayHeight, "" + day.getDayOfMonth());
+                text(g, color, outline, true, xx, yy, dayWidth, dayHeight, "" + day.getDayOfMonth());
                 if (holiday != null)
                     text(g, color, false, false,
-                        x + dayWidth, (int)(y + dayHeight * 0.2F),
+                        xx + dayWidth, (int)(yy + dayHeight * 0.2F),
                         (int)(cellWidth - dayWidth), (int)(dayHeight * 0.4f),
                         holiday);
             }
@@ -158,7 +160,8 @@ public class Calendar {
                 Graphics2D g = image.createGraphics();
                 try (Closeable c = () -> g.dispose()) {
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    image(g, day);
+                    // java.awt.Image作成
+                    image(g, 0, 0, WIDTH, HEIGHT, day);
                     // iText用イメージ作成
                     Image imagePdf = new Image(ImageDataFactory.create(image, null));
                     float wScale = rect.getWidth() / imagePdf.getImageWidth();
