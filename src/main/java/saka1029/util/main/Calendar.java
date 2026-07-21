@@ -149,7 +149,6 @@ public class Calendar {
         PageSize pageSize = PageSize.A4.rotate(); // A4横
         AreaBreak NEXT_PAGE = new AreaBreak(pageSize);
         try (Document document = new Document(pdf, pageSize)) {
-            Rectangle rect = pdf.getDefaultPageSize();
             document.setMargins(0, 0, 0, 0);
             LocalDate day = yearMonth;
             for (int i = 0; i < nMonth; ++i, day = day.plusMonths(1)) {
@@ -162,13 +161,8 @@ public class Calendar {
                     // java.awt.Image作成
                     image(g, day);
                     // iText用イメージ作成
-                    Image imagePdf = new Image(ImageDataFactory.create(image, null));
-                    float wScale = rect.getWidth() / imagePdf.getImageWidth();
-                    float hScale = rect.getHeight() / imagePdf.getImageHeight();
-                    // 拡大率の小さい方でスケールする。
-                    float scale = Math.min(wScale, hScale);
-                    imagePdf.setWidth(imagePdf.getImageWidth() * scale);
-                    imagePdf.setHeight(imagePdf.getImageHeight() * scale);
+                    float scale = pdf.getDefaultPageSize().getWidth() / WIDTH;
+                    Image imagePdf = new Image(ImageDataFactory.create(image, null)).scale(scale, scale);
                     document.add(imagePdf);
                 }
             }
