@@ -36,8 +36,8 @@ public class Calendar {
 
     // A4横サイズ = 297mm * 210mm (11.69インチ * 8.27インチ)
     static final int DPI = 300;
-    static final int WIDTH =  (int) (11.69 * DPI);
-    static final int HEIGHT = (int) (8.27 * DPI);
+    static final int WIDTH =  (int) (11.69 * DPI);  // Image幅
+    static final int HEIGHT = (int) (8.27 * DPI);   // Image高さ
     static final String FONT_NAME = "SansSerif";
     static final float MARGIN_RATE = 0.08F;
     static final float TITLE_HEIGHT_RATE = 0.06F;
@@ -141,18 +141,18 @@ public class Calendar {
         }
     }
 
-    static void A4横(LocalDate yearMonth, int nMonth) throws IOException {
-        File outFile = new File("calendar-P-%04d-%02d%s.pdf"
-            .formatted(yearMonth.getYear(), yearMonth.getMonthValue(), nMonth > 1 ? "(" + nMonth + ")" : ""));
+    static void pdf(LocalDate yearMonth, boolean 横, int nMonth) throws IOException {
+        File outFile = new File("calendar-%s-%04d-%02d%s.pdf"
+            .formatted(横 ? "A4横" : "A4縦", yearMonth.getYear(), yearMonth.getMonthValue(), nMonth > 1 ? "(" + nMonth + ")" : ""));
         PdfDocument pdf = new PdfDocument(new PdfWriter(outFile));
-        PageSize pageSize = PageSize.A4.rotate(); // A4横
+        PageSize pageSize = 横 ? PageSize.A4.rotate() : PageSize.A4;
         AreaBreak NEXT_PAGE = new AreaBreak(pageSize);
         try (Document document = new Document(pdf, pageSize)) {
             document.setMargins(0, 0, 0, 0);
             LocalDate day = yearMonth;
             for (int i = 0; i < nMonth; ++i, day = day.plusMonths(1)) {
                 // 改ページする。これがないと横長のイメージが連続したとき１ページにまとめられる。
-                if (i > 0) document.add(NEXT_PAGE);
+                if (i > 0 && (!横 && i % 2 == 0)) document.add(NEXT_PAGE);
                 BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
                 Graphics2D g = image.createGraphics();
                 try (Closeable c = () -> g.dispose()) {
@@ -160,52 +160,25 @@ public class Calendar {
                     // java.awt.Image作成
                     image(g, day);
                     // iText用イメージ作成
-                    float scale = pdf.getDefaultPageSize().getWidth() / WIDTH;
+                    // 横のときだけ警告が出るので小さめに作成する
+                    float scale = pdf.getDefaultPageSize().getWidth() / (WIDTH + (横 ? 5 : 0));
                     Image imagePdf = new Image(ImageDataFactory.create(image, null)).scale(scale, scale);
                     document.add(imagePdf);
                 }
             }
-            System.out.println("Created " + outFile.getAbsolutePath() + " " + pdf.getNumberOfPages() + "pages");
-        }
-    }
-
-    static void A4縦(LocalDate yearMonth, int nMonth) throws IOException {
-        File outFile = new File("calendar-%04d-%02d%s.pdf"
-            .formatted(yearMonth.getYear(), yearMonth.getMonthValue(), nMonth > 1 ? "(" + nMonth + ")" : ""));
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFile));
-        PageSize pageSize = PageSize.A4; // A4縦
-        AreaBreak NEXT_PAGE = new AreaBreak(pageSize);
-        try (Document document = new Document(pdf, pageSize)) {
-            document.setMargins(0, 0, 0, 0);
-            LocalDate day = yearMonth;
-            for (int i = 0; i < nMonth; ++i, day = day.plusMonths(1)) {
-                // 改ページする。これがないと横長のイメージが連続したとき１ページにまとめられる。
-                if (i > 0 && i % 2 == 0) document.add(NEXT_PAGE);
-                BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g = image.createGraphics();
-                try (Closeable c = () -> g.dispose()) {
-                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    // java.awt.Image作成
-                    image(g, day);
-                    // iText用イメージ作成
-                    float scale = pdf.getDefaultPageSize().getWidth() / WIDTH;
-                    Image imagePdf = new Image(ImageDataFactory.create(image, null)).scale(scale, scale);
-                    document.add(imagePdf);
-                }
-            }
-            System.out.println("Created " + outFile.getAbsolutePath() + " " + pdf.getNumberOfPages() + "pages");
+            System.out.println("Created " + outFile.getName() + " " + pdf.getNumberOfPages() + " pages");
         }
     }
 
     static final String USAGE = """
         usage:
-        java saka1029.util.main.Calendar [-n N] [-p] YYYYMM
+        java saka1029.util.main.Calendar [-n N] [-l] YYYYMM
             -n N  : Nヶ月分作成する
-            -p    : A4横で出力する(デフォルトはA4縦2段組)
+            -l    : A4横で出力する(デフォルトはA4縦2段組)
         """;
 
     public static void main(String[] args) throws IOException {
-        boolean portrate = false;
+        boolean 横 = false;
         int nMonth = 1;
         int i = 0, max = args.length;
         L: for ( ; i < max; ++i)
@@ -216,8 +189,8 @@ public class Calendar {
                 else
                     throw new IllegalArgumentException(USAGE);
                 break;
-            case "-p":
-                portrate = true;
+            case "-l":
+                横 = true;
                 break;
             default:
                 break L;
@@ -226,10 +199,7 @@ public class Calendar {
             throw new IllegalArgumentException(USAGE);
         LocalDate yearMonth = LocalDate.parse(
             args[i].substring(0, 4) + "-" + args[i].substring(4, 6) + "-01");
-        if (portrate)
-            A4横(yearMonth, nMonth);
-        else
-            A4縦(yearMonth, nMonth);
+        pdf(yearMonth, 横, nMonth);
     }
 
 }
