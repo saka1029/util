@@ -152,7 +152,7 @@ public class Calendar {
             LocalDate day = yearMonth;
             for (int i = 0; i < nMonth; ++i, day = day.plusMonths(1)) {
                 // 改ページする。これがないと横長のイメージが連続したとき１ページにまとめられる。
-                if (i > 0 && (!横 && i % 2 == 0)) document.add(NEXT_PAGE);
+                if (i > 0 && (横 || i % 2 == 0)) document.add(NEXT_PAGE);
                 BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
                 Graphics2D g = image.createGraphics();
                 try (Closeable c = () -> g.dispose()) {
@@ -162,6 +162,7 @@ public class Calendar {
                     // iText用イメージ作成
                     // 横のときだけ警告が出るので小さめに作成する
                     float scale = pdf.getDefaultPageSize().getWidth() / (WIDTH + (横 ? 5 : 0));
+                    // float scale = pdf.getDefaultPageSize().getWidth() / WIDTH;
                     Image imagePdf = new Image(ImageDataFactory.create(image, null)).scale(scale, scale);
                     document.add(imagePdf);
                 }
