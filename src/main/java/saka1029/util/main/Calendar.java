@@ -165,7 +165,7 @@ public class Calendar {
                     document.add(imagePdf);
                 }
             }
-            System.out.println(outFile.getAbsolutePath() + " " + pdf.getNumberOfPages() + "pages");
+            System.out.println("Created " + outFile.getAbsolutePath() + " " + pdf.getNumberOfPages() + "pages");
         }
     }
 
@@ -193,7 +193,7 @@ public class Calendar {
                     document.add(imagePdf);
                 }
             }
-            System.out.println(outFile.getAbsolutePath() + " " + pdf.getNumberOfPages() + "pages");
+            System.out.println("Created " + outFile.getAbsolutePath() + " " + pdf.getNumberOfPages() + "pages");
         }
     }
 
