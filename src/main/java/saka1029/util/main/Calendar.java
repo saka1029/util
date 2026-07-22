@@ -21,6 +21,7 @@ import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class Calendar {
     static final int STROKE_WIDTH = 2;
     static final Stroke DEFAULT_STROKE = new BasicStroke(STROKE_WIDTH);
     static final String[] HEADERS = {"日", "月", "火", "水", "木", "金", "土"};
+    static final EnumSet<DayOfWeek> DAY_OF_WEEK_OUTLINE = EnumSet.of(DayOfWeek.SUNDAY, DayOfWeek.SATURDAY);
 
     public static final String 祝日_CSV_URL = "https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv";
     static Map<LocalDate, String> holidays = new HashMap<>();
@@ -130,7 +132,7 @@ public class Calendar {
                 int xx = (int)(left + cellWidth * c);
                 String holiday = holidays.get(day);
                 Color color = day.getMonth() == yearMonth.getMonth() ? Color.BLACK : Color.LIGHT_GRAY;
-                boolean outline = day.getDayOfWeek() == DayOfWeek.SUNDAY || holiday != null;
+                boolean outline = DAY_OF_WEEK_OUTLINE.contains(day.getDayOfWeek()) || holiday != null;
                 text(g, color, outline, true, xx, yy, dayWidth, dayHeight, "" + day.getDayOfMonth());
                 if (holiday != null)
                     text(g, color, false, false,
