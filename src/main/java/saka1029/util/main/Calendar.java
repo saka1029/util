@@ -198,9 +198,10 @@ public class Calendar {
     }
 
     static final String USAGE = """
+        usage:
         java saka1029.util.main.Calendar [-n N] [-p] YYYYMM
-        -n N  : Nヶ月分作成する
-        -p    : A4横で出力する(デフォルトはA4縦)
+            -n N  : Nヶ月分作成する
+            -p    : A4横で出力する(デフォルトはA4縦2段組)
         """;
 
     public static void main(String[] args) throws IOException {
