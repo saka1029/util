@@ -158,11 +158,11 @@ public class Gomi {
     }
 
     static final String USAGE = """
+
         桐生市7,11,17区のごみカレンダーを作成します。
         作成するファイル名は"gomi-YYYY.ics"です。
         usage:
         java saka1029.util.main.Gomi YYYY
-            YYYY : 作成するカレンダーの年度を指定する。
     """;
 
 
