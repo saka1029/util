@@ -1,6 +1,5 @@
 package test.saka1029.util.gomi;
 
-import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,35 +11,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import net.fortuna.ical4j.data.ParserException;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.immutable.ImmutableCalScale;
-import net.fortuna.ical4j.model.property.immutable.ImmutableVersion;
-import net.fortuna.ical4j.util.Calendars;
-
 public class TestGomi {
-
-    static final String CALENDAR = "data/kiryu_gomi_calendar-2026-handmade.ics";
-
-    @Test
-    public void testLoad() throws IOException, ParserException {
-        Calendar cal = Calendars.load(CALENDAR);
-        System.out.println(cal);
-        // System.out.println(cal.getComponents());
-    }
-
-    @Test
-    public void testCreate() {
-        Calendar calendar = new Calendar();
-        calendar.add(new ProdId("Data::ICal 0.21"));
-        calendar.add(ImmutableVersion.VERSION_2_0);
-        calendar.add(ImmutableCalScale.GREGORIAN);
-        VEvent moeru = new VEvent();
-        calendar.add(moeru);
-        System.out.println(calendar);
-    }
 
     static final String TEMPLATE = """
         BEGIN:VCALENDAR
