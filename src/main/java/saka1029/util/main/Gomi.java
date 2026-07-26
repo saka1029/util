@@ -1,5 +1,9 @@
-package test.saka1029.util.gomi;
+package saka1029.util.main;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -9,9 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.junit.Test;
-
-public class TestGomi {
+public class Gomi {
 
     static final String TEMPLATE = """
         BEGIN:VCALENDAR
@@ -104,7 +106,7 @@ public class TestGomi {
         SEQUENCE:0
         END:VEVENT
         END:VCALENDAR
-    """;
+        """;
 
     static Pattern VARIABLE = Pattern.compile("\\$\\{([A-Z0-9_:,-]+)\\}");
     static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -155,8 +157,22 @@ public class TestGomi {
         return generated;
     }
 
-    @Test
-    public void testGenerate() {
-        System.out.println(generate(2026));
+    static final String USAGE = """
+        桐生市7,11,17区のごみカレンダーを作成します。
+        作成するファイル名は"gomi-YYYY.ics"です。
+        usage:
+        java saka1029.util.main.Gomi YYYY
+            YYYY : 作成するカレンダーの年度を指定する。
+    """;
+
+
+    public static void main(String[] args) throws IOException {
+        if (args.length != 1)    
+            throw new IllegalArgumentException(USAGE);
+        int thisYear = Integer.parseInt(args[0]);
+        String generated = generate(thisYear);
+        try (BufferedWriter w = Files.newBufferedWriter(Path.of("gomi-%04d.ics".formatted(thisYear)))) {
+            w.write(generated);
+        }
     }
 }
