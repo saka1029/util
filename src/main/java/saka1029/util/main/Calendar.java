@@ -36,7 +36,7 @@ import com.itextpdf.layout.element.Image;
 public class Calendar {
 
     // A4横サイズ = 297mm * 210mm (11.69インチ * 8.27インチ)
-    static final int DPI = 300;
+    static final int DPI = 150;
     static final int WIDTH =  (int) (11.69 * DPI);  // Image幅
     static final int HEIGHT = (int) (8.27 * DPI);   // Image高さ
     static final String FONT_NAME = "SansSerif";
