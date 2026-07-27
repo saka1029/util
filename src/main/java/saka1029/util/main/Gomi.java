@@ -15,6 +15,14 @@ import java.util.stream.Stream;
 
 public class Gomi {
 
+    /**
+     * 燃えるゴミの以下の記述（除外する日）
+     * <pre>
+     * EXDATE:${NEXT_YEAR}0101,${NEXT_YEAR}0102,${NEXT_YEAR}0103
+     * </pre>
+     * はうまく除外されないので注意する。
+     * Google Calendarにインポートした後、個別に削除する必要がある。
+     */
     static final String TEMPLATE = """
         BEGIN:VCALENDAR
         VERSION:2.0
@@ -32,7 +40,7 @@ public class Gomi {
         SUMMARY:燃えるごみ
         UID:30803188-8FEA-11EC-B107-A29F2D131DD7
         RRULE:FREQ=MONTHLY;BYDAY=1TU,1FR,2TU,2FR,3TU,3FR,4TU,4FR,5TU,5FR;UNTIL=${NEXT_YEAR}0331;WKST=SU
-        EXDATE:${NEXT_YEAR}0101
+        EXDATE:${NEXT_YEAR}0101,${NEXT_YEAR}0102,${NEXT_YEAR}0103
         SEQUENCE:0
         END:VEVENT
         BEGIN:VEVENT
