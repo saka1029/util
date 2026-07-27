@@ -109,15 +109,17 @@ public class Gomi {
         """;
 
     static final Pattern VARIABLE = Pattern.compile("\\$\\{([A-Z0-9_:,-]+)\\}");
+    static final Pattern MONTH_NTH_WEEK = Pattern.compile("(\\d+)-(\\d+)([A-Z]+)");
     static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
     static final String OUT_FILE = "桐生ごみの日%04d.ics";
 
     static LocalDate first(int thisYear, String monthNthWeek) {
-        String[] fields = monthNthWeek.split("-");
-        int month = Integer.parseInt(fields[0]);
-        String nthWeek = fields[1];
-        int n = Integer.parseInt(nthWeek.substring(0, 1));
-        DayOfWeek week = switch (nthWeek.substring(1, 3)) {
+        Matcher matcher = MONTH_NTH_WEEK.matcher(monthNthWeek);
+        if (!matcher.find())
+            throw new RuntimeException("Unknown month n-th week " + monthNthWeek);
+        int month = Integer.parseInt(matcher.group(1));
+        int n = Integer.parseInt(matcher.group(2));
+        DayOfWeek week = switch (matcher.group(3)) {
             case "SU" -> DayOfWeek.SUNDAY;
             case "MO" -> DayOfWeek.MONDAY;
             case "TU" -> DayOfWeek.TUESDAY;
@@ -125,7 +127,7 @@ public class Gomi {
             case "TH" -> DayOfWeek.THURSDAY;
             case "FR" -> DayOfWeek.FRIDAY;
             case "SA" -> DayOfWeek.SATURDAY;
-            default -> throw new RuntimeException("Unknown week " + nthWeek.substring(1, 3));
+            default -> throw new RuntimeException("Unknown week " + matcher.group(3));
         };
         LocalDate first = LocalDate.of(thisYear, month, 1);
         LocalDate last = month < 12 ? LocalDate.of(thisYear, month + 1, 1) : LocalDate.of(thisYear + 1, 1, 1);
