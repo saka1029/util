@@ -6,6 +6,14 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ClipFile",
+            "request": "launch",
+            "mainClass": "saka1029.util.main.ClipFile",
+            "projectName": "util",
+            "args": "output"
+        },
+        {
+            "type": "java",
             "name": "Calendar",
             "request": "launch",
             "mainClass": "saka1029.util.main.Calendar",
