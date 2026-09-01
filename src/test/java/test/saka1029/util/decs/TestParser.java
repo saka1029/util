@@ -37,9 +37,9 @@ public class TestParser {
     @Test
     public void testBinary() {
         Parser parser = Parser.create();
-        assertDecsEquals(decs("0 1"), parser.eval("1+2-3,2*3/2%2"));
-        assertDecsEquals(decs("1 1"), parser.eval("1&3|0,1&!0|1"));
-        assertDecsEquals(decs("512 64"), parser.eval("2^3^2,(2^3)^2"));
+        assertDecsEquals(decs("0 1"), parser.eval("1 + 2 - 3, 2 * 3 / 2 % 2"));
+        assertDecsEquals(decs("1 1"), parser.eval("1 & 3 | 0, 1 & ! 0 | 1"));
+        assertDecsEquals(decs("512 64"), parser.eval("2 ^ 3 ^ 2, (2 ^ 3) ^ 2"));
         BigDecimal[] two = decs("2");
         parser.context.binary("xx", (c, a, b) -> add(a, multiply(b, two)), "a xx b = a + 2 * b");
         assertDecsEquals(decs("7 10 13"), parser.eval(" (1, 2, 3) xx (2, 3, 4) xx 1"));
@@ -86,7 +86,7 @@ public class TestParser {
         Parser parser = Parser.create();
         parser.eval("x = 100");
         parser.eval("y = 200");
-        assertTrue(NO_VALUE == parser.eval("x hypot y = x*x + y*y"));
+        assertTrue(NO_VALUE == parser.eval("x hypot y = x * x + y * y"));
         assertDecsEquals(decs("25"), parser.eval("3 hypot 4"));
         assertDecsEquals(decs("100"), parser.eval("x"));
         assertDecsEquals(decs("200"), parser.eval("y"));

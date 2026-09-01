@@ -20,6 +20,22 @@ public class Scanner {
     }
 
     static final Map<String, TokenType> RESERVED = Map.ofEntries(
+        Map.entry("@", TokenType.AT),
+        Map.entry("+", TokenType.PLUS), Map.entry("-", TokenType.MINUS),
+        Map.entry("*", TokenType.MULT), Map.entry("/", TokenType.DIV),
+        Map.entry("%", TokenType.MOD), Map.entry("^", TokenType.POW),
+        Map.entry("==", TokenType.EQ), Map.entry("!=", TokenType.NE),
+        Map.entry(">", TokenType.GT), Map.entry(">=", TokenType.GE),
+        Map.entry("<", TokenType.LT), Map.entry("<=", TokenType.LE),
+        Map.entry("~~", TokenType.NEARLY_EQ), Map.entry("!~", TokenType.NEARLY_NE),
+        Map.entry("=", TokenType.ASSIGN),
+        Map.entry("&", TokenType.AND),
+        Map.entry("^^", TokenType.XOR),
+        Map.entry("|", TokenType.OR),
+        Map.entry("!", TokenType.NOT),
+        Map.entry("~", TokenType.BITNOT),
+        Map.entry("&&", TokenType.CAND), Map.entry("||", TokenType.COR),
+        Map.entry("$", TokenType.ID),
         Map.entry("help", TokenType.HELP), Map.entry("solve", TokenType.SOLVE),
         Map.entry("min", TokenType.MIN), Map.entry("max", TokenType.MAX),
         Map.entry("exit", TokenType.EXIT)
@@ -87,6 +103,14 @@ public class Scanner {
         };
     }
 
+    static boolean isIdFirst(int ch) {
+        return isAlpha(ch) || isSpecial(ch);
+    }
+
+    static boolean isIdRest(int ch) {
+        return isIdFirst(ch) || isDigit(ch) || ch == '_';
+    }
+
     String str(int ch) {
         return ch == -1 ? "EOF" : "'%c'".formatted(ch);
     }
@@ -130,19 +154,26 @@ public class Scanner {
         return t != null ? t : TokenType.ID;
     }
 
-    TokenType alpha() {
+    TokenType id() {
         int start = index - 1;
-        while (isAlpha(ch) || isDigit(ch))
+        while (isIdRest(ch))
             get();
         return checkReserved(start);
     }
 
-    TokenType special() {
-        int start = index - 1;
-        while (isSpecial(ch))
-            get();
-        return checkReserved(start);
-    }
+    // TokenType alpha() {
+    //     int start = index - 1;
+    //     while (isAlpha(ch) || isDigit(ch))
+    //         get();
+    //     return checkReserved(start);
+    // }
+
+    // TokenType special() {
+    //     int start = index - 1;
+    //     while (isSpecial(ch))
+    //         get();
+    //     return checkReserved(start);
+    // }
 
     String string(int start) {
         int end = ch == -1 ? index : index - 1;
@@ -155,24 +186,25 @@ public class Scanner {
             case '(' -> get(TokenType.LP);
             case ')' -> get(TokenType.RP);
             case ',' -> get(TokenType.COMMA);
-            case '+' -> get(TokenType.PLUS);
-            case '-' -> get(TokenType.MINUS);
-            case '*' -> get(TokenType.MULT);
-            case '/' -> get(TokenType.DIV);
-            case '%' -> get(TokenType.MOD);
-            case '$' -> get(TokenType.ID);
-            case '~' -> get() == '~' ? get(TokenType.NEARLY_EQ) : TokenType.BITNOT;
-            case '^' -> get() == '^' ? get(TokenType.XOR) : TokenType.POW;
-            case '=' -> get() == '=' ? get(TokenType.EQ) : TokenType.ASSIGN;
-            case '!' -> get() == '=' ? get(TokenType.NE) : ch == '~' ? get(TokenType.NEARLY_NE) : TokenType.NOT;
-            case '<' -> get() == '=' ? get(TokenType.LE) : TokenType.LT;
-            case '>' -> get() == '=' ? get(TokenType.GE) : TokenType.GT;
-            case '@' -> get(TokenType.AT);
-            case '&' -> get() == '&' ? get(TokenType.CAND) : TokenType.AND;
-            case '|' -> get() == '|' ? get(TokenType.COR): TokenType.OR;
+            // case '+' -> get(TokenType.PLUS);
+            // case '-' -> get(TokenType.MINUS);
+            // case '*' -> get(TokenType.MULT);
+            // case '/' -> get(TokenType.DIV);
+            // case '%' -> get(TokenType.MOD);
+            // case '$' -> get(TokenType.ID);
+            // case '~' -> get() == '~' ? get(TokenType.NEARLY_EQ) : TokenType.BITNOT;
+            // case '^' -> get() == '^' ? get(TokenType.XOR) : TokenType.POW;
+            // case '=' -> get() == '=' ? get(TokenType.EQ) : TokenType.ASSIGN;
+            // case '!' -> get() == '=' ? get(TokenType.NE) : ch == '~' ? get(TokenType.NEARLY_NE) : TokenType.NOT;
+            // case '<' -> get() == '=' ? get(TokenType.LE) : TokenType.LT;
+            // case '>' -> get() == '=' ? get(TokenType.GE) : TokenType.GT;
+            // case '@' -> get(TokenType.AT);
+            // case '&' -> get() == '&' ? get(TokenType.CAND) : TokenType.AND;
+            // case '|' -> get() == '|' ? get(TokenType.COR): TokenType.OR;
             default -> isDigit(ch) ? number()
-                : isAlpha(ch) ? alpha()
-                : isSpecial(ch) ? special()
+                : isIdFirst(ch) ? id()
+                // : isAlpha(ch) ? alpha()
+                // : isSpecial(ch) ? special()
                 : error("Unknown char %s", str(ch));
         };
         return new Token(type, string(start));
