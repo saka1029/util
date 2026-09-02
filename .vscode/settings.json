@@ -5,4 +5,5 @@
     "markdown.copyFiles.destination": {
         "**/*": "${documentBaseName}/${fileName}"
     },
+    "maven.view": "flat",
 }

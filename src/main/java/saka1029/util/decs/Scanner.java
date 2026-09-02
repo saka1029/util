@@ -103,13 +103,13 @@ public class Scanner {
         };
     }
 
-    static boolean isIdFirst(int ch) {
-        return isAlpha(ch) || isSpecial(ch);
-    }
+    // static boolean isIdFirst(int ch) {
+    //     return isAlpha(ch) || isSpecial(ch);
+    // }
 
-    static boolean isIdRest(int ch) {
-        return isIdFirst(ch) || isDigit(ch) || ch == '_';
-    }
+    // static boolean isIdRest(int ch) {
+    //     return isIdFirst(ch) || isDigit(ch) || ch == '_';
+    // }
 
     String str(int ch) {
         return ch == -1 ? "EOF" : "'%c'".formatted(ch);
@@ -154,26 +154,26 @@ public class Scanner {
         return t != null ? t : TokenType.ID;
     }
 
-    TokenType id() {
+    // TokenType id() {
+    //     int start = index - 1;
+    //     while (isIdRest(ch))
+    //         get();
+    //     return checkReserved(start);
+    // }
+
+    TokenType alpha() {
         int start = index - 1;
-        while (isIdRest(ch))
+        while (isAlpha(ch) || isSpecial(ch) || isDigit(ch))
             get();
         return checkReserved(start);
     }
 
-    // TokenType alpha() {
-    //     int start = index - 1;
-    //     while (isAlpha(ch) || isDigit(ch))
-    //         get();
-    //     return checkReserved(start);
-    // }
-
-    // TokenType special() {
-    //     int start = index - 1;
-    //     while (isSpecial(ch))
-    //         get();
-    //     return checkReserved(start);
-    // }
+    TokenType special() {
+        int start = index - 1;
+        while (isSpecial(ch))
+            get();
+        return checkReserved(start);
+    }
 
     String string(int start) {
         int end = ch == -1 ? index : index - 1;
@@ -202,9 +202,9 @@ public class Scanner {
             // case '&' -> get() == '&' ? get(TokenType.CAND) : TokenType.AND;
             // case '|' -> get() == '|' ? get(TokenType.COR): TokenType.OR;
             default -> isDigit(ch) ? number()
-                : isIdFirst(ch) ? id()
-                // : isAlpha(ch) ? alpha()
-                // : isSpecial(ch) ? special()
+                // : isIdFirst(ch) ? id()
+                : isAlpha(ch) ? alpha()
+                : isSpecial(ch) ? special()
                 : error("Unknown char %s", str(ch));
         };
         return new Token(type, string(start));

@@ -33,9 +33,9 @@ public class Parser {
         unary        = [ '@' ] UOP unary | primary
         primary      = '(' [ expression ] ')' | ID | NUMBER
         COP          = '==' | '!=' | '>' | '>=' | '<' | '<=' | '~~' | '!~'
-        UOP          = id // defined in context
-        BOP          = id // defined in context
-        ID           = ALPHABETIC { ALPHABETIC | DIGIT }
+        UOP          = ID // defined in context
+        BOP          = ID // defined in context
+        ID           = ALPHABETIC { ALPHABETIC | SPECIAL | DIGIT }
                      | SPECIAL { SPECIAL }
         """;
     static final Token END = new Token(TokenType.END, "EOF");

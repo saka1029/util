@@ -408,7 +408,7 @@ public class Context {
         binary("get", (c, a, b) -> Decs.get(a, b), "(M) get (I) -> (D) : get at (I) from (M)");
         unary("int", (c, a) -> Decs.integer(a), "int (N) -> (I) : integer part (round towards zero)");
         unary("iota", (c, a) -> Decs.iota(a), "iota N -> (I) : (1..N)");
-        unary("iota0", (c, a) -> Decs.iota0(a), "iota0 N -> (I) : (0..N)");
+        unary("iota0", (c, a) -> Decs.iota0(a), "iotaz N -> (I) : (0..N)");
         unary("iotan", (c, a) -> Decs.iotan(a), "iotan N -> (I) : (-N..N)");
         unary("iseven", (c, a) -> Decs.isEven(a), "iseven (N) -> (B) : is even (T:1, F:0)");
         unary("isint", (c, a) -> Decs.isInt(a), "isint (N) -> (B) : is integer (T:1, F:0)");

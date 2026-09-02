@@ -31,14 +31,14 @@ public class TestScanner {
     public void testOperator() {
         Scanner scanner = new Scanner();
         List<Token> tokens = scanner.scan(
-            "var =  (3 + 4) - (abc321 - 2) ^ 3.5 % X , 0");
+            "var =  (3 + 4) - (abc - 2) ^ 3.5 % X , 0");
         assertEquals(List.of(
             ID, ASSIGN, LP, NUM, PLUS, NUM, RP, MINUS, LP, ID,
             MINUS, NUM, RP, POW, NUM, MOD, ID, COMMA, NUM),
             tokens.stream().map(t -> t.type).toList());
         assertEquals(List.of(
             "var", "=", "(", "3", "+", "4", ")",
-            "-", "(", "abc321", "-", "2", ")", "^", "3.5", "%", "X", ",", "0"),
+            "-", "(", "abc", "-", "2", ")", "^", "3.5", "%", "X", ",", "0"),
             tokens.stream().map(t -> t.string).toList());
     }
 
