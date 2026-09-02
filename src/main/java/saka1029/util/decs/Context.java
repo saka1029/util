@@ -24,6 +24,15 @@ public class Context {
         init();
     }
 
+    public void help(String name, Consumer<String> out) {
+        variables.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getKey().toString()));
+        setters.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getKey()));
+        unarys.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getValue().string));
+        binarys.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getValue().string));
+        builtinUnarys.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getValue().string));
+        builtinBinarys.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getValue().string));
+    }
+
     public boolean isVariable(String name) {
         return variables.containsKey(name);
     }

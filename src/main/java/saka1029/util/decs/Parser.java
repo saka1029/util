@@ -435,22 +435,28 @@ public class Parser {
 
     Expression helpName(String name) {
         return c -> {
-            boolean found = false;
-            if (c.isBuiltinUnary(name) && (found = true))
-                c.output.accept(c.builtinUnary(name).string);
-            if (c.isBuiltinBinary(name) && (found = true))
-                c.output.accept(c.builtinBinary(name).string);
-            if (c.isVariable(name) && (found = true))
-                c.output.accept(c.variable(name).string);
-            if (c.isUnary(name) && (found = true))
-                c.output.accept(c.unary(name).string);
-            if (c.isBinary(name) && (found = true))
-                c.output.accept(c.binary(name).string);
-            if (!found)
-                c.output.accept("'%s' not found".formatted(name));
+            c.help(name, s -> c.output.accept(s));
             return Decs.NO_VALUE;
         };
     }
+    // Expression helpName(String name) {
+    //     return c -> {
+    //         boolean found = false;
+    //         if (c.isBuiltinUnary(name) && (found = true))
+    //             c.output.accept(c.builtinUnary(name).string);
+    //         if (c.isBuiltinBinary(name) && (found = true))
+    //             c.output.accept(c.builtinBinary(name).string);
+    //         if (c.isVariable(name) && (found = true))
+    //             c.output.accept(c.variable(name).string);
+    //         if (c.isUnary(name) && (found = true))
+    //             c.output.accept(c.unary(name).string);
+    //         if (c.isBinary(name) && (found = true))
+    //             c.output.accept(c.binary(name).string);
+    //         if (!found)
+    //             c.output.accept("'%s' not found".formatted(name));
+    //         return Decs.NO_VALUE;
+    //     };
+    // }
 
     Expression help() {
         if (token == END)
