@@ -25,12 +25,13 @@ public class Context {
     }
 
     public void help(String name, Consumer<String> out) {
-        variables.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getKey().toString()));
-        setters.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getKey()));
-        unarys.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getValue().string));
-        binarys.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getValue().string));
-        builtinUnarys.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getValue().string));
-        builtinBinarys.entrySet().stream().filter(e -> e.getKey().contains(name)).forEach(e -> out.accept(e.getValue().string));
+        String ln = name.toLowerCase();
+        variables.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getKey().toString()));
+        setters.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getKey()));
+        unarys.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getValue().string));
+        binarys.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getValue().string));
+        builtinUnarys.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getValue().string));
+        builtinBinarys.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getValue().string));
     }
 
     public boolean isVariable(String name) {
