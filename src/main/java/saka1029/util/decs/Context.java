@@ -27,7 +27,7 @@ public class Context {
     public void help(String name, Consumer<String> out) {
         String ln = name.toLowerCase();
         variables.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getKey().toString()));
-        setters.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getKey()));
+        // setters.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getKey()));
         unarys.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getValue().string));
         binarys.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getValue().string));
         builtinUnarys.entrySet().stream().filter(e -> e.getKey().toLowerCase().contains(ln)).forEach(e -> out.accept(e.getValue().string));
