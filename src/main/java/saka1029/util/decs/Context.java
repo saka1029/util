@@ -351,21 +351,21 @@ public class Context {
     }
 
     private void init() {
-        builtinUnary("!", (c, a) -> Decs.not(a), "! (C) -> (B) : not B");
-        unary("+", (c, a) -> Decs.add(a), "+ (A) -> D : +");
+        builtinUnary("!", (c, a) -> Decs.not(a), "! (C) -> (B) : not C");
+        unary("+", (c, a) -> Decs.add(a), "+ (A) -> D : sum of (A)");
         builtinBinary("+", (c, a, b) -> Decs.add(a, b), "(A) + (B) -> (D) : A + B");
-        unary("-", (c, a) -> Decs.subtract(a), "- (A) -> D : -");
+        unary("-", (c, a) -> Decs.subtract(a), "- (A) -> D : subtract of (A)");
         builtinBinary("-", (c, a, b) -> Decs.subtract(a, b), "(A) - (B) -> (D) : A - B");
-        unary("*", (c, a) -> Decs.multiply(a), "* (A) -> D : *");
+        unary("*", (c, a) -> Decs.multiply(a), "* (A) -> D : multiply of (A)");
         builtinBinary("*", (c, a, b) -> Decs.multiply(a, b), "(A) * (B) -> (D) : A * B");
-        unary("/", (c, a) -> Decs.divide(a), "/ (A) -> D : /");
+        unary("/", (c, a) -> Decs.divide(a), "/ (A) -> D : division of (A)");
         builtinBinary("/", (c, a, b) -> Decs.divide(a, b), "(A) / (B) -> (D) : A / B");
         builtinBinary("%", (c, a, b) -> Decs.mod(a, b), "(A) % (B) -> (D) : modulo A by B");
-        unary("^", (c, a) -> Decs.pow(a), "^ (A) -> D : power");
-        unary("^^", (c, a) -> Decs.xor(a), "^^ (M) -> (I) : xor");
+        unary("^", (c, a) -> Decs.pow(a), "^ (A) -> D : power of (A)");
+        unary("^^", (c, a) -> Decs.xor(a), "^^ (M) -> (I) : xor of (M)");
         builtinBinary("^^", (c, a, b) -> Decs.xor(a, b), "(M) ^^ (N) -> (I) : M xor N");
         builtinBinary("^", (c, a, b) -> Decs.pow(a, b), "(A) ^ (B) -> (D) : A power of B");
-        unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or");
+        unary("|", (c, a) -> Decs.or(a), "| (B) -> B : or of (B)");
         builtinBinary("|", (c, a, b) -> Decs.or(a, b), "(A) | (B) -> (D) : bit or A B");
         builtinBinary("||", (c, a, b) -> Decs.cor(a, b), "(A) || (B) -> (D) : conditional or A B");
         builtinBinary("==", (c, a, b) -> Decs.eq(a, b), "(A) == (B) -> (B) : A equal B");
