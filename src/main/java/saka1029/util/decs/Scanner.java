@@ -167,6 +167,25 @@ public class Scanner {
             get();
         return checkReserved(start);
     }
+    
+    TokenType ident() {
+        int start = index - 1;
+        while (isAlpha(ch) || isDigit(ch))
+            get();
+        while (ch == '.') {
+            get();
+            if (isAlpha(ch))
+                while (isAlpha(ch) || isDigit(ch))
+                    get();
+            else if (isSpecial(ch))
+                while (isSpecial(ch))
+                    get();
+            else
+                error("Unknown char %s", str(ch));
+        }
+        return checkReserved(start);
+    }
+
 
     TokenType special() {
         int start = index - 1;
@@ -203,7 +222,7 @@ public class Scanner {
             // case '|' -> get() == '|' ? get(TokenType.COR): TokenType.OR;
             default -> isDigit(ch) ? number()
                 // : isIdFirst(ch) ? id()
-                : isAlpha(ch) ? alpha()
+                : isAlpha(ch) ? ident()
                 : isSpecial(ch) ? special()
                 : error("Unknown char %s", str(ch));
         };

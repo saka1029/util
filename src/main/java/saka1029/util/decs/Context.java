@@ -428,15 +428,15 @@ public class Context {
         variable("PI", c -> Decs.pi(), "PI -> D : π");
         unary("pascal", (c, a) -> Decs.pascal(a), "pascal N -> (I) : binomial coefficients for N");
         binary("poly", (c, a, b) -> Decs.poly(a, b), "(A) poly (B) -> (D) : polynomial values");
-        binary("p+", (c, a, b) -> Decs.polyAdd(a, b), "(A) p+ (B) -> (D) : add (A) and (B) as polynomial");
-        binary("p/", (c, a, b) -> {
+        binary("p.+", (c, a, b) -> Decs.polyAdd(a, b), "(A) p.+ (B) -> (D) : add (A) and (B) as polynomial");
+        binary("p./", (c, a, b) -> {
             BigDecimal[][] dr = Decs.polyDivide(a, b);
             c.output.accept("remainder = " + Decs.string(dr[1])); // 剰余を中間表示する。
             return dr[0];
-        }, "(A) p/ (B) -> (D) : divide (A) by (B) as polynomial");
-        binary("p%", (c, a, b) -> Decs.polyMod(a, b), "(A) p% (B) -> (D) : mod (A) by (B) as polynomial");
-        binary("p*", (c, a, b) -> Decs.polyMult(a, b), "(A) p* (B) -> (D) : multiply (A) and (B) as polynomial");
-        binary("p^", (c, a, b) -> Decs.polyPow(a, b), "(A) p^ (B) -> (D) : power (A) by (B) as polynomial");
+        }, "(A) p./ (B) -> (D) : divide (A) by (B) as polynomial");
+        binary("p.%", (c, a, b) -> Decs.polyMod(a, b), "(A) p.% (B) -> (D) : mod (A) by (B) as polynomial");
+        binary("p.*", (c, a, b) -> Decs.polyMult(a, b), "(A) p.* (B) -> (D) : multiply (A) and (B) as polynomial");
+        binary("p.^", (c, a, b) -> Decs.polyPow(a, b), "(A) p.^ (B) -> (D) : power (A) by (B) as polynomial");
         variable("PRECISION", c -> Decs.decs(Decs.MATH_CONTEXT.getPrecision()), "PRECISION N : set precision");
         setter("PRECISION", (c, a) -> Decs.precision(a));
         unary("primes", (c, a) -> Decs.primes(a), "primes (A) -> (D) : primes from 2 to A");

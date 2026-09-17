@@ -14,9 +14,9 @@ import saka1029.util.decs.Scanner.TokenType;
 public class Parser {
     static final String SYNTAX = """
         statement    = expression
-                    | ID '=' expression
-                    | ID ID '=' expression
-                    | ID ID ID '=' expression
+                    | id '=' expression
+                    | id id '=' expression
+                    | id id id '=' expression
                     | 'exit'
                     | 'help' name
                     | 'solve' expression
@@ -31,12 +31,13 @@ public class Parser {
         mult         = power { ( '*' | '/' | '%' ) power }
         power        = unary [ '^' power ]
         unary        = [ '@' ] UOP unary | primary
-        primary      = '(' [ expression ] ')' | ID | NUMBER
+        primary      = '(' [ expression ] ')' | id | NUMBER
         COP          = '==' | '!=' | '>' | '>=' | '<' | '<=' | '~~' | '!~'
-        UOP          = ID // defined in context
-        BOP          = ID // defined in context
-        ID           = ALPHABETIC { ALPHABETIC | SPECIAL | DIGIT }
-                     | SPECIAL { SPECIAL }
+        UOP          = id // defined in context
+        BOP          = id // defined in context
+        id           = idalpha { '.' (idalpha | special)} | special
+        idalpha      = ALPHA { ALPHA | DIGIT }
+        special      = SPECIAL { SPECIAL }
         """;
     static final Token END = new Token(TokenType.END, "EOF");
 
