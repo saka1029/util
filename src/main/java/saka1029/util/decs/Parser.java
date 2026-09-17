@@ -35,8 +35,8 @@ public class Parser {
         COP          = '==' | '!=' | '>' | '>=' | '<' | '<=' | '~~' | '!~'
         UOP          = id // defined in context
         BOP          = id // defined in context
-        id           = idalpha { '.' (idalpha | special)} | special
-        idalpha      = ALPHA { ALPHA | DIGIT }
+        id           = word { '.' (word | special)} | special
+        word         = ALPHA { ALPHA | DIGIT }
         special      = SPECIAL { SPECIAL }
         """;
     static final Token END = new Token(TokenType.END, "EOF");
