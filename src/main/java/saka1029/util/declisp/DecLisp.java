@@ -148,7 +148,7 @@ public class DecLisp {
     public static Env defaultEnv() {
         Env env = new Env();
         env.define(QUOTE, (Applicable) (args, e) -> car(args),
-            VT.spec, "{args}", "quoteを除外したリストを返す");
+            VT.spec, "{args}", "quoteを除外したリストを返す。");
         env.define(LAMBDA, (Applicable) (args, e) -> {
             Expr parms = car(args), body = cdr(args);
             return (Procedure) a -> {
@@ -165,27 +165,47 @@ public class DecLisp {
                 return car(cdr(cdr(args))).eval(e);
             else
                 return Nil.NIL;
-        }, VT.spec, "cond then [else]", "condを評価してFでなければthenを評価し、そうでなければelseを評価する");
+        }, VT.spec, "cond then [else]", "condを評価してFでなければthenを評価し、そうでなければelseを評価する。");
         env.define(sym("define"), (Applicable) (args, e) -> {
             return car(args) instanceof Cons head
                 ? e.define(symbol(head.car()), cons(LAMBDA, cons(head.cdr(), cdr(args))).eval(e))
                 : e.define(symbol(car(args)), car(cdr(args)).eval(e),
-            VT.spec, "symbol value", "symbolをvaluetとして定義する");
+            VT.spec, "symbol value", "symbolをvaluetとして定義する。");
         });
+        env.define(sym("help"), (Applicable) (args, e) -> {
+            int n = 0;
+            String key = args instanceof Cons c ? sym(car(c)).toLowerCase() : "";
+            for (Help h : e.sortedHelp())
+                if (h.name.toLowerCase().contains(key)) {
+                    System.out.println(h);
+                    ++n;
+                }
+            return dec(n);
+        },
+            VT.spec, "search", "searchを含む関数の説明を表示する。");
         env.define(sym("set"), (Applicable) (args, e) -> e.set(symbol(car(args)), car(cdr(args)).eval(e)),
-            VT.spec, "symbol value", "symbolにvalueを代入する");
+            VT.spec, "symbol value", "symbolにvalueを代入する。");
         env.define(sym("&&"), (Applicable) (args, e) -> insert(args, Bool.T, (x, y) -> bool(x) ? y : x),
-            VT.spec, "{args}", "argsを左から順に評価して最初のFでないものを返す");
+            VT.spec, "{args}", "argsを左から順に評価して最初のFでないものを返す。");
         env.define(sym("||"), (Applicable) (args, e) -> insert(args, Bool.F, (x, y) -> bool(x) ? x : y),
-            VT.spec, "{args}", "argsを左から順に評価して最初のFを返す");
+            VT.spec, "{args}", "argsを左から順に評価して最初のFを返す。");
         // procedures
-        env.define(sym("car"), (Procedure) args -> car(car(args)));
-        env.define(sym("cdr"), (Procedure) args -> cdr(car(args)));
-        env.define(sym("cons"), (Procedure) args -> cons(car(args), car(cdr(args))));
-        env.define(sym("list"), (Procedure) args -> args);
-        env.define(sym("not"), (Procedure) args -> bool(!bool(car(args))));
-        env.define(sym("!"), (Procedure) args -> bool(!bool(car(args))));
-        env.define(sym("abs"), (Procedure) args -> dec(dec(car(args)).abs()));
+        env.define(sym("car"), (Procedure) args -> car(car(args)),
+            VT.proc, "arg", "argのcarを返す。");
+        env.define(sym("cdr"), (Procedure) args -> cdr(car(args)),
+            VT.proc, "arg", "argのcdrを返す。");
+        env.define(sym("cons"), (Procedure) args -> cons(car(args), car(cdr(args))),
+            VT.proc, "a b", "aとbのconsを返す。");
+        env.define(sym("list"), (Procedure) args -> args,
+            VT.proc, ". r", "rを返す。");
+        env.define(sym("not"), (Procedure) args -> bool(!bool(car(args))),
+            VT.proc, "a", "aがFのときTを返す。それ以外の時Fを返す。");
+        env.define(sym("!"), (Procedure) args -> bool(!bool(car(args))),
+            VT.proc, "a", "aがFのときTを返す。それ以外の時Fを返す。");
+        env.define(sym("abs"), (Procedure) args -> dec(dec(car(args)).abs(MC)),
+            VT.proc, "a", "a≧0のときaを返す。それ以外の時-aを返す。");
+        env.define(sym("factorial"), (Procedure) args -> dec(factorial(dec(car(args)), MC)),
+            VT.proc, "n", "nの階乗を返す。");
         env.define(sym("gcd"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(dec(x).toBigInteger().gcd(dec(y).toBigInteger())))); 
         env.define(sym("+"), (Procedure) args -> insert(args, dec(0), (x, y) -> dec(dec(x).add(dec(y), MC))));
         env.define(sym("-"), (Procedure) args -> insert(args, dec(0), (x, y) -> dec(dec(x).subtract(dec(y), MC))));
@@ -251,7 +271,7 @@ public class DecLisp {
         env.define(sym("p%"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MODULO));
         env.define(sym("today"), (Procedure) args -> { var d = LocalDate.now();
             return dec(d.getYear() * 10000 + d.getMonthValue() * 100 + d.getDayOfMonth());
-        });
+        }, VT.proc, "", "今日の日付をYYYYMMDD形式の8桁の数字で返す。");
         env.define(sym("days"), (Procedure) args -> {
             int i = toInt(dec(car(args)));
             try {
@@ -260,7 +280,7 @@ public class DecLisp {
             } catch (DateTimeException x) {
                 throw new DecLispException(x);
             }
-        });
+        }, VT.proc, "YYYYMMDD", "YYYYMMDD形式で表現された日付のエポック日からの経過日数を返す。");
         env.define(sym("date"), (Procedure) args -> {
             long i = toLong(dec(car(args)));
             try {
@@ -269,7 +289,7 @@ public class DecLisp {
             } catch (DateTimeException x) {
                 throw new DecLispException(x);
             }
-        });
+        }, VT.proc, "epoc", "エポック日をYYYYMMDD形式の日付に変換する。");
         env.define(sym("week"), (Procedure) args -> {
             int i = toInt(dec(car(args)));
             try {
