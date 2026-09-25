@@ -147,7 +147,8 @@ public class DecLisp {
 
     public static Env defaultEnv() {
         Env env = new Env();
-        env.define(QUOTE, (Applicable) (args, e) -> car(args));
+        env.define(QUOTE, (Applicable) (args, e) -> car(args),
+            VT.spec, "{args}", "quoteを除外したリストを返す");
         env.define(LAMBDA, (Applicable) (args, e) -> {
             Expr parms = car(args), body = cdr(args);
             return (Procedure) a -> {
@@ -155,7 +156,7 @@ public class DecLisp {
                 parms.pairlis(a, newEnv);
                 return progn(body, newEnv);
             };
-        });
+        }, VT.spec, "({var}) {body}", "varを引数としてbodyを実行する関数を定義する。");
         env.define(sym("if"), (Applicable) (args, e) -> {
             boolean p = bool(car(args).eval(e));
             if (p)
@@ -164,15 +165,19 @@ public class DecLisp {
                 return car(cdr(cdr(args))).eval(e);
             else
                 return Nil.NIL;
-        });
+        }, VT.spec, "cond then [else]", "condを評価してFでなければthenを評価し、そうでなければelseを評価する");
         env.define(sym("define"), (Applicable) (args, e) -> {
             return car(args) instanceof Cons head
                 ? e.define(symbol(head.car()), cons(LAMBDA, cons(head.cdr(), cdr(args))).eval(e))
-                : e.define(symbol(car(args)), car(cdr(args)).eval(e));
+                : e.define(symbol(car(args)), car(cdr(args)).eval(e),
+            VT.spec, "symbol value", "symbolをvaluetとして定義する");
         });
-        env.define(sym("set"), (Applicable) (args, e) -> e.set(symbol(car(args)), car(cdr(args)).eval(e)));
-        env.define(sym("&&"), (Applicable) (args, e) -> insert(args, Bool.T, (x, y) -> bool(x) ? y : x));
-        env.define(sym("||"), (Applicable) (args, e) -> insert(args, Bool.F, (x, y) -> bool(x) ? x : y));
+        env.define(sym("set"), (Applicable) (args, e) -> e.set(symbol(car(args)), car(cdr(args)).eval(e)),
+            VT.spec, "symbol value", "symbolにvalueを代入する");
+        env.define(sym("&&"), (Applicable) (args, e) -> insert(args, Bool.T, (x, y) -> bool(x) ? y : x),
+            VT.spec, "{args}", "argsを左から順に評価して最初のFでないものを返す");
+        env.define(sym("||"), (Applicable) (args, e) -> insert(args, Bool.F, (x, y) -> bool(x) ? x : y),
+            VT.spec, "{args}", "argsを左から順に評価して最初のFを返す");
         // procedures
         env.define(sym("car"), (Procedure) args -> car(car(args)));
         env.define(sym("cdr"), (Procedure) args -> cdr(car(args)));

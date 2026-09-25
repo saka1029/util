@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import static saka1029.util.declisp.Common.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -95,5 +96,13 @@ public class TestReader {
         UTF-32 Encoding: 0x00029E3D (171581)
          */
         assertEquals(sym("𩸽"), read("𩸽"));
+    }
+
+    @Test
+    public void testSplit() {
+        String line = "(abc de )s";
+        String splitter = "(?<=[()])|(?=[()])|\\s+";
+        String[] words = line.split(splitter);
+        System.out.println(Arrays.toString(words));
     }
 }

@@ -12,16 +12,16 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.ParsedLine;
-import org.jline.reader.Parser;
 import org.jline.reader.SyntaxError;
 import org.jline.reader.UserInterruptException;
+import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp.Capability;
 
 public class Main {
 
-    static class SimpleDecListParser implements Parser {
+    static class SimpleDecListParser extends DefaultParser {
 
         static class MyParsedLine implements CompletingParsedLine {
             final String word;
@@ -41,7 +41,8 @@ public class Main {
         public ParsedLine parse(String line, int cursor, ParseContext context) throws SyntaxError {
             try {
                 new Reader(line).read();
-                return new MyParsedLine(line);
+                return super.parse(line, cursor, context);
+                // return new MyParsedLine(line);
             } catch (DecLispEOFException x) {
                 throw new EOFError(0, 0, x.getMessage());
             }
@@ -55,13 +56,18 @@ public class Main {
 
     public static void main(String[] args) {
         try (Terminal terminal = TerminalBuilder.builder().system(true).build();) {
+            Env env = defaultEnv();
+            // Completer completer = new StringsCompleter(
+            //     env.sortedHelp().stream()
+            //         .map(h -> h.name)
+            //         .toArray(String[]::new));
             LineReader reader = LineReaderBuilder.builder()
                 .parser(new SimpleDecListParser())
+                // .completer(completer)
                 .terminal(terminal)
                 .variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M> ")
                 .build();
 
-            Env env = defaultEnv();
 
             while (true) {
                 try {
