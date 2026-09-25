@@ -20,7 +20,7 @@ public class TestCommon {
     @Test 
     public void testInteger() {
         try {
-            integer(bigdec("999999999999999"));
+            toInt(bigdec("999999999999999"));
             fail();
         } catch (DecLispException x) {
             assertEquals(ArithmeticException.class, x.getCause().getClass());
@@ -31,7 +31,7 @@ public class TestCommon {
     @Test 
     public void testLon() {
         try {
-            lon(bigdec("9999999999999999999999999"));
+            toLong(bigdec("9999999999999999999999999"));
             fail();
         } catch (DecLispException x) {
             assertEquals(ArithmeticException.class, x.getCause().getClass());

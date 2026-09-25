@@ -50,29 +50,31 @@ public class Main {
 
     static final String ERROR_COLOR  = "\u001b[00;91m";
     static final String ERROR_COLOR_END  = "\u001b[00m";
-    static final String PROMPT = "\u001b[00;92mdecl> ";
+    static final String PROMPT = "\u001b[00;92mdecl> \u001b[00m";
+    static final Symbol LAST_RESULT = sym("$");
 
     public static void main(String[] args) {
-    try {
-        Terminal terminal = TerminalBuilder.builder().system(true).build();
-        LineReader reader = LineReaderBuilder.builder()
-            .parser(new SimpleDecListParser())
-            .terminal(terminal)
-            .variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M> ")
-            .build();
+        try (Terminal terminal = TerminalBuilder.builder().system(true).build();) {
+            LineReader reader = LineReaderBuilder.builder()
+                .parser(new SimpleDecListParser())
+                .terminal(terminal)
+                .variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M> ")
+                .build();
 
-        Env env = defaultEnv();
+            Env env = defaultEnv();
 
-        while (true) {
-            try {
-                String line = reader.readLine(PROMPT);
-                if ("exit".equalsIgnoreCase(line))
-                    break;
+            while (true) {
                 try {
+                    String line = reader.readLine(PROMPT);
+                    if ("exit".equalsIgnoreCase(line))
+                        break;
                     Expr evaled = eval(env, line);
+                    env.define(LAST_RESULT, evaled);
                     terminal.puts(Capability.orig_pair);
                     terminal.writer().println(evaled);
                     terminal.flush();
+                } catch (UserInterruptException uie) {
+                    terminal.writer().println("Ctrl-C entered");
                 } catch (DecLispException x) {
                     // terminal.puts(Capability.set_a_foreground, 1);   // IOErrorになる。
                     terminal.writer().print(ERROR_COLOR);
@@ -80,17 +82,11 @@ public class Main {
                     terminal.writer().print(ERROR_COLOR_END);
                     terminal.flush();
                 }
-            } catch (UserInterruptException uie) {
-                System.out.println("Ctrl-C entered");
             }
+        } catch (EndOfFileException e) {
+            System.out.println("EOF entered");
+        } catch (IOException e) {
+            System.err.println("Error creating terminal: " + e.getMessage());
         }
-        // terminal.writer().println("Goodbye!");
-        terminal.close();
-
-    } catch (EndOfFileException e) {
-        System.out.println("EOF entered");
-    } catch (IOException e) {
-        System.err.println("Error creating terminal: " + e.getMessage());
     }
-}
 }

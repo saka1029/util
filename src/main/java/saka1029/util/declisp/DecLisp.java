@@ -187,6 +187,8 @@ public class DecLisp {
         env.define(sym("*"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(dec(x).multiply(dec(y), MC))));
         env.define(sym("/"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(dec(x).divide(dec(y), MC))));
         env.define(sym("%"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(dec(x).remainder(dec(y), MC))));
+        env.define(sym("pow"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(pow(dec(x), dec(y), MC))));
+        env.define(sym("^"), env.get(sym("pow")));
         env.define(sym("and"), (Procedure) args -> insert(args, Bool.T, (x, y) -> bool(bool(x) & bool(y))));
         env.define(sym("or"), (Procedure) args -> insert(args, Bool.F, (x, y) -> bool(bool(x) | bool(y))));
         env.define(sym("xor"), (Procedure) args -> insert(args, Bool.F, (x, y) -> bool(bool(x) ^ bool(y))));
@@ -201,7 +203,7 @@ public class DecLisp {
         // (precision) -> 現在の精度を返す。
         // (precision n) -> 精度にnを設定しnを返す。
         env.define(sym("precision"), (Procedure) args ->
-            args.equals(Nil.NIL) ? dec(precision()) : dec(precision(integer(dec(car(args))))));
+            args.equals(Nil.NIL) ? dec(precision()) : dec(precision(toInt(dec(car(args))))));
         // (delta) -> 現在のデルタ値を返す。
         // (delta d) -> デルタ値にdを設定しdを返す。
         env.define(sym("delta"), (Procedure) args ->
@@ -220,8 +222,6 @@ public class DecLisp {
         env.define(sym("log2"), (Procedure) args -> dec(log2(dec(car(args)), MC)));
         env.define(sym("gamma"), (Procedure) args -> dec(gamma(dec(car(args)), MC)));
         env.define(sym("exp"), (Procedure) args -> dec(exp(dec(car(args)), MC)));
-        env.define(sym("pow"), (Procedure) args -> dec(pow(dec(car(args)), dec(car(cdr(args))), MC)));
-        env.define(sym("^"), env.get(sym("pow")));
         env.define(sym("sqrt"), (Procedure) args -> dec(sqrt(dec(car(args)), MC)));
         // (root 3 8) -> 8の3乗根
         env.define(sym("root"), (Procedure) args -> dec(root(dec(car(cdr(args))), dec(car(args)), MC)));
@@ -248,7 +248,7 @@ public class DecLisp {
             return dec(d.getYear() * 10000 + d.getMonthValue() * 100 + d.getDayOfMonth());
         });
         env.define(sym("days"), (Procedure) args -> {
-            int i = integer(dec(car(args)));
+            int i = toInt(dec(car(args)));
             try {
                 LocalDate d = LocalDate.of(i / 10000, i / 100 % 100, i % 100);
                 return dec(d.toEpochDay());
@@ -257,7 +257,7 @@ public class DecLisp {
             }
         });
         env.define(sym("date"), (Procedure) args -> {
-            long i = lon(dec(car(args)));
+            long i = toLong(dec(car(args)));
             try {
                 LocalDate d = LocalDate.ofEpochDay(i);
                 return dec(d.getYear() * 10000 + d.getMonthValue() * 100 + d.getDayOfMonth());
@@ -266,7 +266,7 @@ public class DecLisp {
             }
         });
         env.define(sym("week"), (Procedure) args -> {
-            int i = integer(dec(car(args)));
+            int i = toInt(dec(car(args)));
             try {
                 LocalDate d = LocalDate.of(i / 10000, i / 100 % 100, i % 100);
                 return sym(d.getDayOfWeek().toString());
@@ -274,6 +274,7 @@ public class DecLisp {
                 throw new DecLispException(x);
             }
         });
+        env.define(sym("loop"), (Procedure) args -> { while (true); });
         return env;
     }
 }

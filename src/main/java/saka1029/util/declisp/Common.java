@@ -54,14 +54,14 @@ public class Common {
         return r;
     }
 
-    public static int integer(BigDecimal d) {
+    public static int toInt(BigDecimal d) {
         try {
             return d.intValueExact();
         } catch (ArithmeticException x) {
             throw new DecLispException(x);
         }
     }
-    public static long lon(BigDecimal d) {
+    public static long toLong(BigDecimal d) {
         try {
             return d.longValueExact();
         } catch (ArithmeticException x) {

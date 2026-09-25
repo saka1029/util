@@ -4,7 +4,6 @@ import static saka1029.util.declisp.Common.*;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +119,7 @@ public class Reader {
             while (isDigit(ch))
                 get();
         }
-        return new Dec(new BigDecimal(buffer.stringButLast()));
+        return new Dec(bigdec(buffer.stringButLast()));
     }
 
     static boolean isSymbolFirst(int ch) {
