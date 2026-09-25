@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 import static saka1029.util.decs.Decs.*;
-import saka1029.util.decs.Expression;
-import saka1029.util.decs.ExpressionWithVariables;
 import saka1029.util.decs.Parser;
 import saka1029.util.decs.SyntaxException;
+import saka1029.util.decs.Expression;
+import saka1029.util.decs.ExpressionWithVariables;
 
 public class TestParser {
 

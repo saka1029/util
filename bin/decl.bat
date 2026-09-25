@@ -2,5 +2,5 @@
 setlocal
 set BASE=%USERPROFILE%\git\util\target
 set CP=%BASE%\classes;%BASE%\dependency\*
-java -cp %CP% saka1029.util.dentaku.Main %*
+java -cp %CP% saka1029.util.declisp.Main %*
 endlocal
