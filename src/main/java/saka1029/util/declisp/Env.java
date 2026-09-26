@@ -20,8 +20,8 @@ public class Env {
         return key;
     }
     public Symbol define(Symbol key, Expr value,
-            VT type, String args, String text) {
-        help.put(key, new Help(type, key.value(), args, text));
+            VT type, Expr args, String text) {
+        help.put(key, new Help(type, key, args, text));
         return define(key, value);
     }
 
@@ -72,6 +72,7 @@ public class Env {
 
     @Override
     public String toString() {
-        return map.toString() + (prev == null ? "" : " -> " + prev.toString());
+        // return map.toString() + (prev == null ? "" : " -> " + prev.toString());
+        return map.toString();
     }
 }

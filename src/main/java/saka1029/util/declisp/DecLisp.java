@@ -5,7 +5,11 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
 import java.util.stream.Stream;
@@ -145,10 +149,40 @@ public class DecLisp {
         return range(BigDecimal.ONE, end);
     }
 
+    static Expr solver(Expr args, Env env) {
+        Expr target = car(cdr(args));
+        List<Entry<Symbol, Expr>> vars = new ArrayList<>();
+        Set<Symbol> dupCheck = new HashSet<>();
+        for (Expr var : car(args)) {
+            Symbol v = symbol(car(var));
+            if (!dupCheck.add(v))
+                throw new DecLispException("solver: duplicated variable '%s'", v);
+            vars.add(Map.entry(symbol(car(var)), car(cdr(var)).eval(env)));
+        }
+        List<Expr[]> result = new ArrayList<>();
+        result.add(vars.stream().map(x -> (Expr)x.getKey()).toArray(Expr[]::new));
+        new Object() {
+            Env nenv = new Env(env);
+            void solve(int index) {
+                if (index >= vars.size()) {
+                    if (bool(target.eval(nenv)))
+                        result.add(vars.stream().map(x -> nenv.get(x.getKey())).toArray(Expr[]::new));
+                } else {
+                    Symbol var = vars.get(index).getKey();
+                    for (Expr e : vars.get(index).getValue()) {
+                        nenv.define(var, e);
+                        solve(index + 1);
+                    }
+                }
+            }
+        }.solve(0);
+        return list(result.stream().map(x -> list(x)).toList());
+    }
+
     public static Env defaultEnv() {
         Env env = new Env();
         env.define(QUOTE, (Applicable) (args, e) -> car(args),
-            VT.spec, "{args}", "quoteを除外したリストを返す。");
+            VT.spec, list(sym("値")), "quoteを除外した値を返す。");
         env.define(LAMBDA, (Applicable) (args, e) -> {
             Expr parms = car(args), body = cdr(args);
             return (Procedure) a -> {
@@ -156,7 +190,7 @@ public class DecLisp {
                 parms.pairlis(a, newEnv);
                 return progn(body, newEnv);
             };
-        }, VT.spec, "({var}) {body}", "varを引数としてbodyを実行する関数を定義する。");
+        }, VT.spec, list(list(sym("{var}")), sym("{body}")), "varを引数としてbodyを実行する関数を定義する。");
         env.define(sym("if"), (Applicable) (args, e) -> {
             boolean p = bool(car(args).eval(e));
             if (p)
@@ -165,47 +199,49 @@ public class DecLisp {
                 return car(cdr(cdr(args))).eval(e);
             else
                 return Nil.NIL;
-        }, VT.spec, "cond then [else]", "condを評価してFでなければthenを評価し、そうでなければelseを評価する。");
+        }, VT.spec, list(sym("then"), sym("[else]")), "条件が真ならthenを評価し、そうでなければelseを評価する。");
         env.define(sym("define"), (Applicable) (args, e) -> {
             return car(args) instanceof Cons head
-                ? e.define(symbol(head.car()), cons(LAMBDA, cons(head.cdr(), cdr(args))).eval(e))
-                : e.define(symbol(car(args)), car(cdr(args)).eval(e),
-            VT.spec, "symbol value", "symbolをvaluetとして定義する。");
-        });
+                ? e.define(symbol(head.car()), cons(LAMBDA, cons(head.cdr(), cdr(args))).eval(e),
+                    VT.proc, head.cdr(), "ユーザ定義関数")
+                : car(cdr(args)) instanceof Cons && car(car(cdr(args))).equals(LAMBDA)
+                    ? e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.proc, car(cdr(car(cdr(args)))), "ユーザ定義関数")
+                    : e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.var, Nil.NIL, "");
+        }, VT.spec, list(sym("グローバル変数名"), sym("値")), "グローバル変数を定義する。");
         env.define(sym("help"), (Applicable) (args, e) -> {
             int n = 0;
             String key = args instanceof Cons c ? sym(car(c)).toLowerCase() : "";
             for (Help h : e.sortedHelp())
-                if (h.name.toLowerCase().contains(key)) {
+                if (h.name.value().toLowerCase().contains(key)) {
                     System.out.println(h);
                     ++n;
                 }
             return dec(n);
         },
-            VT.spec, "search", "searchを含む関数の説明を表示する。");
+            VT.spec, list(sym("search")), "searchを含む関数の説明を表示する。");
         env.define(sym("set"), (Applicable) (args, e) -> e.set(symbol(car(args)), car(cdr(args)).eval(e)),
-            VT.spec, "symbol value", "symbolにvalueを代入する。");
+            VT.spec, list(sym("グローバル変数"), sym("値")), "グローバル変数に値を代入する。");
         env.define(sym("&&"), (Applicable) (args, e) -> insert(args, Bool.T, (x, y) -> bool(x) ? y : x),
-            VT.spec, "{args}", "argsを左から順に評価して最初のFでないものを返す。");
+            VT.spec, list(sym("{args}")), "argsを左から順に評価して最初のFでないものを返す。");
         env.define(sym("||"), (Applicable) (args, e) -> insert(args, Bool.F, (x, y) -> bool(x) ? x : y),
-            VT.spec, "{args}", "argsを左から順に評価して最初のFを返す。");
+            VT.spec, list(sym("{args}")), "argsを左から順に評価して最初のFを返す。");
         // procedures
         env.define(sym("car"), (Procedure) args -> car(car(args)),
-            VT.proc, "arg", "argのcarを返す。");
+            VT.proc, list(sym("arg")), "argのcarを返す。");
         env.define(sym("cdr"), (Procedure) args -> cdr(car(args)),
-            VT.proc, "arg", "argのcdrを返す。");
+            VT.proc, list(sym("arg")), "argのcdrを返す。");
         env.define(sym("cons"), (Procedure) args -> cons(car(args), car(cdr(args))),
-            VT.proc, "a b", "aとbのconsを返す。");
+            VT.proc, list(sym("a"), sym("b")), "aとbのconsを返す。");
         env.define(sym("list"), (Procedure) args -> args,
-            VT.proc, ". r", "rを返す。");
+            VT.proc, sym("r"), "rを返す。");
         env.define(sym("not"), (Procedure) args -> bool(!bool(car(args))),
-            VT.proc, "a", "aがFのときTを返す。それ以外の時Fを返す。");
+            VT.proc, list(sym("a")), "aがFのときTを返す。それ以外の時Fを返す。");
         env.define(sym("!"), (Procedure) args -> bool(!bool(car(args))),
-            VT.proc, "a", "aがFのときTを返す。それ以外の時Fを返す。");
+            VT.proc, list(sym("a")), "aがFのときTを返す。それ以外の時Fを返す。");
         env.define(sym("abs"), (Procedure) args -> dec(dec(car(args)).abs(MC)),
-            VT.proc, "a", "a≧0のときaを返す。それ以外の時-aを返す。");
+            VT.proc, list(sym("a")), "a≧0のときaを返す。それ以外の時-aを返す。");
         env.define(sym("factorial"), (Procedure) args -> dec(factorial(dec(car(args)), MC)),
-            VT.proc, "n", "nの階乗を返す。");
+            VT.proc, list(sym("n")), "nの階乗を返す。");
         env.define(sym("gcd"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(dec(x).toBigInteger().gcd(dec(y).toBigInteger())))); 
         env.define(sym("+"), (Procedure) args -> insert(args, dec(0), (x, y) -> dec(dec(x).add(dec(y), MC))));
         env.define(sym("-"), (Procedure) args -> insert(args, dec(0), (x, y) -> dec(dec(x).subtract(dec(y), MC))));
@@ -271,7 +307,7 @@ public class DecLisp {
         env.define(sym("p%"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MODULO));
         env.define(sym("today"), (Procedure) args -> { var d = LocalDate.now();
             return dec(d.getYear() * 10000 + d.getMonthValue() * 100 + d.getDayOfMonth());
-        }, VT.proc, "", "今日の日付をYYYYMMDD形式の8桁の数字で返す。");
+        }, VT.proc, Nil.NIL, "今日の日付をYYYYMMDD形式の8桁の数字で返す。");
         env.define(sym("days"), (Procedure) args -> {
             int i = toInt(dec(car(args)));
             try {
@@ -280,7 +316,7 @@ public class DecLisp {
             } catch (DateTimeException x) {
                 throw new DecLispException(x);
             }
-        }, VT.proc, "YYYYMMDD", "YYYYMMDD形式で表現された日付のエポック日からの経過日数を返す。");
+        }, VT.proc, list(sym("YYYYMMDD")), "YYYYMMDD形式で表現された日付のエポック日からの経過日数を返す。");
         env.define(sym("date"), (Procedure) args -> {
             long i = toLong(dec(car(args)));
             try {
@@ -289,7 +325,7 @@ public class DecLisp {
             } catch (DateTimeException x) {
                 throw new DecLispException(x);
             }
-        }, VT.proc, "epoc", "エポック日をYYYYMMDD形式の日付に変換する。");
+        }, VT.proc, list(sym("epoc")), "エポック日をYYYYMMDD形式の日付に変換する。");
         env.define(sym("week"), (Procedure) args -> {
             int i = toInt(dec(car(args)));
             try {
@@ -298,8 +334,10 @@ public class DecLisp {
             } catch (DateTimeException x) {
                 throw new DecLispException(x);
             }
-        });
-        env.define(sym("loop"), (Procedure) args -> { while (true); });
+        }, VT.proc, list(sym("YYYYMMDD")), "YYYYMMDD形式の日付を曜日に変換する。");
+        env.define(sym("solve"), (Applicable) (args, e) -> solver(args, e),
+        VT.spec, list(list(list(sym("変数1"), sym("値1"), sym("...")), sym("...")), sym("式")),
+            "それぞれの変数に値を割り当てて式が真となるケースを見つける。");
         return env;
     }
 }

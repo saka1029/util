@@ -63,7 +63,7 @@ public class Main {
             Env env = defaultEnv();
             Completer completer = new StringsCompleter(
                 env.sortedHelp().stream()
-                    .map(h -> h.name)
+                    .map(h -> h.name.value())
                     .toArray(String[]::new));
             LineReader reader = LineReaderBuilder.builder()
                 .parser(new SimpleDecListParser())
