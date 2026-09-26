@@ -116,6 +116,18 @@ public class TestDeclisp {
     @Test 
     public void testCompare() {
         Env env = defaultEnv();
+        try {
+            eval(env, "(==)");
+            fail();
+        } catch (DecLispException x) {
+            assertEquals("number of arguments must >= 2 '()'", x.getMessage());
+        }
+        try {
+            eval(env, "(== 1)");
+            fail();
+        } catch (DecLispException x) {
+            assertEquals("number of arguments must >= 2 '(1)'", x.getMessage());
+        }
         assertEquals(Bool.F, eval(env, "(== 1 0)"));
         assertEquals(Bool.T, eval(env, "(== 0 0)"));
         assertEquals(Bool.F, eval(env, "(== 0 1)"));
@@ -301,11 +313,22 @@ public class TestDeclisp {
     public void testGcd() {
         Env env = defaultEnv();
         assertEquals(dec(1), eval(env, "(gcd)"));
-        assertEquals(dec(1), eval(env, "(gcd 9)"));
+        assertEquals(dec(9), eval(env, "(gcd 9)"));
         assertEquals(dec(3), eval(env, "(gcd 9 15)"));
         assertEquals(dec(3), eval(env, "(gcd -9 15)"));
         assertEquals(dec(3), eval(env, "(gcd 9 -15)"));
         assertEquals(dec(12), eval(env, "(gcd 120 84 48)"));
+    }
+
+    @Test 
+    public void testLcm() {
+        Env env = defaultEnv();
+        assertEquals(dec(1), eval(env, "(lcm)"));
+        assertEquals(dec(9), eval(env, "(lcm 9)"));
+        assertEquals(dec(45), eval(env, "(lcm 9 15)"));
+        assertEquals(dec(45), eval(env, "(lcm -9 15)"));
+        assertEquals(dec(45), eval(env, "(lcm 9 -15)"));
+        assertEquals(dec(1680), eval(env, "(lcm 120 84 48)"));
     }
 
     @Test 
@@ -323,11 +346,11 @@ public class TestDeclisp {
         Env env = defaultEnv();
         assertEquals(dec(34), eval(env, "(precision 34)"));
         assertEquals(dec(34), eval(env, "(precision)"));
-        assertEquals(dec(bigdec("3.141592653589793238462643383279503")), eval(env, "(pi)"));
-        assertEquals(dec(bigdec("2.718281828459045235360287471352662")), eval(env, "(e)"));
+        assertEquals(dec(bigDec("3.141592653589793238462643383279503")), eval(env, "(pi)"));
+        assertEquals(dec(bigDec("2.718281828459045235360287471352662")), eval(env, "(e)"));
         assertEquals(dec(8), eval(env, "(precision 8)"));
-        assertEquals(dec(bigdec("3.1415927")), eval(env, "(pi)"));
-        assertEquals(dec(bigdec("2.7182818")), eval(env, "(e)"));
+        assertEquals(dec(bigDec("3.1415927")), eval(env, "(pi)"));
+        assertEquals(dec(bigDec("2.7182818")), eval(env, "(e)"));
     }
 
     @Test 

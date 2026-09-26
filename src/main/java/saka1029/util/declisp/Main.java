@@ -4,6 +4,7 @@ import static saka1029.util.declisp.Common.*;
 import static saka1029.util.declisp.DecLisp.defaultEnv;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.jline.reader.Completer;
@@ -69,7 +70,12 @@ public class Main {
                 .parser(new SimpleDecListParser())
                 .completer(completer)
                 .terminal(terminal)
-                .variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M> ")
+                .variable(LineReader.EDIT_AND_EXECUTE_COMMAND, "vi")
+                .variable(LineReader.EDITING_MODE, "vi")
+                .variable(LineReader.HISTORY_FILE, Paths.get(System.getProperty("user.home"), ".decl_history"))
+                .variable(LineReader.HISTORY_SIZE, 1000)
+                .variable(LineReader.HISTORY_FILE_SIZE, 2000)
+                .variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M%P > ")
                 .build();
 
 

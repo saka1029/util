@@ -119,7 +119,7 @@ public class Reader {
             while (isDigit(ch))
                 get();
         }
-        return new Dec(bigdec(buffer.stringButLast()));
+        return new Dec(bigDec(buffer.stringButLast()));
     }
 
     static boolean isSymbolFirst(int ch) {

@@ -35,6 +35,10 @@ interface Expr extends Iterable<Expr>, Comparable<Expr> {
             env.define(sym, args);
     }
 
+    default Expr[] array() {
+        return stream().toArray(Expr[]::new);
+    }
+
     default Stream<Expr> stream() {
         return StreamSupport.stream(spliterator(), false);
     }

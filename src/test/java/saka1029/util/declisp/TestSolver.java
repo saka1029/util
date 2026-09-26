@@ -2,6 +2,7 @@ package saka1029.util.declisp;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,6 +11,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import static saka1029.util.declisp.DecLisp.*;
+import static org.junit.Assert.assertEquals;
 import static saka1029.util.declisp.Common.*;
 
 public class TestSolver {
@@ -56,5 +58,52 @@ public class TestSolver {
         Expr args = read(solve);
         Expr result = solver(cdr(args), env);
         System.out.println(result);
+    }
+
+    /**
+     * Iteratorを逆向きに処理するパターン
+     * (append (1 2) (3 4))
+     * リスト(1 2), (3 4)の順に取り出すIteratorを使って、
+     * (3 4)を結果リストに連結、(1 2)を結果リストに連結、
+     * というように逆順に処理する。
+     */
+    public static Expr append(Expr args) {
+        Iterator<Expr> it = args.iterator();
+        Expr x = new Object() {
+            Expr result = Nil.NIL;
+            Expr append() {
+                if (it.hasNext()) {
+                    Expr list = it.next();
+                    append();   // 次のリストを先に処理する。
+                    List<Expr> elements = list.stream().toList();
+                    // 結果リストに逆順に連結する。
+                    for (int i = elements.size() - 1; i >= 0; --i)
+                        result = cons(elements.get(i), result);
+                }
+                return result;
+            }
+        }.append();
+        return x;
+    }
+    public static Expr append2(Expr args) {
+        Expr result = Nil.NIL;
+        List<Expr> lists = args.stream().toList();
+        for (int i = lists.size() - 1; i >= 0; --i) {
+            List<Expr> list = lists.get(i).stream().toList();
+            for (int j = list.size() - 1; j >= 0; --j)
+                result = cons(list.get(j), result);
+        }
+        return result;
+    }
+
+    @Test 
+    public void testAppend() {
+        Env env = defaultEnv();
+        env.define(sym("append"), (Procedure) args -> append(args));
+        String a = "(append '(1 2 3) '(4 5) '(6))";
+        assertEquals(read("(1 2 3 4 5 6)"), eval(env, a));
+        env.define(sym("append2"), (Procedure) args -> append2(args));
+        String a2 = "(append2 '(1 2 3) '(4 5) '(6))";
+        assertEquals(read("(1 2 3 4 5 6)"), eval(env, a2));
     }
 }

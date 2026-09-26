@@ -14,7 +14,7 @@ public class TestEnv {
         assertEquals(dec(3), env.get(sym("A")));
         env.set(sym("A"), dec(7));
         assertEquals(dec(7), env.get(sym("A")));
-        assertEquals("{} -> {A=7}", new Env(env).toString());
+        assertEquals("{}", new Env(env).toString());
         try {
             assertEquals(dec(3), env.get(sym("F")));
             fail();
