@@ -149,29 +149,37 @@ public class DecLisp {
         return range(BigDecimal.ONE, end);
     }
 
-    static Expr solver(Expr args, Env env) {
+    static Expr solve(Expr args, Env env) {
+        // 式を取り出す。
         Expr target = car(cdr(args));
+        // 変数と値の格納領域
         List<Entry<Symbol, Expr>> vars = new ArrayList<>();
+        // 変数名の重複チェック集合
         Set<Symbol> dupCheck = new HashSet<>();
+        // 変数と値の組をvarsに取り出す。
         for (Expr var : car(args)) {
             Symbol v = symbol(car(var));
             if (!dupCheck.add(v))
                 throw new DecLispException("solver: duplicated variable '%s'", v);
             vars.add(Map.entry(symbol(car(var)), car(cdr(var)).eval(env)));
         }
+        // 結果格納領域
         List<Expr[]> result = new ArrayList<>();
+        // resultに変数名を追加する。
         result.add(vars.stream().map(x -> (Expr)x.getKey()).toArray(Expr[]::new));
         new Object() {
-            Env nenv = new Env(env);
-            void solve(int index) {
-                if (index >= vars.size()) {
-                    if (bool(target.eval(nenv)))
-                        result.add(vars.stream().map(x -> nenv.get(x.getKey())).toArray(Expr[]::new));
+            Env nenv = new Env(env);                            // 試行錯誤用のEnvを作成。
+            void solve(int index) {                             // index番目の変数に値を割り当てる。
+                if (index >= vars.size()) {                     // すべての変数に値を割り当てたら
+                    if (bool(target.eval(nenv)))                // 式を評価する。
+                        result.add(vars.stream()                // 結果を格納する。
+                            .map(x -> nenv.get(x.getKey()))
+                            .toArray(Expr[]::new));
                 } else {
                     Symbol var = vars.get(index).getKey();
-                    for (Expr e : vars.get(index).getValue()) {
-                        nenv.define(var, e);
-                        solve(index + 1);
+                    for (Expr e : vars.get(index).getValue()) { // すべての値について
+                        nenv.define(var, e);                    // 値を割り当てる。
+                        solve(index + 1);                       // 次の変数に値を割り当てる。
                     }
                 }
             }
@@ -335,7 +343,7 @@ public class DecLisp {
                 throw new DecLispException(x);
             }
         }, VT.proc, list(sym("YYYYMMDD")), "YYYYMMDD形式の日付を曜日に変換する。");
-        env.define(sym("solve"), (Applicable) (args, e) -> solver(args, e),
+        env.define(sym("solve"), (Applicable) (args, e) -> solve(args, e),
         VT.spec, list(list(list(sym("変数1"), sym("値1"), sym("...")), sym("...")), sym("式")),
             "それぞれの変数に値を割り当てて式が真となるケースを見つける。");
         return env;
