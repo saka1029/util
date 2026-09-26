@@ -52,6 +52,7 @@ public class DecLisp {
     }
 
     /**
+     * 四則演算用insert
      * 引数の数:
      * 0 -> unit
      * 1 -> operator.apply(unit, arg0)
@@ -75,6 +76,8 @@ public class DecLisp {
     }
 
     /**
+     * 比較演算用insert
+     * 
      * 引数の数:
      * 0, 1 -> エラー
      * その他 -> 左簡約
@@ -94,6 +97,36 @@ public class DecLisp {
         return Bool.T;
     }
 
+    /**
+     * gcd / lcm 用insert
+     * 
+     * 引数の数:
+     * 0 -> 1
+     * 1 -> arg0
+     * default -> 左結合
+     * 
+     * @param args
+     * @param operator
+     * @return
+     */
+    public static Expr insertGcdLcm(Expr args, BinaryOperator<Expr> operator) {
+        Expr result = dec(1);
+        int count = 0;
+        for (Expr a : args)
+            result = switch (count++) {
+                case 0 -> a;
+                default -> operator.apply(result, a);
+            };
+        return result;
+    }
+
+    static BigDecimal gcd(BigDecimal a, BigDecimal b) {
+        return bigDec(bigInt(a).gcd(bigInt(b)));
+    }
+
+    static BigDecimal lcm(BigDecimal a, BigDecimal b) {
+        return a.multiply(b, MC).abs().divide(gcd(a, b), MC); // abs(a * b) / gcd(a, b)
+    }
     static Expr[] array(Expr arg) {
         return arg instanceof Nil || arg instanceof Cons
             ? arg.stream().toArray(Expr[]::new)
@@ -285,27 +318,12 @@ public class DecLisp {
             VT.proc, list(sym("a")), "a≧0のときaを返す。それ以外の時-aを返す。");
         env.define(sym("factorial"), (Procedure) args -> dec(factorial(dec(car(args)), MC)),
             VT.proc, list(sym("n")), "nの階乗を返す。");
-        env.define(sym("gcd"), (Procedure) args -> {
-            Expr[] array = args.array();
-            return switch (array.length) {
-                case 0 -> dec(1);
-                case 1 -> array[0];
-                default -> args.stream()
-                    .reduce((a, b) -> dec(dec(a).toBigInteger().gcd(dec(b).toBigInteger())))
-                    .get();
-            };
-        }, VT.proc, list(sym("n...")), "GCDを求める。");
-        env.define(sym("lcm"), (Procedure) args -> {
-            Expr[] array = args.array();
-            return switch (array.length) {
-                case 0 -> dec(1);
-                case 1 -> array[0];
-                default -> Stream.of(array)
-                    .reduce((a, b) -> dec(dec(a).multiply(dec(b), MC)
-                        .divide(bigDec(bigInt(a).gcd(bigInt(b))), MC).abs(MC))) // abs(a * b / gcd(a, b))
-                    .get();
-            };
-        }, VT.proc, list(sym("n...")), "LCMを求める。");
+        env.define(sym("gcd"), (Procedure) args -> insertGcdLcm(args,
+            (a, b) -> dec(gcd(dec(a), dec(b)))),
+            VT.proc, list(sym("n...")), "GCDを求める。");
+        env.define(sym("lcm"), (Procedure) args -> insertGcdLcm(args, 
+            (a, b) -> dec(lcm(dec(a), dec(b)))),
+            VT.proc, list(sym("n...")), "LCMを求める。");
         env.define(sym("+"), (Procedure) args -> insert(args, dec(0), (x, y) -> dec(dec(x).add(dec(y), MC))),
             VT.proc, list(sym("d...")), "和を求める。");
         env.define(sym("-"), (Procedure) args -> insert(args, dec(0), (x, y) -> dec(dec(x).subtract(dec(y), MC))),
