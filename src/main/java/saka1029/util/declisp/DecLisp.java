@@ -45,6 +45,13 @@ public class DecLisp {
         return r;
     }
 
+    static String unlist(Expr e) {
+        return switch (e) {
+            case Symbol s -> ". " + s;
+            default -> e.toString().replaceAll("^\\(|\\)$", "");
+        };
+    }
+
     static {
         ENV.define(QUOTE, (Applicable) (args, e) -> car(args));
             // VT.spec, list(sym("value"), sym("a"), sym("b")), "quoteを除外した値を返す。");
@@ -68,9 +75,9 @@ public class DecLisp {
         ENV.define(sym("define"), (Applicable) (args, e) -> {
             return car(args) instanceof Cons head
                 ? e.define(symbol(head.car()), cons(LAMBDA, cons(head.cdr(), cdr(args))).eval(e),
-                    VT.proc, head.cdr().toString(), "ユーザ定義関数")
+                    VT.proc, unlist(head.cdr()), "ユーザ定義関数")
                 : car(cdr(args)) instanceof Cons && car(car(cdr(args))).equals(LAMBDA)
-                    ? e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.proc, car(cdr(car(cdr(args)))).toString(), "ユーザ定義関数")
+                    ? e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.proc, unlist(car(cdr(car(cdr(args))))), "ユーザ定義関数")
                     : e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.var, "", "");
         }, VT.spec, "グローバル変数名 値", "グローバル変数を定義する。");
         ENV.define(sym("help"), (Applicable) (args, e) -> {
