@@ -16,7 +16,7 @@ public class Help {
 
     @Override
     public String toString() {
-        if (type == VT.var)
+        if (type == VT.variable)
             return "%s %s".formatted(type, name);
         else
             return "%s (%s %s) : %s".formatted(type, name, args, text);

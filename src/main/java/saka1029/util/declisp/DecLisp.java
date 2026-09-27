@@ -62,7 +62,7 @@ public class DecLisp {
                 parms.pairlis(a, newEnv);
                 return progn(body, newEnv);
             };
-        }, VT.spec, "(var...) body...", "varを引数としてbodyを実行する関数を定義する。");
+        }, VT.special, "(var...) body...", "varを引数としてbodyを実行する関数を定義する。");
         ENV.define(sym("if"), (Applicable) (args, e) -> {
             boolean p = bool(car(args).eval(e));
             if (p)
@@ -71,15 +71,15 @@ public class DecLisp {
                 return car(cdr(cdr(args))).eval(e);
             else
                 return Nil.NIL;
-        }, VT.spec, "then [else]", "条件が真ならthenを評価し、そうでなければelseを評価する。");
+        }, VT.special, "then [else]", "条件が真ならthenを評価し、そうでなければelseを評価する。");
         ENV.define(sym("define"), (Applicable) (args, e) -> {
             return car(args) instanceof Cons head
                 ? e.define(symbol(head.car()), cons(LAMBDA, cons(head.cdr(), cdr(args))).eval(e),
-                    VT.proc, unlist(head.cdr()), "ユーザ定義関数")
+                    VT.procedure, unlist(head.cdr()), "ユーザ定義関数")
                 : car(cdr(args)) instanceof Cons && car(car(cdr(args))).equals(LAMBDA)
-                    ? e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.proc, unlist(car(cdr(car(cdr(args))))), "ユーザ定義関数")
-                    : e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.var, "", "");
-        }, VT.spec, "グローバル変数名 値", "グローバル変数を定義する。");
+                    ? e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.procedure, unlist(car(cdr(car(cdr(args))))), "ユーザ定義関数")
+                    : e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.variable, "", "");
+        }, VT.special, "グローバル変数名 値", "グローバル変数を定義する。");
         ENV.define(sym("help"), (Applicable) (args, e) -> {
             int n = 0;
             String key = args instanceof Cons c ? sym(car(c)).toLowerCase() : "";
@@ -89,34 +89,34 @@ public class DecLisp {
                     ++n;
                 }
             return dec(n);
-        }, VT.spec, "search", "searchを含む関数の説明を表示する。");
+        }, VT.special, "search", "searchを含む関数の説明を表示する。");
         ENV.define(sym("set"), (Applicable) (args, e) -> e.set(symbol(car(args)), car(cdr(args)).eval(e)),
-            VT.spec, "グローバル変数 値", "グローバル変数に値を代入する。");
+            VT.special, "グローバル変数 値", "グローバル変数に値を代入する。");
     }
 
     static {
         ENV.define(sym("&&"), (Applicable) (args, e) -> insertArith(args, Bool.T, (x, y) -> bool(x) ? y : x),
-            VT.spec, "args...", "argsを左から順に評価して最初のFでないものを返す。");
+            VT.special, "args...", "argsを左から順に評価して最初のFでないものを返す。");
         ENV.define(sym("||"), (Applicable) (args, e) -> insertArith(args, Bool.F, (x, y) -> bool(x) ? x : y),
-            VT.spec, "args...", "argsを左から順に評価して最初のFを返す。");
+            VT.special, "args...", "argsを左から順に評価して最初のFを返す。");
     }
 
     static {
         // procedures
         ENV.define(sym("car"), (Procedure) args -> car(car(args)),
-            VT.proc, "arg", "argのcarを返す。");
+            VT.procedure, "arg", "argのcarを返す。");
         ENV.define(sym("cdr"), (Procedure) args -> cdr(car(args)),
-            VT.proc, "arg", "argのcdrを返す。");
+            VT.procedure, "arg", "argのcdrを返す。");
         ENV.define(sym("cons"), (Procedure) args -> cons(car(args), car(cdr(args))),
-            VT.proc, "a b", "aとbのconsを返す。");
+            VT.procedure, "a b", "aとbのconsを返す。");
         ENV.define(sym("list"), (Procedure) args -> args,
-            VT.proc, ". r", "rを返す。");
+            VT.procedure, ". r", "rを返す。");
         ENV.define(sym("reverse"), (Procedure) args -> {
             Expr r = Nil.NIL;
             for (Expr e : car(args))
                 r = cons(e, r);
             return r;
-        }, VT.proc, "リスト", "リストを反転する。");
+        }, VT.procedure, "リスト", "リストを反転する。");
         ENV.define(sym("append"), (Procedure) args -> {
             Expr result = Nil.NIL;
             List<Expr> lists = args.stream().toList();
@@ -126,19 +126,19 @@ public class DecLisp {
                     result = cons(list.get(j), result);
             }
             return result;
-        }, VT.proc, "リスト...", "リストを連結する。");
+        }, VT.procedure, "リスト...", "リストを連結する。");
         ENV.define(sym("apply"), (Procedure) args -> proc(car(args)).apply(car(cdr(args))));
     }
 
     static {
         ENV.define(sym("not"), (Procedure) args -> bool(!bool(car(args))),
-            VT.proc, "a", "aがFのときTを返す。それ以外の時Fを返す。");
+            VT.procedure, "a", "aがFのときTを返す。それ以外の時Fを返す。");
         ENV.define(sym("!"), (Procedure) args -> bool(!bool(car(args))),
-            VT.proc, "a", "aがFのときTを返す。それ以外の時Fを返す。");
+            VT.procedure, "a", "aがFのときTを返す。それ以外の時Fを返す。");
         ENV.define(sym("abs"), (Procedure) args -> dec(dec(car(args)).abs(MC)),
-            VT.proc, "a", "a≧0のときaを返す。それ以外の時-aを返す。");
+            VT.procedure, "a", "a≧0のときaを返す。それ以外の時-aを返す。");
         ENV.define(sym("factorial"), (Procedure) args -> dec(factorial(dec(car(args)), MC)),
-            VT.proc, "n", "nの階乗を返す。");
+            VT.procedure, "n", "nの階乗を返す。");
     }
 
     /**
@@ -175,10 +175,10 @@ public class DecLisp {
     static {
         ENV.define(sym("gcd"), (Procedure) args -> insertGcdLcm(args,
             (a, b) -> dec(gcd(dec(a), dec(b)))),
-            VT.proc, "整数...", "GCDを求める。");
+            VT.procedure, "整数...", "GCDを求める。");
         ENV.define(sym("lcm"), (Procedure) args -> insertGcdLcm(args, 
             (a, b) -> dec(lcm(dec(a), dec(b)))),
-            VT.proc, "整数...", "LCMを求める。");
+            VT.procedure, "整数...", "LCMを求める。");
     }
 
     /**
@@ -207,28 +207,28 @@ public class DecLisp {
 
     static {
         ENV.define(sym("+"), (Procedure) args -> insertArith(args, dec(0), (x, y) -> dec(dec(x).add(dec(y), MC))),
-            VT.proc, "d...", "和を求める。");
+            VT.procedure, "d...", "和を求める。");
         ENV.define(sym("-"), (Procedure) args -> insertArith(args, dec(0), (x, y) -> dec(dec(x).subtract(dec(y), MC))),
-            VT.proc, "d...", "差を求める。");
+            VT.procedure, "d...", "差を求める。");
         ENV.define(sym("*"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).multiply(dec(y), MC))),
-            VT.proc, "d...", "積を求める。");
+            VT.procedure, "d...", "積を求める。");
         ENV.define(sym("/"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).divide(dec(y), MC))),
-            VT.proc, "d...", "除算する。");
+            VT.procedure, "d...", "除算する。");
         ENV.define(sym("%"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).remainder(dec(y), MC))),
-            VT.proc, "d...", "剰余を求める。");
+            VT.procedure, "d...", "剰余を求める。");
         ENV.define(sym("pow"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(pow(dec(x), dec(y), MC))),
-            VT.proc, "d...", "べき乗の計算をする。(左結合)");
+            VT.procedure, "d...", "べき乗の計算をする。(左結合)");
         ENV.define(sym("^"), ENV.get(sym("pow")),
-            VT.proc, "d...", "べき乗の計算をする。(左結合)");
+            VT.procedure, "d...", "べき乗の計算をする。(左結合)");
     }
 
     static {
         ENV.define(sym("and"), (Procedure) args -> insertArith(args, Bool.T, (x, y) -> bool(bool(x) & bool(y))),
-            VT.proc, "d...", "論理積を求める。");
+            VT.procedure, "d...", "論理積を求める。");
         ENV.define(sym("or"), (Procedure) args -> insertArith(args, Bool.F, (x, y) -> bool(bool(x) | bool(y))),
-            VT.proc, "d...", "論理和を求める。");
+            VT.procedure, "d...", "論理和を求める。");
         ENV.define(sym("xor"), (Procedure) args -> insertArith(args, Bool.F, (x, y) -> bool(bool(x) ^ bool(y))),
-            VT.proc, "d...", "排他的論理和を求める。");
+            VT.procedure, "d...", "排他的論理和を求める。");
     }
 
     /**
@@ -255,21 +255,21 @@ public class DecLisp {
 
     static {
         ENV.define(sym("=="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) == 0),
-            VT.proc, "d...", "等しい。");
+            VT.procedure, "d...", "等しい。");
         ENV.define(sym("="), ENV.get(sym("==")),
-            VT.proc, "d...", "等しい。");
+            VT.procedure, "d...", "等しい。");
         ENV.define(sym("!="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) != 0),
-            VT.proc, "d...", "等しくない。");
+            VT.procedure, "d...", "等しくない。");
         ENV.define(sym("<>"), ENV.get(sym("!=")),
-            VT.proc, "d...", "等しくない。");
+            VT.procedure, "d...", "等しくない。");
         ENV.define(sym("<"), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) < 0),
-            VT.proc, "d...", "より少ない。");
+            VT.procedure, "d...", "より少ない。");
         ENV.define(sym("<="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) <= 0),
-            VT.proc, "d...", "より少ないかまたは等しい。");
+            VT.procedure, "d...", "より少ないかまたは等しい。");
         ENV.define(sym(">"), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) > 0),
-            VT.proc, "d...", "より大きい。");
+            VT.procedure, "d...", "より大きい。");
         ENV.define(sym(">="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) >= 0),
-            VT.proc, "d...", "より大きいかまたは等しい。");
+            VT.procedure, "d...", "より大きいかまたは等しい。");
     }
 
     static {
@@ -326,7 +326,7 @@ public class DecLisp {
     static {
         ENV.define(sym("precision"), (Procedure) args ->
             args.equals(Nil.NIL) ? dec(precision()) : dec(precision(toInt(dec(car(args))))),
-            VT.proc, "[新しい精度]",
+            VT.procedure, "[新しい精度]",
             "現在の精度(有効桁数)を取得(precision)または変更(precision 新しい精度)する。");
         // (delta) -> 現在のデルタ値を返す。
         // (delta d) -> デルタ値にdを設定しdを返す。
@@ -376,7 +376,7 @@ public class DecLisp {
                 case 3 -> range(a[0], a[1], a[2]);
                 default -> throw new DecLispException("Illegal range argument");
             };
-        }, VT.proc, "[start] end [step]",
+        }, VT.procedure, "[start] end [step]",
             "指定範囲(start≦x＜endまたはstart≧x＞end)のリストを返す。"
             + "引数省略時(range end)はstart=0、"
             + "(range start end)はstep=1または-1となる。");
@@ -507,16 +507,16 @@ public class DecLisp {
     static {
         ENV.define(sym("today"), (Procedure) args -> { var d = LocalDate.now();
             return dec(d.getYear() * 10000 + d.getMonthValue() * 100 + d.getDayOfMonth());
-        }, VT.proc, "", "今日の日付をYYYYMMDD形式の8桁の数字で返す。");
+        }, VT.procedure, "", "今日の日付をYYYYMMDD形式の8桁の数字で返す。");
         ENV.define(sym("days"), (Procedure) args -> {
             return dec(date(car(args)).toEpochDay());
-        }, VT.proc, "YYYYMMDD", "YYYYMMDD形式で表現された日付のエポック日からの経過日数を返す。");
+        }, VT.procedure, "YYYYMMDD", "YYYYMMDD形式で表現された日付のエポック日からの経過日数を返す。");
         ENV.define(sym("date"), (Procedure) args -> {
             return expr(epoc(car(args)));
-        }, VT.proc, "epoc", "エポック日をYYYYMMDD形式の日付に変換する。");
+        }, VT.procedure, "epoc", "エポック日をYYYYMMDD形式の日付に変換する。");
         ENV.define(sym("week"), (Procedure) args -> {
             return sym(date(car(args)).getDayOfWeek().toString());
-        }, VT.proc, "YYYYMMDD", "YYYYMMDD形式の日付を曜日に変換する。");
+        }, VT.procedure, "YYYYMMDD", "YYYYMMDD形式の日付を曜日に変換する。");
     }
 
     static List<Entry<Symbol, Expr>> variables(Expr args, Env env) {
@@ -566,7 +566,7 @@ public class DecLisp {
 
     static {
         ENV.define(sym("solve"), (Applicable) (args, e) -> solve(args, e),
-        VT.spec, "式 (変数1 値1)...",
+        VT.special, "式 (変数1 値1)...",
             "それぞれの変数に値を割り当てて式が真となるケースを見つける。");
     }
 
@@ -636,7 +636,7 @@ public class DecLisp {
 
     static {
         ENV.define(sym("min-max"), (Applicable) (args, e) -> minMax(args, e),
-        VT.spec, "評価式 (変数1 値1)...",
+        VT.special, "評価式 (変数1 値1)...",
             "それぞれの変数に値を割り当てたときに評価式の値が最大および最小となるケースを見つける。");
     }
 
@@ -650,7 +650,7 @@ public class DecLisp {
                 if (i.remainder(d).equals(BigInteger.ZERO))
                     return Bool.F;
             return Bool.T;
-        }, VT.proc, "整数", "整数値が素数かどうかを判定します。");
+        }, VT.procedure, "整数", "整数値が素数かどうかを判定します。");
 
         ENV.define(sym("primes"), (Procedure) args -> {
             int size = toInt(dec(car(args)));
@@ -668,7 +668,7 @@ public class DecLisp {
                 .filter(i -> !primes[i])
                 .mapToObj(i -> dec(i))
                 .toArray(Expr[]::new));
-        }, VT.proc, "最大値",
+        }, VT.procedure, "最大値",
             "最大値までの素数列を返します。");
     }
 
@@ -698,10 +698,10 @@ public class DecLisp {
 
     static {
         ENV.define(sym("P"), (Procedure) args -> dec(permutation(dec(car(args)), dec(car(cdr(args))))),
-        VT.proc, "n r",
+        VT.procedure, "n r",
             "n個の中からr個選んだ順列の数を返します。");
         ENV.define(sym("C"), (Procedure) args -> dec(combination(dec(car(args)), dec(car(cdr(args))))),
-        VT.proc, "n r",
+        VT.procedure, "n r",
             "n個の中からr個選んだ組み合わせの数を返します。");
 
     }
