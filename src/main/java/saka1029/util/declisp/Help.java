@@ -4,10 +4,10 @@ public class Help {
 
     public final VT type;
     public final Symbol name;
-    public final Expr args;
+    public final String args;
     public final String text;
 
-    public Help(VT type, Symbol name, Expr args, String text) {
+    public Help(VT type, Symbol name, String args, String text) {
         this.type = type;
         this.name = name;
         this.args = args;
@@ -19,7 +19,7 @@ public class Help {
         if (type == VT.var)
             return "%s %s".formatted(type, name);
         else
-            return "%s %s : %s".formatted(type, new Cons(name, args).toString(), text);
+            return "%s (%s %s) : %s".formatted(type, name, args, text);
     }
 
 }

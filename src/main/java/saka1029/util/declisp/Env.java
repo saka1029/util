@@ -20,7 +20,7 @@ public class Env {
         return key;
     }
     public Symbol define(Symbol key, Expr value,
-            VT type, Expr args, String text) {
+            VT type, String args, String text) {
         help.put(key, new Help(type, key, args, text));
         return define(key, value);
     }
