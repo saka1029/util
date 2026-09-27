@@ -463,6 +463,14 @@ public class DecLisp {
         ENV.define(sym("p*"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MULTIPLY));
         ENV.define(sym("p/"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_DIVIDE));
         ENV.define(sym("p%"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MODULO));
+        ENV.define(sym("p="), (Procedure) args -> {
+            Expr[] poly = car(args).array();
+            BigDecimal result = BigDecimal.ZERO;
+            BigDecimal value = dec(car(cdr(args)));
+            for (Expr k : poly)
+                result = result.multiply(value, MC).add(dec(k), MC);
+            return dec(result);
+        });
     }
 
     static {

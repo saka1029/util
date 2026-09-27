@@ -625,4 +625,16 @@ public class TestDeclisp {
         assertEquals(read("(-4)"), eval(env, "(p% (1 -1 -6) (1 1))"));
         assertEquals(read("(1 -1 -6)"), eval(env, "(p+ (p* (1 1) (1 -2)) (-4))"));
     }
+
+    @Test
+    public void testPolyValue() {
+        Env env = defaultEnv();
+        // x = 2 : (x + 1) = 3
+        assertEquals(read("3"), eval(env, "(p= (1 1) 2)"));
+        // x = 2 : (x^2 + 2*x + 1) = 9
+        assertEquals(read("9"), eval(env, "(p= (1 2 1) 2)"));
+        // x = 2 : (x^3 + 3*x^2 + 3*x + 1) = 27
+        assertEquals(read("27"), eval(env, "(p= (1 3 3 1) 2)"));
+        assertEquals(read("64"), eval(env, "(p= (1 3 3 1) 3)"));
+    }
 }
