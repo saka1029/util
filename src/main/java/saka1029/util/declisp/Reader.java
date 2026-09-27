@@ -156,9 +156,9 @@ public class Reader {
         else if (ch == '\'')
             return parseQuote();
         else if (ch == '+')
-            return isDigit(get()) ? parseDecimal() : new Symbol("+");
+            return isDigit(get()) ? parseDecimal() : parseSymbol();
         else if (ch == '-')
-            return isDigit(get()) ? parseDecimal() : new Symbol("-");
+            return isDigit(get()) ? parseDecimal() : parseSymbol();
         else if (isDigit(ch))
             return parseDecimal();
         else if (isSymbolFirst(ch))

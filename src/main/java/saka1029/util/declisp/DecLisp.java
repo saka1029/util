@@ -359,7 +359,7 @@ public class DecLisp {
         if (stepSign == 0)
             throw new DecLispException("step must != 0");
         List<Expr> elements = new ArrayList<>();
-        for (BigDecimal i = start; i.compareTo(end) * stepSign <= 0; i = i.add(step))
+        for (BigDecimal i = start; i.compareTo(end) * stepSign < 0; i = i.add(step))
             elements.add(dec(i));
         return list(elements);
     }
@@ -378,7 +378,7 @@ public class DecLisp {
                 default -> throw new DecLispException("Illegal range argument");
             };
         }, VT.proc, list(sym("[start]"), sym("end"), sym("[step]")),
-            "指定範囲(start≦x≦end)のリストを返す。"
+            "指定範囲(start≦x＜endまたはstart≧x＞end)のリストを返す。"
             + "引数省略時(range end)はstart=0、"
             + "(range start end)はstep=1または-1となる。");
     }
@@ -512,19 +512,24 @@ public class DecLisp {
         Procedure GT = proc(env.get(sym(">")));
         Expr 評価式 = car(args);                                // 評価式を取り出す。
         List<Entry<Symbol, Expr>> vars = variables(args, env);  // 変数と値の格納領域
-        Expr[] names = vars.stream()
-            .map(x -> (Expr)x.getKey()).toArray(Expr[]::new);   // 変数名を取得する。
+        int varSize = vars.size();
+        Expr[] names = new Expr[varSize + 1];
+        names[0] = sym("*");
+        for (int i = 0; i < varSize; ++i)
+            names[i + 1] = vars.get(i).getKey();
         var obj = new Object() {
             Env nenv = new Env(env);                            // 試行錯誤用のEnvを作成。
             Expr 最小評価値 = Nil.NIL;
-            Expr[] 最小値 = null;                                 // 結果格納領域
+            Expr[] 最小値 = null;                               // 結果格納領域
             Expr 最大評価値 = Nil.NIL;
-            Expr[] 最大値 = null;                                 // 結果格納領域
+            Expr[] 最大値 = null;                               // 結果格納領域
 
-            Expr[] 結果() {
-                return vars.stream()
-                    .map(x -> nenv.get(x.getKey()))
-                    .toArray(Expr[]::new);
+            Expr[] 結果(Expr v) {
+                Expr[] r = new Expr[varSize + 1];
+                r[0] = v;
+                for (int i = 0; i < varSize; ++i)
+                    r[i + 1] = nenv.get(vars.get(i).getKey());
+                return r;
             }
 
             void solve(int index) {                             // index番目の変数に値を割り当てる。
@@ -533,11 +538,11 @@ public class DecLisp {
                     if (!ev.isNil()) {
                         if (最小値 == null || bool(LT.apply(list(ev, 最小評価値)))) {
                             最小評価値 = ev;
-                            最小値 = 結果();                // 結果を格納する。
+                            最小値 = 結果(ev);                  // 結果を格納する。
                         }
                         if (最大値 == null || bool(GT.apply(list(ev, 最大評価値)))) {
                             最大評価値 = ev;
-                            最大値 = 結果();                // 結果を格納する。
+                            最大値 = 結果(ev);                  // 結果を格納する。
                         }
                     }
                 } else {
@@ -587,8 +592,42 @@ public class DecLisp {
                 .filter(i -> !primes[i])
                 .mapToObj(i -> dec(i))
                 .toArray(Expr[]::new));
-        }, VT.spec, list(sym("最大値")),
+        }, VT.proc, list(sym("最大値")),
             "最大値までの素数列を返します。");
+    }
+
+    static BigDecimal permutation(BigDecimal n, BigDecimal r) {
+        BigInteger x = bigInt(n);
+        BigInteger y = bigInt(r);
+        if (x.compareTo(BigInteger.ZERO) < 0)
+            throw new DecLispException("n must not be negative but %s", x);
+        if (y.compareTo(BigInteger.ZERO) < 0)
+            throw new DecLispException("r must not be negative but %s", y);
+        if (x.compareTo(y) < 0)
+            throw new DecLispException("n must be grater than or equals to r but n=%s r=%s", n, r);
+        BigInteger result = BigInteger.ONE;
+        for (BigInteger i = x.subtract(y).add(BigInteger.ONE); i.compareTo(x) <= 0; i = i.add(BigInteger.ONE)) 
+            result = result.multiply(i);
+        return new BigDecimal(result);
+    }
+
+    static BigDecimal combination(BigDecimal n, BigDecimal r) {
+        r = r.min(n.subtract(r, MC));
+        BigDecimal den = permutation(n, r);
+        BigDecimal num = BigDecimal.ONE;
+        for (BigDecimal i = r; i.compareTo(BigDecimal.ONE) > 0; i = i.subtract(BigDecimal.ONE))
+            num = num.multiply(i);
+        return den.divide(num, MC);
+    }
+
+    static {
+        ENV.define(sym("P"), (Procedure) args -> dec(permutation(dec(car(args)), dec(car(cdr(args))))),
+        VT.proc, list(sym("n"), sym("r")),
+            "n個の中からr個選んだ順列の数を返します。");
+        ENV.define(sym("C"), (Procedure) args -> dec(combination(dec(car(args)), dec(car(cdr(args))))),
+        VT.proc, list(sym("n"), sym("r")),
+            "n個の中からr個選んだ組み合わせの数を返します。");
+
     }
 
     public static Env defaultEnv() {

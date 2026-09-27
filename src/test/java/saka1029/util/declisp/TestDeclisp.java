@@ -526,13 +526,13 @@ public class TestDeclisp {
     @Test 
     public void testMinMax() {
         Env env = defaultEnv();
-        assertEquals(read("((x y) (0 0) (4 3))"), eval(env, """
+        assertEquals(read("((* x y) (0 0 0) (7 4 3))"), eval(env, """
             (min-max
                 (+ x y)
                 (x (range 4))
                 (y (range 3)))
             """));
-        assertEquals(read("((x y) (4 0) (4 3))"), eval(env, """
+        assertEquals(read("((* x y) (0 4 0) (12 4 3))"), eval(env, """
             (min-max
                 (* x y)
                 (x (range 4 0))
