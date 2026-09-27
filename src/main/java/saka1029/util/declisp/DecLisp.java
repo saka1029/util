@@ -40,165 +40,13 @@ public class DecLisp {
 
     private DecLisp(){}
 
-    public static boolean approx(BigDecimal left, BigDecimal right) {
-        return left.subtract(right, MC).abs(MC).compareTo(DELTA) < 0;
-    }
+    static final Env ENV = new Env();
 
     public static Expr progn(Expr body, Env env) {
         Expr r = Nil.NIL;
         for (Expr c : body)
             r = c.eval(env);
         return r;
-    }
-
-    /**
-     * 四則演算用insert
-     * 引数の数:
-     * 0 -> unit
-     * 1 -> operator.apply(unit, arg0)
-     * default -> 左簡約
-     * 
-     * @param args
-     * @param unit
-     * @param operator
-     * @return
-     */
-    public static Expr insert(Expr args, Expr unit, BinaryOperator<Expr> operator) {
-        Expr result = unit;
-        Expr prev = null;
-        int count = 0;
-        for (Expr a : args) {
-            result = operator.apply(count == 1 ? prev : result, a);
-            prev = a;
-            ++count;
-        }
-        return result;
-    }
-
-    /**
-     * 比較演算用insert
-     * 
-     * 引数の数:
-     * 0, 1 -> エラー
-     * その他 -> 左簡約
-     */
-    public static Expr insert(Expr args, BiPredicate<Expr, Expr> operator) {
-        Expr prev = null;
-        int count = 0;
-        for (Expr a : args) {
-            if (count >= 1)
-                if (!operator.test(prev, a))
-                    return Bool.F;
-            prev = a;
-            ++count;
-        }
-        if (count <= 1)
-            throw new DecLispException("number of arguments must >= 2 '%s'", args);
-        return Bool.T;
-    }
-
-    /**
-     * gcd / lcm 用insert
-     * 
-     * 引数の数:
-     * 0 -> 1
-     * 1 -> arg0
-     * default -> 左結合
-     * 
-     * @param args
-     * @param operator
-     * @return
-     */
-    public static Expr insertGcdLcm(Expr args, BinaryOperator<Expr> operator) {
-        Expr result = dec(1);
-        int count = 0;
-        for (Expr a : args)
-            result = switch (count++) {
-                case 0 -> a;
-                default -> operator.apply(result, a);
-            };
-        return result;
-    }
-
-    static BigDecimal gcd(BigDecimal a, BigDecimal b) {
-        return bigDec(bigInt(a).gcd(bigInt(b)));
-    }
-
-    static BigDecimal lcm(BigDecimal a, BigDecimal b) {
-        return a.multiply(b, MC).abs().divide(gcd(a, b), MC); // abs(a * b) / gcd(a, b)
-    }
-    static Expr[] array(Expr arg) {
-        return arg instanceof Nil || arg instanceof Cons
-            ? arg.stream().toArray(Expr[]::new)
-            : new Expr[] {arg};
-    }
-
-    public static Expr[][] matrix(Expr arg) {
-        return Stream.of(array(arg))
-            .map(row -> array(row))
-            .toArray(Expr[][]::new);
-    }
-
-    static Expr[][] transpose(Expr[][] origin) {
-        int rows = origin.length;
-        if (rows <= 0)
-            return new Expr[][] {};
-        int cols = Stream.of(origin)
-            .mapToInt(r -> r.length)
-            .max().getAsInt();
-        Expr[][] transposed = new Expr[cols][rows];
-        for (int r = 0; r < rows; ++r) {
-            Expr[] row = origin[r];
-            int rowLen = row.length;
-            if (rowLen != cols && rowLen != 1)
-                throw new DecLispException("Illegal matrix %s", Arrays.deepToString(origin));
-            for (int c = 0; c < cols; ++c)
-                transposed[c][r] = c >= rowLen ? row[0] : row[c];
-        }
-        return transposed;
-    }
-
-    public static Expr map(Expr arg, Procedure proc) {
-        Expr[][] matrix = matrix(arg);
-        Expr[][] transposed = transpose(matrix);
-        Expr[] lists = Stream.of(transposed)
-            .map(row -> proc.apply(list(row)))
-            .toArray(Expr[]::new);
-        return list(lists);
-    }
-
-    public static Expr polynomial(Expr args, Expr[] unit, BinaryOperator<Expr[]> operator) {
-        Expr[][] matrix = matrix(args);
-        if (matrix.length == 0)
-            return Nil.NIL;
-        int count = 0;
-        Expr[] result = unit, prev = null;
-        for (Expr[] row : matrix) {
-            result = operator.apply(count == 1 ? prev : result, row);
-            prev = row;
-            ++count;
-        }
-        return list(result);
-    }
-
-    public static Expr range(BigDecimal start, BigDecimal end, BigDecimal step) {
-        int stepSign = step.signum();
-        if (stepSign == 0)
-            throw new DecLispException("step must != 0");
-        List<Expr> elements = new ArrayList<>();
-        for (BigDecimal i = start; i.compareTo(end) * stepSign <= 0; i = i.add(step))
-            elements.add(dec(i));
-        return list(elements);
-    }
-
-    public static Expr range(BigDecimal start, BigDecimal end) {
-        return start.compareTo(end) <= 0
-            ? range(start, end, BigDecimal.ONE)
-            : range(start, end, BigDecimal.ONE.negate());
-    }
-
-    public static Expr range(BigDecimal end) {
-        return range(BigDecimal.ONE, end);
     }
 
     static Expr solve(Expr args, Env env) {
@@ -239,11 +87,10 @@ public class DecLisp {
         return list(result.stream().map(x -> list(x)).toList());
     }
 
-    public static Env defaultEnv() {
-        Env env = new Env();
-        env.define(QUOTE, (Applicable) (args, e) -> car(args));
+    static {
+        ENV.define(QUOTE, (Applicable) (args, e) -> car(args));
             // VT.spec, list(sym("value"), sym("a"), sym("b")), "quoteを除外した値を返す。");
-        env.define(LAMBDA, (Applicable) (args, e) -> {
+        ENV.define(LAMBDA, (Applicable) (args, e) -> {
             Expr parms = car(args), body = cdr(args);
             return (Procedure) a -> {
                 Env newEnv = new Env(e);
@@ -251,7 +98,7 @@ public class DecLisp {
                 return progn(body, newEnv);
             };
         }, VT.spec, list(list(sym("var...")), sym("body...")), "varを引数としてbodyを実行する関数を定義する。");
-        env.define(sym("if"), (Applicable) (args, e) -> {
+        ENV.define(sym("if"), (Applicable) (args, e) -> {
             boolean p = bool(car(args).eval(e));
             if (p)
                 return car(cdr(args)).eval(e);
@@ -260,7 +107,7 @@ public class DecLisp {
             else
                 return Nil.NIL;
         }, VT.spec, list(sym("then"), sym("[else]")), "条件が真ならthenを評価し、そうでなければelseを評価する。");
-        env.define(sym("define"), (Applicable) (args, e) -> {
+        ENV.define(sym("define"), (Applicable) (args, e) -> {
             return car(args) instanceof Cons head
                 ? e.define(symbol(head.car()), cons(LAMBDA, cons(head.cdr(), cdr(args))).eval(e),
                     VT.proc, head.cdr(), "ユーザ定義関数")
@@ -268,7 +115,7 @@ public class DecLisp {
                     ? e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.proc, car(cdr(car(cdr(args)))), "ユーザ定義関数")
                     : e.define(symbol(car(args)), car(cdr(args)).eval(e), VT.var, Nil.NIL, "");
         }, VT.spec, list(sym("グローバル変数名"), sym("値")), "グローバル変数を定義する。");
-        env.define(sym("help"), (Applicable) (args, e) -> {
+        ENV.define(sym("help"), (Applicable) (args, e) -> {
             int n = 0;
             String key = args instanceof Cons c ? sym(car(c)).toLowerCase() : "";
             for (Help h : e.sortedHelp())
@@ -279,28 +126,34 @@ public class DecLisp {
             return dec(n);
         },
             VT.spec, list(sym("search")), "searchを含む関数の説明を表示する。");
-        env.define(sym("set"), (Applicable) (args, e) -> e.set(symbol(car(args)), car(cdr(args)).eval(e)),
+        ENV.define(sym("set"), (Applicable) (args, e) -> e.set(symbol(car(args)), car(cdr(args)).eval(e)),
             VT.spec, list(sym("グローバル変数"), sym("値")), "グローバル変数に値を代入する。");
-        env.define(sym("&&"), (Applicable) (args, e) -> insert(args, Bool.T, (x, y) -> bool(x) ? y : x),
+    }
+
+    static {
+        ENV.define(sym("&&"), (Applicable) (args, e) -> insertArith(args, Bool.T, (x, y) -> bool(x) ? y : x),
             VT.spec, list(sym("{args}")), "argsを左から順に評価して最初のFでないものを返す。");
-        env.define(sym("||"), (Applicable) (args, e) -> insert(args, Bool.F, (x, y) -> bool(x) ? x : y),
+        ENV.define(sym("||"), (Applicable) (args, e) -> insertArith(args, Bool.F, (x, y) -> bool(x) ? x : y),
             VT.spec, list(sym("{args}")), "argsを左から順に評価して最初のFを返す。");
+    }
+
+    static {
         // procedures
-        env.define(sym("car"), (Procedure) args -> car(car(args)),
+        ENV.define(sym("car"), (Procedure) args -> car(car(args)),
             VT.proc, list(sym("arg")), "argのcarを返す。");
-        env.define(sym("cdr"), (Procedure) args -> cdr(car(args)),
+        ENV.define(sym("cdr"), (Procedure) args -> cdr(car(args)),
             VT.proc, list(sym("arg")), "argのcdrを返す。");
-        env.define(sym("cons"), (Procedure) args -> cons(car(args), car(cdr(args))),
+        ENV.define(sym("cons"), (Procedure) args -> cons(car(args), car(cdr(args))),
             VT.proc, list(sym("a"), sym("b")), "aとbのconsを返す。");
-        env.define(sym("list"), (Procedure) args -> args,
+        ENV.define(sym("list"), (Procedure) args -> args,
             VT.proc, sym("r"), "rを返す。");
-        env.define(sym("reverse"), (Procedure) args -> {
+        ENV.define(sym("reverse"), (Procedure) args -> {
             Expr r = Nil.NIL;
             for (Expr e : car(args))
                 r = cons(e, r);
             return r;
         }, VT.proc, list(sym("リスト")), "リストを反転する。");
-        env.define(sym("append"), (Procedure) args -> {
+        ENV.define(sym("append"), (Procedure) args -> {
             Expr result = Nil.NIL;
             List<Expr> lists = args.stream().toList();
             for (int i = lists.size() - 1; i >= 0; --i) {
@@ -310,105 +163,293 @@ public class DecLisp {
             }
             return result;
         }, VT.proc, list(sym("{リスト}")), "リストを連結する。");
-        env.define(sym("not"), (Procedure) args -> bool(!bool(car(args))),
+        ENV.define(sym("apply"), (Procedure) args -> proc(car(args)).apply(car(cdr(args))));
+    }
+
+    static {
+        ENV.define(sym("not"), (Procedure) args -> bool(!bool(car(args))),
             VT.proc, list(sym("a")), "aがFのときTを返す。それ以外の時Fを返す。");
-        env.define(sym("!"), (Procedure) args -> bool(!bool(car(args))),
+        ENV.define(sym("!"), (Procedure) args -> bool(!bool(car(args))),
             VT.proc, list(sym("a")), "aがFのときTを返す。それ以外の時Fを返す。");
-        env.define(sym("abs"), (Procedure) args -> dec(dec(car(args)).abs(MC)),
+        ENV.define(sym("abs"), (Procedure) args -> dec(dec(car(args)).abs(MC)),
             VT.proc, list(sym("a")), "a≧0のときaを返す。それ以外の時-aを返す。");
-        env.define(sym("factorial"), (Procedure) args -> dec(factorial(dec(car(args)), MC)),
+        ENV.define(sym("factorial"), (Procedure) args -> dec(factorial(dec(car(args)), MC)),
             VT.proc, list(sym("n")), "nの階乗を返す。");
-        env.define(sym("gcd"), (Procedure) args -> insertGcdLcm(args,
+    }
+
+    /**
+     * gcd / lcm 用insert
+     * 
+     * 引数の数:
+     * 0 -> 1
+     * 1 -> arg0
+     * default -> 左結合
+     * 
+     * @param args
+     * @param operator
+     * @return
+     */
+    public static Expr insertGcdLcm(Expr args, BinaryOperator<Expr> operator) {
+        Expr result = dec(1);
+        int count = 0;
+        for (Expr a : args)
+            result = switch (count++) {
+                case 0 -> a;
+                default -> operator.apply(result, a);
+            };
+        return result;
+    }
+
+    static BigDecimal gcd(BigDecimal a, BigDecimal b) {
+        return bigDec(bigInt(a).gcd(bigInt(b)));
+    }
+
+    static BigDecimal lcm(BigDecimal a, BigDecimal b) {
+        return a.multiply(b, MC).abs().divide(gcd(a, b), MC); // abs(a * b) / gcd(a, b)
+    }
+
+    static {
+        ENV.define(sym("gcd"), (Procedure) args -> insertGcdLcm(args,
             (a, b) -> dec(gcd(dec(a), dec(b)))),
             VT.proc, list(sym("n...")), "GCDを求める。");
-        env.define(sym("lcm"), (Procedure) args -> insertGcdLcm(args, 
+        ENV.define(sym("lcm"), (Procedure) args -> insertGcdLcm(args, 
             (a, b) -> dec(lcm(dec(a), dec(b)))),
             VT.proc, list(sym("n...")), "LCMを求める。");
-        env.define(sym("+"), (Procedure) args -> insert(args, dec(0), (x, y) -> dec(dec(x).add(dec(y), MC))),
+    }
+
+    /**
+     * 四則演算用insert
+     * 引数の数:
+     * 0 -> unit
+     * 1 -> operator.apply(unit, arg0)
+     * default -> 左簡約
+     * 
+     * @param args
+     * @param unit
+     * @param operator
+     * @return
+     */
+    public static Expr insertArith(Expr args, Expr unit, BinaryOperator<Expr> operator) {
+        Expr result = unit;
+        Expr prev = null;
+        int count = 0;
+        for (Expr a : args) {
+            result = operator.apply(count == 1 ? prev : result, a);
+            prev = a;
+            ++count;
+        }
+        return result;
+    }
+
+    static {
+        ENV.define(sym("+"), (Procedure) args -> insertArith(args, dec(0), (x, y) -> dec(dec(x).add(dec(y), MC))),
             VT.proc, list(sym("d...")), "和を求める。");
-        env.define(sym("-"), (Procedure) args -> insert(args, dec(0), (x, y) -> dec(dec(x).subtract(dec(y), MC))),
+        ENV.define(sym("-"), (Procedure) args -> insertArith(args, dec(0), (x, y) -> dec(dec(x).subtract(dec(y), MC))),
             VT.proc, list(sym("d...")), "差を求める。");
-        env.define(sym("*"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(dec(x).multiply(dec(y), MC))),
+        ENV.define(sym("*"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).multiply(dec(y), MC))),
             VT.proc, list(sym("d...")), "積を求める。");
-        env.define(sym("/"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(dec(x).divide(dec(y), MC))),
+        ENV.define(sym("/"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).divide(dec(y), MC))),
             VT.proc, list(sym("d...")), "除算する。");
-        env.define(sym("%"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(dec(x).remainder(dec(y), MC))),
+        ENV.define(sym("%"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).remainder(dec(y), MC))),
             VT.proc, list(sym("d...")), "剰余を求める。");
-        env.define(sym("pow"), (Procedure) args -> insert(args, dec(1), (x, y) -> dec(pow(dec(x), dec(y), MC))),
+        ENV.define(sym("pow"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(pow(dec(x), dec(y), MC))),
             VT.proc, list(sym("d...")), "べき乗の計算をする。(左結合)");
-        env.define(sym("^"), env.get(sym("pow")),
+        ENV.define(sym("^"), ENV.get(sym("pow")),
             VT.proc, list(sym("d...")), "べき乗の計算をする。(左結合)");
-        env.define(sym("and"), (Procedure) args -> insert(args, Bool.T, (x, y) -> bool(bool(x) & bool(y))),
+    }
+
+    static {
+        ENV.define(sym("and"), (Procedure) args -> insertArith(args, Bool.T, (x, y) -> bool(bool(x) & bool(y))),
             VT.proc, list(sym("d...")), "論理積を求める。");
-        env.define(sym("or"), (Procedure) args -> insert(args, Bool.F, (x, y) -> bool(bool(x) | bool(y))),
+        ENV.define(sym("or"), (Procedure) args -> insertArith(args, Bool.F, (x, y) -> bool(bool(x) | bool(y))),
             VT.proc, list(sym("d...")), "論理和を求める。");
-        env.define(sym("xor"), (Procedure) args -> insert(args, Bool.F, (x, y) -> bool(bool(x) ^ bool(y))),
+        ENV.define(sym("xor"), (Procedure) args -> insertArith(args, Bool.F, (x, y) -> bool(bool(x) ^ bool(y))),
             VT.proc, list(sym("d...")), "排他的論理和を求める。");
-        env.define(sym("=="), (Procedure) args -> insert(args, (x, y) -> x.compareTo(y) == 0),
+    }
+
+    /**
+     * 比較演算用insert
+     * 
+     * 引数の数:
+     * 0, 1 -> エラー
+     * その他 -> 左簡約
+     */
+    public static Expr insertComp(Expr args, BiPredicate<Expr, Expr> operator) {
+        Expr prev = null;
+        int count = 0;
+        for (Expr a : args) {
+            if (count >= 1)
+                if (!operator.test(prev, a))
+                    return Bool.F;
+            prev = a;
+            ++count;
+        }
+        if (count <= 1)
+            throw new DecLispException("number of arguments must >= 2 '%s'", args);
+        return Bool.T;
+    }
+
+    static {
+        ENV.define(sym("=="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) == 0),
             VT.proc, list(sym("d...")), "等しい。");
-        env.define(sym("="), env.get(sym("==")),
+        ENV.define(sym("="), ENV.get(sym("==")),
             VT.proc, list(sym("d...")), "等しい。");
-        env.define(sym("!="), (Procedure) args -> insert(args, (x, y) -> x.compareTo(y) != 0),
+        ENV.define(sym("!="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) != 0),
             VT.proc, list(sym("d...")), "等しくない。");
-        env.define(sym("<>"), env.get(sym("!=")),
+        ENV.define(sym("<>"), ENV.get(sym("!=")),
             VT.proc, list(sym("d...")), "等しくない。");
-        env.define(sym("<"), (Procedure) args -> insert(args, (x, y) -> x.compareTo(y) < 0),
+        ENV.define(sym("<"), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) < 0),
             VT.proc, list(sym("d...")), "より少ない。");
-        env.define(sym("<="), (Procedure) args -> insert(args, (x, y) -> x.compareTo(y) <= 0),
+        ENV.define(sym("<="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) <= 0),
             VT.proc, list(sym("d...")), "より少ないかまたは等しい。");
-        env.define(sym(">"), (Procedure) args -> insert(args, (x, y) -> x.compareTo(y) > 0),
+        ENV.define(sym(">"), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) > 0),
             VT.proc, list(sym("d...")), "より大きい。");
-        env.define(sym(">="), (Procedure) args -> insert(args, (x, y) -> x.compareTo(y) >= 0),
+        ENV.define(sym(">="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) >= 0),
             VT.proc, list(sym("d...")), "より大きいかまたは等しい。");
-        env.define(sym("map"), (Procedure) args -> map(cdr(args), proc(car(args))));
-        env.define(sym("precision"), (Procedure) args ->
+    }
+
+    static {
+        ENV.define(sym("approx"), (Procedure) args ->
+            // abs(a - b) <= DELTA
+            bool((dec(car(args)).subtract(dec(car(cdr(args))), MC).abs(MC).compareTo(DELTA)) <= 0));
+        ENV.define(sym("~"), ENV.get(sym("approx")));
+    }
+
+    static Expr[] array(Expr arg) {
+        return arg instanceof Nil || arg instanceof Cons
+            ? arg.stream().toArray(Expr[]::new)
+            : new Expr[] {arg};
+    }
+
+    public static Expr[][] matrix(Expr arg) {
+        return Stream.of(array(arg))
+            .map(row -> array(row))
+            .toArray(Expr[][]::new);
+    }
+
+    static Expr[][] transpose(Expr[][] origin) {
+        int rows = origin.length;
+        if (rows <= 0)
+            return new Expr[][] {};
+        int cols = Stream.of(origin)
+            .mapToInt(r -> r.length)
+            .max().getAsInt();
+        Expr[][] transposed = new Expr[cols][rows];
+        for (int r = 0; r < rows; ++r) {
+            Expr[] row = origin[r];
+            int rowLen = row.length;
+            if (rowLen != cols && rowLen != 1)
+                throw new DecLispException("Illegal matrix %s", Arrays.deepToString(origin));
+            for (int c = 0; c < cols; ++c)
+                transposed[c][r] = c >= rowLen ? row[0] : row[c];
+        }
+        return transposed;
+    }
+
+    public static Expr map(Expr arg, Procedure proc) {
+        Expr[][] matrix = matrix(arg);
+        Expr[][] transposed = transpose(matrix);
+        Expr[] lists = Stream.of(transposed)
+            .map(row -> proc.apply(list(row)))
+            .toArray(Expr[]::new);
+        return list(lists);
+    }
+
+    static {
+        ENV.define(sym("map"), (Procedure) args -> map(cdr(args), proc(car(args))));
+    }
+
+    static {
+        ENV.define(sym("precision"), (Procedure) args ->
             args.equals(Nil.NIL) ? dec(precision()) : dec(precision(toInt(dec(car(args))))),
             VT.proc, list(sym("[新しい精度]")),
             "現在の精度(有効桁数)を取得(precision)または変更(precision 新しい精度)する。");
         // (delta) -> 現在のデルタ値を返す。
         // (delta d) -> デルタ値にdを設定しdを返す。
-        env.define(sym("delta"), (Procedure) args ->
+        ENV.define(sym("delta"), (Procedure) args ->
             args.equals(Nil.NIL) ? dec(delta()) : dec(delta(dec(car(args)))));
-        // (~ a b)
-        env.define(sym("approx"), (Procedure) args -> bool(approx(dec(car(args)), dec(car(cdr(args))))));
-        env.define(sym("~"), env.get(sym("approx")));
-        env.define(sym("sin"), (Procedure) args -> dec(sin(dec(car(args)), MC)));
-        env.define(sym("cos"), (Procedure) args -> dec(cos(dec(car(args)), MC)));
-        env.define(sym("tan"), (Procedure) args -> dec(tan(dec(car(args)), MC)));
-        env.define(sym("asin"), (Procedure) args -> dec(asin(dec(car(args)), MC)));
-        env.define(sym("acos"), (Procedure) args -> dec(acos(dec(car(args)), MC)));
-        env.define(sym("atan"), (Procedure) args -> dec(atan(dec(car(args)), MC)));
-        env.define(sym("log"), (Procedure) args -> dec(log(dec(car(args)), MC)));
-        env.define(sym("log10"), (Procedure) args -> dec(log10(dec(car(args)), MC)));
-        env.define(sym("log2"), (Procedure) args -> dec(log2(dec(car(args)), MC)));
-        env.define(sym("gamma"), (Procedure) args -> dec(gamma(dec(car(args)), MC)));
-        env.define(sym("exp"), (Procedure) args -> dec(exp(dec(car(args)), MC)));
-        env.define(sym("sqrt"), (Procedure) args -> dec(sqrt(dec(car(args)), MC)));
+    }
+
+    static {
+        ENV.define(sym("sin"), (Procedure) args -> dec(sin(dec(car(args)), MC)));
+        ENV.define(sym("cos"), (Procedure) args -> dec(cos(dec(car(args)), MC)));
+        ENV.define(sym("tan"), (Procedure) args -> dec(tan(dec(car(args)), MC)));
+        ENV.define(sym("asin"), (Procedure) args -> dec(asin(dec(car(args)), MC)));
+        ENV.define(sym("acos"), (Procedure) args -> dec(acos(dec(car(args)), MC)));
+        ENV.define(sym("atan"), (Procedure) args -> dec(atan(dec(car(args)), MC)));
+        ENV.define(sym("log"), (Procedure) args -> dec(log(dec(car(args)), MC)));
+        ENV.define(sym("log10"), (Procedure) args -> dec(log10(dec(car(args)), MC)));
+        ENV.define(sym("log2"), (Procedure) args -> dec(log2(dec(car(args)), MC)));
+        ENV.define(sym("gamma"), (Procedure) args -> dec(gamma(dec(car(args)), MC)));
+        ENV.define(sym("exp"), (Procedure) args -> dec(exp(dec(car(args)), MC)));
+        ENV.define(sym("sqrt"), (Procedure) args -> dec(sqrt(dec(car(args)), MC)));
         // (root 3 8) -> 8の3乗根
-        env.define(sym("root"), (Procedure) args -> dec(root(dec(car(cdr(args))), dec(car(args)), MC)));
-        env.define(sym("pi"), (Procedure) args -> dec(pi(MC)));
-        env.define(sym("e"), (Procedure) args -> dec(e(MC)));
-        env.define(sym("range"), (Procedure) args -> {
+        ENV.define(sym("root"), (Procedure) args -> dec(root(dec(car(cdr(args))), dec(car(args)), MC)));
+        ENV.define(sym("pi"), (Procedure) args -> dec(pi(MC)));
+        ENV.define(sym("e"), (Procedure) args -> dec(e(MC)));
+    }
+
+    static Expr range(BigDecimal start, BigDecimal end, BigDecimal step) {
+        int stepSign = step.signum();
+        if (stepSign == 0)
+            throw new DecLispException("step must != 0");
+        List<Expr> elements = new ArrayList<>();
+        for (BigDecimal i = start; i.compareTo(end) * stepSign <= 0; i = i.add(step))
+            elements.add(dec(i));
+        return list(elements);
+    }
+
+    static Expr range(BigDecimal start, BigDecimal end) {
+        return range(start, end, start.compareTo(end) <= 0 ? BigDecimal.ONE : BigDecimal.ONE.negate());
+    }
+
+    static {
+        ENV.define(sym("range"), (Procedure) args -> {
             BigDecimal[] a = args.stream().map(x -> dec(x)).toArray(BigDecimal[]::new);
             return switch (a.length) {
-                case 1 -> range(a[0]);
+                case 1 -> range(BigDecimal.ZERO, a[0]);
                 case 2 -> range(a[0], a[1]);
                 case 3 -> range(a[0], a[1], a[2]);
                 default -> throw new DecLispException("Illegal range argument");
             };
-        });
-        env.define(sym("apply"), (Procedure) args -> proc(car(args)).apply(car(cdr(args))));
-        env.define(sym("square"), eval(env, "(lambda (x) (* x x))"));
-        env.define(sym("hypot"), eval(env, "(lambda (x y) (sqrt (+ (square x) (square y))))"));
-        env.define(sym("p+"), (Procedure) args -> polynomial(args, POLYNOMIAL_ADD_UNIT, POLYNOMIAL_ADD));
-        env.define(sym("p-"), (Procedure) args -> polynomial(args, POLYNOMIAL_ADD_UNIT, POLYNOMIAL_SUBTRACT));
-        env.define(sym("p*"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MULTIPLY));
-        env.define(sym("p/"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_DIVIDE));
-        env.define(sym("p%"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MODULO));
-        env.define(sym("today"), (Procedure) args -> { var d = LocalDate.now();
+        }, VT.proc, list(sym("[start]"), sym("end"), sym("[step]")),
+            "指定範囲(start≦x≦end)のリストを返す。"
+            + "引数省略時(range end)はstart=0、"
+            + "(range start end)はstep=1または-1となる。");
+    }
+
+    static {
+        ENV.define(sym("square"), eval(ENV, "(lambda (x) (* x x))"));
+        ENV.define(sym("hypot"), eval(ENV, "(lambda (x y) (sqrt (+ (square x) (square y))))"));
+    }
+
+    public static Expr polynomial(Expr args, Expr[] unit, BinaryOperator<Expr[]> operator) {
+        Expr[][] matrix = matrix(args);
+        if (matrix.length == 0)
+            return Nil.NIL;
+        int count = 0;
+        Expr[] result = unit, prev = null;
+        for (Expr[] row : matrix) {
+            result = operator.apply(count == 1 ? prev : result, row);
+            prev = row;
+            ++count;
+        }
+        return list(result);
+    }
+
+    static {
+        ENV.define(sym("p+"), (Procedure) args -> polynomial(args, POLYNOMIAL_ADD_UNIT, POLYNOMIAL_ADD));
+        ENV.define(sym("p-"), (Procedure) args -> polynomial(args, POLYNOMIAL_ADD_UNIT, POLYNOMIAL_SUBTRACT));
+        ENV.define(sym("p*"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MULTIPLY));
+        ENV.define(sym("p/"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_DIVIDE));
+        ENV.define(sym("p%"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MODULO));
+    }
+
+    static {
+        ENV.define(sym("today"), (Procedure) args -> { var d = LocalDate.now();
             return dec(d.getYear() * 10000 + d.getMonthValue() * 100 + d.getDayOfMonth());
         }, VT.proc, Nil.NIL, "今日の日付をYYYYMMDD形式の8桁の数字で返す。");
-        env.define(sym("days"), (Procedure) args -> {
+        ENV.define(sym("days"), (Procedure) args -> {
             int i = toInt(dec(car(args)));
             try {
                 LocalDate d = LocalDate.of(i / 10000, i / 100 % 100, i % 100);
@@ -417,7 +458,7 @@ public class DecLisp {
                 throw new DecLispException(x);
             }
         }, VT.proc, list(sym("YYYYMMDD")), "YYYYMMDD形式で表現された日付のエポック日からの経過日数を返す。");
-        env.define(sym("date"), (Procedure) args -> {
+        ENV.define(sym("date"), (Procedure) args -> {
             long i = toLong(dec(car(args)));
             try {
                 LocalDate d = LocalDate.ofEpochDay(i);
@@ -426,7 +467,7 @@ public class DecLisp {
                 throw new DecLispException(x);
             }
         }, VT.proc, list(sym("epoc")), "エポック日をYYYYMMDD形式の日付に変換する。");
-        env.define(sym("week"), (Procedure) args -> {
+        ENV.define(sym("week"), (Procedure) args -> {
             int i = toInt(dec(car(args)));
             try {
                 LocalDate d = LocalDate.of(i / 10000, i / 100 % 100, i % 100);
@@ -435,9 +476,15 @@ public class DecLisp {
                 throw new DecLispException(x);
             }
         }, VT.proc, list(sym("YYYYMMDD")), "YYYYMMDD形式の日付を曜日に変換する。");
-        env.define(sym("solve"), (Applicable) (args, e) -> solve(args, e),
+    }
+
+    static {
+        ENV.define(sym("solve"), (Applicable) (args, e) -> solve(args, e),
         VT.spec, list(list(list(sym("変数1"), sym("値1"), sym("...")), sym("...")), sym("式")),
             "それぞれの変数に値を割り当てて式が真となるケースを見つける。");
-        return env;
+    }
+
+    public static Env defaultEnv() {
+        return ENV;
     }
 }
