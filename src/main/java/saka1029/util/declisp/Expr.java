@@ -13,6 +13,10 @@ interface Expr extends Iterable<Expr>, Comparable<Expr> {
         throw new DecLispException("Expr.eval(): cannot eval");
     }
 
+    default boolean isNil() {
+        return this.equals(Nil.NIL);
+    }
+
     default <T> T cast(Class<T> cls) {
         if (cls.isInstance(this))
             return cls.cast(this);

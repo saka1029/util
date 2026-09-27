@@ -1,6 +1,7 @@
 package saka1029.util.declisp;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
+import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static ch.obermuhlner.math.big.BigDecimalMath.*;
@@ -47,44 +50,6 @@ public class DecLisp {
         for (Expr c : body)
             r = c.eval(env);
         return r;
-    }
-
-    static Expr solve(Expr args, Env env) {
-        // 式を取り出す。
-        Expr target = car(cdr(args));
-        // 変数と値の格納領域
-        List<Entry<Symbol, Expr>> vars = new ArrayList<>();
-        // 変数名の重複チェック集合
-        Set<Symbol> dupCheck = new HashSet<>();
-        // 変数と値の組をvarsに取り出す。
-        for (Expr var : car(args)) {
-            Symbol v = symbol(car(var));
-            if (!dupCheck.add(v))
-                throw new DecLispException("solver: duplicated variable '%s'", v);
-            vars.add(Map.entry(symbol(car(var)), car(cdr(var)).eval(env)));
-        }
-        // 結果格納領域
-        List<Expr[]> result = new ArrayList<>();
-        // resultに変数名を追加する。
-        result.add(vars.stream().map(x -> (Expr)x.getKey()).toArray(Expr[]::new));
-        new Object() {
-            Env nenv = new Env(env);                            // 試行錯誤用のEnvを作成。
-            void solve(int index) {                             // index番目の変数に値を割り当てる。
-                if (index >= vars.size()) {                     // すべての変数に値を割り当てたら
-                    if (bool(target.eval(nenv)))                // 式を評価する。
-                        result.add(vars.stream()                // 結果を格納する。
-                            .map(x -> nenv.get(x.getKey()))
-                            .toArray(Expr[]::new));
-                } else {
-                    Symbol var = vars.get(index).getKey();
-                    for (Expr e : vars.get(index).getValue()) { // すべての値について
-                        nenv.define(var, e);                    // 値を割り当てる。
-                        solve(index + 1);                       // 次の変数に値を割り当てる。
-                    }
-                }
-            }
-        }.solve(0);
-        return list(result.stream().map(x -> list(x)).toList());
     }
 
     static {
@@ -478,10 +443,152 @@ public class DecLisp {
         }, VT.proc, list(sym("YYYYMMDD")), "YYYYMMDD形式の日付を曜日に変換する。");
     }
 
+    static List<Entry<Symbol, Expr>> variables(Expr args, Env env) {
+        List<Entry<Symbol, Expr>> vars = new ArrayList<>();     // 変数と値の格納領域
+        Set<Symbol> dupCheck = new HashSet<>();                 // 変数名の重複チェック集合
+        for (Expr var : cdr(args)) {                            // 変数と値の組をvarsに取り出す。
+            Symbol v = symbol(car(var));
+            if (!dupCheck.add(v))
+                throw new DecLispException("variables: duplicated variable '%s'", v);
+            vars.add(Map.entry(symbol(car(var)), car(cdr(var)).eval(env)));
+        }
+        return vars;
+    }
+
+    /**
+     * (solve
+     *      評価式
+     *      (変数1 値1)
+     *      (変数2 値2)
+     *       ...
+     * )
+     */
+    static Expr solve(Expr args, Env env) {
+        Expr target = car(args);                                // 式を取り出す。
+        List<Entry<Symbol, Expr>> vars = variables(args, env);  // 変数と値の格納領域
+        List<Expr[]> result = new ArrayList<>();                // 結果格納領域
+        result.add(vars.stream().map(x -> (Expr)x.getKey()).toArray(Expr[]::new));    // 変数名を追加する。
+        new Object() {
+            Env nenv = new Env(env);                            // 試行錯誤用のEnvを作成。
+            void solve(int index) {                             // index番目の変数に値を割り当てる。
+                if (index >= vars.size()) {                     // すべての変数に値を割り当てたら
+                    if (bool(target.eval(nenv)))                // 式を評価する。
+                        result.add(vars.stream()                // 結果を格納する。
+                            .map(x -> nenv.get(x.getKey()))
+                            .toArray(Expr[]::new));
+                } else {
+                    Symbol var = vars.get(index).getKey();
+                    for (Expr e : vars.get(index).getValue()) { // すべての値について
+                        nenv.define(var, e);                    // 値を割り当てる。
+                        solve(index + 1);                       // 次の変数に値を割り当てる。
+                    }
+                }
+            }
+        }.solve(0);
+        return list(result.stream().map(x -> list(x)).toList());
+    }
+
     static {
         ENV.define(sym("solve"), (Applicable) (args, e) -> solve(args, e),
-        VT.spec, list(list(list(sym("変数1"), sym("値1"), sym("...")), sym("...")), sym("式")),
+        VT.spec, list(sym("式"), list(list(sym("変数1"), sym("値1")), sym("..."))),
             "それぞれの変数に値を割り当てて式が真となるケースを見つける。");
+    }
+
+    /**
+     * (min-max
+     *      評価式
+     *      (変数1 値1)
+     *      (変数2 値2)
+     *       ...  
+     * )
+     * 比較式: 2引数の真偽値を返す関数を指定する。
+     * 
+     * @param args
+     * @param env
+     * @return
+     */
+    static Expr minMax(Expr args, Env env) {
+        Procedure LT = proc(env.get(sym("<")));
+        Procedure GT = proc(env.get(sym(">")));
+        Expr 評価式 = car(args);                                // 評価式を取り出す。
+        List<Entry<Symbol, Expr>> vars = variables(args, env);  // 変数と値の格納領域
+        Expr[] names = vars.stream()
+            .map(x -> (Expr)x.getKey()).toArray(Expr[]::new);   // 変数名を取得する。
+        var obj = new Object() {
+            Env nenv = new Env(env);                            // 試行錯誤用のEnvを作成。
+            Expr 最小評価値 = Nil.NIL;
+            Expr[] 最小値 = null;                                 // 結果格納領域
+            Expr 最大評価値 = Nil.NIL;
+            Expr[] 最大値 = null;                                 // 結果格納領域
+
+            Expr[] 結果() {
+                return vars.stream()
+                    .map(x -> nenv.get(x.getKey()))
+                    .toArray(Expr[]::new);
+            }
+
+            void solve(int index) {                             // index番目の変数に値を割り当てる。
+                if (index >= vars.size()) {                     // すべての変数に値を割り当てたら
+                    Expr ev = 評価式.eval(nenv);                // 式を評価する。
+                    if (!ev.isNil()) {
+                        if (最小値 == null || bool(LT.apply(list(ev, 最小評価値)))) {
+                            最小評価値 = ev;
+                            最小値 = 結果();                // 結果を格納する。
+                        }
+                        if (最大値 == null || bool(GT.apply(list(ev, 最大評価値)))) {
+                            最大評価値 = ev;
+                            最大値 = 結果();                // 結果を格納する。
+                        }
+                    }
+                } else {
+                    Symbol var = vars.get(index).getKey();
+                    for (Expr e : vars.get(index).getValue()) { // すべての値について
+                        nenv.define(var, e);                    // 値を割り当てる。
+                        solve(index + 1);                       // 次の変数に値を割り当てる。
+                    }
+                }
+            }
+        };
+        obj.solve(0);
+        return list(list(names), list(obj.最小値), list(obj.最大値));
+    }
+
+    static {
+        ENV.define(sym("min-max"), (Applicable) (args, e) -> minMax(args, e),
+        VT.spec, list(sym("評価式"), list(sym("変数1"), sym("値1")), sym("...")),
+            "それぞれの変数に値を割り当てたときに評価式の値が最大および最小となるケースを見つける。");
+    }
+
+    static {
+        ENV.define(sym("isPrime"), (Procedure) args -> {
+            BigInteger i = bigInt(car(args));
+            if (i.compareTo(BigInteger.TWO) < 0)
+                return Bool.F;
+            BigInteger max = i.sqrt();
+            for (BigInteger d = BigInteger.TWO; d.compareTo(max) <= 0; d = d.add(BigInteger.ONE))
+                if (i.remainder(d).equals(BigInteger.ZERO))
+                    return Bool.F;
+            return Bool.T;
+        }, VT.proc, list(sym("整数")), "整数値が素数かどうかを判定します。");
+
+        ENV.define(sym("primes"), (Procedure) args -> {
+            int size = toInt(dec(car(args)));
+            boolean[] primes = new boolean[size];
+            IntConsumer sieve = n -> {
+                for (int i = n + n; i < size; i += n)
+                    primes[i] = true;
+            };
+            primes[0] = primes[1] = true;
+            int max = (int)Math.sqrt(size);
+            sieve.accept(2);
+            for (int i = 3; i <= max; i += 2)
+                sieve.accept(i);
+            return list(IntStream.range(0, size)
+                .filter(i -> !primes[i])
+                .mapToObj(i -> dec(i))
+                .toArray(Expr[]::new));
+        }, VT.spec, list(sym("最大値")),
+            "最大値までの素数列を返します。");
     }
 
     public static Env defaultEnv() {

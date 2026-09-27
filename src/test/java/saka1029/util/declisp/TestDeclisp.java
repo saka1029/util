@@ -405,7 +405,7 @@ public class TestDeclisp {
     @Test 
     public void testRange() {
         Env env = defaultEnv();
-        assertEquals(read("(1 2 3)"), eval(env, "(range 3)"));
+        assertEquals(read("(0 1 2 3)"), eval(env, "(range 3)"));
         assertEquals(read("(0 1 2 3)"), eval(env, "(range 0 3)"));
         assertEquals(read("(0 -1 -2 -3)"), eval(env, "(range 0 -3)"));
         assertEquals(read("(0 0.5 1 1.5 2)"), eval(env, "(range 0 2 0.5)"));
@@ -421,7 +421,7 @@ public class TestDeclisp {
         } catch (DecLispException x) {
             assertEquals("Illegal range argument", x.getMessage());
         }
-        assertEquals(read("(2 4 6)"), eval(env, "(map (lambda (n) (* 2 n)) (range 3))"));
+        assertEquals(read("(0 2 4 6)"), eval(env, "(map (lambda (n) (* 2 n)) (range 3))"));
     }
 
     @Test 
@@ -493,5 +493,62 @@ public class TestDeclisp {
         } catch (DecLispException e) {
             assertEquals(DateTimeException.class, e.getCause().getClass());
         }
+    }
+
+    @Test 
+    public void testSolve() {
+        Env env = defaultEnv();
+        assertEquals(read("((x y) (1 3) (2 2) (3 1) (4 0))"), eval(env, """
+            (solve
+                (= 4 (+ x y))
+                (x (range 4))
+                (y (range 3)))
+            """));
+        assertEquals(read("((x y) (2 2) (4 1))"), eval(env, """
+            (solve
+                (= 4 (* x y))
+                (x (range 4))
+                (y (range 3)))
+            """));
+        try {
+            eval(env, """
+            (solve
+                (+ x y)
+                (x (range 4))
+                (x (range 3)))
+            """);
+            fail();
+        } catch (DecLispException x) {
+            assertEquals("variables: duplicated variable 'x'", x.getMessage());
+        }
+    }
+
+    @Test 
+    public void testMinMax() {
+        Env env = defaultEnv();
+        assertEquals(read("((x y) (0 0) (4 3))"), eval(env, """
+            (min-max
+                (+ x y)
+                (x (range 4))
+                (y (range 3)))
+            """));
+        assertEquals(read("((x y) (4 0) (4 3))"), eval(env, """
+            (min-max
+                (* x y)
+                (x (range 4 0))
+                (y (range 3 0)))
+            """));
+        try {
+            eval(env, """
+            (min-max
+                (+ x y)
+                (x (range 4))
+                (x (range 3)))
+            """);
+            fail();
+        } catch (DecLispException x) {
+            assertEquals("variables: duplicated variable 'x'", x.getMessage());
+        }
+
     }
 }
