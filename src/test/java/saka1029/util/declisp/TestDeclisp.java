@@ -299,7 +299,7 @@ public class TestDeclisp {
         assertEquals(read("(T T T F)"), eval(env, "(map or (T T F F) (T F T F))"));
         assertEquals(read("(F T T F)"), eval(env, "(map xor (T T F F) (T F T F))"));
         assertEquals(read("fact"), eval(env, "(define (fact n) (if (<= n 0) 1 (* n (fact (- n 1)))))"));
-        assertEquals(read("(1 1 2 6 24 120 720)"), eval(env, "(map fact (range 0 6))"));
+        assertEquals(read("(1 1 2 6 24 120)"), eval(env, "(map fact (range 0 6))"));
     }
 
     @Test 
@@ -405,12 +405,12 @@ public class TestDeclisp {
     @Test 
     public void testRange() {
         Env env = defaultEnv();
-        assertEquals(read("(0 1 2 3)"), eval(env, "(range 3)"));
-        assertEquals(read("(0 1 2 3)"), eval(env, "(range 0 3)"));
-        assertEquals(read("(0 -1 -2 -3)"), eval(env, "(range 0 -3)"));
-        assertEquals(read("(0 0.5 1 1.5 2)"), eval(env, "(range 0 2 0.5)"));
+        assertEquals(read("(0 1 2)"), eval(env, "(range 3)"));
+        assertEquals(read("(0 1 2)"), eval(env, "(range 0 3)"));
+        assertEquals(read("(0 -1 -2)"), eval(env, "(range 0 -3)"));
+        assertEquals(read("(0 0.5 1 1.5)"), eval(env, "(range 0 2 0.5)"));
         assertEquals(read("()"), eval(env, "(range 0 -2 0.5)"));
-        assertEquals(read("(0 -0.2 -0.4 -0.6 -0.8 -1)"), eval(env, "(range 0 -1 -0.2)"));
+        assertEquals(read("(0 -0.2 -0.4 -0.6 -0.8)"), eval(env, "(range 0 -1 -0.2)"));
         try {
             eval(env, "(range 0 -1 0)");
         } catch (DecLispException x) {
@@ -421,14 +421,14 @@ public class TestDeclisp {
         } catch (DecLispException x) {
             assertEquals("Illegal range argument", x.getMessage());
         }
-        assertEquals(read("(0 2 4 6)"), eval(env, "(map (lambda (n) (* 2 n)) (range 3))"));
+        assertEquals(read("(0 2 4)"), eval(env, "(map (lambda (n) (* 2 n)) (range 3))"));
     }
 
     @Test 
     public void testApply() {
         Env env = defaultEnv();
         assertEquals(read("6"), eval(env, "(apply + (1 2 3))"));
-        assertEquals(read("5050"), eval(env, "(apply + (range 100))"));
+        assertEquals(read("4950"), eval(env, "(apply + (range 100))"));
     }
 
     @Test 
@@ -498,13 +498,13 @@ public class TestDeclisp {
     @Test 
     public void testSolve() {
         Env env = defaultEnv();
-        assertEquals(read("((x y) (1 3) (2 2) (3 1) (4 0))"), eval(env, """
+        assertEquals(read("((x y) (2 2) (3 1))"), eval(env, """
             (solve
                 (= 4 (+ x y))
                 (x (range 4))
                 (y (range 3)))
             """));
-        assertEquals(read("((x y) (2 2) (4 1))"), eval(env, """
+        assertEquals(read("((x y) (2 2))"), eval(env, """
             (solve
                 (= 4 (* x y))
                 (x (range 4))
@@ -526,13 +526,13 @@ public class TestDeclisp {
     @Test 
     public void testMinMax() {
         Env env = defaultEnv();
-        assertEquals(read("((* x y) (0 0 0) (7 4 3))"), eval(env, """
+        assertEquals(read("((* x y) (0 0 0) (5 3 2))"), eval(env, """
             (min-max
                 (+ x y)
                 (x (range 4))
                 (y (range 3)))
             """));
-        assertEquals(read("((* x y) (0 4 0) (12 4 3))"), eval(env, """
+        assertEquals(read("((* x y) (1 1 1) (12 4 3))"), eval(env, """
             (min-max
                 (* x y)
                 (x (range 4 0))
