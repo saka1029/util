@@ -106,4 +106,24 @@ public class TestSolver {
         String a2 = "(append2 '(1 2 3) '(4 5) '(6))";
         assertEquals(read("(1 2 3 4 5 6)"), eval(env, a2));
     }
+
+    static Set<Symbol> getSymbols(Expr e) {
+        Set<Symbol> symbols = new HashSet<>();
+        new Object() {
+            void get(Expr e) {
+                if (e instanceof Symbol s) {
+                    symbols.add(s);
+                } else if (e instanceof Cons c) {
+                    get(c.car());
+                    get(c.cdr());
+                }
+            }
+        }.get(e);
+        return symbols;
+    }
+
+    @Test 
+    public void testGetSymbols() {
+        assertEquals(Set.of(sym("!="), sym("a"), sym("b")), getSymbols(read("(!= a b)")));
+    }
 }
