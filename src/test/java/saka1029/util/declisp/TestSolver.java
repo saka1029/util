@@ -133,10 +133,8 @@ public class TestSolver {
         }
     }
 
-    static void solve(Expr args, Env env) {
-        List<Variable> variables = new ArrayList<>();
-        Set<Symbol> symbols = new HashSet<>();
-        for (Expr v : car(args)) {
+    static void variables(Expr vlines, List<Variable> variables, Set<Symbol> symbols, Env env) {
+        for (Expr v : vlines) {
             Symbol s = symbol(car(v));
             symbols.add(s);
             Variable variable = new Variable(s);
@@ -144,10 +142,10 @@ public class TestSolver {
             for (Expr val : car(cdr(v)).eval(env))
                 variable.values.add(val);
         }
-        for (Variable v : variables)
-            System.out.println(v);
-        List<Constraint> constraints = new ArrayList<>();
-        for (Expr c : car(cdr(args))) {
+    }
+
+    static void constraints(Expr clines, List<Constraint> constraints, Set<Symbol> symbols) {
+        for (Expr c : clines) {
             Constraint constraint = new Constraint(c);
             constraints.add(constraint);
             new Object() {
@@ -162,6 +160,16 @@ public class TestSolver {
                 }
             }.variable(c);
         }
+    }
+
+    static void solve(Expr args, Env env) {
+        List<Variable> variables = new ArrayList<>();
+        Set<Symbol> symbols = new HashSet<>();
+        variables(car(args), variables, symbols, env);
+        List<Constraint> constraints = new ArrayList<>();
+        constraints(car(cdr(args)), constraints, symbols);
+        for (Variable v : variables)
+            System.out.println(v);
         for (Constraint c : constraints)
             System.out.println(c);
     }
