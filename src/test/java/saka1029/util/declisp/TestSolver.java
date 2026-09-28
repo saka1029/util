@@ -169,16 +169,9 @@ public class TestSolver {
         return true;
     }
 
-    static void solve(Expr args, Env env) {
-        List<Variable> variables = new ArrayList<>();
-        Set<Symbol> symbols = new HashSet<>();
-        List<Constraint> constraints = new ArrayList<>();
-        parseVariables(car(args), variables, symbols, env);
-        parseConstraints(car(cdr(args)), constraints, symbols);
+    static void bind(List<Variable> variables, List<Constraint> constraints) {
         Set<Symbol> bind = new HashSet<>();
-        int variableSize = variables.size();
-        for (int i = 0; i < variableSize; ++i) {
-            Variable variable = variables.get(i);
+        for (Variable variable : variables) {
             bind.add(variable.variable);
             for (Iterator<Constraint> it = constraints.iterator(); it.hasNext(); ) {
                 Constraint c = it.next();
@@ -188,6 +181,20 @@ public class TestSolver {
                 }
             }
         }
+        if (!constraints.isEmpty())
+            throw new DecLispException("illegal constraints");
+    }
+
+    static void solve(Expr args, Env env) {
+        List<Variable> variables = new ArrayList<>();
+        Set<Symbol> symbols = new HashSet<>();
+        List<Constraint> constraints = new ArrayList<>();
+        // 変数とその取りうる値を初期化する。
+        parseVariables(car(args), variables, symbols, env);
+        // 制約とそれに含まれる変数を初期化する。
+        parseConstraints(car(cdr(args)), constraints, symbols);
+        // 変数に値を割り当てた後実行する制約を設定する。
+        bind(variables, constraints);
         for (Variable v : variables)
             System.out.println(v);
         for (Constraint c : constraints)
