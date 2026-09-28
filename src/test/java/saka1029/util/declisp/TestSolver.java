@@ -162,12 +162,32 @@ public class TestSolver {
         }
     }
 
+    static boolean bound(Set<Symbol> constraintSymbols, Set<Symbol> bind) {
+        for (Symbol symbol : constraintSymbols)
+            if (!bind.contains(symbol))
+                return false;
+        return true;
+    }
+
     static void solve(Expr args, Env env) {
         List<Variable> variables = new ArrayList<>();
         Set<Symbol> symbols = new HashSet<>();
         List<Constraint> constraints = new ArrayList<>();
         parseVariables(car(args), variables, symbols, env);
         parseConstraints(car(cdr(args)), constraints, symbols);
+        Set<Symbol> bind = new HashSet<>();
+        int variableSize = variables.size();
+        for (int i = 0; i < variableSize; ++i) {
+            Variable variable = variables.get(i);
+            bind.add(variable.variable);
+            for (Iterator<Constraint> it = constraints.iterator(); it.hasNext(); ) {
+                Constraint c = it.next();
+                if (bound(c.variables, bind)) {
+                    variable.constrains.add(c.constraint);
+                    it.remove();
+                }
+            }
+        }
         for (Variable v : variables)
             System.out.println(v);
         for (Constraint c : constraints)
