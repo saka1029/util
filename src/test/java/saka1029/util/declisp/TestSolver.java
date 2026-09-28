@@ -127,13 +127,13 @@ public class TestSolver {
             this(constraint, new HashSet<>());
         }
     }
-    record Variable(Symbol variable, Set<Expr> values, Set<Constraint> constrains) {
+    record Variable(Symbol variable, List<Expr> values, List<Expr> constrains) {
         public Variable(Symbol variable) {
-            this(variable, new HashSet<>(), new HashSet<>());
+            this(variable, new ArrayList<>(), new ArrayList<>());
         }
     }
 
-    static void variables(Expr vlines, List<Variable> variables, Set<Symbol> symbols, Env env) {
+    static void parseVariables(Expr vlines, List<Variable> variables, Set<Symbol> symbols, Env env) {
         for (Expr v : vlines) {
             Symbol s = symbol(car(v));
             symbols.add(s);
@@ -144,7 +144,7 @@ public class TestSolver {
         }
     }
 
-    static void constraints(Expr clines, List<Constraint> constraints, Set<Symbol> symbols) {
+    static void parseConstraints(Expr clines, List<Constraint> constraints, Set<Symbol> symbols) {
         for (Expr c : clines) {
             Constraint constraint = new Constraint(c);
             constraints.add(constraint);
@@ -165,9 +165,9 @@ public class TestSolver {
     static void solve(Expr args, Env env) {
         List<Variable> variables = new ArrayList<>();
         Set<Symbol> symbols = new HashSet<>();
-        variables(car(args), variables, symbols, env);
         List<Constraint> constraints = new ArrayList<>();
-        constraints(car(cdr(args)), constraints, symbols);
+        parseVariables(car(args), variables, symbols, env);
+        parseConstraints(car(cdr(args)), constraints, symbols);
         for (Variable v : variables)
             System.out.println(v);
         for (Constraint c : constraints)
