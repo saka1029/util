@@ -129,6 +129,12 @@ public class TestSolver {
         }
     }
 
+    /*
+     * (all-different a b c) 
+     *   -> Constraint[constrint:(!= a b) variables:(a b)]
+     *      Constraint[constrint:(!= a c) variables:(a c)]
+     *      Constraint[constrint:(!= b c) variables:(b c)]
+     */
     static void parseConstraints(Expr clines, List<Constraint> constraints, Set<Symbol> symbols) {
         for (Expr c : clines) {
             Constraint constraint = new Constraint(c);
