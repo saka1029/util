@@ -107,7 +107,7 @@ public class TestSolver {
         assertEquals(read("(1 2 3 4 5 6)"), eval(env, a2));
     }
 
-    static Set<Symbol> getSymbols(Expr e) {
+    static Set<Symbol> symbols(Expr e) {
         Set<Symbol> symbols = new HashSet<>();
         new Object() {
             void get(Expr e) {
@@ -122,8 +122,60 @@ public class TestSolver {
         return symbols;
     }
 
+    record Constraint(Expr constraint, Set<Symbol> variables) {
+        public Constraint(Expr constraint) {
+            this(constraint, new HashSet<>());
+        }
+    }
+    record Variable(Symbol variable, Set<Expr> values, Set<Constraint> constrains) {
+        public Variable(Symbol variable) {
+            this(variable, new HashSet<>(), new HashSet<>());
+        }
+    }
+
+    static void solve(Expr args, Env env) {
+        List<Variable> variables = new ArrayList<>();
+        Set<Symbol> symbols = new HashSet<>();
+        for (Expr v : car(args)) {
+            Symbol s = symbol(car(v));
+            symbols.add(s);
+            Variable variable = new Variable(s);
+            variables.add(variable);
+            for (Expr val : car(cdr(v)).eval(env))
+                variable.values.add(val);
+        }
+        for (Variable v : variables)
+            System.out.println(v);
+        List<Constraint> constraints = new ArrayList<>();
+        for (Expr c : car(cdr(args))) {
+            Constraint constraint = new Constraint(c);
+            constraints.add(constraint);
+            new Object() {
+                void variable(Expr e) {
+                    if (e instanceof Symbol s) {
+                        if (symbols.contains(s))
+                            constraint.variables.add(s);
+                    } else if (e instanceof Cons c) {
+                        variable(c.car());
+                        variable(c.cdr());
+                    }
+                }
+            }.variable(c);
+        }
+        for (Constraint c : constraints)
+            System.out.println(c);
+    }
+
     @Test 
-    public void testGetSymbols() {
-        assertEquals(Set.of(sym("!="), sym("a"), sym("b")), getSymbols(read("(!= a b)")));
+    public void testNewSolver() {
+        Env env = defaultEnv();
+        String solve = """
+            (solve
+                (   (x (range 10))
+                    (y (range 3))  )
+                (   (>= x 3)
+                    (!= x y)  ))
+            """;
+        solve(cdr(read(solve)), env);
     }
 }
