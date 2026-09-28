@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.jline.reader.Completer;
 import org.jline.reader.CompletingParsedLine;
 import org.jline.reader.EOFError;
 import org.jline.reader.EndOfFileException;
@@ -17,7 +16,6 @@ import org.jline.reader.ParsedLine;
 import org.jline.reader.SyntaxError;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.DefaultParser;
-import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp.Capability;
@@ -62,16 +60,16 @@ public class Main {
     public static void main(String[] args) {
         try (Terminal terminal = TerminalBuilder.builder().system(true).build();) {
             Env env = defaultEnv();
-            Completer completer = new StringsCompleter(
-                env.sortedHelp().stream()
-                    .map(h -> h.name.value())
-                    .toArray(String[]::new));
+            // Completer completer = new StringsCompleter(
+            //     env.sortedHelp().stream()
+            //         .map(h -> h.name.value())
+            //         .toArray(String[]::new));
             LineReader reader = LineReaderBuilder.builder()
                 .parser(new SimpleDecListParser())
-                .completer(completer)
+                // .completer(completer)
                 .terminal(terminal)
-                .variable(LineReader.EDIT_AND_EXECUTE_COMMAND, "vi")
-                .variable(LineReader.EDITING_MODE, "vi")
+                .variable(LineReader.EDIT_AND_EXECUTE_COMMAND, "vi")    // 有効でない
+                .variable(LineReader.EDITING_MODE, "vi")                // 有効でない
                 .variable(LineReader.HISTORY_FILE, Paths.get(System.getProperty("user.home"), ".decl_history"))
                 .variable(LineReader.HISTORY_SIZE, 1000)
                 .variable(LineReader.HISTORY_FILE_SIZE, 2000)

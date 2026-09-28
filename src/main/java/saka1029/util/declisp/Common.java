@@ -47,10 +47,10 @@ public class Common {
      * @return
      */
     public static Expr listDot(List<Expr> list) {
-        int last = list.size() - 1;
-        Expr r = list.get(last);
-        for (int i = last - 1; i >= 0; --i)
-            r = new Cons(list.get(i), r);
+        int i = list.size() - 1;
+        Expr r = list.get(i--);
+        while (i >= 0)
+            r = new Cons(list.get(i--), r);
         return r;
     }
 

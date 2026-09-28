@@ -67,7 +67,7 @@ public class DecLisp {
             boolean p = bool(car(args).eval(e));
             if (p)
                 return car(cdr(args)).eval(e);
-            else if (!cdr(cdr(args)).equals(Nil.NIL))
+            else if (!cdr(cdr(args)).isNil())
                 return car(cdr(cdr(args))).eval(e);
             else
                 return Nil.NIL;
@@ -207,28 +207,28 @@ public class DecLisp {
 
     static {
         ENV.define(sym("+"), (Procedure) args -> insertArith(args, dec(0), (x, y) -> dec(dec(x).add(dec(y), MC))),
-            VT.procedure, "d...", "和を求める。");
+            VT.procedure, "数...", "和を求める。");
         ENV.define(sym("-"), (Procedure) args -> insertArith(args, dec(0), (x, y) -> dec(dec(x).subtract(dec(y), MC))),
-            VT.procedure, "d...", "差を求める。");
+            VT.procedure, "数...", "差を求める。");
         ENV.define(sym("*"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).multiply(dec(y), MC))),
-            VT.procedure, "d...", "積を求める。");
+            VT.procedure, "数...", "積を求める。");
         ENV.define(sym("/"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).divide(dec(y), MC))),
-            VT.procedure, "d...", "除算する。");
+            VT.procedure, "数...", "除算する。");
         ENV.define(sym("%"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).remainder(dec(y), MC))),
-            VT.procedure, "d...", "剰余を求める。");
+            VT.procedure, "数...", "剰余を求める。");
         ENV.define(sym("pow"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(pow(dec(x), dec(y), MC))),
-            VT.procedure, "d...", "べき乗の計算をする。(左結合)");
+            VT.procedure, "数...", "べき乗の計算をする。(左結合)");
         ENV.define(sym("^"), ENV.get(sym("pow")),
-            VT.procedure, "d...", "べき乗の計算をする。(左結合)");
+            VT.procedure, "数...", "べき乗の計算をする。(左結合)");
     }
 
     static {
         ENV.define(sym("and"), (Procedure) args -> insertArith(args, Bool.T, (x, y) -> bool(bool(x) & bool(y))),
-            VT.procedure, "d...", "論理積を求める。");
+            VT.procedure, "真理値...", "論理積を求める。");
         ENV.define(sym("or"), (Procedure) args -> insertArith(args, Bool.F, (x, y) -> bool(bool(x) | bool(y))),
-            VT.procedure, "d...", "論理和を求める。");
+            VT.procedure, "真理値...", "論理和を求める。");
         ENV.define(sym("xor"), (Procedure) args -> insertArith(args, Bool.F, (x, y) -> bool(bool(x) ^ bool(y))),
-            VT.procedure, "d...", "排他的論理和を求める。");
+            VT.procedure, "真理値...", "排他的論理和を求める。");
     }
 
     /**
@@ -255,28 +255,30 @@ public class DecLisp {
 
     static {
         ENV.define(sym("=="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) == 0),
-            VT.procedure, "d...", "等しい。");
+            VT.procedure, "数...", "等しい。");
         ENV.define(sym("="), ENV.get(sym("==")),
-            VT.procedure, "d...", "等しい。");
+            VT.procedure, "数...", "等しい。");
         ENV.define(sym("!="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) != 0),
-            VT.procedure, "d...", "等しくない。");
+            VT.procedure, "数...", "等しくない。");
         ENV.define(sym("<>"), ENV.get(sym("!=")),
-            VT.procedure, "d...", "等しくない。");
+            VT.procedure, "数...", "等しくない。");
         ENV.define(sym("<"), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) < 0),
-            VT.procedure, "d...", "より少ない。");
+            VT.procedure, "数...", "より少ない。");
         ENV.define(sym("<="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) <= 0),
-            VT.procedure, "d...", "より少ないかまたは等しい。");
+            VT.procedure, "数...", "より少ないかまたは等しい。");
         ENV.define(sym(">"), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) > 0),
-            VT.procedure, "d...", "より大きい。");
+            VT.procedure, "数...", "より大きい。");
         ENV.define(sym(">="), (Procedure) args -> insertComp(args, (x, y) -> x.compareTo(y) >= 0),
-            VT.procedure, "d...", "より大きいかまたは等しい。");
+            VT.procedure, "数...", "より大きいかまたは等しい。");
     }
 
     static {
         ENV.define(sym("approx"), (Procedure) args ->
             // abs(a - b) <= DELTA
-            bool((dec(car(args)).subtract(dec(car(cdr(args))), MC).abs(MC).compareTo(DELTA)) <= 0));
-        ENV.define(sym("~"), ENV.get(sym("approx")));
+            bool((dec(car(args)).subtract(dec(car(cdr(args))), MC).abs(MC).compareTo(DELTA)) <= 0),
+        VT.procedure, "数1 数2", "数1と数2がほぼ等値である。(差の絶対値がDELTA未満である)");
+        ENV.define(sym("~"), ENV.get(sym("approx")),
+        VT.procedure, "数1 数2", "数1と数2がほぼ等値である。(差の絶対値がDELTA未満である)");
     }
 
     static Expr[] array(Expr arg) {
@@ -320,7 +322,8 @@ public class DecLisp {
     }
 
     static {
-        ENV.define(sym("map"), (Procedure) args -> map(cdr(args), proc(car(args))));
+        ENV.define(sym("map"), (Procedure) args -> map(cdr(args), proc(car(args))),
+        VT.procedure, "関数 リスト...", "関数をリストの要素に順次適用し、その結果をリストにして返す。");
     }
 
     static {
@@ -335,22 +338,22 @@ public class DecLisp {
     }
 
     static {
-        ENV.define(sym("sin"), (Procedure) args -> dec(sin(dec(car(args)), MC)));
-        ENV.define(sym("cos"), (Procedure) args -> dec(cos(dec(car(args)), MC)));
-        ENV.define(sym("tan"), (Procedure) args -> dec(tan(dec(car(args)), MC)));
-        ENV.define(sym("asin"), (Procedure) args -> dec(asin(dec(car(args)), MC)));
-        ENV.define(sym("acos"), (Procedure) args -> dec(acos(dec(car(args)), MC)));
-        ENV.define(sym("atan"), (Procedure) args -> dec(atan(dec(car(args)), MC)));
-        ENV.define(sym("log"), (Procedure) args -> dec(log(dec(car(args)), MC)));
-        ENV.define(sym("log10"), (Procedure) args -> dec(log10(dec(car(args)), MC)));
-        ENV.define(sym("log2"), (Procedure) args -> dec(log2(dec(car(args)), MC)));
-        ENV.define(sym("gamma"), (Procedure) args -> dec(gamma(dec(car(args)), MC)));
-        ENV.define(sym("exp"), (Procedure) args -> dec(exp(dec(car(args)), MC)));
-        ENV.define(sym("sqrt"), (Procedure) args -> dec(sqrt(dec(car(args)), MC)));
+        ENV.define(sym("sin"), (Procedure) args -> dec(sin(dec(car(args)), MC)), VT.procedure, "ラジアン", "sin値を返す。");
+        ENV.define(sym("cos"), (Procedure) args -> dec(cos(dec(car(args)), MC)), VT.procedure, "ラジアン", "cos値を返す。");
+        ENV.define(sym("tan"), (Procedure) args -> dec(tan(dec(car(args)), MC)), VT.procedure, "ラジアン", "tan値を返す。");
+        ENV.define(sym("asin"), (Procedure) args -> dec(asin(dec(car(args)), MC)), VT.procedure, "数", "asin値を返す。");
+        ENV.define(sym("acos"), (Procedure) args -> dec(acos(dec(car(args)), MC)), VT.procedure, "数", "acos値を返す。");
+        ENV.define(sym("atan"), (Procedure) args -> dec(atan(dec(car(args)), MC)), VT.procedure, "数", "atan値を返す。");
+        ENV.define(sym("log"), (Procedure) args -> dec(log(dec(car(args)), MC)), VT.procedure, "数", "log値(底はe)を返す。");
+        ENV.define(sym("log10"), (Procedure) args -> dec(log10(dec(car(args)), MC)), VT.procedure, "数", "log10値を返す。");
+        ENV.define(sym("log2"), (Procedure) args -> dec(log2(dec(car(args)), MC)), VT.procedure, "数", "log2値を返す。");
+        ENV.define(sym("gamma"), (Procedure) args -> dec(gamma(dec(car(args)), MC)), VT.procedure, "数", "gamma値を返す。");
+        ENV.define(sym("exp"), (Procedure) args -> dec(exp(dec(car(args)), MC)), VT.procedure, "数", "exp値を返す。");
+        ENV.define(sym("sqrt"), (Procedure) args -> dec(sqrt(dec(car(args)), MC)), VT.procedure, "数", "平方根");
         // (root 3 8) -> 8の3乗根
-        ENV.define(sym("root"), (Procedure) args -> dec(root(dec(car(cdr(args))), dec(car(args)), MC)));
-        ENV.define(sym("pi"), (Procedure) args -> dec(pi(MC)));
-        ENV.define(sym("e"), (Procedure) args -> dec(e(MC)));
+        ENV.define(sym("root"), (Procedure) args -> dec(root(dec(car(cdr(args))), dec(car(args)), MC)), VT.procedure, "べき乗根 数", "べき乗根を返す。");
+        ENV.define(sym("pi"), (Procedure) args -> dec(pi(MC)), VT.procedure, "", "円周率を返す。");
+        ENV.define(sym("e"), (Procedure) args -> dec(e(MC)), VT.procedure, "", "eを返す。");
     }
 
     static Expr range(BigDecimal start, BigDecimal end, BigDecimal step) {
@@ -383,8 +386,10 @@ public class DecLisp {
     }
 
     static {
-        ENV.define(sym("square"), eval(ENV, "(lambda (x) (* x x))"));
-        ENV.define(sym("hypot"), eval(ENV, "(lambda (x y) (sqrt (+ (square x) (square y))))"));
+        ENV.define(sym("square"), eval(ENV, "(lambda (x) (* x x))"),
+        VT.procedure, "x", "xの2乗を返す。");
+        ENV.define(sym("hypot"), eval(ENV, "(lambda (x y) (sqrt (+ (square x) (square y))))"),
+        VT.procedure, "x y", "原点から座標(x, y)までの距離sqrt(x^2 + y^2)を返す。");
     }
     public static Expr[] removeLeadingZeros(Expr[] d) {
         int length = d.length;
@@ -464,11 +469,16 @@ public class DecLisp {
     }
 
     static {
-        ENV.define(sym("p+"), (Procedure) args -> polynomial(args, POLYNOMIAL_ADD_UNIT, POLYNOMIAL_ADD));
-        ENV.define(sym("p-"), (Procedure) args -> polynomial(args, POLYNOMIAL_ADD_UNIT, POLYNOMIAL_SUBTRACT));
-        ENV.define(sym("p*"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MULTIPLY));
-        ENV.define(sym("p/"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_DIVIDE));
-        ENV.define(sym("p%"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MODULO));
+        ENV.define(sym("p+"), (Procedure) args -> polynomial(args, POLYNOMIAL_ADD_UNIT, POLYNOMIAL_ADD),
+        VT.procedure, "多項式...", "多項式を加算する。(多項式=(1 2 3)=x^2+2x+3)");
+        ENV.define(sym("p-"), (Procedure) args -> polynomial(args, POLYNOMIAL_ADD_UNIT, POLYNOMIAL_SUBTRACT),
+        VT.procedure, "多項式...", "多項式を減算する。(多項式=(1 2 3)=x^2+2x+3)");
+        ENV.define(sym("p*"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MULTIPLY),
+        VT.procedure, "多項式...", "多項式を乗算する。(多項式=(1 2 3)=x^2+2x+3)");
+        ENV.define(sym("p/"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_DIVIDE),
+        VT.procedure, "多項式...", "多項式を除算する。(多項式=(1 2 3)=x^2+2x+3)");
+        ENV.define(sym("p%"), (Procedure) args -> polynomial(args, POLYNOMIAL_MULTIPLY_UNIT, POLYNOMIAL_MODULO),
+        VT.procedure, "多項式...", "多項式を除算した剰余を求める。(多項式=(1 2 3)=x^2+2x+3)");
         ENV.define(sym("p="), (Procedure) args -> {
             Expr[] poly = car(args).array();
             BigDecimal result = BigDecimal.ZERO;
@@ -476,7 +486,7 @@ public class DecLisp {
             for (Expr k : poly)
                 result = result.multiply(value, MC).add(dec(k), MC);
             return dec(result);
-        });
+        }, VT.procedure, "多項式 値", "多項式に値を代入した結果を返す。(多項式=(1 2 3)=x^2+2x+3)");
     }
 
     static LocalDate date(Expr e) {
