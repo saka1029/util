@@ -107,21 +107,6 @@ public class TestSolver {
         assertEquals(read("(1 2 3 4 5 6)"), eval(env, a2));
     }
 
-    static Set<Symbol> symbols(Expr e) {
-        Set<Symbol> symbols = new HashSet<>();
-        new Object() {
-            void get(Expr e) {
-                if (e instanceof Symbol s) {
-                    symbols.add(s);
-                } else if (e instanceof Cons c) {
-                    get(c.car());
-                    get(c.cdr());
-                }
-            }
-        }.get(e);
-        return symbols;
-    }
-
     record Constraint(Expr constraint, Set<Symbol> variables) {
         public Constraint(Expr constraint) {
             this(constraint, new HashSet<>());
