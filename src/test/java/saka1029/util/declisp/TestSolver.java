@@ -168,20 +168,13 @@ public class TestSolver {
                 parseOtherConstraint(cline, constraints, symbols);
     }
 
-    static boolean bound(Set<Symbol> constraintSymbols, Set<Symbol> bind) {
-        for (Symbol symbol : constraintSymbols)
-            if (!bind.contains(symbol))
-                return false;
-        return true;
-    }
-
     static void bind(List<Variable> variables, List<Constraint> constraints) {
         Set<Symbol> bind = new HashSet<>();
         for (Variable variable : variables) {
             bind.add(variable.variable);
             for (Iterator<Constraint> it = constraints.iterator(); it.hasNext(); ) {
                 Constraint c = it.next();
-                if (bound(c.variables, bind)) {
+                if (c.variables.stream().allMatch(bind::contains)) {
                     variable.constrains.add(c.constraint);
                     it.remove();
                 }
@@ -203,8 +196,6 @@ public class TestSolver {
         bind(variables, constraints);
         for (Variable v : variables)
             System.out.println(v);
-        for (Constraint c : constraints)
-            System.out.println(c);
     }
 
     @Test 
