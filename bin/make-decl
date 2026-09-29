@@ -1,0 +1,3 @@
+#!/bin/sh
+mvn -f $HOME/git/declisp install
+mvn -f $HOME/git/util compile
