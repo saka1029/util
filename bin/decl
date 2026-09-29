@@ -2,5 +2,5 @@
 OPT='-Xss8192K --enable-native-access=ALL-UNNAMED'
 T=~/git/util/target
 CP=$T/classes:$T/dependency/*
-# echo java $OPT -cp $CP saka1029.util.declisp.Main "$@"
-java $OPT -cp $CP saka1029.util.declisp.Main "$@"
+# echo java $OPT -cp $CP saka1029.util.main.DecLisp "$@"
+java $OPT -cp $CP saka1029.util.main.DecLisp "$@"
