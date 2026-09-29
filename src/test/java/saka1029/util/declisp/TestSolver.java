@@ -129,28 +129,43 @@ public class TestSolver {
         }
     }
 
-    /*
-     * (all-different a b c) 
-     *   -> Constraint[constrint:(!= a b) variables:(a b)]
-     *      Constraint[constrint:(!= a c) variables:(a c)]
-     *      Constraint[constrint:(!= b c) variables:(b c)]
-     */
-    static void parseConstraints(Expr clines, List<Constraint> constraints, Set<Symbol> symbols) {
-        for (Expr c : clines) {
-            Constraint constraint = new Constraint(c);
-            constraints.add(constraint);
-            new Object() {
-                void variable(Expr e) {
-                    if (e instanceof Symbol s) {
-                        if (symbols.contains(s))
-                            constraint.variables.add(s);
-                    } else if (e instanceof Cons c) {
-                        variable(c.car());
-                        variable(c.cdr());
-                    }
-                }
-            }.variable(c);
+    static void parseAllDifferent(Expr cline, List<Constraint> constraints, Set<Symbol> symbols) {
+        Expr[] vars = array(cdr(cline));
+        for (Expr v : vars)
+            if (!symbols.contains(v))
+                throw new DecLispException("undefined variable '%s'", v);
+        for (int i = 0, size = vars.length; i < size; ++i) {
+            for (int j = i + 1; j < size; ++j) {
+                Constraint diff = new Constraint(list(sym("!="), vars[i], vars[j]));
+                constraints.add(diff);
+                diff.variables.add(symbol(vars[i]));
+                diff.variables.add(symbol(vars[j]));
+            }
         }
+    }
+
+    static void parseOtherConstraint(Expr cline, List<Constraint> constraints, Set<Symbol> symbols) {
+        Constraint constraint = new Constraint(cline);
+        constraints.add(constraint);
+        new Object() {
+            void variable(Expr e) {
+                if (e instanceof Symbol s) {
+                    if (symbols.contains(s))
+                        constraint.variables.add(s);
+                } else if (e instanceof Cons c) {
+                    variable(c.car());
+                    variable(c.cdr());
+                }
+            }
+        }.variable(cline);
+    }
+
+    static void parseConstraints(Expr clines, List<Constraint> constraints, Set<Symbol> symbols) {
+        for (Expr cline : clines)
+            if (car(cline).equals(sym("all-different")))
+                parseAllDifferent(cline, constraints, symbols);
+            else
+                parseOtherConstraint(cline, constraints, symbols);
     }
 
     static boolean bound(Set<Symbol> constraintSymbols, Set<Symbol> bind) {
@@ -198,9 +213,10 @@ public class TestSolver {
         String solve = """
             (solve
                 (   (x (range 10))
-                    (y (range 3))  )
-                (   (>= x 3)
-                    (!= x y)  ))
+                    (y (range 3))
+                    (z (-2 -1))  )
+                (   (all-different x y z)
+                    (<= x y)  ))
             """;
         solve(cdr(read(solve)), env);
     }
