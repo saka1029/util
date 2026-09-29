@@ -21,7 +21,7 @@ interface Expr extends Iterable<Expr>, Comparable<Expr> {
         if (cls.isInstance(this))
             return cls.cast(this);
         else
-            throw new DecLispException("cast: cannot cast '%s' to '%s'", this, cls.getSimpleName());
+            throw new DecLispException("type '%s' expected but '%s' appeared", cls.getSimpleName(), this);
     }
 
     default Expr evlis(Env env) {
