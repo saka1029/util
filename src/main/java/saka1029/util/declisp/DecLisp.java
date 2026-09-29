@@ -684,6 +684,16 @@ public class DecLisp {
 
     }
 
+    static {
+        ENV.define(sym("number"), (Procedure) args -> {
+            BigDecimal r = BigDecimal.ZERO;
+            BigDecimal ten = BigDecimal.valueOf(10);
+            for (Expr digit : args)
+                r = r.multiply(ten).add(dec(digit));
+            return dec(r);
+        });
+    }
+
     record Constraint(Expr constraint, Set<Symbol> variables) {
         public Constraint(Expr constraint) {
             this(constraint, new HashSet<>());
@@ -762,7 +772,9 @@ public class DecLisp {
             throw new DecLispException("illegal constraints");
     }
 
+    // static int bindCount = 0;
     static Expr solve(List<Variable> variables, Env env) {
+        // bindCount = 0;
         List<Expr[]> result = new ArrayList<>();
         result.add(variables.stream().map(x -> x.variable).toArray(Expr[]::new));
         new Object() {
@@ -777,6 +789,7 @@ public class DecLisp {
                     Variable v = variables.get(index);
                     L: for (Expr e : v.values) {
                         nenv.define(v.variable, e);
+                        // ++bindCount;
                         for (Expr c : v.constrains)
                             if (!bool(c.eval(nenv)))
                                 continue L;
@@ -785,6 +798,7 @@ public class DecLisp {
                 }
             }
         }.solve(0);
+        // System.out.printf("bindCount=%d%n", bindCount);
         return list(result.stream()
             .map(a -> list(a))
             .toArray(Expr[]::new));
@@ -797,8 +811,8 @@ public class DecLisp {
         parseVariables(car(args), variables, symbols, env);
         parseConstraints(car(cdr(args)), constraints, symbols);
         bindConstaints(variables, constraints);
-        // for (Variable v : variables)
-        //     System.out.println(v);
+        for (Variable v : variables)
+            System.out.println(v);
         return solve(variables, env);
     }
 
