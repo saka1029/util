@@ -131,7 +131,7 @@ public class TestSolver {
 
     static void parseAllDifferent(Expr cline, List<Constraint> constraints, Set<Symbol> symbols) {
         Expr[] vars = array(cdr(cline));
-        for (Expr v : vars)
+        for (Expr v : vars) // all-differentの対象変数がすべて変数として定義されていることを確認する
             if (!symbols.contains(v))
                 throw new DecLispException("undefined variable '%s'", v);
         for (int i = 0, size = vars.length; i < size; ++i) {
