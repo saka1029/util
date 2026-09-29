@@ -1,3 +1,6 @@
 #!/bin/sh
-mvn -f $HOME/git/declisp install
-mvn -f $HOME/git/util compile
+
+GIT=$HOME/git
+git clone https://github.com/saka1029/declisp.git $GIT/declisp
+mvn -f $GIT/declisp install
+mvn -f $GIT/util compile
