@@ -213,10 +213,16 @@ public class DecLisp {
             VT.procedure, "数...", "差を求める。");
         ENV.define(sym("*"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).multiply(dec(y), MC))),
             VT.procedure, "数...", "積を求める。");
-        ENV.define(sym("/"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).divide(dec(y), MC))),
-            VT.procedure, "数...", "除算する。");
-        ENV.define(sym("%"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(dec(x).remainder(dec(y), MC))),
-            VT.procedure, "数...", "剰余を求める。");
+        ENV.define(sym("/"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> {
+            if (dec(y).compareTo(BigDecimal.ZERO) == 0)
+                throw new DecLispException("division by 0");
+            return dec(dec(x).divide(dec(y), MC));
+        }), VT.procedure, "数...", "除算する。");
+        ENV.define(sym("%"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> {
+            if (dec(y).compareTo(BigDecimal.ZERO) == 0)
+                throw new DecLispException("division by 0");
+            return dec(dec(x).remainder(dec(y), MC));
+        }), VT.procedure, "数...", "剰余を求める。");
         ENV.define(sym("pow"), (Procedure) args -> insertArith(args, dec(1), (x, y) -> dec(pow(dec(x), dec(y), MC))),
             VT.procedure, "数...", "べき乗の計算をする。(左結合)");
         ENV.define(sym("^"), ENV.get(sym("pow")),
