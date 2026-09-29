@@ -2,7 +2,7 @@ package saka1029.util.declisp;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static saka1029.util.declisp.DecLisp.defaultEnv;
+import static saka1029.util.declisp.DecLisp.*;
 
 import org.junit.Test;
 

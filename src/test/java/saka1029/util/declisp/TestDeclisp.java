@@ -475,26 +475,33 @@ public class TestDeclisp {
         Env env = defaultEnv();
         assertEquals(read("((x y) (2 2) (3 1))"), eval(env, """
             (solve
-                (= 4 (+ x y))
-                (x (range 4))
-                (y (range 3)))
+                ( (x (range 4))
+                  (y (range 3)) )
+                ( (= 4 (+ x y)) )
+            )
             """));
         assertEquals(read("((x y) (2 2))"), eval(env, """
             (solve
-                (= 4 (* x y))
-                (x (range 4))
-                (y (range 3)))
+                ( (x (range 4))
+                  (y (range 3)) )
+                ( (= 4 (* x y)) )
+            )
             """));
         try {
             eval(env, """
             (solve
-                (+ x y)
-                (x (range 4))
-                (x (range 3)))
+                (
+                    (x (range 4))
+                    (x (range 3))
+                )
+                (
+                    (+ x x)
+                )
+            )
             """);
             fail();
         } catch (DecLispException x) {
-            assertEquals("variables: duplicated variable 'x'", x.getMessage());
+            assertEquals("variable 'x' duplicated", x.getMessage());
         }
     }
 

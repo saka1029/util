@@ -22,13 +22,13 @@ public class TestExpr {
             car(dec(2));
             fail();
         } catch (DecLispException x) {
-            assertEquals("cast: cannot cast '2' to 'Cons'", x.getMessage());
+            assertEquals("type 'Cons' expected but '2' appeared", x.getMessage());
         }
         try {
             cdr(dec(2));
             fail();
         } catch (DecLispException x) {
-            assertEquals("cast: cannot cast '2' to 'Cons'", x.getMessage());
+            assertEquals("type 'Cons' expected but '2' appeared", x.getMessage());
         }
     }
 
