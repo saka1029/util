@@ -762,7 +762,7 @@ public class DecLisp {
         new Object() {
             Env nenv = new Env(env);    // 試行錯誤用のEnv
             void solve(int index) {
-                System.out.printf("index=%d nenv=%s%n", index, nenv);
+                // System.out.printf("index=%d nenv=%s%n", index, nenv);
                 if (index >= variables.size()) {
                     result.add(variables.stream()
                         .map(x -> nenv.get(x.variable))
@@ -791,8 +791,8 @@ public class DecLisp {
         parseVariables(car(args), variables, symbols, env);
         parseConstraints(car(cdr(args)), constraints, symbols);
         bindConstaints(variables, constraints);
-        for (Variable v : variables)
-            System.out.println(v);
+        // for (Variable v : variables)
+        //     System.out.println(v);
         return solve(variables, env);
     }
 
