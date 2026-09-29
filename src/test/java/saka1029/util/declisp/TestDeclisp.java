@@ -355,6 +355,7 @@ public class TestDeclisp {
 
     @Test 
     public void testTriangle() {
+        
         Env env = defaultEnv();
         eval(env, "(define d30 (/ (pi) 6))");
         eval(env, "(define d45 (/ (pi) 4))");
@@ -487,16 +488,36 @@ public class TestDeclisp {
                 ( (= 4 (* x y)) )
             )
             """));
+        
+        // Variable[variable=s, values=[1, 2, 3, 4, 5, 6, 7, 8, 9], constrains=[]]
+        // Variable[variable=e, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], constrains=[(!= s e)]]
+        // Variable[variable=n, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], constrains=[(!= s n), (!= e n)]]
+        // Variable[variable=d, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], constrains=[(!= s d), (!= e d), (!= n d)]]
+        // Variable[variable=m, values=[1, 2, 3, 4, 5, 6, 7, 8, 9], constrains=[(!= s m), (!= e m), (!= n m), (!= d m)]]
+        // Variable[variable=o, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], constrains=[(!= s o), (!= e o), (!= n o), (!= d o), (!= m o)]]
+        // Variable[variable=r, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], constrains=[(!= s r), (!= e r), (!= n r), (!= d r), (!= m r), (!= o r)]]
+        // Variable[variable=y, values=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], constrains=[(!= s y), (!= e y), (!= n y), (!= d y), (!= m y), (!= o y), (!= r y), (= (+ (p= (s e n d) 10) (p= (m o r e) 10)) (p= (m o n e y) 10))]]
+
+        // assertEquals(read("((s e n d m o r y) (9 5 6 7 1 0 8 2))"), eval(env, """
+        //     (solve
+        //         ( (s (range 1 10))
+        //           (e (range 10))
+        //           (n (range 10))
+        //           (d (range 10))
+        //           (m (range 1 10))
+        //           (o (range 10))
+        //           (r (range 10))
+        //           (y (range 10)) )
+        //         ( (all-different s e n d m o r y)
+        //           (= (+ (p= (s e n d) 10) (p= (m o r e) 10)) (p= (m o n e y) 10))  )
+        //     )
+        //     """));
         try {
             eval(env, """
             (solve
-                (
-                    (x (range 4))
-                    (x (range 3))
-                )
-                (
-                    (+ x x)
-                )
+                ( (x (range 4))
+                  (x (range 3)) )
+                ( (+ x x) )
             )
             """);
             fail();
