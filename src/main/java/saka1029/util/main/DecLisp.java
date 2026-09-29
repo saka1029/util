@@ -1,7 +1,7 @@
-package saka1029.util.declisp;
+package saka1029.util.main;
 
-import static saka1029.util.declisp.Common.*;
-import static saka1029.util.declisp.DecLisp.defaultEnv;
+import static saka1029.declisp.Common.*;
+import static saka1029.declisp.DecLisp.defaultEnv;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -20,7 +20,7 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp.Capability;
 
-public class Main {
+public class DecLisp {
 
     static class SimpleDecListParser extends DefaultParser {
 
