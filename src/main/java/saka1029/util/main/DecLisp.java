@@ -91,9 +91,11 @@ public class DecLisp {
                         break;
                     Expr evaled = eval(env, line);
                     env.define(LAST_RESULT, evaled);
-                    terminal.puts(Capability.orig_pair);
-                    terminal.writer().println(evaled);
-                    terminal.flush();
+                    if (!evaled.equals(NO_VALUE)) {
+                        terminal.puts(Capability.orig_pair);
+                        terminal.writer().println(evaled);
+                        terminal.flush();
+                    }
                 } catch (UserInterruptException uie) {
                     terminal.writer().println("Ctrl-C entered");
                 } catch (DecLispException x) {
