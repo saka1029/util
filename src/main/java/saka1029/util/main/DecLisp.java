@@ -74,7 +74,7 @@ public class DecLisp {
             //         .toArray(String[]::new));
             env.out(s -> {
                 terminal.writer().print(PRINT_COLOR);
-                terminal.writer().println(s);
+                terminal.writer().print(s);
                 terminal.writer().print(COLOR_END);
                 terminal.flush();
             });
