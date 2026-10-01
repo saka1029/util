@@ -60,7 +60,8 @@ public class DecLisp {
     }
 
     static final String ERROR_COLOR  = "\u001b[00;91m";
-    static final String ERROR_COLOR_END  = "\u001b[00m";
+    static final String PRINT_COLOR  = "\u001b[00;96m";
+    static final String COLOR_END  = "\u001b[00m";
     static final String PROMPT = "\u001b[00;92mdecl> \u001b[00m";
     static final Symbol LAST_RESULT = sym("$");
 
@@ -71,6 +72,12 @@ public class DecLisp {
             //     env.sortedHelp().stream()
             //         .map(h -> h.name.value())
             //         .toArray(String[]::new));
+            env.out(s -> {
+                terminal.writer().print(PRINT_COLOR);
+                terminal.writer().println(s);
+                terminal.writer().print(COLOR_END);
+                terminal.flush();
+            });
             LineReader reader = LineReaderBuilder.builder()
                 .parser(new SimpleDecListParser())
                 // .completer(completer)
@@ -102,7 +109,7 @@ public class DecLisp {
                     // terminal.puts(Capability.set_a_foreground, 1);   // IOErrorになる。
                     terminal.writer().print(ERROR_COLOR);
                     terminal.writer().println(x.getMessage());
-                    terminal.writer().print(ERROR_COLOR_END);
+                    terminal.writer().print(COLOR_END);
                     terminal.flush();
                 }
             }
