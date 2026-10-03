@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import saka1029.util.language.JavaCompilerInMemory;
-import saka1029.util.language.JavaCompilerInMemory.CompileError;
+import saka1029.csp.JavaCompilerInMemory;
+import saka1029.csp.JavaCompilerInMemory.CompileError;
 
 public class Problem {
 

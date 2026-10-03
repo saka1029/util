@@ -27,6 +27,12 @@
     </dependency>
 
     <dependency>
+      <groupId>saka1029.csp</groupId>
+      <artifactId>csp</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
       <version>1.23.1</version>

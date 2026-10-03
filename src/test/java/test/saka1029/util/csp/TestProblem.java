@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import saka1029.util.csp.Problem;
-import saka1029.util.language.JavaCompilerInMemory.CompileError;
+import saka1029.csp.JavaCompilerInMemory.CompileError;
 
 public class TestProblem {
 

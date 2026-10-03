@@ -6,9 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import saka1029.util.csp.FukumenParser;
-import saka1029.util.csp.Problem;
-import saka1029.util.language.JavaCompilerInMemory.CompileError;
+import saka1029.csp.FukumenParser;
+import saka1029.csp.Problem;
+import saka1029.csp.JavaCompilerInMemory.CompileError;
 
 public class Fukumen {
 
