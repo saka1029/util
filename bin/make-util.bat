@@ -1,0 +1,6 @@
+GIT=%USERPROFILE%/git
+git clone https://github.com/saka1029/csp.git $GIT/csp
+git clone https://github.com/saka1029/declisp.git $GIT/declisp
+mvn -f $GIT/csp install
+mvn -f $GIT/declisp install
+mvn -f $GIT/util compile
