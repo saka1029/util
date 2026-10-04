@@ -21,7 +21,7 @@ public class TestContext {
         String name = "name";
         context.unary(name, unary, "unary");
         context.binary(name, binary, "binary");
-        try (var c = context.variableTemp(name, expression, "variable")) {
+        try (var _ = context.variableTemp(name, expression, "variable")) {
             assertFalse(context.isUnary(name));
             assertFalse(context.isBinary(name));
             assertEquals(new Help<>(expression, "variable"), context.variable(name));

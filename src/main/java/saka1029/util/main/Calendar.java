@@ -57,7 +57,7 @@ public class Calendar {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d");
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
             connection.connect();
-            try (Closeable c = () -> connection.disconnect();
+            try (Closeable _ = () -> connection.disconnect();
                 InputStream is = connection.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(is, "SJIS"))) {
                 String line = br.readLine();    // skip header
@@ -157,7 +157,7 @@ public class Calendar {
                 if (i > 0 && (横 || i % 2 == 0)) document.add(NEXT_PAGE);
                 BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
                 Graphics2D g = image.createGraphics();
-                try (Closeable c = () -> g.dispose()) {
+                try (Closeable _ = () -> g.dispose()) {
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     // java.awt.Image作成
                     image(g, day);

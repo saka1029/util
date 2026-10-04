@@ -338,7 +338,7 @@ public class Parser {
         Expression e = expression();
         return c -> {
             Unary unary = (cc, a) -> {
-                try (Undo u = cc.variableTemp(arg, ccc -> a, arg)) {
+                try (Undo _ = cc.variableTemp(arg, ccc -> a, arg)) {
                     return e.eval(cc);
                 }
             };
@@ -358,8 +358,8 @@ public class Parser {
         Expression e = expression();
         return c -> {
             Binary binary = (cc, l, r) -> {
-                try (Undo ul = cc.variableTemp(left, ccc -> l, "local " + left);
-                    Undo ur = cc.variableTemp(right, ccc -> r, "local " + right)) {
+                try (Undo _ = cc.variableTemp(left, ccc -> l, "local " + left);
+                    Undo _ = cc.variableTemp(right, ccc -> r, "local " + right)) {
                     return e.eval(cc);
                 }
             };
