@@ -17,8 +17,9 @@ public class Csp {
      * <pre>
      * SYNTAX
      * definition = 'problem' className
-     *              { 'variable' int int var { var } }
-     *              { 'constraint' predicate }
+     *              { 'var' int int var { var } }
+     *              { 'rule' predicate }
+     *              { 'allDifferent' var { var } }
      *              { functions }
      * </pre>
      */
@@ -35,7 +36,7 @@ public class Csp {
                     case "problem":
                         problem.className(f[1]);
                         break;
-                    case "variable":
+                    case "var":
                         String[] g = f[1].split("\\s+");
                         if (g.length < 3 || !g[0].matches("[+-]?\\d+") || !g[1].matches("[+-]?\\d+"))
                             throw new RuntimeException("expected 'variable int int variable...'");
@@ -43,7 +44,7 @@ public class Csp {
                         for (int i = 2; i < g.length; ++i)
                             problem.variable(min, max, g[i]);
                         break;
-                    case "constraint":
+                    case "rule":
                         problem.constraint(f[1]);
                         break;
                     case "allDifferent":
