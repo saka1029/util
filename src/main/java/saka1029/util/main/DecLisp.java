@@ -62,7 +62,7 @@ public class DecLisp {
     static final String ERROR_COLOR  = "\u001b[00;91m";
     static final String PRINT_COLOR  = "\u001b[00;96m";
     static final String COLOR_END  = "\u001b[00m";
-    static final String PROMPT = "\u001b[00;92mdecl> \u001b[00m";
+    static final String PROMPT = "\u001b[00;92m    \u001b[00m";
     static final Symbol LAST_RESULT = sym("$");
 
     public static void main(String[] args) {
@@ -87,7 +87,7 @@ public class DecLisp {
                 .variable(LineReader.HISTORY_FILE, Paths.get(System.getProperty("user.home"), ".decl_history"))
                 .variable(LineReader.HISTORY_SIZE, 1000)
                 .variable(LineReader.HISTORY_FILE_SIZE, 2000)
-                .variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M%P > ")
+                .variable(LineReader.SECONDARY_PROMPT_PATTERN, "    ")
                 .build();
 
 
