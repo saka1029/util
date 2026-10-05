@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 import saka1029.csp.FukumenParser;
 import saka1029.csp.Problem;
+import saka1029.csp.Solver;
 import saka1029.csp.JavaCompilerInMemory.CompileError;
 
 public class Fukumen {
@@ -57,7 +58,17 @@ public class Fukumen {
             }
         if (problem == null)
             usage();
-        problem.solve(displaySource);
+        if (displaySource)
+            System.out.println(problem.generate());
+        try {
+            Solver solver = problem.solver();
+            long start = System.currentTimeMillis();
+            int count = solver.solve();
+            System.err.println("solutions: " + count + ", elapse: " + (System.currentTimeMillis() - start) + " msec.");
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException
+                | ClassNotFoundException | InstantiationException | IllegalArgumentException | CompileError e) {
+            e.printStackTrace();
+        }
     }
 
 }
